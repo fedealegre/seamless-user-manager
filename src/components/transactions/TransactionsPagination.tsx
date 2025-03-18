@@ -36,7 +36,7 @@ const TransactionsPagination: React.FC<TransactionsPaginationProps> = ({
         <PaginationContent>
           <PaginationItem>
             <PaginationPrevious 
-              onClick={() => setPage(p => Math.max(1, p - 1))}
+              onClick={() => setPage(Math.max(1, page - 1))}
               className={page <= 1 ? "pointer-events-none opacity-50" : ""} 
             />
           </PaginationItem>
@@ -57,7 +57,7 @@ const TransactionsPagination: React.FC<TransactionsPaginationProps> = ({
           
           <PaginationItem>
             <PaginationNext 
-              onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+              onClick={() => setPage(Math.min(totalPages, page + 1))}
               className={page >= totalPages ? "pointer-events-none opacity-50" : ""} 
             />
           </PaginationItem>
