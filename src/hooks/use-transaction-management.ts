@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { apiService } from "@/lib/api";
@@ -51,7 +52,8 @@ export const useTransactionManagement = () => {
       
       try {
         const params = getApiParams();
-        const txns = await apiService.getWalletTransactions(userId, walletId, params);
+        // Fix here: Using listTransactions directly with walletId and params
+        const txns = await apiService.listTransactions(walletId, params);
         
         if (searchTerm) {
           return txns.filter(t => 
@@ -144,6 +146,7 @@ export const useTransactionManagement = () => {
     if (!selectedTransaction) return;
     
     try {
+      // Using the correct parameter order for cancelTransaction
       await apiService.cancelTransaction(selectedTransaction.transactionId, reason);
       toast({
         title: "Transaction Cancelled",
