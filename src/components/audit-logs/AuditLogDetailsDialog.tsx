@@ -10,7 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Plus, Pencil, Trash, Lock, LockOpen, RefreshCw, FileCog } from "lucide-react";
+import { FileCog } from "lucide-react";
 
 interface AuditLogDetailsDialogProps {
   open: boolean;
@@ -20,16 +20,6 @@ interface AuditLogDetailsDialogProps {
   getBadgeColor: (type: string) => string;
   getOperationTypeDetails: (type: string) => { label: string; icon: React.ElementType };
 }
-
-const iconMap: Record<string, React.ElementType> = {
-  "Plus": Plus,
-  "Pencil": Pencil,
-  "Trash": Trash,
-  "Lock": Lock,
-  "LockOpen": LockOpen,
-  "RefreshCw": RefreshCw,
-  "FileCog": FileCog
-};
 
 const AuditLogDetailsDialog: React.FC<AuditLogDetailsDialogProps> = ({
   open,

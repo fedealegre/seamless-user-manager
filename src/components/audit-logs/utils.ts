@@ -1,18 +1,18 @@
 
-import { LucideIcon, FileCog, Plus, Pencil, Trash, Lock, LockOpen, RefreshCw } from "lucide-react";
+import { Plus, Pencil, Trash, Lock, LockOpen, RefreshCw, FileCog } from "lucide-react";
 import { AuditLog } from "@/lib/api/types";
 
 export const operationTypes = [
-  { id: "USER_CREATE", label: "User Create", icon: "Plus" },
-  { id: "USER_UPDATE", label: "User Update", icon: "Pencil" },
-  { id: "USER_DELETE", label: "User Delete", icon: "Trash" },
-  { id: "USER_BLOCK", label: "User Block", icon: "Lock" },
-  { id: "USER_UNBLOCK", label: "User Unblock", icon: "LockOpen" },
-  { id: "TRANSACTION_CANCEL", label: "Transaction Cancel", icon: "RefreshCw" },
-  { id: "CUSTOMER_COMPENSATE", label: "Customer Compensate", icon: "FileCog" },
-  { id: "RULE_CREATE", label: "Rule Create", icon: "Plus" },
-  { id: "RULE_UPDATE", label: "Rule Update", icon: "Pencil" },
-  { id: "RULE_DELETE", label: "Rule Delete", icon: "Trash" },
+  { id: "USER_CREATE", label: "User Create", icon: Plus },
+  { id: "USER_UPDATE", label: "User Update", icon: Pencil },
+  { id: "USER_DELETE", label: "User Delete", icon: Trash },
+  { id: "USER_BLOCK", label: "User Block", icon: Lock },
+  { id: "USER_UNBLOCK", label: "User Unblock", icon: LockOpen },
+  { id: "TRANSACTION_CANCEL", label: "Transaction Cancel", icon: RefreshCw },
+  { id: "CUSTOMER_COMPENSATE", label: "Customer Compensate", icon: FileCog },
+  { id: "RULE_CREATE", label: "Rule Create", icon: Plus },
+  { id: "RULE_UPDATE", label: "Rule Update", icon: Pencil },
+  { id: "RULE_DELETE", label: "Rule Delete", icon: Trash },
 ];
 
 export const getBadgeColor = (type: string) => {

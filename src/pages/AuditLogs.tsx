@@ -6,7 +6,7 @@ import { AuditLog } from "@/lib/api/types";
 import { format, parseISO, subDays } from "date-fns";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { RefreshCw, FileCog, Plus, Pencil, Trash, Lock, LockOpen } from "lucide-react";
+import { RefreshCw, FileCog } from "lucide-react";
 import { FilterParams } from "@/components/audit-logs/AuditLogFilters";
 import AuditLogFilters from "@/components/audit-logs/AuditLogFilters";
 import AuditLogTable from "@/components/audit-logs/AuditLogTable";
@@ -55,38 +55,9 @@ const AuditLogs = () => {
   const getOperationTypeDetails = (type: string) => {
     const operation = operationTypes.find((op) => op.id === type);
     if (operation) {
-      // Get the actual icon component from the icon name
-      const iconName = operation.icon;
-      let IconComponent;
-      switch (iconName) {
-        case "Plus":
-          IconComponent = Plus;
-          break;
-        case "Pencil":
-          IconComponent = Pencil;
-          break;
-        case "Trash":
-          IconComponent = Trash;
-          break;
-        case "Lock":
-          IconComponent = Lock;
-          break;
-        case "LockOpen":
-          IconComponent = LockOpen;
-          break;
-        case "RefreshCw":
-          IconComponent = RefreshCw;
-          break;
-        case "FileCog":
-          IconComponent = FileCog;
-          break;
-        default:
-          IconComponent = FileCog;
-      }
-      
       return {
         label: operation.label,
-        icon: IconComponent,
+        icon: operation.icon,
       };
     }
     return {
