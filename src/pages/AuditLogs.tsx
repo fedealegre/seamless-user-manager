@@ -18,7 +18,7 @@ const AuditLogs = () => {
     startDate: subDays(new Date(), 7),
     endDate: new Date(),
     user: "",
-    operationType: "",
+    operationType: "all", // Changed default to "all" instead of empty string
   });
   
   const [selectedLog, setSelectedLog] = useState<AuditLog | null>(null);
@@ -31,7 +31,7 @@ const AuditLogs = () => {
         filters.startDate ? format(filters.startDate, "yyyy-MM-dd") : undefined,
         filters.endDate ? format(filters.endDate, "yyyy-MM-dd") : undefined,
         filters.user.trim() || undefined,
-        filters.operationType || undefined
+        filters.operationType === "all" ? undefined : filters.operationType
       );
     },
   });
@@ -48,7 +48,7 @@ const AuditLogs = () => {
       startDate: subDays(new Date(), 7),
       endDate: new Date(),
       user: "",
-      operationType: "",
+      operationType: "all", // Changed default to "all" instead of empty string
     });
   };
 

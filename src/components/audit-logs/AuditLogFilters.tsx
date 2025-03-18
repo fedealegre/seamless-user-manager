@@ -1,14 +1,19 @@
 
 import React from "react";
-import { format } from "date-fns";
-import { Filter, Search, CalendarIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
-import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { DatePicker } from "@/components/ui/date-picker";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { operationTypes } from "./utils";
 
 export interface FilterParams {
   startDate: Date | undefined;
@@ -17,128 +22,88 @@ export interface FilterParams {
   operationType: string;
 }
 
-interface AuditLogFiltersProps {
-  filters: FilterParams;
-  operationTypes: { id: string; label: string; icon: React.ElementType }[];
-  onFilterChange: (key: keyof FilterParams, value: any) => void;
-  onReset: () => void;
-}
-
-const AuditLogFilters: React.FC<AuditLogFiltersProps> = ({
+const AuditLogFilters = ({
   filters,
   operationTypes,
   onFilterChange,
   onReset,
+}: {
+  filters: FilterParams;
+  operationTypes: { id: string; label: string; icon: React.ElementType }[];
+  onFilterChange: (key: keyof FilterParams, value: any) => void;
+  onReset: () => void;
 }) => {
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Filters</CardTitle>
-        <CardDescription>
-          Narrow down logs by time period, user, or operation type
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {/* Date From */}
+      <CardContent className="p-4 pt-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium">From Date</label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={cn(
-                    "w-full justify-start text-left font-normal",
-                    !filters.startDate && "text-muted-foreground"
-                  )}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {filters.startDate ? format(filters.startDate, "PPP") : "Select date"}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0">
-                <Calendar
-                  mode="single"
-                  selected={filters.startDate}
-                  onSelect={(date) => onFilterChange("startDate", date)}
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
+            <label className="text-sm font-medium" htmlFor="start-date">
+              Start Date
+            </label>
+            <DatePicker
+              id="start-date"
+              date={filters.startDate}
+              onSelect={(date) => onFilterChange("startDate", date)}
+              className="w-full"
+            />
           </div>
           
-          {/* Date To */}
           <div className="space-y-2">
-            <label className="text-sm font-medium">To Date</label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={cn(
-                    "w-full justify-start text-left font-normal",
-                    !filters.endDate && "text-muted-foreground"
-                  )}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {filters.endDate ? format(filters.endDate, "PPP") : "Select date"}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0">
-                <Calendar
-                  mode="single"
-                  selected={filters.endDate}
-                  onSelect={(date) => onFilterChange("endDate", date)}
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
+            <label className="text-sm font-medium" htmlFor="end-date">
+              End Date
+            </label>
+            <DatePicker
+              id="end-date"
+              date={filters.endDate}
+              onSelect={(date) => onFilterChange("endDate", date)}
+              className="w-full"
+            />
           </div>
           
-          {/* User Filter */}
           <div className="space-y-2">
-            <label className="text-sm font-medium">User</label>
-            <div className="relative">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search by user..."
-                className="pl-8"
-                value={filters.user}
-                onChange={(e) => onFilterChange("user", e.target.value)}
-              />
-            </div>
+            <label className="text-sm font-medium" htmlFor="user">
+              User
+            </label>
+            <Input
+              id="user"
+              placeholder="Search by user"
+              value={filters.user}
+              onChange={(e) => onFilterChange("user", e.target.value)}
+              className="w-full"
+            />
           </div>
           
-          {/* Operation Type */}
           <div className="space-y-2">
-            <label className="text-sm font-medium">Operation Type</label>
+            <label className="text-sm font-medium" htmlFor="operation-type">
+              Operation Type
+            </label>
             <Select
               value={filters.operationType}
               onValueChange={(value) => onFilterChange("operationType", value)}
             >
-              <SelectTrigger>
-                <SelectValue placeholder="All operation types" />
+              <SelectTrigger id="operation-type" className="w-full">
+                <SelectValue placeholder="All operations" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All operation types</SelectItem>
-                {operationTypes.map((type) => (
-                  <SelectItem key={type.id} value={type.id}>
-                    {type.label}
-                  </SelectItem>
-                ))}
+                <SelectGroup>
+                  <SelectLabel>Operation Types</SelectLabel>
+                  {/* Add a non-empty value for the "all" option */}
+                  <SelectItem value="all">All operations</SelectItem>
+                  {operationTypes.map((op) => (
+                    <SelectItem key={op.id} value={op.id}>
+                      {op.label}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
               </SelectContent>
             </Select>
           </div>
         </div>
         
-        <div className="mt-4 flex items-center justify-end gap-2">
-          <Button 
-            variant="outline" 
-            onClick={onReset}
-          >
+        <div className="flex justify-end mt-4">
+          <Button variant="outline" onClick={onReset} className="ml-2">
             Reset Filters
-          </Button>
-          <Button>
-            <Filter size={16} className="mr-2" /> Apply Filters
           </Button>
         </div>
       </CardContent>

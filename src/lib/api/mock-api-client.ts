@@ -120,10 +120,10 @@ export class MockApiClient {
     }
     
     if (user) {
-      filteredLogs = filteredLogs.filter(log => log.user.includes(user));
+      filteredLogs = filteredLogs.filter(log => log.user.toLowerCase().includes(user.toLowerCase()));
     }
     
-    if (operationType) {
+    if (operationType && operationType !== "all") {
       filteredLogs = filteredLogs.filter(log => log.operationType === operationType);
     }
     
