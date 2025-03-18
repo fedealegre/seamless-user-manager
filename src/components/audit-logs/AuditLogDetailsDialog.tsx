@@ -10,6 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Plus, Pencil, Trash, Lock, LockOpen, RefreshCw, FileCog } from "lucide-react";
 
 interface AuditLogDetailsDialogProps {
   open: boolean;
@@ -17,8 +18,18 @@ interface AuditLogDetailsDialogProps {
   log: AuditLog | null;
   formatDateTime: (dateTime: string) => string;
   getBadgeColor: (type: string) => string;
-  getOperationTypeDetails: (type: string) => { label: string; icon: React.ElementType };
+  getOperationTypeDetails: (type: string) => { label: string; icon: string };
 }
+
+const iconMap: Record<string, React.ElementType> = {
+  "Plus": Plus,
+  "Pencil": Pencil,
+  "Trash": Trash,
+  "Lock": Lock,
+  "LockOpen": LockOpen,
+  "RefreshCw": RefreshCw,
+  "FileCog": FileCog
+};
 
 const AuditLogDetailsDialog: React.FC<AuditLogDetailsDialogProps> = ({
   open,
@@ -30,7 +41,8 @@ const AuditLogDetailsDialog: React.FC<AuditLogDetailsDialogProps> = ({
 }) => {
   if (!log) return null;
 
-  const { icon: OpIcon, label } = getOperationTypeDetails(log.operationType);
+  const { icon: iconName, label } = getOperationTypeDetails(log.operationType);
+  const OpIcon = iconMap[iconName];
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -63,7 +75,7 @@ const AuditLogDetailsDialog: React.FC<AuditLogDetailsDialogProps> = ({
                     getBadgeColor(log.operationType)
                   )}
                 >
-                  <OpIcon size={12} />
+                  {OpIcon && <OpIcon size={12} />}
                   <span>{label}</span>
                 </Badge>
               </div>
