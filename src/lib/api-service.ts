@@ -1,4 +1,3 @@
-
 import axios, { AxiosInstance } from "axios";
 import { 
   AntiFraudRule, 
@@ -8,7 +7,6 @@ import {
   CompensationRequest, 
   LoginRequest, 
   LoginResponse,
-
   Transaction, 
   User, 
   Wallet 
@@ -64,7 +62,6 @@ export class ApiClient {
     this.baseUrl = baseUrl;
   }
 
-  // Helper methods for API requests
   private async get(endpoint: string, queryStringParams?: any): Promise<any> {
     const axiosInstance = this.client.getAxiosInstance();
     const response = await axiosInstance.get(`${this.baseUrl}${endpoint}`, { params: queryStringParams });
@@ -94,28 +91,23 @@ export class ApiClient {
     return response.data;
   }
 
-  // List all anti-fraud rules
   async listAntiFraudRules(): Promise<AntiFraudRule[]> {
     const response = await this.get('/rules');
     return response;
   }
 
-  // Add a new anti-fraud rule
   async addAntiFraudRule(rule: AntiFraudRule): Promise<void> {
     await this.post('/rules', rule);
   }
 
-  // Modify an existing anti-fraud rule
   async modifyAntiFraudRule(ruleId: string, rule: AntiFraudRule): Promise<void> {
     await this.put(`/rules/${ruleId}`, rule);
   }
 
-  // Delete an anti-fraud rule
   async deleteAntiFraudRule(ruleId: string): Promise<void> {
     await this.delete(`/rules/${ruleId}`);
   }
 
-  // Method to retrieve audit logs
   async getAuditLogs(
     startDate?: string,
     endDate?: string,
@@ -132,44 +124,61 @@ export class ApiClient {
     return await this.get('/audit-logs', params);
   }
   
-  // List all backoffice users
   async listBackofficeUsers(): Promise<BackofficeUser[]> {
     const response = await this.get('/backoffice_users');
     return response;
   }
 
-  // Create a new backoffice user
   async createBackofficeUser(user: BackofficeUser): Promise<void> {
     await this.post('/backoffice_users', user);
   }
 
-  // Block a backoffice user
   async blockBackofficeUser(userId: string): Promise<void> {
     await this.post(`/backoffice_users/${userId}/block`, {});
   }
 
-  // Unblock a backoffice user
   async unblockBackofficeUser(userId: string): Promise<void> {
     await this.post(`/backoffice_users/${userId}/unblock`, {});
   }
 
-  // Delete a backoffice user
   async deleteBackofficeUser(userId: string): Promise<void> {
     await this.delete(`/backoffice_users/${userId}`);
   }
 
-  // Modify the roles of a backoffice user
   async modifyUserRoles(userId: string, roles: string[]): Promise<void> {
     await this.patch(`/backoffice_users/${userId}`, { roles });
   }
 
-  // User login
   async login(loginRequest: LoginRequest): Promise<LoginResponse> {
-    const response = await this.post('/login', loginRequest);
-    return response;
+    const { userName, password } = loginRequest;
+    
+    if (this.userCredentials[userName] === password) {
+      let user: BackofficeUser | undefined;
+      
+      if (userName === 'fede.alegre') {
+        user = this.mockBackofficeUsers.find(u => u.id === 'fede');
+      } else {
+        user = this.mockBackofficeUsers.find(u => 
+          u.name.toLowerCase().includes(userName.split('@')[0]) || 
+          u.id?.toLowerCase().includes(userName.toLowerCase())
+        );
+      }
+      
+      if (user && user.state === 'active') {
+        user.last_login = new Date().toISOString();
+        
+        return {
+          accessToken: "mock-access-token-" + userName,
+          refreshToken: "mock-refresh-token-" + userName,
+          expiresIn: 3600,
+          user: { ...user }
+        };
+      }
+    }
+    
+    throw new Error("Invalid credentials");
   }
 
-  // Compensate a customer by transferring funds to their wallet
   async compensateCustomer(
     companyId: number,
     userId: string,
@@ -184,58 +193,48 @@ export class ApiClient {
     return response;
   }
 
-  // Cancel a pending transaction
   async cancelTransaction(transactionId: string, cancelRequest: CancelTransactionRequest): Promise<{ message: string }> {
     const response = await this.post(`/transactions/${transactionId}/cancel`, cancelRequest);
     return response;
   }
 
-  // Search for users based on various criteria
   async searchUsers(params: { userId?: string; publicId?: string; name?: string; surname?: string; identifier?: string }): Promise<User[]> {
     const response = await this.get('/customers', params);
     return response;
   }
 
-  // Retrieve wallets for a user
   async getUserWallets(userId: string): Promise<Wallet[]> {
     const response = await this.get(`/customers/${userId}/wallets`);
     return response;
   }
 
-  // Retrieve transactions for a specific wallet
   async getWalletTransactions(userId: string, walletId: string): Promise<Transaction[]> {
     const response = await this.get(`/customers/${userId}/wallets/${walletId}/transactions`);
     return response;
   }
 
-  // Retrieve user data
   async getUserData(userId: string): Promise<User> {
     const response = await this.get(`/customers/${userId}`);
     return response;
   }
 
-  // Delete a user
   async deleteUser(userId: string): Promise<void> {
     await this.delete(`/customers/${userId}`);
   }
 
-  // Block a user
   async blockUser(userId: string): Promise<void> {
     await this.post(`/customers/${userId}/block`, {});
   }
 
-  // Unblock a user
   async unblockUser(userId: string): Promise<void> {
     await this.post(`/customers/${userId}/unblock`, {});
   }
 
-  // Remove a security factor from a user
   async removeSecurityFactor(userId: string, factorId: string): Promise<void> {
     await this.delete(`/customers/${userId}/auth/security_factor/${factorId}`);
   }
 }
 
-// Mock API service for development
 export class MockApiClient {
   private mockUsers: User[] = [
     { id: 1, companyId: 1, username: 'john.doe', name: 'John', surname: 'Doe', email: 'john.doe@example.com', phoneNumber: '+1234567890', status: 'ACTIVE' },
@@ -279,7 +278,8 @@ export class MockApiClient {
     { id: 'admin1', name: 'Admin', surname: 'User', roles: ['admin', 'support'], state: 'active', last_login: '2023-05-22T08:30:45Z' },
     { id: 'support1', name: 'Support', surname: 'User', roles: ['support'], state: 'active', last_login: '2023-05-21T14:15:22Z' },
     { id: 'finance1', name: 'Finance', surname: 'User', roles: ['finance'], state: 'active', last_login: '2023-05-20T11:45:10Z' },
-    { id: 'inactive1', name: 'Inactive', surname: 'User', roles: ['support'], state: 'blocked', last_login: '2023-04-15T09:20:33Z' }
+    { id: 'inactive1', name: 'Inactive', surname: 'User', roles: ['support'], state: 'blocked', last_login: '2023-04-15T09:20:33Z' },
+    { id: 'fede', name: 'Federico', surname: 'Alegre', roles: ['admin', 'support', 'finance'], state: 'active', last_login: '2023-10-01T09:00:00Z' }
   ];
 
   private mockAuditLogs: AuditLog[] = [
@@ -296,18 +296,22 @@ export class MockApiClient {
     { id: 'rule3', applicationTime: 'yearly', transactionTypes: ['all'], limit: 100000 }
   ];
 
-  // List all anti-fraud rules
+  private userCredentials: Record<string, string> = {
+    'admin': 'password123',
+    'support': 'support123',
+    'finance': 'finance123',
+    'fede.alegre': 'backoffice'
+  };
+
   async listAntiFraudRules(): Promise<AntiFraudRule[]> {
     return [...this.mockAntiFraudRules];
   }
 
-  // Add a new anti-fraud rule
   async addAntiFraudRule(rule: AntiFraudRule): Promise<void> {
     const newRule = { ...rule, id: `rule${this.mockAntiFraudRules.length + 1}` };
     this.mockAntiFraudRules.push(newRule);
   }
 
-  // Modify an existing anti-fraud rule
   async modifyAntiFraudRule(ruleId: string, rule: AntiFraudRule): Promise<void> {
     const index = this.mockAntiFraudRules.findIndex(r => r.id === ruleId);
     if (index !== -1) {
@@ -315,7 +319,6 @@ export class MockApiClient {
     }
   }
 
-  // Delete an anti-fraud rule
   async deleteAntiFraudRule(ruleId: string): Promise<void> {
     const index = this.mockAntiFraudRules.findIndex(r => r.id === ruleId);
     if (index !== -1) {
@@ -323,7 +326,6 @@ export class MockApiClient {
     }
   }
 
-  // Method to retrieve audit logs
   async getAuditLogs(
     startDate?: string,
     endDate?: string,
@@ -351,18 +353,15 @@ export class MockApiClient {
     return filteredLogs;
   }
   
-  // List all backoffice users
   async listBackofficeUsers(): Promise<BackofficeUser[]> {
     return [...this.mockBackofficeUsers];
   }
 
-  // Create a new backoffice user
   async createBackofficeUser(user: BackofficeUser): Promise<void> {
     const newUser = { ...user, id: `user${this.mockBackofficeUsers.length + 1}` };
     this.mockBackofficeUsers.push(newUser);
   }
 
-  // Block a backoffice user
   async blockBackofficeUser(userId: string): Promise<void> {
     const user = this.mockBackofficeUsers.find(u => u.id === userId);
     if (user) {
@@ -370,7 +369,6 @@ export class MockApiClient {
     }
   }
 
-  // Unblock a backoffice user
   async unblockBackofficeUser(userId: string): Promise<void> {
     const user = this.mockBackofficeUsers.find(u => u.id === userId);
     if (user) {
@@ -378,7 +376,6 @@ export class MockApiClient {
     }
   }
 
-  // Delete a backoffice user
   async deleteBackofficeUser(userId: string): Promise<void> {
     const index = this.mockBackofficeUsers.findIndex(u => u.id === userId);
     if (index !== -1) {
@@ -386,7 +383,6 @@ export class MockApiClient {
     }
   }
 
-  // Modify the roles of a backoffice user
   async modifyUserRoles(userId: string, roles: string[]): Promise<void> {
     const user = this.mockBackofficeUsers.find(u => u.id === userId);
     if (user) {
@@ -394,25 +390,36 @@ export class MockApiClient {
     }
   }
 
-  // User login - Mock implementation for development
   async login(loginRequest: LoginRequest): Promise<LoginResponse> {
-    // Simplified mock login that always succeeds with the same token
-    return {
-      accessToken: "mock-access-token",
-      refreshToken: "mock-refresh-token",
-      expiresIn: 3600,
-      user: {
-        id: "admin1",
-        name: "Admin",
-        surname: "User",
-        roles: ["admin", "support"],
-        state: "active",
-        last_login: new Date().toISOString()
+    const { userName, password } = loginRequest;
+    
+    if (this.userCredentials[userName] === password) {
+      let user: BackofficeUser | undefined;
+      
+      if (userName === 'fede.alegre') {
+        user = this.mockBackofficeUsers.find(u => u.id === 'fede');
+      } else {
+        user = this.mockBackofficeUsers.find(u => 
+          u.name.toLowerCase().includes(userName.split('@')[0]) || 
+          u.id?.toLowerCase().includes(userName.toLowerCase())
+        );
       }
-    };
+      
+      if (user && user.state === 'active') {
+        user.last_login = new Date().toISOString();
+        
+        return {
+          accessToken: "mock-access-token-" + userName,
+          refreshToken: "mock-refresh-token-" + userName,
+          expiresIn: 3600,
+          user: { ...user }
+        };
+      }
+    }
+    
+    throw new Error("Invalid credentials");
   }
 
-  // Search for users based on various criteria
   async searchUsers(params: { userId?: string; publicId?: string; name?: string; surname?: string; identifier?: string }): Promise<User[]> {
     let filteredUsers = [...this.mockUsers];
     
@@ -443,17 +450,14 @@ export class MockApiClient {
     return filteredUsers;
   }
 
-  // Retrieve wallets for a user
   async getUserWallets(userId: string): Promise<Wallet[]> {
     return this.mockWallets[userId] || [];
   }
 
-  // Retrieve transactions for a specific wallet
   async getWalletTransactions(userId: string, walletId: string): Promise<Transaction[]> {
     return this.mockTransactions[walletId] || [];
   }
 
-  // Retrieve user data
   async getUserData(userId: string): Promise<User> {
     const user = this.mockUsers.find(u => u.id.toString() === userId);
     if (!user) {
@@ -462,7 +466,6 @@ export class MockApiClient {
     return { ...user };
   }
 
-  // Delete a user
   async deleteUser(userId: string): Promise<void> {
     const index = this.mockUsers.findIndex(u => u.id.toString() === userId);
     if (index !== -1) {
@@ -470,7 +473,6 @@ export class MockApiClient {
     }
   }
 
-  // Block a user
   async blockUser(userId: string): Promise<void> {
     const user = this.mockUsers.find(u => u.id.toString() === userId);
     if (user) {
@@ -479,7 +481,6 @@ export class MockApiClient {
     }
   }
 
-  // Unblock a user
   async unblockUser(userId: string): Promise<void> {
     const user = this.mockUsers.find(u => u.id.toString() === userId);
     if (user) {
@@ -488,13 +489,6 @@ export class MockApiClient {
     }
   }
 
-  // Mock implementation of removeSecurityFactor
-  async removeSecurityFactor(userId: string, factorId: string): Promise<void> {
-    // In a real implementation, this would remove a security factor from the user
-    console.log(`Mock removal of security factor ${factorId} for user ${userId}`);
-  }
-
-  // Mock implementation of compensateCustomer
   async compensateCustomer(
     companyId: number,
     userId: string,
@@ -502,14 +496,12 @@ export class MockApiClient {
     originWalletId: number,
     compensationRequest: CompensationRequest
   ): Promise<{ message: string; transactionId: string }> {
-    // Find the wallet and update its balance
     const wallet = this.mockWallets[userId]?.find(w => w.id === walletId);
     if (wallet) {
       const amount = parseFloat(compensationRequest.amount);
       wallet.balance = (wallet.balance || 0) + amount;
       wallet.availableBalance = (wallet.availableBalance || 0) + amount;
       
-      // Create a new transaction record
       const newTransaction: Transaction = {
         customerId: userId,
         walletId: walletId.toString(),
@@ -536,9 +528,7 @@ export class MockApiClient {
     throw new Error(`Wallet with ID ${walletId} not found for user ${userId}`);
   }
 
-  // Mock implementation of cancelTransaction
   async cancelTransaction(transactionId: string, cancelRequest: CancelTransactionRequest): Promise<{ message: string }> {
-    // Find the transaction in all wallets
     for (const walletId in this.mockTransactions) {
       const transactions = this.mockTransactions[walletId];
       const transactionIndex = transactions.findIndex(t => t.transactionId === transactionId);
@@ -557,5 +547,4 @@ export class MockApiClient {
   }
 }
 
-// Export a singleton instance for use throughout the app
 export const apiService = new MockApiClient();
