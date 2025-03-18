@@ -88,7 +88,6 @@ const AuditLogFilters = ({
               <SelectContent>
                 <SelectGroup>
                   <SelectLabel>Operation Types</SelectLabel>
-                  {/* Add a non-empty value for the "all" option */}
                   <SelectItem value="all">All operations</SelectItem>
                   {operationTypes.map((op) => (
                     <SelectItem key={op.id} value={op.id}>
