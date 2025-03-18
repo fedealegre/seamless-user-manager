@@ -37,7 +37,7 @@ export const getBadgeColor = (type: string) => {
 // Example audit logs data
 export const exampleAuditLogs: AuditLog[] = [
   {
-    id: 1,
+    id: "1",
     dateTime: "2023-09-15T14:32:45Z",
     user: "admin.user",
     operationType: "USER_CREATE",
@@ -51,7 +51,7 @@ export const exampleAuditLogs: AuditLog[] = [
     }, null, 2)
   },
   {
-    id: 2,
+    id: "2",
     dateTime: "2023-09-16T09:21:33Z",
     user: "admin.user",
     operationType: "USER_UPDATE",
@@ -70,7 +70,7 @@ export const exampleAuditLogs: AuditLog[] = [
     }, null, 2)
   },
   {
-    id: 3,
+    id: "3",
     dateTime: "2023-09-18T11:05:17Z",
     user: "security.admin",
     operationType: "USER_BLOCK",
@@ -88,7 +88,7 @@ export const exampleAuditLogs: AuditLog[] = [
     }, null, 2)
   },
   {
-    id: 4,
+    id: "4",
     dateTime: "2023-09-20T16:42:09Z",
     user: "support.agent",
     operationType: "TRANSACTION_CANCEL",
@@ -108,7 +108,7 @@ export const exampleAuditLogs: AuditLog[] = [
     }, null, 2)
   },
   {
-    id: 5,
+    id: "5",
     dateTime: "2023-09-22T10:18:55Z",
     user: "finance.manager",
     operationType: "CUSTOMER_COMPENSATE",
@@ -126,7 +126,7 @@ export const exampleAuditLogs: AuditLog[] = [
     }, null, 2)
   },
   {
-    id: 6,
+    id: "6",
     dateTime: "2023-09-25T13:27:30Z",
     user: "security.admin",
     operationType: "RULE_CREATE",
@@ -140,7 +140,7 @@ export const exampleAuditLogs: AuditLog[] = [
     }, null, 2)
   },
   {
-    id: 7,
+    id: "7",
     dateTime: "2023-09-27T15:39:22Z",
     user: "security.admin",
     operationType: "RULE_UPDATE",
@@ -159,7 +159,7 @@ export const exampleAuditLogs: AuditLog[] = [
     }, null, 2)
   },
   {
-    id: 8,
+    id: "8",
     dateTime: "2023-09-29T08:05:11Z",
     user: "support.supervisor",
     operationType: "USER_UNBLOCK",
@@ -177,7 +177,7 @@ export const exampleAuditLogs: AuditLog[] = [
     }, null, 2)
   },
   {
-    id: 9,
+    id: "9",
     dateTime: "2023-10-02T11:42:18Z",
     user: "system.admin",
     operationType: "USER_DELETE",
@@ -191,7 +191,7 @@ export const exampleAuditLogs: AuditLog[] = [
     newValue: ""
   },
   {
-    id: 10,
+    id: "10",
     dateTime: "2023-10-05T14:33:27Z",
     user: "security.admin",
     operationType: "RULE_DELETE",

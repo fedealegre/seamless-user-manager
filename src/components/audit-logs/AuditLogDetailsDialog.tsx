@@ -18,7 +18,7 @@ interface AuditLogDetailsDialogProps {
   log: AuditLog | null;
   formatDateTime: (dateTime: string) => string;
   getBadgeColor: (type: string) => string;
-  getOperationTypeDetails: (type: string) => { label: string; icon: string };
+  getOperationTypeDetails: (type: string) => { label: string; icon: React.ElementType };
 }
 
 const iconMap: Record<string, React.ElementType> = {
@@ -41,8 +41,7 @@ const AuditLogDetailsDialog: React.FC<AuditLogDetailsDialogProps> = ({
 }) => {
   if (!log) return null;
 
-  const { icon: iconName, label } = getOperationTypeDetails(log.operationType);
-  const OpIcon = iconMap[iconName];
+  const { icon: IconComponent, label } = getOperationTypeDetails(log.operationType);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -75,7 +74,7 @@ const AuditLogDetailsDialog: React.FC<AuditLogDetailsDialogProps> = ({
                     getBadgeColor(log.operationType)
                   )}
                 >
-                  {OpIcon && <OpIcon size={12} />}
+                  <IconComponent size={12} />
                   <span>{label}</span>
                 </Badge>
               </div>

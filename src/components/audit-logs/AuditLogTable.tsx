@@ -63,8 +63,7 @@ const AuditLogTable: React.FC<AuditLogTableProps> = ({
         <TableBody>
           {logs && logs.length > 0 ? (
             logs.map((log, index) => {
-              const operationDetails = getOperationTypeDetails(log.operationType);
-              const OpIcon = operationDetails.icon;
+              const { icon: IconComponent, label } = getOperationTypeDetails(log.operationType);
               
               return (
                 <TableRow key={log.id || index}>
@@ -84,8 +83,8 @@ const AuditLogTable: React.FC<AuditLogTableProps> = ({
                         getBadgeColor(log.operationType)
                       )}
                     >
-                      <OpIcon size={12} />
-                      <span>{operationDetails.label}</span>
+                      <IconComponent size={12} />
+                      <span>{label}</span>
                     </Badge>
                   </TableCell>
                   <TableCell>
