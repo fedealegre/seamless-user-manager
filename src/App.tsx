@@ -12,6 +12,7 @@ import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import UserManagement from "./pages/UserManagement";
 import TransactionManagement from "./pages/TransactionManagement";
+import WalletManagement from "./pages/WalletManagement";
 import AntiFraudRules from "./pages/AntiFraudRules";
 import AuditLogs from "./pages/AuditLogs";
 import NotFound from "./pages/NotFound";
@@ -43,7 +44,7 @@ const App = () => (
             <Route element={<PrivateRoute />}>
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/users" element={<UserManagement />} />
-              <Route path="/wallets" element={<Dashboard />} />
+              <Route path="/wallets" element={<WalletManagement />} />
               <Route path="/transactions" element={<TransactionManagement />} />
             </Route>
             
