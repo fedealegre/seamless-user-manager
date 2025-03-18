@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Transaction } from "@/lib/api-types";
+import { Transaction } from "@/lib/api/types";
 import {
   Dialog,
   DialogContent,
