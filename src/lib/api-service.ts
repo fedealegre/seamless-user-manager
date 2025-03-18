@@ -56,10 +56,27 @@ class OAuth2Client {
 export class ApiClient {
   private client: OAuth2Client;
   private baseUrl: string;
+  private userCredentials: Record<string, string> = {};
+  private mockBackofficeUsers: BackofficeUser[] = [];
 
   constructor(client: OAuth2Client, baseUrl: string) {
     this.client = client;
     this.baseUrl = baseUrl;
+    // Initialize mock data - this would typically come from the server
+    this.userCredentials = {
+      'admin': 'password123',
+      'support': 'support123',
+      'finance': 'finance123',
+      'fede.alegre': 'backoffice'
+    };
+    
+    this.mockBackofficeUsers = [
+      { id: 'admin1', name: 'Admin', surname: 'User', roles: ['admin', 'support'], state: 'active', last_login: '2023-05-22T08:30:45Z' },
+      { id: 'support1', name: 'Support', surname: 'User', roles: ['support'], state: 'active', last_login: '2023-05-21T14:15:22Z' },
+      { id: 'finance1', name: 'Finance', surname: 'User', roles: ['finance'], state: 'active', last_login: '2023-05-20T11:45:10Z' },
+      { id: 'inactive1', name: 'Inactive', surname: 'User', roles: ['support'], state: 'blocked', last_login: '2023-04-15T09:20:33Z' },
+      { id: 'fede', name: 'Federico', surname: 'Alegre', roles: ['admin', 'support', 'finance'], state: 'active', last_login: '2023-10-01T09:00:00Z' }
+    ];
   }
 
   private async get(endpoint: string, queryStringParams?: any): Promise<any> {
