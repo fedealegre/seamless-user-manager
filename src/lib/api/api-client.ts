@@ -1,4 +1,3 @@
-
 import axios, { AxiosInstance } from "axios";
 import { OAuth2Client } from "./oauth-client";
 import { 
@@ -10,6 +9,7 @@ import {
   LoginRequest, 
   LoginResponse,
   Transaction, 
+  TransactionListParams,
   User, 
   Wallet 
 } from "./types";
@@ -172,8 +172,28 @@ export class ApiClient {
     return response;
   }
 
-  async cancelTransaction(transactionId: string, cancelRequest: CancelTransactionRequest): Promise<{ message: string }> {
+  async listTransactions(walletId: string, params?: TransactionListParams): Promise<Transaction[]> {
+    const response = await this.get(`/wallets/${walletId}/transactions`, params);
+    return response;
+  }
+
+  async cancelTransaction(transactionId: string, cancelRequest: CancelTransactionRequest): Promise<{ message: string }>;
+  async cancelTransaction(transactionId: string, reason: string): Promise<{ message: string }>;
+  async cancelTransaction(transactionId: string, reasonOrRequest: string | CancelTransactionRequest): Promise<{ message: string }> {
+    let cancelRequest: CancelTransactionRequest;
+    
+    if (typeof reasonOrRequest === 'string') {
+      cancelRequest = { reason: reasonOrRequest };
+    } else {
+      cancelRequest = reasonOrRequest;
+    }
+    
     const response = await this.post(`/transactions/${transactionId}/cancel`, cancelRequest);
+    return response;
+  }
+
+  async getTransactionDetails(transactionId: string): Promise<Transaction> {
+    const response = await this.get(`/transactions/${transactionId}`);
     return response;
   }
 
@@ -187,8 +207,8 @@ export class ApiClient {
     return response;
   }
 
-  async getWalletTransactions(userId: string, walletId: string): Promise<Transaction[]> {
-    const response = await this.get(`/customers/${userId}/wallets/${walletId}/transactions`);
+  async getWalletTransactions(userId: string, walletId: string, params?: TransactionListParams): Promise<Transaction[]> {
+    const response = await this.get(`/customers/${userId}/wallets/${walletId}/transactions`, params);
     return response;
   }
 

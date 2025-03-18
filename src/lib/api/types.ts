@@ -1,4 +1,3 @@
-
 // Moving all the type definitions to a separate file
 export interface Transaction {
     originalTransactionId?: string;
@@ -116,4 +115,14 @@ export interface LoginResponse {
     refreshToken: string;
     expiresIn: number;
     user: BackofficeUser;
+}
+
+export interface TransactionListParams {
+    startDate?: string;
+    endDate?: string;
+    status?: string;
+    type?: string;
+    currency?: string;
+    page?: number;
+    pageSize?: number;
 }

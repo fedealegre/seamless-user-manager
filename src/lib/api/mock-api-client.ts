@@ -1,4 +1,3 @@
-
 import {
   AntiFraudRule,
   AuditLog,
@@ -8,6 +7,7 @@ import {
   LoginRequest,
   LoginResponse,
   Transaction,
+  TransactionListParams,
   User,
   Wallet
 } from "./types";
@@ -305,7 +305,36 @@ export class MockApiClient {
     throw new Error(`Wallet with ID ${walletId} not found for user ${userId}`);
   }
 
-  async cancelTransaction(transactionId: string, cancelRequest: CancelTransactionRequest): Promise<{ message: string }> {
+  async listTransactions(walletId: string, params?: TransactionListParams): Promise<Transaction[]> {
+    const transactions = this.mockTransactions[walletId] || [];
+    
+    if (!params) return [...transactions];
+    
+    return this.filterTransactions(transactions, params);
+  }
+  
+  async getTransactionDetails(transactionId: string): Promise<Transaction> {
+    for (const walletId in this.mockTransactions) {
+      const transaction = this.mockTransactions[walletId].find(t => t.transactionId === transactionId);
+      if (transaction) {
+        return { ...transaction };
+      }
+    }
+    
+    throw new Error(`Transaction with ID ${transactionId} not found`);
+  }
+
+  async cancelTransaction(transactionId: string, cancelRequest: CancelTransactionRequest): Promise<{ message: string }>;
+  async cancelTransaction(transactionId: string, reason: string): Promise<{ message: string }>;
+  async cancelTransaction(transactionId: string, reasonOrRequest: string | CancelTransactionRequest): Promise<{ message: string }> {
+    let reason: string;
+    
+    if (typeof reasonOrRequest === 'string') {
+      reason = reasonOrRequest;
+    } else {
+      reason = reasonOrRequest.reason;
+    }
+    
     for (const walletId in this.mockTransactions) {
       const transactions = this.mockTransactions[walletId];
       const transactionIndex = transactions.findIndex(t => t.transactionId === transactionId);
@@ -321,5 +350,37 @@ export class MockApiClient {
     }
     
     throw new Error(`Transaction with ID ${transactionId} not found`);
+  }
+
+  private filterTransactions(transactions: Transaction[], params: TransactionListParams): Transaction[] {
+    let filteredTxns = [...transactions];
+    
+    if (params.status) {
+      filteredTxns = filteredTxns.filter(t => t.status === params.status);
+    }
+    
+    if (params.type) {
+      filteredTxns = filteredTxns.filter(t => t.type === params.type);
+    }
+    
+    if (params.currency) {
+      filteredTxns = filteredTxns.filter(t => t.currency === params.currency);
+    }
+    
+    if (params.startDate && params.startDate !== '') {
+      filteredTxns = filteredTxns.filter(t => t.date && new Date(t.date) >= new Date(params.startDate!));
+    }
+    
+    if (params.endDate && params.endDate !== '') {
+      filteredTxns = filteredTxns.filter(t => t.date && new Date(t.date) <= new Date(params.endDate!));
+    }
+    
+    // Basic pagination if requested
+    if (params.page !== undefined && params.pageSize !== undefined) {
+      const start = (params.page - 1) * params.pageSize;
+      return filteredTxns.slice(start, start + params.pageSize);
+    }
+    
+    return filteredTxns;
   }
 }
