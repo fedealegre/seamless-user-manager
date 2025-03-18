@@ -1,8 +1,61 @@
+
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { apiService } from "@/lib/api";
 import { Transaction, User, Wallet } from "@/lib/api/types";
 import { formatDistance } from "date-fns";
+import { useToast } from "@/hooks/use-toast";
+import { 
+  Search, 
+  Filter, 
+  Eye, 
+  XCircle, 
+  CircleDollarSign, 
+  MoreVertical 
+} from "lucide-react";
+
+// UI Components
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { 
+  Card, 
+  CardHeader, 
+  CardTitle, 
+  CardDescription, 
+  CardContent 
+} from "@/components/ui/card";
+import { 
+  DropdownMenu, 
+  DropdownMenuTrigger, 
+  DropdownMenuContent, 
+  DropdownMenuLabel, 
+  DropdownMenuSeparator, 
+  DropdownMenuItem 
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { 
+  Pagination, 
+  PaginationContent, 
+  PaginationItem, 
+  PaginationLink, 
+  PaginationNext, 
+  PaginationPrevious 
+} from "@/components/ui/pagination";
+import { Skeleton } from "@/components/ui/skeleton";
+import { 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow 
+} from "@/components/ui/table";
+
+// Transaction Components
+import TransactionFilters from "@/components/transactions/TransactionFilters";
+import TransactionDetails from "@/components/transactions/TransactionDetails";
+import CancelTransactionDialog from "@/components/transactions/CancelTransactionDialog";
+import CompensateCustomerDialog from "@/components/transactions/CompensateCustomerDialog";
 
 // Sample transaction status badges with appropriate colors
 const getStatusBadge = (status?: string) => {
