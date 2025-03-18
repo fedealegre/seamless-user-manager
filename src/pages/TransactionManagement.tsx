@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { apiService } from "@/lib/api";
@@ -184,14 +183,44 @@ const TransactionManagement = () => {
     setShowDetailsDialog(true);
   };
 
+  const handleCloseDetailsDialog = (open: boolean) => {
+    setShowDetailsDialog(open);
+    if (!open) {
+      // Clean up the selected transaction when dialog is closed
+      setTimeout(() => {
+        setSelectedTransaction(null);
+      }, 300); // Small delay to ensure animation completes
+    }
+  };
+
   const handleCancelTransaction = (transaction: Transaction) => {
     setSelectedTransaction(transaction);
     setShowCancelDialog(true);
   };
 
+  const handleCloseCancelDialog = (open: boolean) => {
+    setShowCancelDialog(open);
+    if (!open) {
+      // Clean up the selected transaction when dialog is closed
+      setTimeout(() => {
+        setSelectedTransaction(null);
+      }, 300); // Small delay to ensure animation completes
+    }
+  };
+
   const handleCompensateCustomer = (transaction: Transaction) => {
     setSelectedTransaction(transaction);
     setShowCompensateDialog(true);
+  };
+
+  const handleCloseCompensateDialog = (open: boolean) => {
+    setShowCompensateDialog(open);
+    if (!open) {
+      // Clean up the selected transaction when dialog is closed
+      setTimeout(() => {
+        setSelectedTransaction(null);
+      }, 300); // Small delay to ensure animation completes
+    }
   };
 
   const handleApplyFilters = (newFilters: typeof filters) => {
@@ -495,7 +524,7 @@ const TransactionManagement = () => {
       {selectedTransaction && (
         <TransactionDetails
           open={showDetailsDialog}
-          onOpenChange={setShowDetailsDialog}
+          onOpenChange={handleCloseDetailsDialog}
           transaction={selectedTransaction}
         />
       )}
@@ -504,7 +533,7 @@ const TransactionManagement = () => {
       {selectedTransaction && (
         <CancelTransactionDialog
           open={showCancelDialog}
-          onOpenChange={setShowCancelDialog}
+          onOpenChange={handleCloseCancelDialog}
           transaction={selectedTransaction}
           onSubmit={handleSubmitCancel}
         />
@@ -514,7 +543,7 @@ const TransactionManagement = () => {
       {selectedTransaction && (
         <CompensateCustomerDialog
           open={showCompensateDialog}
-          onOpenChange={setShowCompensateDialog}
+          onOpenChange={handleCloseCompensateDialog}
           transaction={selectedTransaction}
           onSubmit={handleSubmitCompensation}
         />
