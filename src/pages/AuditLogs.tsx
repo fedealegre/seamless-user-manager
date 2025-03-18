@@ -11,21 +11,7 @@ import { FilterParams } from "@/components/audit-logs/AuditLogFilters";
 import AuditLogFilters from "@/components/audit-logs/AuditLogFilters";
 import AuditLogTable from "@/components/audit-logs/AuditLogTable";
 import AuditLogDetailsDialog from "@/components/audit-logs/AuditLogDetailsDialog";
-import { getBadgeColor } from "@/components/audit-logs/utils";
-
-// Define operation types with their icons
-const operationTypes = [
-  { id: "USER_CREATE", label: "User Create", icon: Plus },
-  { id: "USER_UPDATE", label: "User Update", icon: Pencil },
-  { id: "USER_DELETE", label: "User Delete", icon: Trash },
-  { id: "USER_BLOCK", label: "User Block", icon: Lock },
-  { id: "USER_UNBLOCK", label: "User Unblock", icon: LockOpen },
-  { id: "TRANSACTION_CANCEL", label: "Transaction Cancel", icon: RefreshCw },
-  { id: "CUSTOMER_COMPENSATE", label: "Customer Compensate", icon: FileCog },
-  { id: "RULE_CREATE", label: "Rule Create", icon: Plus },
-  { id: "RULE_UPDATE", label: "Rule Update", icon: Pencil },
-  { id: "RULE_DELETE", label: "Rule Delete", icon: Trash },
-];
+import { getBadgeColor, operationTypes } from "@/components/audit-logs/utils";
 
 const AuditLogs = () => {
   const [filters, setFilters] = useState<FilterParams>({
@@ -38,7 +24,7 @@ const AuditLogs = () => {
   const [selectedLog, setSelectedLog] = useState<AuditLog | null>(null);
   const [showDetailDialog, setShowDetailDialog] = useState(false);
 
-  const { data: logs, isLoading } = useQuery({
+  const { data: logs, isLoading, refetch } = useQuery({
     queryKey: ["auditLogs", filters],
     queryFn: () => {
       return apiService.getAuditLogs(
@@ -69,9 +55,38 @@ const AuditLogs = () => {
   const getOperationTypeDetails = (type: string) => {
     const operation = operationTypes.find((op) => op.id === type);
     if (operation) {
+      // Get the actual icon component from the icon name
+      const iconName = operation.icon;
+      let IconComponent;
+      switch (iconName) {
+        case "Plus":
+          IconComponent = Plus;
+          break;
+        case "Pencil":
+          IconComponent = Pencil;
+          break;
+        case "Trash":
+          IconComponent = Trash;
+          break;
+        case "Lock":
+          IconComponent = Lock;
+          break;
+        case "LockOpen":
+          IconComponent = LockOpen;
+          break;
+        case "RefreshCw":
+          IconComponent = RefreshCw;
+          break;
+        case "FileCog":
+          IconComponent = FileCog;
+          break;
+        default:
+          IconComponent = FileCog;
+      }
+      
       return {
         label: operation.label,
-        icon: operation.icon,
+        icon: IconComponent,
       };
     }
     return {
@@ -101,7 +116,7 @@ const AuditLogs = () => {
           <p className="text-muted-foreground">Review system activity and security events</p>
         </div>
         
-        <Button variant="outline" onClick={() => location.reload()} className="w-full md:w-auto">
+        <Button variant="outline" onClick={() => refetch()} className="w-full md:w-auto">
           <RefreshCw size={16} className="mr-2" /> Refresh
         </Button>
       </div>
