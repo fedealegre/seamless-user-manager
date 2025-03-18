@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { 
   Table, 
@@ -18,8 +17,8 @@ import { Label } from "@/components/ui/label";
 import { AlertCircle, Edit, Plus, Trash } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
-import { apiService } from "@/lib/api-service";
-import { AntiFraudRule } from "@/lib/api-types";
+import { apiService } from "@/lib/api";
+import { AntiFraudRule } from "@/lib/api/types";
 
 const AntiFraudRules = () => {
   const { toast } = useToast();
@@ -30,9 +29,8 @@ const AntiFraudRules = () => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [currentRule, setCurrentRule] = useState<AntiFraudRule | null>(null);
   
-  // Form state
   const [formState, setFormState] = useState<AntiFraudRule>({
-    applicationTime: 'daily', // Default value
+    applicationTime: 'daily',
     transactionTypes: [],
     limit: 0
   });
@@ -60,7 +58,6 @@ const AntiFraudRules = () => {
   
   const handleAddRule = async () => {
     try {
-      // Make sure formState has the required properties with correct values
       const newRule: AntiFraudRule = {
         applicationTime: formState.applicationTime,
         transactionTypes: selectedTransactionTypes,
@@ -89,7 +86,6 @@ const AntiFraudRules = () => {
     if (!currentRule?.id) return;
     
     try {
-      // Make sure formState has the required properties with correct values
       const updatedRule: AntiFraudRule = {
         applicationTime: formState.applicationTime,
         transactionTypes: selectedTransactionTypes,
@@ -349,7 +345,6 @@ const AntiFraudRules = () => {
         </CardContent>
       </Card>
       
-      {/* Edit Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>

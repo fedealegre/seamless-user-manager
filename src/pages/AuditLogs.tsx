@@ -1,8 +1,7 @@
-
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { apiService } from "@/lib/api-service";
-import { AuditLog } from "@/lib/api-types";
+import { apiService } from "@/lib/api";
+import { AuditLog } from "@/lib/api/types";
 import { format, parseISO, subDays } from "date-fns";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";

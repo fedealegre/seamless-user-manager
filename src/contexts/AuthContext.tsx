@@ -1,7 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { apiService } from "@/lib/api-service";
-import { BackofficeUser, LoginRequest } from "@/lib/api-types";
+import { apiService } from "@/lib/api";
+import { BackofficeUser, LoginRequest } from "@/lib/api/types";
 import { useToast } from "@/components/ui/use-toast";
 
 interface AuthContextType {

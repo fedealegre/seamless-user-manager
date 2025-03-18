@@ -1,68 +1,8 @@
-
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { apiService } from "@/lib/api-service";
-import { Transaction, User, Wallet } from "@/lib/api-types";
+import { apiService } from "@/lib/api";
+import { Transaction, User, Wallet } from "@/lib/api/types";
 import { formatDistance } from "date-fns";
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardHeader, 
-  CardTitle 
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { 
-  Search, 
-  MoreVertical, 
-  Eye, 
-  XCircle,
-  CircleDollarSign,
-  ArrowUpDown,
-  Filter,
-  Calendar 
-} from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useToast } from "@/components/ui/use-toast";
-import { 
-  Pagination, 
-  PaginationContent, 
-  PaginationItem, 
-  PaginationLink, 
-  PaginationNext, 
-  PaginationPrevious 
-} from "@/components/ui/pagination";
-import TransactionDetails from "@/components/transactions/TransactionDetails";
-import TransactionFilters from "@/components/transactions/TransactionFilters";
-import CancelTransactionDialog from "@/components/transactions/CancelTransactionDialog";
-import CompensateCustomerDialog from "@/components/transactions/CompensateCustomerDialog";
 
 // Sample transaction status badges with appropriate colors
 const getStatusBadge = (status?: string) => {
