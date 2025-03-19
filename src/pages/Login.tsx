@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "@/contexts/AuthContext";
-import { LoginRequest } from "@/lib/api-types";
+import { LoginRequest } from "@/lib/api/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -35,8 +35,16 @@ const Login = () => {
   const onSubmit = async (values: LoginFormValues) => {
     const { rememberMe, ...credentials } = values;
     
+    // Build complete LoginRequest as defined in the OpenAPI spec
+    const loginRequest: LoginRequest = {
+      ...credentials,
+      // Optional device information for enhanced security
+      appPlatform: navigator.platform,
+      appVersion: navigator.appVersion,
+    };
+    
     try {
-      await login(credentials as LoginRequest);
+      await login(loginRequest);
       // Successful login will update isAuthenticated, causing a redirect
     } catch (error) {
       // Error is handled by the auth context

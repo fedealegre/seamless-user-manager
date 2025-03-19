@@ -1,4 +1,6 @@
-// Moving all the type definitions to a separate file
+
+// API types based on the OpenAPI specifications
+
 export interface Transaction {
     originalTransactionId?: string;
     customerId: string;
@@ -125,4 +127,10 @@ export interface TransactionListParams {
     currency?: string;
     page?: number;
     pageSize?: number;
+}
+
+// Error responses
+export interface ApiError {
+    message: string;
+    statusCode: number;
 }

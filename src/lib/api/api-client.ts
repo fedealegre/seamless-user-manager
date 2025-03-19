@@ -57,10 +57,11 @@ export class ApiClient {
     }
   }
 
-  private async delete(endpoint: string): Promise<void> {
+  private async delete<T = void>(endpoint: string): Promise<T> {
     try {
       const axiosInstance = await this.client.getAxiosInstance();
-      await axiosInstance.delete(`${this.baseUrl}${endpoint}`);
+      const response = await axiosInstance.delete(`${this.baseUrl}${endpoint}`);
+      return response.data;
     } catch (error: any) {
       this.handleApiError(error);
       throw error;
@@ -103,9 +104,9 @@ export class ApiClient {
     }
   }
 
+  // Anti-Fraud Rules API
   async listAntiFraudRules(): Promise<AntiFraudRule[]> {
-    const response = await this.get<AntiFraudRule[]>('/rules');
-    return response;
+    return await this.get<AntiFraudRule[]>('/rules');
   }
 
   async addAntiFraudRule(rule: AntiFraudRule): Promise<void> {
@@ -120,6 +121,7 @@ export class ApiClient {
     await this.delete(`/rules/${ruleId}`);
   }
 
+  // Audit Logs API
   async getAuditLogs(
     startDate?: string,
     endDate?: string,
@@ -136,6 +138,7 @@ export class ApiClient {
     return await this.get<AuditLog[]>('/audit-logs', params);
   }
   
+  // Backoffice User Management API
   async listBackofficeUsers(): Promise<BackofficeUser[]> {
     return await this.get<BackofficeUser[]>('/backoffice_users');
   }
@@ -160,22 +163,13 @@ export class ApiClient {
     await this.patch<void>(`/backoffice_users/${userId}`, { roles });
   }
 
+  // User Login API
   async login(loginRequest: LoginRequest): Promise<LoginResponse> {
-    const { userName, password } = loginRequest;
-    
-    if (userName === 'fede.alegre') {
-      const user: BackofficeUser = { id: 'fede', name: 'Federico', surname: 'Alegre', roles: ['admin', 'support', 'finance'], state: 'active', last_login: '2023-10-01T09:00:00Z' };
-      return {
-        accessToken: "mock-access-token-" + userName,
-        refreshToken: "mock-refresh-token-" + userName,
-        expiresIn: 3600,
-        user: { ...user }
-      };
-    }
-    
-    throw new Error("Invalid credentials");
+    const response = await this.post<LoginResponse>('/login', loginRequest);
+    return response;
   }
 
+  // User Compensation (This seems to be an additional API not fully covered in the specs)
   async compensateCustomer(
     companyId: number,
     userId: string,
@@ -190,6 +184,7 @@ export class ApiClient {
     return response;
   }
 
+  // Transactions API
   async listTransactions(walletId: string, params?: TransactionListParams): Promise<Transaction[]> {
     const response = await this.get<Transaction[]>(`/wallets/${walletId}/transactions`, params);
     return response;
@@ -215,6 +210,7 @@ export class ApiClient {
     return response;
   }
 
+  // User Management API
   async searchUsers(params: { userId?: string; publicId?: string; name?: string; surname?: string; identifier?: string }): Promise<User[]> {
     const response = await this.get<User[]>('/customers', params);
     return response;

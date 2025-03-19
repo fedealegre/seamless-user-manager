@@ -1,6 +1,6 @@
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import { apiService } from "@/lib/api";
+import { api } from "@/lib/api";
 import { BackofficeUser, LoginRequest } from "@/lib/api/types";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -40,12 +40,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (credentials: LoginRequest) => {
     try {
       setIsLoading(true);
-      const response = await apiService.login(credentials);
+      const response = await api.login(credentials);
       
       // Store user and token
       setUser(response.user);
       localStorage.setItem("user", JSON.stringify(response.user));
       localStorage.setItem("token", response.accessToken);
+      
+      // Also store refresh token
+      localStorage.setItem("refreshToken", response.refreshToken);
+      
+      // Store token expiration time
+      const expiresAt = Date.now() + (response.expiresIn * 1000);
+      localStorage.setItem("expiresAt", expiresAt.toString());
       
       toast({
         title: "Login successful",
@@ -53,9 +60,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       });
     } catch (error) {
       console.error("Login failed:", error);
+      let errorMessage = "Invalid credentials. Please try again.";
+      
+      if (error instanceof Error) {
+        // Extract specific error message if available
+        if (error.message.includes("Unauthorized")) {
+          errorMessage = "Invalid username or password";
+        } else if (error.message.includes("Network Error")) {
+          errorMessage = "Network error. Please check your connection";
+        } else {
+          errorMessage = error.message;
+        }
+      }
+      
       toast({
         title: "Login failed",
-        description: "Invalid credentials. Please try again.",
+        description: errorMessage,
         variant: "destructive",
       });
       throw error;
@@ -68,6 +88,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
     localStorage.removeItem("user");
     localStorage.removeItem("token");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("expiresAt");
+    
     toast({
       title: "Logged out",
       description: "You have been successfully logged out.",

@@ -10,7 +10,11 @@ export class OAuth2Client {
   private refreshToken: string | null = null;
   private expiresAt: number = 0;
   private axiosInstance: AxiosInstance;
-  private scopes: string[] = ["read:users", "write:users"];
+  private scopes: string[] = [
+    "read:users", 
+    "write:users", 
+    "manage:rules"
+  ];
 
   constructor(
     clientId: string, 
@@ -55,8 +59,13 @@ export class OAuth2Client {
     params.append('code', code);
     params.append('redirect_uri', redirectUri);
 
-    const response = await this.axiosInstance.post(this.tokenUrl, params);
-    this.setTokensFromResponse(response.data);
+    try {
+      const response = await this.axiosInstance.post(this.tokenUrl, params);
+      this.setTokensFromResponse(response.data);
+    } catch (error) {
+      console.error('Authorization code exchange failed:', error);
+      throw new Error('Failed to exchange authorization code for tokens');
+    }
   }
 
   private setTokensFromResponse(data: any): void {
@@ -122,6 +131,8 @@ export class OAuth2Client {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
+        // Add retry logic for network issues
+        timeout: 30000, // 30 second timeout
       });
     } catch (error) {
       throw new Error("Failed to get authenticated Axios instance: " + (error as Error).message);
@@ -130,5 +141,17 @@ export class OAuth2Client {
 
   isAuthenticated(): boolean {
     return !!this.accessToken && this.expiresAt > Date.now();
+  }
+
+  // Add method to update scopes if needed
+  setScopes(scopes: string[]): void {
+    this.scopes = scopes;
+  }
+
+  // Method to add individual scope
+  addScope(scope: string): void {
+    if (!this.scopes.includes(scope)) {
+      this.scopes.push(scope);
+    }
   }
 }
