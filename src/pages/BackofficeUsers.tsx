@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { api } from "@/lib/api";
+import { apiService as api } from "@/lib/api";
 import { BackofficeUser } from "@/lib/api/types";
 import BackofficeLayout from "@/components/BackofficeLayout";
 import BackofficeUsersTable from "@/components/backoffice-users/BackofficeUsersTable";

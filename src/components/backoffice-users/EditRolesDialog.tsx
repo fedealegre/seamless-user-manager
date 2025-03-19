@@ -1,7 +1,6 @@
-
 import React, { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { api } from "@/lib/api";
+import { apiService as api } from "@/lib/api";
 import { BackofficeUser } from "@/lib/api/types";
 import { useToast } from "@/hooks/use-toast";
 import {
