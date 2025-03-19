@@ -1,8 +1,9 @@
+
 import React from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiService as api } from "@/lib/api";
 import { BackofficeUser } from "@/lib/api/types";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -13,7 +14,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
 
 interface DeleteBackofficeUserDialogProps {
   open: boolean;
@@ -40,9 +40,20 @@ const DeleteBackofficeUserDialog: React.FC<DeleteBackofficeUserDialogProps> = ({
       onClose();
     },
     onError: (error) => {
+      let errorMessage = "Failed to delete user";
+      
+      if (error instanceof Error) {
+        // Extract specific error message
+        if (error.message.includes("Not Found")) {
+          errorMessage = "User not found. The user may have already been deleted.";
+        } else {
+          errorMessage = error.message;
+        }
+      }
+      
       toast({
         title: "Error",
-        description: `Failed to delete user: ${error instanceof Error ? error.message : "Unknown error"}`,
+        description: errorMessage,
         variant: "destructive",
       });
     },
@@ -63,7 +74,7 @@ const DeleteBackofficeUserDialog: React.FC<DeleteBackofficeUserDialogProps> = ({
 
   return (
     <AlertDialog open={open} onOpenChange={onClose}>
-      <AlertDialogContent>
+      <AlertDialogContent onClick={(e) => e.stopPropagation()}>
         <AlertDialogHeader>
           <AlertDialogTitle>Delete Backoffice User</AlertDialogTitle>
           <AlertDialogDescription>

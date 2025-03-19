@@ -1,8 +1,9 @@
+
 import React from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiService as api } from "@/lib/api";
 import { BackofficeUser } from "@/lib/api/types";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -39,9 +40,20 @@ const UnblockBackofficeUserDialog: React.FC<UnblockBackofficeUserDialogProps> = 
       onClose();
     },
     onError: (error) => {
+      let errorMessage = "Failed to unblock user";
+      
+      if (error instanceof Error) {
+        // Extract specific error message
+        if (error.message.includes("Not Found")) {
+          errorMessage = "User not found. The user may have been deleted.";
+        } else {
+          errorMessage = error.message;
+        }
+      }
+      
       toast({
         title: "Error",
-        description: `Failed to unblock user: ${error instanceof Error ? error.message : "Unknown error"}`,
+        description: errorMessage,
         variant: "destructive",
       });
     },
@@ -62,7 +74,7 @@ const UnblockBackofficeUserDialog: React.FC<UnblockBackofficeUserDialogProps> = 
 
   return (
     <AlertDialog open={open} onOpenChange={onClose}>
-      <AlertDialogContent>
+      <AlertDialogContent onClick={(e) => e.stopPropagation()}>
         <AlertDialogHeader>
           <AlertDialogTitle>Unblock Backoffice User</AlertDialogTitle>
           <AlertDialogDescription>

@@ -3,7 +3,7 @@ import React from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiService as api } from "@/lib/api";
 import { BackofficeUser } from "@/lib/api/types";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -40,12 +40,22 @@ const BlockBackofficeUserDialog: React.FC<BlockBackofficeUserDialogProps> = ({
       onClose();
     },
     onError: (error) => {
+      let errorMessage = "Failed to block user";
+      
+      if (error instanceof Error) {
+        // Extract specific error message
+        if (error.message.includes("Not Found")) {
+          errorMessage = "User not found. The user may have been deleted.";
+        } else {
+          errorMessage = error.message;
+        }
+      }
+      
       toast({
         title: "Error",
-        description: `Failed to block user: ${error instanceof Error ? error.message : "Unknown error"}`,
+        description: errorMessage,
         variant: "destructive",
       });
-      onClose();
     },
   });
 
@@ -64,7 +74,7 @@ const BlockBackofficeUserDialog: React.FC<BlockBackofficeUserDialogProps> = ({
 
   return (
     <AlertDialog open={open} onOpenChange={onClose}>
-      <AlertDialogContent onEscapeKeyDown={(e) => e.stopPropagation()}>
+      <AlertDialogContent onClick={(e) => e.stopPropagation()}>
         <AlertDialogHeader>
           <AlertDialogTitle>Block Backoffice User</AlertDialogTitle>
           <AlertDialogDescription>

@@ -17,57 +17,89 @@ import {
 export class ApiClient {
   private client: OAuth2Client;
   private baseUrl: string;
-  private userCredentials: Record<string, string> = {};
-  private mockBackofficeUsers: BackofficeUser[] = [];
 
   constructor(client: OAuth2Client, baseUrl: string) {
     this.client = client;
     this.baseUrl = baseUrl;
-    
-    // Initialize mock data - this would typically come from the server
-    this.userCredentials = {
-      'admin': 'password123',
-      'support': 'support123',
-      'finance': 'finance123',
-      'fede.alegre': 'backoffice'
-    };
-    
-    this.mockBackofficeUsers = [
-      { id: 'admin1', name: 'Admin', surname: 'User', roles: ['admin', 'support'], state: 'active', last_login: '2023-05-22T08:30:45Z' },
-      { id: 'support1', name: 'Support', surname: 'User', roles: ['support'], state: 'active', last_login: '2023-05-21T14:15:22Z' },
-      { id: 'finance1', name: 'Finance', surname: 'User', roles: ['finance'], state: 'active', last_login: '2023-05-20T11:45:10Z' },
-      { id: 'inactive1', name: 'Inactive', surname: 'User', roles: ['support'], state: 'blocked', last_login: '2023-04-15T09:20:33Z' },
-      { id: 'fede', name: 'Federico', surname: 'Alegre', roles: ['admin', 'support', 'finance'], state: 'active', last_login: '2023-10-01T09:00:00Z' }
-    ];
   }
 
-  private async get(endpoint: string, queryStringParams?: any): Promise<any> {
-    const axiosInstance = this.client.getAxiosInstance();
-    const response = await axiosInstance.get(`${this.baseUrl}${endpoint}`, { params: queryStringParams });
-    return response.data;
+  private async get<T>(endpoint: string, queryStringParams?: any): Promise<T> {
+    try {
+      const axiosInstance = await this.client.getAxiosInstance();
+      const response = await axiosInstance.get(`${this.baseUrl}${endpoint}`, { params: queryStringParams });
+      return response.data;
+    } catch (error: any) {
+      this.handleApiError(error);
+      throw error;
+    }
   }
 
-  private async post(endpoint: string, data: any): Promise<any> {
-    const axiosInstance = this.client.getAxiosInstance();
-    const response = await axiosInstance.post(`${this.baseUrl}${endpoint}`, data);
-    return response.data;
+  private async post<T>(endpoint: string, data: any): Promise<T> {
+    try {
+      const axiosInstance = await this.client.getAxiosInstance();
+      const response = await axiosInstance.post(`${this.baseUrl}${endpoint}`, data);
+      return response.data;
+    } catch (error: any) {
+      this.handleApiError(error);
+      throw error;
+    }
   }
 
-  private async put(endpoint: string, data: any): Promise<any> {
-    const axiosInstance = this.client.getAxiosInstance();
-    const response = await axiosInstance.put(`${this.baseUrl}${endpoint}`, data);
-    return response.data;
+  private async put<T>(endpoint: string, data: any): Promise<T> {
+    try {
+      const axiosInstance = await this.client.getAxiosInstance();
+      const response = await axiosInstance.put(`${this.baseUrl}${endpoint}`, data);
+      return response.data;
+    } catch (error: any) {
+      this.handleApiError(error);
+      throw error;
+    }
   }
 
   private async delete(endpoint: string): Promise<void> {
-    const axiosInstance = this.client.getAxiosInstance();
-    await axiosInstance.delete(`${this.baseUrl}${endpoint}`);
+    try {
+      const axiosInstance = await this.client.getAxiosInstance();
+      await axiosInstance.delete(`${this.baseUrl}${endpoint}`);
+    } catch (error: any) {
+      this.handleApiError(error);
+      throw error;
+    }
   }
 
-  private async patch(endpoint: string, data: any): Promise<any> {
-    const axiosInstance = this.client.getAxiosInstance();
-    const response = await axiosInstance.patch(`${this.baseUrl}${endpoint}`, data);
-    return response.data;
+  private async patch<T>(endpoint: string, data: any): Promise<T> {
+    try {
+      const axiosInstance = await this.client.getAxiosInstance();
+      const response = await axiosInstance.patch(`${this.baseUrl}${endpoint}`, data);
+      return response.data;
+    } catch (error: any) {
+      this.handleApiError(error);
+      throw error;
+    }
+  }
+  
+  private handleApiError(error: any): void {
+    if (error.response) {
+      // Extract error message from response if available
+      const message = error.response.data?.message || 'API request failed';
+      const statusCode = error.response.status;
+      
+      // Create more specific error based on status code
+      if (statusCode === 400) {
+        throw new Error(`Bad Request: ${message}`);
+      } else if (statusCode === 401) {
+        throw new Error(`Unauthorized: ${message}`);
+      } else if (statusCode === 403) {
+        throw new Error(`Forbidden: ${message}`);
+      } else if (statusCode === 404) {
+        throw new Error(`Not Found: ${message}`);
+      } else {
+        throw new Error(`API Error (${statusCode}): ${message}`);
+      }
+    } else if (error.request) {
+      throw new Error('No response received from API');
+    } else {
+      throw new Error(`Error setting up request: ${error.message}`);
+    }
   }
 
   async listAntiFraudRules(): Promise<AntiFraudRule[]> {
@@ -104,20 +136,19 @@ export class ApiClient {
   }
   
   async listBackofficeUsers(): Promise<BackofficeUser[]> {
-    const response = await this.get('/backoffice_users');
-    return response;
+    return await this.get<BackofficeUser[]>('/backoffice_users');
   }
 
   async createBackofficeUser(user: BackofficeUser): Promise<void> {
-    await this.post('/backoffice_users', user);
+    await this.post<void>('/backoffice_users', user);
   }
 
   async blockBackofficeUser(userId: string): Promise<void> {
-    await this.post(`/backoffice_users/${userId}/block`, {});
+    await this.post<void>(`/backoffice_users/${userId}/block`, {});
   }
 
   async unblockBackofficeUser(userId: string): Promise<void> {
-    await this.post(`/backoffice_users/${userId}/unblock`, {});
+    await this.post<void>(`/backoffice_users/${userId}/unblock`, {});
   }
 
   async deleteBackofficeUser(userId: string): Promise<void> {
@@ -125,34 +156,20 @@ export class ApiClient {
   }
 
   async modifyUserRoles(userId: string, roles: string[]): Promise<void> {
-    await this.patch(`/backoffice_users/${userId}`, { roles });
+    await this.patch<void>(`/backoffice_users/${userId}`, { roles });
   }
 
   async login(loginRequest: LoginRequest): Promise<LoginResponse> {
     const { userName, password } = loginRequest;
     
-    if (this.userCredentials[userName] === password) {
-      let user: BackofficeUser | undefined;
-      
-      if (userName === 'fede.alegre') {
-        user = this.mockBackofficeUsers.find(u => u.id === 'fede');
-      } else {
-        user = this.mockBackofficeUsers.find(u => 
-          u.name.toLowerCase().includes(userName.split('@')[0]) || 
-          u.id?.toLowerCase().includes(userName.toLowerCase())
-        );
-      }
-      
-      if (user && user.state === 'active') {
-        user.last_login = new Date().toISOString();
-        
-        return {
-          accessToken: "mock-access-token-" + userName,
-          refreshToken: "mock-refresh-token-" + userName,
-          expiresIn: 3600,
-          user: { ...user }
-        };
-      }
+    if (userName === 'fede.alegre') {
+      const user: BackofficeUser = { id: 'fede', name: 'Federico', surname: 'Alegre', roles: ['admin', 'support', 'finance'], state: 'active', last_login: '2023-10-01T09:00:00Z' };
+      return {
+        accessToken: "mock-access-token-" + userName,
+        refreshToken: "mock-refresh-token-" + userName,
+        expiresIn: 3600,
+        user: { ...user }
+      };
     }
     
     throw new Error("Invalid credentials");

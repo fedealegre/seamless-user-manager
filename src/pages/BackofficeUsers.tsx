@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { apiService as api } from "@/lib/api";
 import { BackofficeUser } from "@/lib/api/types";
 import BackofficeUsersTable from "@/components/backoffice-users/BackofficeUsersTable";
@@ -11,14 +11,14 @@ import UnblockBackofficeUserDialog from "@/components/backoffice-users/UnblockBa
 import EditRolesDialog from "@/components/backoffice-users/EditRolesDialog";
 import BackofficeUsersLoadingSkeleton from "@/components/backoffice-users/BackofficeUsersLoadingSkeleton";
 import { Button } from "@/components/ui/button";
-import { UserPlus, Search } from "lucide-react";
+import { UserPlus, Search, AlertTriangle, RefreshCw } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useToast } from "@/hooks/use-toast";
+import { useToast } from "@/components/ui/use-toast";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const BackofficeUsers: React.FC = () => {
   const { toast } = useToast();
-  const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState("");
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -32,9 +32,12 @@ const BackofficeUsers: React.FC = () => {
     data: users = [],
     isLoading,
     isError,
+    error,
+    refetch,
   } = useQuery({
     queryKey: ["backofficeUsers"],
     queryFn: () => api.listBackofficeUsers(),
+    retry: 1,
   });
 
   // Filter users based on search
@@ -95,9 +98,18 @@ const BackofficeUsers: React.FC = () => {
           {isLoading ? (
             <BackofficeUsersLoadingSkeleton />
           ) : isError ? (
-            <p className="text-center py-6 text-destructive">
-              Error loading backoffice users. Please try again.
-            </p>
+            <div className="space-y-4">
+              <Alert variant="destructive">
+                <AlertTriangle className="h-4 w-4" />
+                <AlertTitle>Error Loading Users</AlertTitle>
+                <AlertDescription>
+                  {error instanceof Error ? error.message : "Failed to load backoffice users. Please try again."}
+                </AlertDescription>
+              </Alert>
+              <Button variant="outline" onClick={() => refetch()} className="mt-2">
+                <RefreshCw className="h-4 w-4 mr-2" /> Retry
+              </Button>
+            </div>
           ) : (
             <BackofficeUsersTable
               users={filteredUsers}

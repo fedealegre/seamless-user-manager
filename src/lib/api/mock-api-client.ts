@@ -131,40 +131,77 @@ export class MockApiClient {
   }
   
   async listBackofficeUsers(): Promise<BackofficeUser[]> {
+    await this.delay(500);
     return [...this.mockBackofficeUsers];
   }
 
   async createBackofficeUser(user: BackofficeUser): Promise<void> {
-    const newUser = { ...user, id: `user${this.mockBackofficeUsers.length + 1}` };
+    await this.delay(500);
+    
+    if (!user.name || !user.surname || !user.roles || user.roles.length === 0) {
+      throw new Error("Bad Request: Missing required fields");
+    }
+    
+    const newUser = { 
+      ...user, 
+      id: `user${Date.now()}`,
+      state: user.state || 'active',
+      last_login: null
+    };
+    
     this.mockBackofficeUsers.push(newUser);
   }
 
   async blockBackofficeUser(userId: string): Promise<void> {
+    await this.delay(500);
+    
     const user = this.mockBackofficeUsers.find(u => u.id === userId);
-    if (user) {
-      user.state = 'blocked';
+    if (!user) {
+      throw new Error("Not Found: User with the specified ID does not exist");
     }
+    
+    user.state = 'blocked';
   }
 
   async unblockBackofficeUser(userId: string): Promise<void> {
+    await this.delay(500);
+    
     const user = this.mockBackofficeUsers.find(u => u.id === userId);
-    if (user) {
-      user.state = 'active';
+    if (!user) {
+      throw new Error("Not Found: User with the specified ID does not exist");
     }
+    
+    user.state = 'active';
   }
 
   async deleteBackofficeUser(userId: string): Promise<void> {
+    await this.delay(500);
+    
     const index = this.mockBackofficeUsers.findIndex(u => u.id === userId);
-    if (index !== -1) {
-      this.mockBackofficeUsers.splice(index, 1);
+    if (index === -1) {
+      throw new Error("Not Found: User with the specified ID does not exist");
     }
+    
+    this.mockBackofficeUsers.splice(index, 1);
   }
 
   async modifyUserRoles(userId: string, roles: string[]): Promise<void> {
-    const user = this.mockBackofficeUsers.find(u => u.id === userId);
-    if (user) {
-      user.roles = [...roles];
+    await this.delay(500);
+    
+    if (!roles || roles.length === 0) {
+      throw new Error("Bad Request: At least one role must be specified");
     }
+    
+    const user = this.mockBackofficeUsers.find(u => u.id === userId);
+    if (!user) {
+      throw new Error("Not Found: User with the specified ID does not exist");
+    }
+    
+    user.roles = [...roles];
+  }
+
+  private async delay(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 
   async login(loginRequest: LoginRequest): Promise<LoginResponse> {
