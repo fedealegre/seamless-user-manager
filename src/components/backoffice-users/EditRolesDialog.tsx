@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { BackofficeUser } from "@/lib/api/types";
@@ -36,8 +36,15 @@ const EditRolesDialog: React.FC<EditRolesDialogProps> = ({
 }) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [selectedRoles, setSelectedRoles] = useState<string[]>(user.roles || []);
+  const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  // Initialize roles when dialog opens or user changes
+  useEffect(() => {
+    if (open && user.roles) {
+      setSelectedRoles(user.roles || []);
+    }
+  }, [open, user]);
 
   const updateRolesMutation = useMutation({
     mutationFn: ({ userId, roles }: { userId: string; roles: string[] }) => 
