@@ -46,6 +46,14 @@ const EditRolesDialog: React.FC<EditRolesDialogProps> = ({
     }
   }, [open, user]);
 
+  // Clean up state when dialog closes
+  useEffect(() => {
+    if (!open) {
+      // Reset state when dialog is closed
+      setErrorMessage(null);
+    }
+  }, [open]);
+
   const updateRolesMutation = useMutation({
     mutationFn: ({ userId, roles }: { userId: string; roles: string[] }) => 
       api.modifyUserRoles(userId, roles),
@@ -55,6 +63,7 @@ const EditRolesDialog: React.FC<EditRolesDialogProps> = ({
         title: "Success",
         description: "User roles updated successfully",
       });
+      // Close dialog on success
       onClose();
     },
     onError: (error) => {
@@ -77,6 +86,10 @@ const EditRolesDialog: React.FC<EditRolesDialogProps> = ({
         description: errorMessage,
         variant: "destructive",
       });
+    },
+    // Ensure mutation completes properly whether it succeeds or fails
+    onSettled: () => {
+      // Additional cleanup if needed
     },
   });
 
@@ -114,13 +127,23 @@ const EditRolesDialog: React.FC<EditRolesDialogProps> = ({
   };
 
   const handleClose = () => {
+    // Only allow closing if no mutation is in progress
     if (!updateRolesMutation.isPending) {
+      // Reset error message before closing
+      setErrorMessage(null);
       onClose();
     }
   };
 
   return (
-    <Dialog open={open} onOpenChange={handleClose}>
+    <Dialog 
+      open={open} 
+      onOpenChange={(isOpen) => {
+        if (!isOpen && !updateRolesMutation.isPending) {
+          handleClose();
+        }
+      }}
+    >
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Edit User Roles</DialogTitle>
