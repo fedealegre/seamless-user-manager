@@ -1,3 +1,4 @@
+
 import axios, { AxiosInstance } from "axios";
 import { OAuth2Client } from "./oauth-client";
 import { 
@@ -103,16 +104,16 @@ export class ApiClient {
   }
 
   async listAntiFraudRules(): Promise<AntiFraudRule[]> {
-    const response = await this.get('/rules');
+    const response = await this.get<AntiFraudRule[]>('/rules');
     return response;
   }
 
   async addAntiFraudRule(rule: AntiFraudRule): Promise<void> {
-    await this.post('/rules', rule);
+    await this.post<void>('/rules', rule);
   }
 
   async modifyAntiFraudRule(ruleId: string, rule: AntiFraudRule): Promise<void> {
-    await this.put(`/rules/${ruleId}`, rule);
+    await this.put<void>(`/rules/${ruleId}`, rule);
   }
 
   async deleteAntiFraudRule(ruleId: string): Promise<void> {
@@ -132,7 +133,7 @@ export class ApiClient {
     if (user) params.user = user;
     if (operationType) params.operationType = operationType;
 
-    return await this.get('/audit-logs', params);
+    return await this.get<AuditLog[]>('/audit-logs', params);
   }
   
   async listBackofficeUsers(): Promise<BackofficeUser[]> {
@@ -182,7 +183,7 @@ export class ApiClient {
     originWalletId: number,
     compensationRequest: CompensationRequest
   ): Promise<{ message: string; transactionId: string }> {
-    const response = await this.post(
+    const response = await this.post<{ message: string; transactionId: string }>(
       `/companies/${companyId}/compensate/customer/${userId}/wallet/${walletId}/origin/${originWalletId}`,
       compensationRequest
     );
@@ -190,7 +191,7 @@ export class ApiClient {
   }
 
   async listTransactions(walletId: string, params?: TransactionListParams): Promise<Transaction[]> {
-    const response = await this.get(`/wallets/${walletId}/transactions`, params);
+    const response = await this.get<Transaction[]>(`/wallets/${walletId}/transactions`, params);
     return response;
   }
 
@@ -205,32 +206,32 @@ export class ApiClient {
       cancelRequest = reasonOrRequest;
     }
     
-    const response = await this.post(`/transactions/${transactionId}/cancel`, cancelRequest);
+    const response = await this.post<{ message: string }>(`/transactions/${transactionId}/cancel`, cancelRequest);
     return response;
   }
 
   async getTransactionDetails(transactionId: string): Promise<Transaction> {
-    const response = await this.get(`/transactions/${transactionId}`);
+    const response = await this.get<Transaction>(`/transactions/${transactionId}`);
     return response;
   }
 
   async searchUsers(params: { userId?: string; publicId?: string; name?: string; surname?: string; identifier?: string }): Promise<User[]> {
-    const response = await this.get('/customers', params);
+    const response = await this.get<User[]>('/customers', params);
     return response;
   }
 
   async getUserWallets(userId: string): Promise<Wallet[]> {
-    const response = await this.get(`/customers/${userId}/wallets`);
+    const response = await this.get<Wallet[]>(`/customers/${userId}/wallets`);
     return response;
   }
 
   async getWalletTransactions(userId: string, walletId: string, params?: TransactionListParams): Promise<Transaction[]> {
-    const response = await this.get(`/customers/${userId}/wallets/${walletId}/transactions`, params);
+    const response = await this.get<Transaction[]>(`/customers/${userId}/wallets/${walletId}/transactions`, params);
     return response;
   }
 
   async getUserData(userId: string): Promise<User> {
-    const response = await this.get(`/customers/${userId}`);
+    const response = await this.get<User>(`/customers/${userId}`);
     return response;
   }
 
@@ -239,11 +240,11 @@ export class ApiClient {
   }
 
   async blockUser(userId: string): Promise<void> {
-    await this.post(`/customers/${userId}/block`, {});
+    await this.post<void>(`/customers/${userId}/block`, {});
   }
 
   async unblockUser(userId: string): Promise<void> {
-    await this.post(`/customers/${userId}/unblock`, {});
+    await this.post<void>(`/customers/${userId}/unblock`, {});
   }
 
   async removeSecurityFactor(userId: string, factorId: string): Promise<void> {
