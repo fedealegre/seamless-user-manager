@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { apiService as api } from "@/lib/api";
+import { api } from "@/lib/api";
 import { BackofficeUser } from "@/lib/api/types";
 import { useToast } from "@/components/ui/use-toast";
 import {
@@ -106,9 +106,15 @@ const EditRolesDialog: React.FC<EditRolesDialogProps> = ({
     }
   };
 
+  const handleClose = () => {
+    if (!updateRolesMutation.isPending) {
+      onClose();
+    }
+  };
+
   return (
-    <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]" onClick={(e) => e.stopPropagation()}>
+    <Dialog open={open} onOpenChange={handleClose}>
+      <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Edit User Roles</DialogTitle>
           <DialogDescription>
@@ -157,7 +163,7 @@ const EditRolesDialog: React.FC<EditRolesDialogProps> = ({
           <Button 
             type="button" 
             variant="outline" 
-            onClick={onClose}
+            onClick={handleClose}
             disabled={updateRolesMutation.isPending}
           >
             Cancel
