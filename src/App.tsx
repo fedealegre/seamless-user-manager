@@ -15,6 +15,7 @@ import TransactionManagement from "./pages/TransactionManagement";
 import WalletManagement from "./pages/WalletManagement";
 import AntiFraudRules from "./pages/AntiFraudRules";
 import AuditLogs from "./pages/AuditLogs";
+import BackofficeUsers from "./pages/BackofficeUsers";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
@@ -52,7 +53,7 @@ const App = () => (
             <Route element={<PrivateRoute allowedRoles={["admin"]} />}>
               <Route path="/anti-fraud" element={<AntiFraudRules />} />
               <Route path="/audit-logs" element={<AuditLogs />} />
-              <Route path="/backoffice-users" element={<Dashboard />} />
+              <Route path="/backoffice-users" element={<BackofficeUsers />} />
               <Route path="/settings" element={<Dashboard />} />
             </Route>
             
