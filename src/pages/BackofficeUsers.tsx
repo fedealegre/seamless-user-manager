@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiService as api } from "@/lib/api";
 import { BackofficeUser } from "@/lib/api/types";
-import BackofficeLayout from "@/components/BackofficeLayout";
 import BackofficeUsersTable from "@/components/backoffice-users/BackofficeUsersTable";
 import AddBackofficeUserDialog from "@/components/backoffice-users/AddBackofficeUserDialog";
 import DeleteBackofficeUserDialog from "@/components/backoffice-users/DeleteBackofficeUserDialog";
@@ -71,44 +70,42 @@ const BackofficeUsers: React.FC = () => {
   };
 
   return (
-    <BackofficeLayout>
-      <div className="flex flex-col gap-6">
-        <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold">Backoffice Users Management</h1>
-          <Button onClick={() => setShowAddDialog(true)}>
-            <UserPlus className="mr-2 h-4 w-4" /> Add New User
-          </Button>
-        </div>
-
-        <Card>
-          <CardHeader className="pb-3">
-            <CardTitle>Backoffice Users</CardTitle>
-            <div className="flex items-center gap-2 mt-2">
-              <Search className="h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search by name, ID, or role..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="h-9 w-full md:w-[300px]"
-              />
-            </div>
-          </CardHeader>
-          <CardContent>
-            {isLoading ? (
-              <BackofficeUsersLoadingSkeleton />
-            ) : isError ? (
-              <p className="text-center py-6 text-destructive">
-                Error loading backoffice users. Please try again.
-              </p>
-            ) : (
-              <BackofficeUsersTable
-                users={filteredUsers}
-                onUserAction={handleUserAction}
-              />
-            )}
-          </CardContent>
-        </Card>
+    <div className="flex flex-col gap-6">
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold">Backoffice Users Management</h1>
+        <Button onClick={() => setShowAddDialog(true)}>
+          <UserPlus className="mr-2 h-4 w-4" /> Add New User
+        </Button>
       </div>
+
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle>Backoffice Users</CardTitle>
+          <div className="flex items-center gap-2 mt-2">
+            <Search className="h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search by name, ID, or role..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="h-9 w-full md:w-[300px]"
+            />
+          </div>
+        </CardHeader>
+        <CardContent>
+          {isLoading ? (
+            <BackofficeUsersLoadingSkeleton />
+          ) : isError ? (
+            <p className="text-center py-6 text-destructive">
+              Error loading backoffice users. Please try again.
+            </p>
+          ) : (
+            <BackofficeUsersTable
+              users={filteredUsers}
+              onUserAction={handleUserAction}
+            />
+          )}
+        </CardContent>
+      </Card>
 
       {/* Dialogs for user management */}
       {showAddDialog && (
@@ -149,7 +146,7 @@ const BackofficeUsers: React.FC = () => {
           onClose={() => setShowEditRolesDialog(false)}
         />
       )}
-    </BackofficeLayout>
+    </div>
   );
 };
 

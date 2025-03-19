@@ -1,3 +1,4 @@
+
 import React from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiService as api } from "@/lib/api";
@@ -44,6 +45,7 @@ const BlockBackofficeUserDialog: React.FC<BlockBackofficeUserDialogProps> = ({
         description: `Failed to block user: ${error instanceof Error ? error.message : "Unknown error"}`,
         variant: "destructive",
       });
+      onClose();
     },
   });
 
@@ -62,7 +64,7 @@ const BlockBackofficeUserDialog: React.FC<BlockBackofficeUserDialogProps> = ({
 
   return (
     <AlertDialog open={open} onOpenChange={onClose}>
-      <AlertDialogContent>
+      <AlertDialogContent onEscapeKeyDown={(e) => e.stopPropagation()}>
         <AlertDialogHeader>
           <AlertDialogTitle>Block Backoffice User</AlertDialogTitle>
           <AlertDialogDescription>
@@ -71,11 +73,18 @@ const BlockBackofficeUserDialog: React.FC<BlockBackofficeUserDialogProps> = ({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={blockUserMutation.isPending}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel 
+            disabled={blockUserMutation.isPending}
+            onClick={() => onClose()}
+            type="button"
+          >
+            Cancel
+          </AlertDialogCancel>
           <AlertDialogAction 
             onClick={handleBlock} 
             disabled={blockUserMutation.isPending}
             className="bg-amber-600 text-white hover:bg-amber-700"
+            type="button"
           >
             {blockUserMutation.isPending ? "Blocking..." : "Block User"}
           </AlertDialogAction>
