@@ -33,3 +33,5 @@ if (!useMockApi) {
 
 // Export the API service
 export const api = apiService;
+// Also export as apiService for backward compatibility
+export { apiService };

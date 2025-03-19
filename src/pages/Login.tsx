@@ -37,7 +37,8 @@ const Login = () => {
     
     // Build complete LoginRequest as defined in the OpenAPI spec
     const loginRequest: LoginRequest = {
-      ...credentials,
+      userName: credentials.userName, // Ensure userName is not optional
+      password: credentials.password, // Ensure password is not optional
       // Optional device information for enhanced security
       appPlatform: navigator.platform,
       appVersion: navigator.appVersion,
