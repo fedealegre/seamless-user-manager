@@ -114,7 +114,7 @@ const EditRolesDialog: React.FC<EditRolesDialogProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>Edit User Roles</DialogTitle>
           <DialogDescription>

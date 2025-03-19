@@ -74,7 +74,7 @@ const UnblockBackofficeUserDialog: React.FC<UnblockBackofficeUserDialogProps> = 
 
   return (
     <AlertDialog open={open} onOpenChange={onClose}>
-      <AlertDialogContent onClick={(e) => e.stopPropagation()}>
+      <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Unblock Backoffice User</AlertDialogTitle>
           <AlertDialogDescription>

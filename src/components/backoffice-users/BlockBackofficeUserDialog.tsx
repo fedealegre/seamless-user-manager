@@ -74,7 +74,7 @@ const BlockBackofficeUserDialog: React.FC<BlockBackofficeUserDialogProps> = ({
 
   return (
     <AlertDialog open={open} onOpenChange={onClose}>
-      <AlertDialogContent onClick={(e) => e.stopPropagation()}>
+      <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Block Backoffice User</AlertDialogTitle>
           <AlertDialogDescription>
@@ -85,8 +85,6 @@ const BlockBackofficeUserDialog: React.FC<BlockBackofficeUserDialogProps> = ({
         <AlertDialogFooter>
           <AlertDialogCancel 
             disabled={blockUserMutation.isPending}
-            onClick={() => onClose()}
-            type="button"
           >
             Cancel
           </AlertDialogCancel>
@@ -94,7 +92,6 @@ const BlockBackofficeUserDialog: React.FC<BlockBackofficeUserDialogProps> = ({
             onClick={handleBlock} 
             disabled={blockUserMutation.isPending}
             className="bg-amber-600 text-white hover:bg-amber-700"
-            type="button"
           >
             {blockUserMutation.isPending ? "Blocking..." : "Block User"}
           </AlertDialogAction>

@@ -74,7 +74,7 @@ const DeleteBackofficeUserDialog: React.FC<DeleteBackofficeUserDialogProps> = ({
 
   return (
     <AlertDialog open={open} onOpenChange={onClose}>
-      <AlertDialogContent onClick={(e) => e.stopPropagation()}>
+      <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Delete Backoffice User</AlertDialogTitle>
           <AlertDialogDescription>
