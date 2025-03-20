@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { useNavigate } from "react-router-dom";
 
 interface UsersTableProps {
   users: User[];
@@ -36,6 +37,12 @@ const UsersTable: React.FC<UsersTableProps> = ({
   setShowBlockDialog,
   setShowUnblockDialog,
 }) => {
+  const navigate = useNavigate();
+
+  const handleViewUser = (user: User) => {
+    navigate(`/users/${user.id}`);
+  };
+
   return (
     <div className="rounded-md border">
       <Table>
@@ -89,13 +96,13 @@ const UsersTable: React.FC<UsersTableProps> = ({
                     <DropdownMenuContent align="end">
                       <DropdownMenuLabel>Actions</DropdownMenuLabel>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleViewUser(user)}>
                         <Eye size={16} className="mr-2" /> View Details
                       </DropdownMenuItem>
-                      <DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleViewUser(user)}>
                         <Wallet size={16} className="mr-2" /> View Wallets
                       </DropdownMenuItem>
-                      <DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleViewUser(user)}>
                         <FileText size={16} className="mr-2" /> Transactions
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />

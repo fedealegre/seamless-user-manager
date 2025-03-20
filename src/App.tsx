@@ -11,6 +11,7 @@ import PrivateRoute from "@/components/PrivateRoute";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import UserManagement from "./pages/UserManagement";
+import UserDetailPage from "./pages/UserDetailPage";
 import TransactionManagement from "./pages/TransactionManagement";
 import WalletManagement from "./pages/WalletManagement";
 import AntiFraudRules from "./pages/AntiFraudRules";
@@ -45,6 +46,7 @@ const App = () => (
             <Route element={<PrivateRoute />}>
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/users" element={<UserManagement />} />
+              <Route path="/users/:userId" element={<UserDetailPage />} />
               <Route path="/wallets" element={<WalletManagement />} />
               <Route path="/transactions" element={<TransactionManagement />} />
             </Route>
