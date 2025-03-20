@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { 
@@ -12,6 +11,7 @@ import {
   BarChart3,
   SlidersHorizontal
 } from "lucide-react";
+import { X } from "@/components/layout/icons";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
