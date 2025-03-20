@@ -34,7 +34,7 @@ function App() {
         <Route path="/" element={<Index />} />
         <Route path="/login" element={<Login />} />
         
-        {/* Wrap protected routes with PrivateRoute component */}
+        {/* Protected routes with PrivateRoute component */}
         <Route element={<PrivateRoute />}>
           <Route element={<BackofficeLayout />}>
             <Route path="/dashboard" element={<Dashboard />} />
