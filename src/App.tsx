@@ -33,23 +33,21 @@ function App() {
       <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/login" element={<Login />} />
-        <Route
-          path="/"
-          element={
-            <PrivateRoute>
-              <BackofficeLayout />
-            </PrivateRoute>
-          }
-        >
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/users" element={<UserManagement />} />
-          <Route path="/users/:userId" element={<UserDetails />} />
-          <Route path="/transactions" element={<TransactionManagement />} />
-          <Route path="/wallets" element={<WalletManagement />} />
-          <Route path="/audit-logs" element={<AuditLogs />} />
-          <Route path="/backoffice-users" element={<BackofficeUsers />} />
-          <Route path="/antifraud-rules" element={<AntiFraudRules />} />
+        
+        {/* Wrap protected routes with PrivateRoute component */}
+        <Route element={<PrivateRoute />}>
+          <Route element={<BackofficeLayout />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/users" element={<UserManagement />} />
+            <Route path="/users/:userId" element={<UserDetails />} />
+            <Route path="/transactions" element={<TransactionManagement />} />
+            <Route path="/wallets" element={<WalletManagement />} />
+            <Route path="/audit-logs" element={<AuditLogs />} />
+            <Route path="/backoffice-users" element={<BackofficeUsers />} />
+            <Route path="/antifraud-rules" element={<AntiFraudRules />} />
+          </Route>
         </Route>
+        
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Toaster />

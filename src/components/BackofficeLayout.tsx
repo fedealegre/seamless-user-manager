@@ -1,6 +1,5 @@
-
 import React, { useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate, Outlet } from "react-router-dom";
 import { 
   Users, 
   Wallet, 
@@ -54,7 +53,7 @@ const sidebarSections: SidebarSection[] = [
   {
     title: "Security",
     items: [
-      { title: "Anti-Fraud Rules", icon: Shield, path: "/anti-fraud" },
+      { title: "Anti-Fraud Rules", icon: Shield, path: "/antifraud-rules" },
       { title: "Audit Logs", icon: Clock, path: "/audit-logs" },
       { title: "Backoffice Users", icon: User, path: "/backoffice-users" }
     ]
@@ -67,11 +66,7 @@ const sidebarSections: SidebarSection[] = [
   }
 ];
 
-interface BackofficeLayoutProps {
-  children: React.ReactNode;
-}
-
-const BackofficeLayout: React.FC<BackofficeLayoutProps> = ({ children }) => {
+const BackofficeLayout: React.FC = () => {
   const { user, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
@@ -83,10 +78,6 @@ const BackofficeLayout: React.FC<BackofficeLayoutProps> = ({ children }) => {
   };
   
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
-  
-  if (!user) {
-    return <>{children}</>;
-  }
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">
@@ -172,12 +163,12 @@ const BackofficeLayout: React.FC<BackofficeLayoutProps> = ({ children }) => {
                 <Avatar>
                   <AvatarImage src="" />
                   <AvatarFallback className="bg-primary text-primary-foreground">
-                    {user.name.charAt(0)}{user.surname.charAt(0)}
+                    {user?.name.charAt(0)}{user?.surname.charAt(0)}
                   </AvatarFallback>
                 </Avatar>
                 <div className="ml-3">
-                  <p className="text-sm font-medium">{user.name} {user.surname}</p>
-                  <p className="text-xs text-muted-foreground">{user.roles.join(", ")}</p>
+                  <p className="text-sm font-medium">{user?.name} {user?.surname}</p>
+                  <p className="text-xs text-muted-foreground">{user?.roles.join(", ")}</p>
                 </div>
                 <Button 
                   variant="ghost" 
@@ -284,7 +275,7 @@ const BackofficeLayout: React.FC<BackofficeLayoutProps> = ({ children }) => {
                   <Avatar>
                     <AvatarImage src="" />
                     <AvatarFallback className="bg-primary text-primary-foreground">
-                      {user.name.charAt(0)}{user.surname.charAt(0)}
+                      {user?.name.charAt(0)}{user?.surname.charAt(0)}
                     </AvatarFallback>
                   </Avatar>
                 </Button>
@@ -305,7 +296,7 @@ const BackofficeLayout: React.FC<BackofficeLayoutProps> = ({ children }) => {
         
         {/* Page content */}
         <main className="flex-1 overflow-y-auto p-4 lg:p-6">
-          {children}
+          <Outlet />
         </main>
       </div>
     </div>
