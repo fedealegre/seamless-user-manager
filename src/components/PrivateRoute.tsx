@@ -2,6 +2,7 @@
 import React from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import BackofficeLayout from "./BackofficeLayout";
 
 interface PrivateRouteProps {
   allowedRoles?: string[];
@@ -30,21 +31,26 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ allowedRoles }) => {
     
     if (!hasRequiredRole) {
       return (
-        <div className="flex flex-col items-center justify-center min-h-[calc(100vh-10rem)]">
-          <div className="text-4xl font-bold text-destructive mb-2">Access Denied</div>
-          <p className="text-lg text-muted-foreground mb-6">
-            You don't have permission to access this page.
-          </p>
-          <p className="text-sm text-muted-foreground">
-            Required roles: {allowedRoles.join(", ")}
-          </p>
-        </div>
+        <BackofficeLayout>
+          <div className="flex flex-col items-center justify-center min-h-[calc(100vh-10rem)]">
+            <div className="text-4xl font-bold text-destructive mb-2">Access Denied</div>
+            <p className="text-lg text-muted-foreground mb-6">
+              You don't have permission to access this page.
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Required roles: {allowedRoles.join(", ")}
+            </p>
+          </div>
+        </BackofficeLayout>
       );
     }
   }
 
-  // User is authenticated and has the required role, render the Outlet
-  return <Outlet />;
+  return (
+    <BackofficeLayout>
+      <Outlet />
+    </BackofficeLayout>
+  );
 };
 
 export default PrivateRoute;

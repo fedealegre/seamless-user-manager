@@ -1,7 +1,6 @@
 
 import React from "react";
 import { User } from "@/lib/api/types";
-import { useNavigate } from "react-router-dom";
 import { MoreVertical, Eye, Lock, LockOpen, X, Wallet, FileText, UserIcon } from "lucide-react";
 import { 
   Table, 
@@ -37,12 +36,6 @@ const UsersTable: React.FC<UsersTableProps> = ({
   setShowBlockDialog,
   setShowUnblockDialog,
 }) => {
-  const navigate = useNavigate();
-
-  const viewUserDetails = (user: User) => {
-    navigate(`/users/${user.id}`);
-  };
-
   return (
     <div className="rounded-md border">
       <Table>
@@ -58,7 +51,7 @@ const UsersTable: React.FC<UsersTableProps> = ({
         <TableBody>
           {users && users.length > 0 ? (
             users.map((user) => (
-              <TableRow key={user.id} className="cursor-pointer" onClick={() => viewUserDetails(user)}>
+              <TableRow key={user.id}>
                 <TableCell>
                   <div className="flex items-center gap-3">
                     <div className="h-10 w-10 rounded-full bg-muted/50 flex items-center justify-center">
@@ -88,7 +81,7 @@ const UsersTable: React.FC<UsersTableProps> = ({
                 </TableCell>
                 <TableCell className="text-right">
                   <DropdownMenu>
-                    <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                    <DropdownMenuTrigger asChild>
                       <Button variant="ghost" size="icon">
                         <MoreVertical size={16} />
                       </Button>
@@ -96,29 +89,19 @@ const UsersTable: React.FC<UsersTableProps> = ({
                     <DropdownMenuContent align="end">
                       <DropdownMenuLabel>Actions</DropdownMenuLabel>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={(e) => {
-                        e.stopPropagation();
-                        viewUserDetails(user);
-                      }}>
+                      <DropdownMenuItem>
                         <Eye size={16} className="mr-2" /> View Details
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={(e) => {
-                        e.stopPropagation();
-                        viewUserDetails(user);
-                      }}>
+                      <DropdownMenuItem>
                         <Wallet size={16} className="mr-2" /> View Wallets
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={(e) => {
-                        e.stopPropagation();
-                        viewUserDetails(user);
-                      }}>
+                      <DropdownMenuItem>
                         <FileText size={16} className="mr-2" /> Transactions
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       {user.status === "ACTIVE" || !user.blocked ? (
                         <DropdownMenuItem 
-                          onClick={(e) => {
-                            e.stopPropagation();
+                          onClick={() => {
                             setSelectedUser(user);
                             setShowBlockDialog(true);
                           }}
@@ -128,8 +111,7 @@ const UsersTable: React.FC<UsersTableProps> = ({
                         </DropdownMenuItem>
                       ) : (
                         <DropdownMenuItem 
-                          onClick={(e) => {
-                            e.stopPropagation();
+                          onClick={() => {
                             setSelectedUser(user);
                             setShowUnblockDialog(true);
                           }}
@@ -139,8 +121,7 @@ const UsersTable: React.FC<UsersTableProps> = ({
                         </DropdownMenuItem>
                       )}
                       <DropdownMenuItem 
-                        onClick={(e) => {
-                          e.stopPropagation();
+                        onClick={() => {
                           setSelectedUser(user);
                           setShowDeleteDialog(true);
                         }}
