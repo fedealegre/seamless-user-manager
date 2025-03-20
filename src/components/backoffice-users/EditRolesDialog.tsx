@@ -127,11 +127,11 @@ const EditRolesDialog: React.FC<EditRolesDialogProps> = ({
   };
 
   const handleClose = () => {
-    // Only allow closing if no mutation is in progress
     if (!updateRolesMutation.isPending) {
-      // Reset error message before closing
       setErrorMessage(null);
       onClose();
+      // Ensure body pointer-events are reset
+      document.body.style.pointerEvents = '';
     }
   };
 
@@ -141,10 +141,16 @@ const EditRolesDialog: React.FC<EditRolesDialogProps> = ({
       onOpenChange={(isOpen) => {
         if (!isOpen && !updateRolesMutation.isPending) {
           handleClose();
+        } else if (!isOpen && updateRolesMutation.isPending) {
+          // If trying to close during pending operation, restore pointer-events
+          document.body.style.pointerEvents = '';
         }
       }}
     >
-      <DialogContent>
+      <DialogContent onCloseAutoFocus={(event) => {
+        event.preventDefault();
+        document.body.style.pointerEvents = '';
+      }}>
         <DialogHeader>
           <DialogTitle>Edit User Roles</DialogTitle>
           <DialogDescription>
