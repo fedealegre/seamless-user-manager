@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Check, Save, Upload, Building, Wallet, Bell } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useCompanySettings } from "@/contexts/CompanySettingsContext";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -14,32 +15,10 @@ import { CompanyInfoForm } from "@/components/company-settings/CompanyInfoForm";
 import { NotificationSettingsForm } from "@/components/company-settings/NotificationSettingsForm";
 import { FinancialSettingsForm } from "@/components/company-settings/FinancialSettingsForm";
 
-// Mock data - would be fetched from API in real implementation
-const defaultSettings = {
-  companyInfo: {
-    name: "PayBackoffice Inc.",
-    backofficeTitle: "PayBackoffice",
-    companyLogo: null,
-    backofficeIcon: null
-  },
-  notifications: {
-    notifyUsersWhenBlocked: true,
-    notifyUsersWhenUnblocked: true
-  },
-  financial: {
-    iva: 16,
-    commissions: {
-      transfer: 1.5,
-      payment: 2.0,
-      withdrawal: 2.5
-    }
-  }
-};
-
 const CompanySettings = () => {
   const { user } = useAuth();
   const { toast } = useToast();
-  const [settings, setSettings] = useState(defaultSettings);
+  const { settings, updateSettings } = useCompanySettings();
   const [isLoading, setIsLoading] = useState(false);
 
   // Check if user has admin role
@@ -64,12 +43,12 @@ const CompanySettings = () => {
     
     // Simulate API call
     setTimeout(() => {
-      setSettings({
-        ...settings,
-        companyInfo: {
-          ...settings.companyInfo,
-          ...data
-        }
+      // Update context with new settings
+      updateSettings({
+        name: data.name,
+        backofficeTitle: data.backofficeTitle,
+        companyLogo: data.companyLogo,
+        backofficeIcon: data.backofficeIcon
       });
       
       setIsLoading(false);
@@ -85,14 +64,8 @@ const CompanySettings = () => {
     
     // Simulate API call
     setTimeout(() => {
-      setSettings({
-        ...settings,
-        notifications: {
-          ...settings.notifications,
-          ...data
-        }
-      });
-      
+      // We store the notification settings but don't update the context
+      // as those settings don't affect the UI
       setIsLoading(false);
       toast({
         title: "Notification settings updated",
@@ -106,14 +79,8 @@ const CompanySettings = () => {
     
     // Simulate API call
     setTimeout(() => {
-      setSettings({
-        ...settings,
-        financial: {
-          ...settings.financial,
-          ...data
-        }
-      });
-      
+      // We store the financial settings but don't update the context
+      // as those settings don't affect the UI
       setIsLoading(false);
       toast({
         title: "Financial settings updated",
@@ -159,7 +126,7 @@ const CompanySettings = () => {
             </CardHeader>
             <CardContent>
               <CompanyInfoForm 
-                defaultValues={settings.companyInfo} 
+                defaultValues={settings} 
                 onSubmit={handleCompanyInfoSubmit}
                 isLoading={isLoading}
               />
@@ -177,7 +144,10 @@ const CompanySettings = () => {
             </CardHeader>
             <CardContent>
               <NotificationSettingsForm 
-                defaultValues={settings.notifications}
+                defaultValues={{
+                  notifyUsersWhenBlocked: true,
+                  notifyUsersWhenUnblocked: true
+                }}
                 onSubmit={handleNotificationSettingsSubmit}
                 isLoading={isLoading}
               />
@@ -195,7 +165,14 @@ const CompanySettings = () => {
             </CardHeader>
             <CardContent>
               <FinancialSettingsForm 
-                defaultValues={settings.financial}
+                defaultValues={{
+                  iva: 16,
+                  commissions: {
+                    transfer: 1.5,
+                    payment: 2.0,
+                    withdrawal: 2.5
+                  }
+                }}
                 onSubmit={handleFinancialSettingsSubmit}
                 isLoading={isLoading}
               />

@@ -28,18 +28,18 @@ type CompanyInfoFormProps = {
   defaultValues: {
     name: string;
     backofficeTitle: string;
-    companyLogo: File | null;
-    backofficeIcon: File | null;
+    companyLogo: string | null;
+    backofficeIcon: string | null;
   };
   onSubmit: (data: any) => void;
   isLoading: boolean;
 };
 
 export const CompanyInfoForm = ({ defaultValues, onSubmit, isLoading }: CompanyInfoFormProps) => {
-  const [companyLogo, setCompanyLogo] = useState<File | null>(defaultValues.companyLogo);
-  const [companyLogoPreview, setCompanyLogoPreview] = useState<string | null>(null);
-  const [backofficeIcon, setBackofficeIcon] = useState<File | null>(defaultValues.backofficeIcon);
-  const [backofficeIconPreview, setBackofficeIconPreview] = useState<string | null>(null);
+  const [companyLogo, setCompanyLogo] = useState<File | null>(null);
+  const [companyLogoPreview, setCompanyLogoPreview] = useState<string | null>(defaultValues.companyLogo);
+  const [backofficeIcon, setBackofficeIcon] = useState<File | null>(null);
+  const [backofficeIconPreview, setBackofficeIconPreview] = useState<string | null>(defaultValues.backofficeIcon);
 
   const form = useForm<z.infer<typeof companyInfoSchema>>({
     resolver: zodResolver(companyInfoSchema),
@@ -48,6 +48,16 @@ export const CompanyInfoForm = ({ defaultValues, onSubmit, isLoading }: CompanyI
       backofficeTitle: defaultValues.backofficeTitle,
     },
   });
+
+  // Convert file to Base64 string
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = error => reject(error);
+      reader.readAsDataURL(file);
+    });
+  };
 
   const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -77,13 +87,22 @@ export const CompanyInfoForm = ({ defaultValues, onSubmit, isLoading }: CompanyI
     }
   };
 
-  const handleSubmit = (data: z.infer<typeof companyInfoSchema>) => {
-    // Combine form data with file uploads
-    const formData = {
+  const handleSubmit = async (data: z.infer<typeof companyInfoSchema>) => {
+    // Prepare form data with Base64 encoded images
+    const formData: any = {
       ...data,
-      companyLogo,
-      backofficeIcon
+      companyLogo: companyLogoPreview,
+      backofficeIcon: backofficeIconPreview
     };
+    
+    // Convert new files to Base64 if they exist
+    if (companyLogo) {
+      formData.companyLogo = await fileToBase64(companyLogo);
+    }
+    
+    if (backofficeIcon) {
+      formData.backofficeIcon = await fileToBase64(backofficeIcon);
+    }
     
     onSubmit(formData);
   };

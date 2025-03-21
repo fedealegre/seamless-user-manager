@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import SidebarContent from "./SidebarContent";
 import UserProfile from "./UserProfile";
+import { useCompanySettings } from "@/contexts/CompanySettingsContext";
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -12,6 +13,8 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, toggleSidebar }) => {
+  const { settings } = useCompanySettings();
+  
   return (
     <aside 
       className={cn(
@@ -28,10 +31,18 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, toggleSidebar }) => {
               !sidebarOpen && "lg:opacity-0"
             )}
           >
-            <div className="w-8 h-8 mr-2 bg-primary rounded-md flex items-center justify-center">
-              <span className="text-primary-foreground font-bold">PB</span>
+            <div className="w-8 h-8 mr-2 bg-primary rounded-md flex items-center justify-center overflow-hidden">
+              {settings.backofficeIcon ? (
+                <img 
+                  src={settings.backofficeIcon} 
+                  alt="Logo" 
+                  className="w-full h-full object-contain"
+                />
+              ) : (
+                <span className="text-primary-foreground font-bold">PB</span>
+              )}
             </div>
-            <h1 className="text-xl font-semibold">PayBackoffice</h1>
+            <h1 className="text-xl font-semibold">{settings.backofficeTitle}</h1>
           </div>
           <Button 
             variant="ghost" 

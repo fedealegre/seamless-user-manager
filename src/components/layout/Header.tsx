@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { Menu, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import UserProfile from "./UserProfile";
+import { useCompanySettings } from "@/contexts/CompanySettingsContext";
 import { 
   DropdownMenu, 
   DropdownMenuContent, 
@@ -18,6 +19,8 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
+  const { settings } = useCompanySettings();
+  
   return (
     <header className="h-16 border-b border-border flex items-center justify-between px-4 lg:px-6">
       <div className="flex items-center gap-3">
@@ -29,7 +32,7 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
         >
           <Menu size={18} />
         </Button>
-        <h1 className="text-xl font-semibold lg:hidden">PayBackoffice</h1>
+        <h1 className="text-xl font-semibold lg:hidden">{settings.backofficeTitle}</h1>
         <Button 
           variant="ghost" 
           size="icon"
