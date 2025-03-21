@@ -1,7 +1,7 @@
 
 import { useQuery } from "@tanstack/react-query";
-import { apiService } from "@/lib/api";
 import { User, Wallet } from "@/lib/api/types";
+import { userService } from "@/lib/api/user-service";
 
 export function useUserDetails(userId: string | undefined) {
   // Fetch user info
@@ -13,7 +13,7 @@ export function useUserDetails(userId: string | undefined) {
     queryKey: ['user', userId],
     queryFn: () => {
       if (!userId) throw new Error('User ID is required');
-      return apiService.getUserData(userId);
+      return userService.getUserData(userId);
     },
     enabled: !!userId,
   });
@@ -27,7 +27,7 @@ export function useUserDetails(userId: string | undefined) {
     queryKey: ['user-wallets', userId],
     queryFn: () => {
       if (!userId) throw new Error('User ID is required');
-      return apiService.getUserWallets(userId);
+      return userService.getUserWallets(userId);
     },
     enabled: !!userId,
   });

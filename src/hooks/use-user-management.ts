@@ -1,9 +1,9 @@
 
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { apiService } from "@/lib/api";
 import { User } from "@/lib/api/types";
 import { useToast } from "@/hooks/use-toast";
+import { userService } from "@/lib/api/user-service";
 
 interface SearchHistoryItem {
   query: string;
@@ -57,7 +57,7 @@ export function useUserManagement() {
         }
       }
       
-      return apiService.searchUsers(params);
+      return userService.searchUsers(params);
     },
     enabled: false, // Don't run on mount, only when explicitly triggered
   });
@@ -106,7 +106,7 @@ export function useUserManagement() {
     if (!selectedUser) return;
     
     try {
-      await apiService.deleteUser(selectedUser.id.toString());
+      await userService.deleteUser(selectedUser.id.toString());
       toast({
         title: "User Deleted",
         description: `User ${selectedUser.name} ${selectedUser.surname} has been deleted successfully.`,
@@ -129,7 +129,7 @@ export function useUserManagement() {
     if (!selectedUser) return;
     
     try {
-      await apiService.blockUser(selectedUser.id.toString());
+      await userService.blockUser(selectedUser.id.toString());
       toast({
         title: "User Blocked",
         description: `User ${selectedUser.name} ${selectedUser.surname} has been blocked.`,
@@ -152,7 +152,7 @@ export function useUserManagement() {
     if (!selectedUser) return;
     
     try {
-      await apiService.unblockUser(selectedUser.id.toString());
+      await userService.unblockUser(selectedUser.id.toString());
       toast({
         title: "User Unblocked",
         description: `User ${selectedUser.name} ${selectedUser.surname} has been unblocked.`,
