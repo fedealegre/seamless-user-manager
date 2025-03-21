@@ -1,6 +1,6 @@
 
-import axios, { AxiosInstance } from "axios";
-import { User, Wallet, Transaction } from "./types";
+import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
+import { User, Wallet, Transaction, CompensationRequest } from "./types";
 
 export class WaasabiApiClient {
   private baseUrl: string;
@@ -15,10 +15,43 @@ export class WaasabiApiClient {
     this.axiosInstance = axios.create({
       baseURL: this.baseUrl,
       headers: {
-        'x-consumer-custom-id': this.customerId,
         'Content-Type': 'application/json'
       }
     });
+
+    // Add request interceptor to ensure headers are present on every request
+    this.axiosInstance.interceptors.request.use((config) => {
+      // Ensure our custom header is always present
+      config.headers = config.headers || {};
+      config.headers['x-consumer-custom-id'] = this.customerId;
+      
+      console.log(`API Request: ${config.method?.toUpperCase()} ${config.url}`, { 
+        headers: config.headers,
+        params: config.params
+      });
+      
+      return config;
+    });
+
+    // Add response interceptor for better error logging
+    this.axiosInstance.interceptors.response.use(
+      (response) => {
+        console.log(`API Response for ${response.config.url}: Status ${response.status}`);
+        return response;
+      },
+      (error) => {
+        console.error('API Error Response:', {
+          url: error.config?.url,
+          method: error.config?.method,
+          status: error.response?.status,
+          data: error.response?.data,
+          headers: error.config?.headers
+        });
+        return Promise.reject(error);
+      }
+    );
+    
+    console.log(`WaasabiApiClient initialized with baseURL: ${baseUrl} and customerId: ${customerId}`);
   }
 
   async searchUsers(params: { 
@@ -106,13 +139,7 @@ export class WaasabiApiClient {
     userId: string,
     walletId: number,
     originWalletId: number,
-    request: {
-      amount: string;
-      reason: string;
-      transaction_code: string;
-      admin_user: string;
-      transaction_type: string;
-    }
+    request: CompensationRequest
   ): Promise<any> {
     try {
       const response = await this.axiosInstance.post(
@@ -129,7 +156,9 @@ export class WaasabiApiClient {
 
   private handleApiError(error: any): void {
     if (error.response) {
-      const message = error.response.data?.message || 'API request failed';
+      const message = error.response.data?.message || 
+                     error.response.data?.details?.[0]?.error_message || 
+                     'API request failed';
       const statusCode = error.response.status;
       
       if (statusCode === 400) {
