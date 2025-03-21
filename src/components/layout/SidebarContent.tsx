@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { 
@@ -9,7 +8,6 @@ import {
   Clock, 
   User, 
   BarChart3,
-  SlidersHorizontal,
   Settings
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -50,7 +48,6 @@ const sidebarSections: SidebarSection[] = [
   {
     title: "Settings",
     items: [
-      { title: "System Settings", icon: SlidersHorizontal, path: "/settings" },
       { title: "Company Settings", icon: Settings, path: "/company-settings", roles: ["admin"] }
     ]
   }

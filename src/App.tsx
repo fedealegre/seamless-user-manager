@@ -17,6 +17,7 @@ import WalletManagement from "./pages/WalletManagement";
 import AntiFraudRules from "./pages/AntiFraudRules";
 import AuditLogs from "./pages/AuditLogs";
 import BackofficeUsers from "./pages/BackofficeUsers";
+import CompanySettings from "./pages/CompanySettings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
@@ -56,7 +57,7 @@ const App = () => (
               <Route path="/anti-fraud" element={<AntiFraudRules />} />
               <Route path="/audit-logs" element={<AuditLogs />} />
               <Route path="/backoffice-users" element={<BackofficeUsers />} />
-              <Route path="/settings" element={<Dashboard />} />
+              <Route path="/company-settings" element={<CompanySettings />} />
             </Route>
             
             {/* Catch-all Route */}
