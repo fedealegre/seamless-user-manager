@@ -1,15 +1,21 @@
-
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosHeaders } from "axios";
 import { User, Wallet, Transaction, CompensationRequest } from "./types";
+import { WaasabiOAuthClient } from "./waasabi-oauth-client";
 
 export class WaasabiApiClient {
   private baseUrl: string;
   private customerId: string;
   private axiosInstance: AxiosInstance;
+  private oauthClient: WaasabiOAuthClient | null = null;
 
-  constructor(baseUrl: string, customerId: string) {
+  constructor(
+    baseUrl: string, 
+    customerId: string, 
+    oauthClient?: WaasabiOAuthClient
+  ) {
     this.baseUrl = baseUrl;
     this.customerId = customerId;
+    this.oauthClient = oauthClient || null;
     
     // Create the axios instance with default headers
     this.axiosInstance = axios.create({
@@ -20,13 +26,25 @@ export class WaasabiApiClient {
     });
 
     // Add request interceptor to ensure headers are present on every request
-    this.axiosInstance.interceptors.request.use((config) => {
+    this.axiosInstance.interceptors.request.use(async (config) => {
       // Create a proper Axios headers object if it doesn't exist
       config.headers = config.headers || new AxiosHeaders();
       
       // Set the custom header
       if (config.headers && typeof config.headers.set === 'function') {
         config.headers.set('x-consumer-custom-id', this.customerId);
+        
+        // Add authorization header if OAuth client is available
+        if (this.oauthClient) {
+          try {
+            const token = await this.oauthClient.getAccessToken();
+            config.headers.set('Authorization', `Bearer ${token}`);
+          } catch (error) {
+            console.error('Failed to get access token for request:', error);
+            // Continue with the request even without the token
+            // The server will respond with 401 if the token is required
+          }
+        }
       } else {
         // Fallback for older Axios versions
         // If we can't use set() method, create a new AxiosHeaders instance
@@ -39,6 +57,17 @@ export class WaasabiApiClient {
         }
         // Add our custom header
         headers.set('x-consumer-custom-id', this.customerId);
+        
+        // Add authorization header if OAuth client is available
+        if (this.oauthClient) {
+          try {
+            const token = await this.oauthClient.getAccessToken();
+            headers.set('Authorization', `Bearer ${token}`);
+          } catch (error) {
+            console.error('Failed to get access token for request:', error);
+          }
+        }
+        
         config.headers = headers;
       }
       
@@ -64,11 +93,19 @@ export class WaasabiApiClient {
           data: error.response?.data,
           headers: error.config?.headers
         });
+        
+        // If we get a 401 (Unauthorized) and we have an OAuth client,
+        // clear the tokens to force a refresh on the next request
+        if (error.response?.status === 401 && this.oauthClient) {
+          console.warn('Received 401, clearing OAuth tokens');
+          this.oauthClient.clearTokens();
+        }
+        
         return Promise.reject(error);
       }
     );
     
-    console.log(`WaasabiApiClient initialized with baseURL: ${baseUrl} and customerId: ${customerId}`);
+    console.log(`WaasabiApiClient initialized with baseURL: ${baseUrl}, customerId: ${customerId}, and OAuth: ${!!oauthClient}`);
   }
 
   async searchUsers(params: { 

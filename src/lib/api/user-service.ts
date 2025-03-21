@@ -1,6 +1,6 @@
-
 import { apiService } from "./index";
 import { WaasabiApiClient } from "./waasabi-api-client";
+import { WaasabiOAuthClient } from "./waasabi-oauth-client";
 import { User, Wallet, Transaction, CompensationRequest } from "./types";
 
 // Check if we should use Waasabi API - FORCE to true to always use Waasabi API
@@ -8,10 +8,28 @@ const useWaasabiApi = true; // Force to true instead of checking environment var
 const waasabiBaseUrl = import.meta.env.VITE_WAASABI_API_URL || 'http://qa-aws.waasabi.io:47344/admin/v1';
 const waasabiCustomerId = import.meta.env.VITE_WAASABI_CUSTOMER_ID || '1234';
 
-// Create the Waasabi API client
+// OAuth configuration
+const waasabiOAuthClientId = import.meta.env.VITE_WAASABI_OAUTH_CLIENT_ID || '6akohc1kgth07qtipmoaq7et7l';
+const waasabiOAuthClientSecret = import.meta.env.VITE_WAASABI_OAUTH_CLIENT_SECRET || '1bre8qgf8ss9objbsf7v2bqju0h535f6lc76n1j3sj4aohpui6nr';
+const waasabiOAuthTokenUrl = import.meta.env.VITE_WAASABI_OAUTH_TOKEN_URL || 'https://waasabi-sandbox.auth.eu-west-3.amazoncognito.com/oauth2/token';
+
+// Create the OAuth client
+let waasabiOAuthClient: WaasabiOAuthClient | null = null;
+if (useWaasabiApi) {
+  waasabiOAuthClient = new WaasabiOAuthClient(
+    waasabiOAuthClientId,
+    waasabiOAuthClientSecret,
+    waasabiOAuthTokenUrl
+  );
+  console.log('Created Waasabi OAuth client');
+}
+
+// Create the Waasabi API client with OAuth
 let waasabiClient: WaasabiApiClient | null = null;
-waasabiClient = new WaasabiApiClient(waasabiBaseUrl, waasabiCustomerId);
-console.log('Using Waasabi API for user management');
+if (useWaasabiApi) {
+  waasabiClient = new WaasabiApiClient(waasabiBaseUrl, waasabiCustomerId, waasabiOAuthClient);
+  console.log('Using Waasabi API with OAuth for user management');
+}
 
 // User Service interface
 interface UserService {
