@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { apiService } from "@/lib/api";
+import { userService } from "@/lib/api/user-service";
 import { Wallet, Transaction } from "@/lib/api/types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -34,12 +34,12 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
     }
   }, [wallets, selectedWalletId]);
 
-  // Fetch transactions for the selected wallet
+  // Fetch transactions for the selected wallet using userService
   const { data: transactions, isLoading } = useQuery({
     queryKey: ['user-transactions', userId, selectedWalletId],
     queryFn: () => {
       if (!selectedWalletId) return Promise.resolve([]);
-      return apiService.getWalletTransactions(userId, selectedWalletId);
+      return userService.getWalletTransactions(userId, selectedWalletId);
     },
     enabled: !!selectedWalletId,
   });
@@ -90,7 +90,7 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
       const originWalletId = parseInt(selectedWalletId);
       const walletId = parseInt(selectedWalletId);
 
-      const result = await apiService.compensateCustomer(
+      const result = await userService.compensateCustomer(
         companyId,
         userId,
         walletId,

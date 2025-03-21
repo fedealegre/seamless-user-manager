@@ -1,6 +1,6 @@
 
 import axios, { AxiosInstance } from "axios";
-import { User } from "./types";
+import { User, Wallet, Transaction } from "./types";
 
 export class WaasabiApiClient {
   private baseUrl: string;
@@ -79,12 +79,49 @@ export class WaasabiApiClient {
     }
   }
 
-  async getUserWallets(userId: string): Promise<any[]> {
+  async getUserWallets(userId: string): Promise<Wallet[]> {
     try {
       const response = await this.axiosInstance.get(`/customers/${userId}/wallets`);
       return response.data;
     } catch (error: any) {
       console.error("Error getting user wallets:", error);
+      this.handleApiError(error);
+      throw error;
+    }
+  }
+
+  async getWalletTransactions(userId: string, walletId: string): Promise<Transaction[]> {
+    try {
+      const response = await this.axiosInstance.get(`/customers/${userId}/wallets/${walletId}/transactions`);
+      return response.data;
+    } catch (error: any) {
+      console.error("Error getting wallet transactions:", error);
+      this.handleApiError(error);
+      throw error;
+    }
+  }
+
+  async compensateCustomer(
+    companyId: number,
+    userId: string,
+    walletId: number,
+    originWalletId: number,
+    request: {
+      amount: string;
+      reason: string;
+      transaction_code: string;
+      admin_user: string;
+      transaction_type: string;
+    }
+  ): Promise<any> {
+    try {
+      const response = await this.axiosInstance.post(
+        `/customers/${userId}/wallets/${walletId}/compensate`,
+        request
+      );
+      return response.data;
+    } catch (error: any) {
+      console.error("Error compensating customer:", error);
       this.handleApiError(error);
       throw error;
     }

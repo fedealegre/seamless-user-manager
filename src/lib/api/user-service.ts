@@ -1,7 +1,7 @@
 
 import { apiService } from "./index";
 import { WaasabiApiClient } from "./waasabi-api-client";
-import { User, Wallet } from "./types";
+import { User, Wallet, Transaction, CompensationRequest } from "./types";
 
 // Check if we should use Waasabi API
 const useWaasabiApi = import.meta.env.VITE_USE_WAASABI_API === 'true';
@@ -25,6 +25,14 @@ interface UserService {
   blockUser(userId: string): Promise<void>;
   unblockUser(userId: string): Promise<void>;
   getUserWallets(userId: string): Promise<Wallet[]>;
+  getWalletTransactions(userId: string, walletId: string): Promise<Transaction[]>;
+  compensateCustomer(
+    companyId: number,
+    userId: string,
+    walletId: number,
+    originWalletId: number,
+    request: CompensationRequest
+  ): Promise<any>;
 }
 
 // The actual service implementation that delegates to the appropriate client
@@ -69,6 +77,26 @@ class UserServiceImpl implements UserService {
       return waasabiClient.getUserWallets(userId);
     }
     return apiService.getUserWallets(userId);
+  }
+
+  async getWalletTransactions(userId: string, walletId: string): Promise<Transaction[]> {
+    if (useWaasabiApi && waasabiClient) {
+      return waasabiClient.getWalletTransactions(userId, walletId);
+    }
+    return apiService.getWalletTransactions(userId, walletId);
+  }
+
+  async compensateCustomer(
+    companyId: number,
+    userId: string,
+    walletId: number,
+    originWalletId: number,
+    request: CompensationRequest
+  ): Promise<any> {
+    if (useWaasabiApi && waasabiClient) {
+      return waasabiClient.compensateCustomer(companyId, userId, walletId, originWalletId, request);
+    }
+    return apiService.compensateCustomer(companyId, userId, walletId, originWalletId, request);
   }
 }
 
