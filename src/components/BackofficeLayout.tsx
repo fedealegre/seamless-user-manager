@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { 
@@ -13,7 +12,8 @@ import {
   X, 
   BarChart3,
   SlidersHorizontal,
-  Bell
+  Bell,
+  Settings
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
@@ -34,6 +34,7 @@ interface SidebarItem {
   icon: React.ElementType;
   path: string;
   badge?: number | string;
+  roles?: string[];
 }
 
 interface SidebarSection {
@@ -62,7 +63,8 @@ const sidebarSections: SidebarSection[] = [
   {
     title: "Settings",
     items: [
-      { title: "System Settings", icon: SlidersHorizontal, path: "/settings" }
+      { title: "System Settings", icon: SlidersHorizontal, path: "/settings" },
+      { title: "Company Settings", icon: Settings, path: "/company-settings", roles: ["admin"] }
     ]
   }
 ];
@@ -88,9 +90,13 @@ const BackofficeLayout: React.FC<BackofficeLayoutProps> = ({ children }) => {
     return <>{children}</>;
   }
 
+  const hasRequiredRoles = (item: SidebarItem) => {
+    if (!item.roles || item.roles.length === 0) return true;
+    return user.roles.some(role => item.roles?.includes(role));
+  };
+
   return (
     <div className="flex h-screen overflow-hidden bg-background">
-      {/* Sidebar */}
       <aside 
         className={cn(
           "fixed lg:relative lg:block z-20 transition-all duration-300 ease-in-out",
@@ -122,48 +128,53 @@ const BackofficeLayout: React.FC<BackofficeLayoutProps> = ({ children }) => {
           </div>
           
           <div className="flex-1 py-4 overflow-y-auto">
-            {sidebarSections.map((section, index) => (
-              <div key={index} className="mb-6">
-                {sidebarOpen && (
-                  <div className="px-4 mb-2">
-                    <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                      {section.title}
-                    </h2>
-                  </div>
-                )}
-                <ul>
-                  {section.items.map((item, itemIndex) => (
-                    <li key={itemIndex}>
-                      <Link 
-                        to={item.path} 
-                        className={cn(
-                          "sidebar-menu-item group",
-                          "mx-2 mb-1 transition-colors duration-200",
-                          location.pathname === item.path 
-                            ? "bg-primary/10 text-primary font-medium"
-                            : "hover:bg-accent hover:text-accent-foreground"
-                        )}
-                      >
-                        <item.icon size={18} />
-                        {sidebarOpen && (
-                          <>
-                            <span>{item.title}</span>
-                            {item.badge && (
-                              <Badge 
-                                variant="outline" 
-                                className="ml-auto bg-primary/10 text-primary text-xs"
-                              >
-                                {item.badge}
-                              </Badge>
-                            )}
-                          </>
-                        )}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+            {sidebarSections.map((section, index) => {
+              const visibleItems = section.items.filter(hasRequiredRoles);
+              
+              if (visibleItems.length === 0) return null;
+              
+              return (
+                <div key={index} className="mb-6">
+                  {sidebarOpen && (
+                    <div className="px-4 mb-2">
+                      <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                        {section.title}
+                      </h2>
+                    </div>
+                  )}
+                  <ul>
+                    {visibleItems.map((item, itemIndex) => (
+                      <li key={itemIndex}>
+                        <Link 
+                          to={item.path} 
+                          className={cn(
+                            "flex items-center h-10 px-4 text-sm rounded-md transition-colors duration-200",
+                            location.pathname === item.path 
+                              ? "bg-primary/10 text-primary font-medium"
+                              : "hover:bg-accent hover:text-accent-foreground"
+                          )}
+                        >
+                          <item.icon size={18} />
+                          {sidebarOpen && (
+                            <>
+                              <span className="ml-3">{item.title}</span>
+                              {item.badge && (
+                                <Badge 
+                                  variant="outline" 
+                                  className="ml-auto bg-primary/10 text-primary text-xs"
+                                >
+                                  {item.badge}
+                                </Badge>
+                              )}
+                            </>
+                          )}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              );
+            })}
           </div>
           
           <div className="p-4 border-t border-border">
@@ -202,9 +213,7 @@ const BackofficeLayout: React.FC<BackofficeLayoutProps> = ({ children }) => {
         </div>
       </aside>
       
-      {/* Main content */}
       <div className="flex-1 flex flex-col h-full overflow-hidden">
-        {/* Header */}
         <header className="h-16 border-b border-border flex items-center justify-between px-4 lg:px-6">
           <div className="flex items-center gap-3">
             <Button 
@@ -303,7 +312,6 @@ const BackofficeLayout: React.FC<BackofficeLayoutProps> = ({ children }) => {
           </div>
         </header>
         
-        {/* Page content */}
         <main className="flex-1 overflow-y-auto p-4 lg:p-6">
           {children}
         </main>
