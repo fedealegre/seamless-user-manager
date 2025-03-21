@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Edit, ExternalLink } from "lucide-react";
+import { Edit, ExternalLink, Eye } from "lucide-react";
 import { Wallet } from "@/lib/api/types";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -15,9 +15,10 @@ import {
 
 interface WalletsTableProps {
   wallets: Wallet[];
+  onSelectWallet?: (walletId: string) => void;
 }
 
-export const WalletsTable: React.FC<WalletsTableProps> = ({ wallets }) => {
+export const WalletsTable: React.FC<WalletsTableProps> = ({ wallets, onSelectWallet }) => {
   // Helper function for wallet status badge
   const getStatusBadge = (status?: string) => {
     switch (status?.toLowerCase()) {
@@ -83,6 +84,16 @@ export const WalletsTable: React.FC<WalletsTableProps> = ({ wallets }) => {
                 </TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-2">
+                    {onSelectWallet && (
+                      <Button 
+                        variant="outline" 
+                        size="icon" 
+                        onClick={() => onSelectWallet(wallet.id.toString())}
+                        title="View Transactions"
+                      >
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                    )}
                     <Button variant="outline" size="icon">
                       <Edit className="h-4 w-4" />
                     </Button>

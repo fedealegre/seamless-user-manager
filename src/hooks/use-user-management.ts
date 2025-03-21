@@ -1,21 +1,41 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { apiService } from "@/lib/api";
 import { User } from "@/lib/api/types";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
+
+interface SearchHistoryItem {
+  query: string;
+  searchBy: "name" | "surname" | "identifier" | "phone" | "walletId";
+  timestamp: number;
+}
 
 export function useUserManagement() {
   const [searchParams, setSearchParams] = useState({
     query: "",
-    searchBy: "name" as "name" | "surname" | "identifier",
+    searchBy: "name" as "name" | "surname" | "identifier" | "phone" | "walletId",
   });
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showBlockDialog, setShowBlockDialog] = useState(false);
   const [showUnblockDialog, setShowUnblockDialog] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [searchHistory, setSearchHistory] = useState<SearchHistoryItem[]>([]);
   
   const { toast } = useToast();
+
+  // Load search history from localStorage on component mount
+  useEffect(() => {
+    const savedHistory = localStorage.getItem('userSearchHistory');
+    if (savedHistory) {
+      try {
+        setSearchHistory(JSON.parse(savedHistory));
+      } catch (e) {
+        console.error("Error loading search history:", e);
+        localStorage.removeItem('userSearchHistory');
+      }
+    }
+  }, []);
 
   // Query for users
   const { data: users, isLoading, refetch } = useQuery({
@@ -28,6 +48,10 @@ export function useUserManagement() {
           params.name = searchParams.query;
         } else if (searchParams.searchBy === "surname") {
           params.surname = searchParams.query;
+        } else if (searchParams.searchBy === "phone") {
+          params.phoneNumber = searchParams.query;
+        } else if (searchParams.searchBy === "walletId") {
+          params.walletId = searchParams.query;
         } else {
           params.identifier = searchParams.query;
         }
@@ -35,10 +59,46 @@ export function useUserManagement() {
       
       return apiService.searchUsers(params);
     },
+    enabled: false, // Don't run on mount, only when explicitly triggered
   });
+
+  const saveSearchToHistory = () => {
+    if (searchParams.query.trim() === "") return;
+    
+    const newItem: SearchHistoryItem = {
+      ...searchParams,
+      timestamp: Date.now()
+    };
+    
+    // Add to the front, limit to 10 items
+    const updatedHistory = [
+      newItem,
+      ...searchHistory.filter(item => 
+        !(item.query === newItem.query && item.searchBy === newItem.searchBy)
+      )
+    ].slice(0, 10);
+    
+    setSearchHistory(updatedHistory);
+    localStorage.setItem('userSearchHistory', JSON.stringify(updatedHistory));
+  };
+
+  const clearSearchHistory = () => {
+    setSearchHistory([]);
+    localStorage.removeItem('userSearchHistory');
+  };
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
+    if (searchParams.query.trim() === "") {
+      toast({
+        title: "Error",
+        description: "Please enter a search term",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    saveSearchToHistory();
     refetch();
   };
 
@@ -127,6 +187,8 @@ export function useUserManagement() {
     setShowUnblockDialog,
     handleDeleteUser,
     handleBlockUser,
-    handleUnblockUser
+    handleUnblockUser,
+    searchHistory,
+    clearSearchHistory
   };
 }

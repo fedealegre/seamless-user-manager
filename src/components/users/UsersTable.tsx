@@ -20,7 +20,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useNavigate } from "react-router-dom";
 
 interface UsersTableProps {
   users: User[];
@@ -28,6 +27,7 @@ interface UsersTableProps {
   setShowDeleteDialog: (show: boolean) => void;
   setShowBlockDialog: (show: boolean) => void;
   setShowUnblockDialog: (show: boolean) => void;
+  onViewDetails: (userId: number) => void;
 }
 
 const UsersTable: React.FC<UsersTableProps> = ({
@@ -36,13 +36,8 @@ const UsersTable: React.FC<UsersTableProps> = ({
   setShowDeleteDialog,
   setShowBlockDialog,
   setShowUnblockDialog,
+  onViewDetails,
 }) => {
-  const navigate = useNavigate();
-
-  const handleViewUser = (user: User) => {
-    navigate(`/users/${user.id}`);
-  };
-
   return (
     <div className="rounded-md border">
       <Table>
@@ -96,13 +91,13 @@ const UsersTable: React.FC<UsersTableProps> = ({
                     <DropdownMenuContent align="end">
                       <DropdownMenuLabel>Actions</DropdownMenuLabel>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={() => handleViewUser(user)}>
+                      <DropdownMenuItem onClick={() => onViewDetails(user.id)}>
                         <Eye size={16} className="mr-2" /> View Details
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleViewUser(user)}>
+                      <DropdownMenuItem onClick={() => onViewDetails(user.id)}>
                         <Wallet size={16} className="mr-2" /> View Wallets
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleViewUser(user)}>
+                      <DropdownMenuItem onClick={() => onViewDetails(user.id)}>
                         <FileText size={16} className="mr-2" /> Transactions
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
