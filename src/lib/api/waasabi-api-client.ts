@@ -1,5 +1,5 @@
 
-import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosHeaders } from "axios";
 import { User, Wallet, Transaction, CompensationRequest } from "./types";
 
 export class WaasabiApiClient {
@@ -21,9 +21,19 @@ export class WaasabiApiClient {
 
     // Add request interceptor to ensure headers are present on every request
     this.axiosInstance.interceptors.request.use((config) => {
-      // Ensure our custom header is always present
-      config.headers = config.headers || {};
-      config.headers['x-consumer-custom-id'] = this.customerId;
+      // Create a proper Axios headers object if it doesn't exist
+      config.headers = config.headers || new AxiosHeaders();
+      
+      // Set the custom header
+      if (config.headers && typeof config.headers.set === 'function') {
+        config.headers.set('x-consumer-custom-id', this.customerId);
+      } else {
+        // Fallback for older Axios versions
+        config.headers = {
+          ...config.headers,
+          'x-consumer-custom-id': this.customerId
+        };
+      }
       
       console.log(`API Request: ${config.method?.toUpperCase()} ${config.url}`, { 
         headers: config.headers,
