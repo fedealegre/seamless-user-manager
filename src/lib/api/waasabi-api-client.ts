@@ -1,94 +1,25 @@
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosHeaders } from "axios";
-import { User, Wallet, Transaction, CompensationRequest } from "./types";
+
 import { WaasabiOAuthClient } from "./waasabi-oauth-client";
+import { WaasabiCustomerService } from "./services/waasabi-customer-service";
+import { WaasabiWalletService } from "./services/waasabi-wallet-service";
+import { User, Wallet, Transaction, CompensationRequest } from "./types";
 
 export class WaasabiApiClient {
-  private baseUrl: string;
-  private customerId: string;
-  private axiosInstance: AxiosInstance;
-  private oauthClient: WaasabiOAuthClient | null = null;
-  private useCustomIdHeader: boolean;
+  private customerService: WaasabiCustomerService;
+  private walletService: WaasabiWalletService;
 
   constructor(
     baseUrl: string, 
     customerId: string, 
     oauthClient?: WaasabiOAuthClient
   ) {
-    this.baseUrl = baseUrl;
-    this.customerId = customerId;
-    this.oauthClient = oauthClient || null;
-    
-    // Determine if we should use the x-consumer-custom-id header
-    // Don't use it for the sandbox/production environment
-    this.useCustomIdHeader = !baseUrl.includes('api-sandbox.waasabi.io');
-    
-    // Create the axios instance with default headers
-    this.axiosInstance = axios.create({
-      baseURL: this.baseUrl,
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-
-    // Add request interceptor to ensure headers are present on every request
-    this.axiosInstance.interceptors.request.use(async (config) => {
-      // Create a proper Axios headers object if it doesn't exist
-      config.headers = config.headers || new AxiosHeaders();
-      
-      // Set the custom header only for environments that need it
-      if (this.useCustomIdHeader && config.headers && typeof config.headers.set === 'function') {
-        config.headers.set('x-consumer-custom-id', this.customerId);
-      }
-      
-      // Add authorization header if OAuth client is available
-      if (this.oauthClient && config.headers && typeof config.headers.set === 'function') {
-        try {
-          const token = await this.oauthClient.getAccessToken();
-          config.headers.set('Authorization', `Bearer ${token}`);
-        } catch (error) {
-          console.error('Failed to get access token for request:', error);
-          // Continue with the request even without the token
-          // The server will respond with 401 if the token is required
-        }
-      }
-      
-      console.log(`API Request: ${config.method?.toUpperCase()} ${config.url}`, { 
-        headers: config.headers,
-        params: config.params
-      });
-      
-      return config;
-    });
-
-    // Add response interceptor for better error logging
-    this.axiosInstance.interceptors.response.use(
-      (response) => {
-        console.log(`API Response for ${response.config.url}: Status ${response.status}`);
-        return response;
-      },
-      (error) => {
-        console.error('API Error Response:', {
-          url: error.config?.url,
-          method: error.config?.method,
-          status: error.response?.status,
-          data: error.response?.data,
-          headers: error.config?.headers
-        });
-        
-        // If we get a 401 (Unauthorized) and we have an OAuth client,
-        // clear the tokens to force a refresh on the next request
-        if (error.response?.status === 401 && this.oauthClient) {
-          console.warn('Received 401, clearing OAuth tokens');
-          this.oauthClient.clearTokens();
-        }
-        
-        return Promise.reject(error);
-      }
-    );
+    this.customerService = new WaasabiCustomerService(baseUrl, customerId, oauthClient);
+    this.walletService = new WaasabiWalletService(baseUrl, customerId, oauthClient);
     
     console.log(`WaasabiApiClient initialized with baseURL: ${baseUrl}, customerId: ${customerId}, and OAuth: ${!!oauthClient}`);
   }
 
+  // User-related operations
   async searchUsers(params: { 
     name?: string;
     surname?: string;
@@ -96,81 +27,32 @@ export class WaasabiApiClient {
     phoneNumber?: string;
     walletId?: string;
   }): Promise<User[]> {
-    try {
-      // Make sure we log the parameters and headers
-      console.log('Sending searchUsers request with params:', params);
-      
-      const response = await this.axiosInstance.get('/customers', { params });
-      console.log('SearchUsers response:', response.data);
-      return response.data;
-    } catch (error: any) {
-      console.error("Error searching users:", error);
-      this.handleApiError(error);
-      throw error;
-    }
+    return this.customerService.searchUsers(params);
   }
 
   async getUserData(userId: string): Promise<User> {
-    try {
-      const response = await this.axiosInstance.get(`/customers/${userId}`);
-      return response.data;
-    } catch (error: any) {
-      console.error("Error getting user data:", error);
-      this.handleApiError(error);
-      throw error;
-    }
+    return this.customerService.getUserData(userId);
   }
 
   async deleteUser(userId: string): Promise<void> {
-    try {
-      await this.axiosInstance.delete(`/customers/${userId}`);
-    } catch (error: any) {
-      console.error("Error deleting user:", error);
-      this.handleApiError(error);
-      throw error;
-    }
+    return this.customerService.deleteUser(userId);
   }
 
   async blockUser(userId: string): Promise<void> {
-    try {
-      await this.axiosInstance.post(`/customers/${userId}/block`, {});
-    } catch (error: any) {
-      console.error("Error blocking user:", error);
-      this.handleApiError(error);
-      throw error;
-    }
+    return this.customerService.blockUser(userId);
   }
 
   async unblockUser(userId: string): Promise<void> {
-    try {
-      await this.axiosInstance.post(`/customers/${userId}/unblock`, {});
-    } catch (error: any) {
-      console.error("Error unblocking user:", error);
-      this.handleApiError(error);
-      throw error;
-    }
+    return this.customerService.unblockUser(userId);
   }
 
+  // Wallet-related operations
   async getUserWallets(userId: string): Promise<Wallet[]> {
-    try {
-      const response = await this.axiosInstance.get(`/customers/${userId}/wallets`);
-      return response.data;
-    } catch (error: any) {
-      console.error("Error getting user wallets:", error);
-      this.handleApiError(error);
-      throw error;
-    }
+    return this.walletService.getUserWallets(userId);
   }
 
   async getWalletTransactions(userId: string, walletId: string): Promise<Transaction[]> {
-    try {
-      const response = await this.axiosInstance.get(`/customers/${userId}/wallets/${walletId}/transactions`);
-      return response.data;
-    } catch (error: any) {
-      console.error("Error getting wallet transactions:", error);
-      this.handleApiError(error);
-      throw error;
-    }
+    return this.walletService.getWalletTransactions(userId, walletId);
   }
 
   async compensateCustomer(
@@ -180,45 +62,6 @@ export class WaasabiApiClient {
     originWalletId: number,
     request: CompensationRequest
   ): Promise<any> {
-    try {
-      const response = await this.axiosInstance.post(
-        `/customers/${userId}/wallets/${walletId}/compensate`,
-        request
-      );
-      return response.data;
-    } catch (error: any) {
-      console.error("Error compensating customer:", error);
-      this.handleApiError(error);
-      throw error;
-    }
-  }
-
-  private handleApiError(error: any): void {
-    if (error.response) {
-      const message = error.response.data?.message || 
-                     error.response.data?.details?.[0]?.error_message || 
-                     'API request failed';
-      const statusCode = error.response.status;
-      
-      console.error(`API Error (${statusCode}): ${message}`, error.response.data);
-      
-      if (statusCode === 400) {
-        throw new Error(`Bad Request: ${message}`);
-      } else if (statusCode === 401) {
-        throw new Error(`Unauthorized: ${message}`);
-      } else if (statusCode === 403) {
-        throw new Error(`Forbidden: ${message}`);
-      } else if (statusCode === 404) {
-        throw new Error(`Not Found: ${message}`);
-      } else {
-        throw new Error(`API Error (${statusCode}): ${message}`);
-      }
-    } else if (error.request) {
-      console.error('No response received from API', error.request);
-      throw new Error('No response received from API');
-    } else {
-      console.error(`Error setting up request: ${error.message}`, error);
-      throw new Error(`Error setting up request: ${error.message}`);
-    }
+    return this.walletService.compensateCustomer(companyId, userId, walletId, originWalletId, request);
   }
 }
