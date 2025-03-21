@@ -1,3 +1,4 @@
+
 import { apiService } from "./index";
 import { WaasabiApiClient } from "./waasabi-api-client";
 import { WaasabiOAuthClient } from "./waasabi-oauth-client";
@@ -5,7 +6,7 @@ import { User, Wallet, Transaction, CompensationRequest } from "./types";
 
 // Check if we should use Waasabi API - FORCE to true to always use Waasabi API
 const useWaasabiApi = true; // Force to true instead of checking environment variable
-const waasabiBaseUrl = import.meta.env.VITE_WAASABI_API_URL || 'http://qa-aws.waasabi.io:47344/admin/v1';
+const waasabiBaseUrl = import.meta.env.VITE_WAASABI_API_URL || 'https://api-sandbox.waasabi.io/sandbox/admin/v1';
 const waasabiCustomerId = import.meta.env.VITE_WAASABI_CUSTOMER_ID || '1234';
 
 // OAuth configuration

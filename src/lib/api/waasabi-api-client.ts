@@ -7,6 +7,7 @@ export class WaasabiApiClient {
   private customerId: string;
   private axiosInstance: AxiosInstance;
   private oauthClient: WaasabiOAuthClient | null = null;
+  private useCustomIdHeader: boolean;
 
   constructor(
     baseUrl: string, 
@@ -16,6 +17,10 @@ export class WaasabiApiClient {
     this.baseUrl = baseUrl;
     this.customerId = customerId;
     this.oauthClient = oauthClient || null;
+    
+    // Determine if we should use the x-consumer-custom-id header
+    // Don't use it for the sandbox/production environment
+    this.useCustomIdHeader = !baseUrl.includes('api-sandbox.waasabi.io');
     
     // Create the axios instance with default headers
     this.axiosInstance = axios.create({
@@ -30,45 +35,21 @@ export class WaasabiApiClient {
       // Create a proper Axios headers object if it doesn't exist
       config.headers = config.headers || new AxiosHeaders();
       
-      // Set the custom header
-      if (config.headers && typeof config.headers.set === 'function') {
+      // Set the custom header only for environments that need it
+      if (this.useCustomIdHeader && config.headers && typeof config.headers.set === 'function') {
         config.headers.set('x-consumer-custom-id', this.customerId);
-        
-        // Add authorization header if OAuth client is available
-        if (this.oauthClient) {
-          try {
-            const token = await this.oauthClient.getAccessToken();
-            config.headers.set('Authorization', `Bearer ${token}`);
-          } catch (error) {
-            console.error('Failed to get access token for request:', error);
-            // Continue with the request even without the token
-            // The server will respond with 401 if the token is required
-          }
+      }
+      
+      // Add authorization header if OAuth client is available
+      if (this.oauthClient && config.headers && typeof config.headers.set === 'function') {
+        try {
+          const token = await this.oauthClient.getAccessToken();
+          config.headers.set('Authorization', `Bearer ${token}`);
+        } catch (error) {
+          console.error('Failed to get access token for request:', error);
+          // Continue with the request even without the token
+          // The server will respond with 401 if the token is required
         }
-      } else {
-        // Fallback for older Axios versions
-        // If we can't use set() method, create a new AxiosHeaders instance
-        const headers = new AxiosHeaders();
-        if (config.headers) {
-          // Copy existing headers
-          Object.entries(config.headers).forEach(([key, value]) => {
-            headers.set(key, value);
-          });
-        }
-        // Add our custom header
-        headers.set('x-consumer-custom-id', this.customerId);
-        
-        // Add authorization header if OAuth client is available
-        if (this.oauthClient) {
-          try {
-            const token = await this.oauthClient.getAccessToken();
-            headers.set('Authorization', `Bearer ${token}`);
-          } catch (error) {
-            console.error('Failed to get access token for request:', error);
-          }
-        }
-        
-        config.headers = headers;
       }
       
       console.log(`API Request: ${config.method?.toUpperCase()} ${config.url}`, { 
