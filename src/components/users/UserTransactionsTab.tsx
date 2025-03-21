@@ -7,7 +7,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import TransactionsTable from "@/components/transactions/TransactionsTable";
 import TransactionsLoadingSkeleton from "@/components/transactions/TransactionsLoadingSkeleton";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
+import TransactionDetails from "@/components/transactions/TransactionDetails";
+import CompensateCustomerDialog from "@/components/transactions/CompensateCustomerDialog";
 
 interface UserTransactionsTabProps {
   userId: string;
@@ -19,6 +21,11 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
   const [page, setPage] = useState(1);
   const pageSize = 10;
   const { toast } = useToast();
+  
+  // Dialog states
+  const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
+  const [showTransactionDetails, setShowTransactionDetails] = useState(false);
+  const [showCompensateDialog, setShowCompensateDialog] = useState(false);
 
   // Get the first wallet ID when wallets are loaded
   React.useEffect(() => {
@@ -37,12 +44,10 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
     enabled: !!selectedWalletId,
   });
 
-  // Dummy handlers for transaction actions (these would be implemented in a real app)
+  // Handlers for transaction actions
   const handleViewDetails = (transaction: Transaction) => {
-    toast({
-      title: "Transaction Details",
-      description: `Viewing details for transaction ${transaction.transactionId}`,
-    });
+    setSelectedTransaction(transaction);
+    setShowTransactionDetails(true);
   };
 
   const handleCancelTransaction = (transaction: Transaction) => {
@@ -53,10 +58,61 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
   };
 
   const handleCompensateCustomer = (transaction: Transaction) => {
-    toast({
-      title: "Compensate Customer",
-      description: `Compensation for transaction ${transaction.transactionId} not implemented in this view`,
-    });
+    setSelectedTransaction(transaction);
+    setShowCompensateDialog(true);
+  };
+
+  const handleCompensateSubmit = async (amount: string, reason: string) => {
+    if (!selectedTransaction || !selectedWalletId) {
+      toast({
+        title: "Error",
+        description: "Missing transaction or wallet information",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      // Assuming these are required fields for compensation
+      const compensationRequest = {
+        amount,
+        reason,
+        transaction_code: selectedTransaction.transactionId,
+        admin_user: "current-admin", // This should come from auth context in a real app
+        transaction_type: "COMPENSATE" as const,
+      };
+
+      // Use the company ID from the wallet if available, or use a default
+      const companyId = selectedTransaction.customerId 
+        ? parseInt(selectedTransaction.customerId)
+        : 1;
+
+      const originWalletId = parseInt(selectedWalletId);
+      const walletId = parseInt(selectedWalletId);
+
+      const result = await apiService.compensateCustomer(
+        companyId,
+        userId,
+        walletId,
+        originWalletId,
+        compensationRequest
+      );
+
+      toast({
+        title: "Compensation Processed",
+        description: `Transaction ${result.transactionId} has been created for compensation`,
+      });
+
+      // Close the dialog and refetch transactions
+      setShowCompensateDialog(false);
+      setSelectedTransaction(null);
+    } catch (error: any) {
+      toast({
+        title: "Compensation Failed",
+        description: error.message || "An error occurred while processing the compensation",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -107,6 +163,25 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
           </Tabs>
         )}
       </CardContent>
+
+      {/* Transaction Details Dialog */}
+      {selectedTransaction && (
+        <TransactionDetails
+          transaction={selectedTransaction}
+          open={showTransactionDetails}
+          onOpenChange={setShowTransactionDetails}
+        />
+      )}
+
+      {/* Compensate Customer Dialog */}
+      {selectedTransaction && (
+        <CompensateCustomerDialog
+          transaction={selectedTransaction}
+          open={showCompensateDialog}
+          onOpenChange={setShowCompensateDialog}
+          onSubmit={handleCompensateSubmit}
+        />
+      )}
     </Card>
   );
 };
