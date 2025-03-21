@@ -29,10 +29,17 @@ export class WaasabiApiClient {
         config.headers.set('x-consumer-custom-id', this.customerId);
       } else {
         // Fallback for older Axios versions
-        config.headers = {
-          ...config.headers,
-          'x-consumer-custom-id': this.customerId
-        };
+        // If we can't use set() method, create a new AxiosHeaders instance
+        const headers = new AxiosHeaders();
+        if (config.headers) {
+          // Copy existing headers
+          Object.entries(config.headers).forEach(([key, value]) => {
+            headers.set(key, value);
+          });
+        }
+        // Add our custom header
+        headers.set('x-consumer-custom-id', this.customerId);
+        config.headers = headers;
       }
       
       console.log(`API Request: ${config.method?.toUpperCase()} ${config.url}`, { 
