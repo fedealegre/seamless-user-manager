@@ -62,7 +62,11 @@ export class WaasabiApiClient {
     walletId?: string;
   }): Promise<User[]> {
     try {
+      // Make sure we log the parameters and headers
+      console.log('Sending searchUsers request with params:', params);
+      
       const response = await this.axiosInstance.get('/customers', { params });
+      console.log('SearchUsers response:', response.data);
       return response.data;
     } catch (error: any) {
       console.error("Error searching users:", error);
@@ -161,6 +165,8 @@ export class WaasabiApiClient {
                      'API request failed';
       const statusCode = error.response.status;
       
+      console.error(`API Error (${statusCode}): ${message}`, error.response.data);
+      
       if (statusCode === 400) {
         throw new Error(`Bad Request: ${message}`);
       } else if (statusCode === 401) {
@@ -173,8 +179,10 @@ export class WaasabiApiClient {
         throw new Error(`API Error (${statusCode}): ${message}`);
       }
     } else if (error.request) {
+      console.error('No response received from API', error.request);
       throw new Error('No response received from API');
     } else {
+      console.error(`Error setting up request: ${error.message}`, error);
       throw new Error(`Error setting up request: ${error.message}`);
     }
   }
