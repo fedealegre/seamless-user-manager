@@ -1,14 +1,21 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { User } from "@/lib/api/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { EditUserInfoForm } from "./EditUserInfoForm";
+import { userService } from "@/lib/api/user-service";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface UserInfoTabProps {
   user: User;
 }
 
 export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const queryClient = useQueryClient();
+
   // Helper function to format dates
   const formatDate = (dateString?: string): string => {
     if (!dateString) return "N/A";
@@ -42,8 +49,39 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
     );
   };
 
+  const handleUpdateUser = async (updatedUserData: any) => {
+    await userService.updateUser(user.id.toString(), updatedUserData);
+    setIsEditing(false);
+    queryClient.invalidateQueries({ queryKey: ['user', user.id.toString()] });
+  };
+
+  if (isEditing) {
+    return (
+      <div className="space-y-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Edit User Information</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <EditUserInfoForm 
+              user={user} 
+              onUpdate={handleUpdateUser} 
+              onCancel={() => setIsEditing(false)} 
+            />
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
+      <div className="flex justify-end">
+        <Button onClick={() => setIsEditing(true)}>
+          Edit Information
+        </Button>
+      </div>
+      
       <Card>
         <CardHeader>
           <CardTitle>Basic Information</CardTitle>

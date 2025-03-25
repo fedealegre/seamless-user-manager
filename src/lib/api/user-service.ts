@@ -12,7 +12,14 @@ const mockUsers: User[] = [
     surname: 'Doe', 
     email: 'john.doe@example.com', 
     phoneNumber: '+1234567890', 
-    status: 'ACTIVE' 
+    status: 'ACTIVE',
+    birthDate: '1985-05-15',
+    nationality: 'USA',
+    gender: 'M',
+    language: 'English',
+    region: 'North America',
+    governmentIdentificationType: 'SSN',
+    governmentIdentification: '123-45-6789'
   },
   { 
     id: 2, 
@@ -22,7 +29,12 @@ const mockUsers: User[] = [
     surname: 'Smith', 
     email: 'jane.smith@example.com', 
     phoneNumber: '+1987654321', 
-    status: 'ACTIVE' 
+    status: 'ACTIVE',
+    birthDate: '1990-08-20',
+    nationality: 'Canada',
+    gender: 'F',
+    language: 'English',
+    region: 'North America'
   },
   { 
     id: 3, 
@@ -32,7 +44,12 @@ const mockUsers: User[] = [
     surname: 'Johnson', 
     email: 'robert.johnson@example.com', 
     phoneNumber: '+1122334455', 
-    status: 'BLOCKED' 
+    status: 'BLOCKED',
+    birthDate: '1978-12-03',
+    nationality: 'UK',
+    gender: 'M',
+    language: 'English',
+    region: 'Europe'
   }
 ];
 
@@ -175,6 +192,7 @@ const mockTransactions: { [walletId: number]: Transaction[] } = {
 interface UserService {
   searchUsers(params: any): Promise<User[]>;
   getUserData(userId: string): Promise<User>;
+  updateUser(userId: string, userData: Partial<User>): Promise<User>;
   deleteUser(userId: string): Promise<void>;
   blockUser(userId: string): Promise<void>;
   unblockUser(userId: string): Promise<void>;
@@ -187,7 +205,61 @@ interface UserService {
     originWalletId: number,
     request: CompensationRequest
   ): Promise<any>;
+  generateRandomTransaction(): Promise<Transaction>;
 }
+
+// Helper functions for transaction generation
+const generateRandomTransaction = (): Transaction => {
+  // Get a random user
+  const userIds = Object.keys(mockWallets).map(id => parseInt(id));
+  const randomUserId = userIds[Math.floor(Math.random() * userIds.length)];
+  
+  // Get a random wallet for that user
+  const userWallets = mockWallets[randomUserId];
+  const randomWallet = userWallets[Math.floor(Math.random() * userWallets.length)];
+  
+  // Generate transaction types and statuses
+  const transactionTypes = ["deposit", "withdrawal", "transfer", "payment", "refund"];
+  const transactionStatuses = ["completed", "pending", "failed", "processing"];
+  
+  const randomType = transactionTypes[Math.floor(Math.random() * transactionTypes.length)];
+  const randomStatus = transactionStatuses[Math.floor(Math.random() * transactionStatuses.length)];
+  
+  // Generate a random amount between 1 and 1000
+  const randomAmount = parseFloat((Math.random() * 1000 + 1).toFixed(2));
+  
+  // Create the transaction
+  const newTransaction: Transaction = {
+    transactionId: `tx_${Date.now().toString()}`,
+    customerId: randomUserId.toString(),
+    walletId: randomWallet.id.toString(),
+    date: new Date().toISOString(),
+    status: randomStatus,
+    type: randomType,
+    amount: randomAmount,
+    currency: randomWallet.currency || "USD",
+    reference: `Auto-generated ${randomType}`
+  };
+  
+  // Add the transaction to the mock data
+  if (!mockTransactions[randomWallet.id]) {
+    mockTransactions[randomWallet.id] = [];
+  }
+  mockTransactions[randomWallet.id].unshift(newTransaction);
+  
+  // Update wallet balance
+  if (randomStatus === "completed") {
+    if (randomType === "deposit" || randomType === "refund") {
+      randomWallet.balance = (randomWallet.balance || 0) + randomAmount;
+      randomWallet.availableBalance = (randomWallet.availableBalance || 0) + randomAmount;
+    } else if (randomType === "withdrawal" || randomType === "payment") {
+      randomWallet.balance = (randomWallet.balance || 0) - randomAmount;
+      randomWallet.availableBalance = (randomWallet.availableBalance || 0) - randomAmount;
+    }
+  }
+  
+  return newTransaction;
+};
 
 // The actual service implementation that uses mock data
 class UserServiceImpl implements UserService {
@@ -204,8 +276,8 @@ class UserServiceImpl implements UserService {
       }
       if (params.identifier && 
           !user.username.toLowerCase().includes(params.identifier.toLowerCase()) &&
-          !user.email.toLowerCase().includes(params.identifier.toLowerCase()) &&
-          !user.phoneNumber.includes(params.identifier)) {
+          !user.email?.toLowerCase().includes(params.identifier.toLowerCase()) &&
+          !user.phoneNumber?.includes(params.identifier)) {
         return false;
       }
       return true;
@@ -219,6 +291,25 @@ class UserServiceImpl implements UserService {
       throw new Error(`User with ID ${userId} not found`);
     }
     return user;
+  }
+
+  async updateUser(userId: string, userData: Partial<User>): Promise<User> {
+    console.log("Using mock data for updateUser", userData);
+    const userIndex = mockUsers.findIndex(u => u.id.toString() === userId);
+    
+    if (userIndex === -1) {
+      throw new Error(`User with ID ${userId} not found`);
+    }
+    
+    // Update the user with new data
+    const updatedUser = {
+      ...mockUsers[userIndex],
+      ...userData
+    };
+    
+    mockUsers[userIndex] = updatedUser;
+    
+    return updatedUser;
   }
 
   async deleteUser(userId: string): Promise<void> {
@@ -297,8 +388,12 @@ class UserServiceImpl implements UserService {
       transactionId: newTransaction.transactionId
     };
   }
+
+  async generateRandomTransaction(): Promise<Transaction> {
+    console.log("Generating random transaction");
+    return generateRandomTransaction();
+  }
 }
 
 // Export the singleton instance
 export const userService = new UserServiceImpl();
-

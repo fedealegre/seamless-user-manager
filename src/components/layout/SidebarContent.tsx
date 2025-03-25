@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { 
@@ -42,7 +43,7 @@ const sidebarSections: SidebarSection[] = [
     items: [
       { title: "Anti-Fraud Rules", icon: Shield, path: "/anti-fraud" },
       { title: "Audit Logs", icon: Clock, path: "/audit-logs" },
-      { title: "Backoffice Users", icon: User, path: "/backoffice-users" }
+      { title: "Backoffice Operators", icon: User, path: "/backoffice-operators" }
     ]
   },
   {
