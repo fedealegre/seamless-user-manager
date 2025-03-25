@@ -12,6 +12,8 @@ import AuditLogFilters from "@/components/audit-logs/AuditLogFilters";
 import AuditLogTable from "@/components/audit-logs/AuditLogTable";
 import AuditLogDetailsDialog from "@/components/audit-logs/AuditLogDetailsDialog";
 import { getBadgeColor, operationTypes } from "@/components/audit-logs/utils";
+import { CSVExportService } from "@/lib/csv/csv-export-service";
+import { toast } from "@/components/ui/use-toast";
 
 const AuditLogs = () => {
   const [filters, setFilters] = useState<FilterParams>({
@@ -79,6 +81,46 @@ const AuditLogs = () => {
     }
   };
 
+  const handleExportLogs = () => {
+    if (!logs || logs.length === 0) {
+      toast({
+        title: "No data to export",
+        description: "There are no audit logs matching your filters to export.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Generate a filename with the current date
+    const filename = `audit-logs-${format(new Date(), "yyyy-MM-dd")}`;
+
+    // Define CSV headers
+    const headers = ["Date & Time", "User", "Operation", "Entity", "Details"];
+
+    // Export the logs
+    CSVExportService.export({
+      filename,
+      headers,
+      rows: logs,
+      mapRow: (log: AuditLog) => {
+        const { label } = getOperationTypeDetails(log.operationType);
+        return [
+          formatDateTime(log.dateTime),
+          log.user,
+          label,
+          log.entity || "N/A",
+          log.details || "-"
+        ];
+      }
+    });
+
+    // Show success notification
+    toast({
+      title: "Export Successful",
+      description: "The audit logs have been exported to CSV successfully.",
+    });
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between md:items-center gap-4">
@@ -117,6 +159,7 @@ const AuditLogs = () => {
             getBadgeColor={getBadgeColor}
             getOperationTypeDetails={getOperationTypeDetails}
             onViewDetails={viewLogDetails}
+            onExport={handleExportLogs}
           />
         </CardContent>
       </Card>
@@ -134,3 +177,4 @@ const AuditLogs = () => {
 };
 
 export default AuditLogs;
+

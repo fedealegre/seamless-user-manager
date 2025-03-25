@@ -1,7 +1,7 @@
 
 import React from "react";
 import { AuditLog } from "@/lib/api/types";
-import { Clock, FileText } from "lucide-react";
+import { Clock, FileText, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
@@ -22,6 +22,7 @@ interface AuditLogTableProps {
   getBadgeColor: (type: string) => string;
   getOperationTypeDetails: (type: string) => { label: string; icon: React.ElementType };
   onViewDetails: (log: AuditLog) => void;
+  onExport?: () => void;
 }
 
 const AuditLogTable: React.FC<AuditLogTableProps> = ({
@@ -31,6 +32,7 @@ const AuditLogTable: React.FC<AuditLogTableProps> = ({
   getBadgeColor,
   getOperationTypeDetails,
   onViewDetails,
+  onExport,
 }) => {
   if (isLoading) {
     return (
@@ -50,6 +52,18 @@ const AuditLogTable: React.FC<AuditLogTableProps> = ({
 
   return (
     <div className="rounded-md border">
+      {logs && logs.length > 0 && onExport && (
+        <div className="flex justify-end p-4 border-b">
+          <Button
+            variant="outline"
+            onClick={onExport}
+            className="flex items-center gap-2"
+          >
+            <Download size={16} />
+            Export CSV
+          </Button>
+        </div>
+      )}
       <Table>
         <TableHeader>
           <TableRow>
@@ -120,3 +134,4 @@ const AuditLogTable: React.FC<AuditLogTableProps> = ({
 };
 
 export default AuditLogTable;
+
