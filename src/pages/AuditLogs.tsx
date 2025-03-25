@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { apiService } from "@/lib/api";
@@ -14,15 +13,16 @@ import AuditLogDetailsDialog from "@/components/audit-logs/AuditLogDetailsDialog
 import { getBadgeColor, operationTypes } from "@/components/audit-logs/utils";
 import { CSVExportService } from "@/lib/csv/csv-export-service";
 import { toast } from "@/components/ui/use-toast";
+import ExportCSVButton from "@/components/common/ExportCSVButton";
 
 const AuditLogs = () => {
   const [filters, setFilters] = useState<FilterParams>({
     startDate: subDays(new Date(), 7),
     endDate: new Date(),
     user: "",
-    operationType: "all", // Changed default to "all" instead of empty string
+    operationType: "all",
   });
-  
+
   const [selectedLog, setSelectedLog] = useState<AuditLog | null>(null);
   const [showDetailDialog, setShowDetailDialog] = useState(false);
 
@@ -50,7 +50,7 @@ const AuditLogs = () => {
       startDate: subDays(new Date(), 7),
       endDate: new Date(),
       user: "",
-      operationType: "all", // Changed default to "all" instead of empty string
+      operationType: "all",
     });
   };
 
@@ -91,13 +91,10 @@ const AuditLogs = () => {
       return;
     }
 
-    // Generate a filename with the current date
     const filename = `audit-logs-${format(new Date(), "yyyy-MM-dd")}`;
 
-    // Define CSV headers
-    const headers = ["Date & Time", "User", "Operation", "Entity", "Details"];
+    const headers = ["Date & Time", "User", "Operation", "Entity", "Previous Value", "New Value"];
 
-    // Export the logs
     CSVExportService.export({
       filename,
       headers,
@@ -109,12 +106,12 @@ const AuditLogs = () => {
           log.user,
           label,
           log.entity || "N/A",
-          log.details || "-"
+          log.previousValue || "-",
+          log.newValue || "-"
         ];
       }
     });
 
-    // Show success notification
     toast({
       title: "Export Successful",
       description: "The audit logs have been exported to CSV successfully.",
@@ -177,4 +174,3 @@ const AuditLogs = () => {
 };
 
 export default AuditLogs;
-
