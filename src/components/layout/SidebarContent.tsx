@@ -33,7 +33,7 @@ const sidebarSections: SidebarSection[] = [
     title: "Management",
     items: [
       { title: "Dashboard", icon: BarChart3, path: "/dashboard" },
-      { title: "User Management", icon: Users, path: "/users", badge: 3 },
+      { title: "User Management", icon: Users, path: "/users" }, // Removed badge
       { title: "Wallets", icon: Wallet, path: "/wallets" },
       { title: "Transactions", icon: FileText, path: "/transactions" }
     ]
