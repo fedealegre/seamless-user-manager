@@ -16,7 +16,9 @@ export class MockApiClient {
   private mockUsers: User[] = [
     { id: 1, companyId: 1, username: 'john.doe', name: 'John', surname: 'Doe', email: 'john.doe@example.com', phoneNumber: '+1234567890', status: 'ACTIVE' },
     { id: 2, companyId: 1, username: 'jane.smith', name: 'Jane', surname: 'Smith', email: 'jane.smith@example.com', phoneNumber: '+1987654321', status: 'ACTIVE' },
-    { id: 3, companyId: 1, username: 'robert.johnson', name: 'Robert', surname: 'Johnson', email: 'robert.johnson@example.com', phoneNumber: '+1122334455', status: 'BLOCKED' }
+    { id: 3, companyId: 1, username: 'robert.johnson', name: 'Robert', surname: 'Johnson', email: 'robert.johnson@example.com', phoneNumber: '+1122334455', status: 'BLOCKED' },
+    { id: 4, companyId: 1, username: 'carlos.lillo', name: 'Carlos', surname: 'Lillo', email: 'robert.johnson@example.com', phoneNumber: '+1122334455', status: 'ACTIVE' }
+
   ];
 
   private mockWallets: Record<string, Wallet[]> = {
