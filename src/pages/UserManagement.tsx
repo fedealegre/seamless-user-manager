@@ -122,7 +122,7 @@ const UserManagement = () => {
                         <CardContent className="p-4">
                           <div className="flex flex-wrap justify-between items-start gap-2">
                             <div className="flex-1">
-                              {Object.entries(item.params).map(([key, value]) => (
+                              {item.params && Object.entries(item.params).map(([key, value]) => (
                                 <p key={key} className="font-medium text-sm">
                                   {searchConfig.fields.find(f => f.id === key)?.label || key}:
                                   <span className="ml-2 text-muted-foreground">{value}</span>
@@ -136,8 +136,10 @@ const UserManagement = () => {
                               variant="outline"
                               size="sm"
                               onClick={() => {
-                                executeSearch(item.params);
-                                setActiveTab("search");
+                                if (item.params) {
+                                  executeSearch(item.params);
+                                  setActiveTab("search");
+                                }
                               }}
                             >
                               Search Again

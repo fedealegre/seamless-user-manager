@@ -27,7 +27,13 @@ export function useUserManagement() {
     const savedHistory = localStorage.getItem('userSearchHistory');
     if (savedHistory) {
       try {
-        setSearchHistory(JSON.parse(savedHistory));
+        const parsedHistory = JSON.parse(savedHistory);
+        // Make sure each item has a valid params object
+        const validHistory = parsedHistory.map((item: any) => ({
+          ...item,
+          params: item.params || {}
+        }));
+        setSearchHistory(validHistory);
       } catch (e) {
         console.error("Error loading search history:", e);
         localStorage.removeItem('userSearchHistory');
@@ -156,6 +162,8 @@ export function useUserManagement() {
   };
 
   const executeSearch = (params: Record<string, string>) => {
+    if (!params || Object.keys(params).length === 0) return;
+    
     setSearchParams(params);
     refetch();
   };
