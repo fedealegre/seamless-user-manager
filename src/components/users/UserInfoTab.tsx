@@ -127,7 +127,7 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
               </div>
               <div>
                 <h3 className="text-sm font-medium text-muted-foreground">Phone Number</h3>
-                <p>{formatDisplayValue(user.phoneNumber)}</p>
+                <p>{formatDisplayValue(user.phoneNumber || user.cellPhone)}</p>
               </div>
             </div>
             <div className="space-y-4">

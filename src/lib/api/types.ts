@@ -36,17 +36,17 @@ export interface Wallet {
 
 export interface User {
     id: number;
-    companyId: number;
+    companyId?: number; // Made optional to match mock data
     publicId?: string;
     defaultWalletId?: number;
-    username: string;
+    username?: string; // Made optional to match mock data
     name: string;
-    surname: string;
+    surname?: string; // Made optional to match mock data
     email?: string;
     phoneNumber?: string;
     phoneCompany?: string;
     cellPhone?: string;
-    gender?: string;
+    gender?: 'M' | 'F' | 'Other'; // Updated to match the expected enum values
     governmentIdentification2?: string;
     governmentIdentificationType2?: string;
     governmentIdentification?: string;

@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -74,7 +73,7 @@ export const EditUserInfoForm: React.FC<EditUserInfoFormProps> = ({
       phoneNumber: user.phoneNumber || "",
       birthDate: birthDateValue,
       nationality: user.nationality || "",
-      gender: user.gender || undefined,
+      gender: (user.gender as "M" | "F" | "Other") || undefined,
       language: user.language || "",
       region: user.region || "",
       status: user.status as "ACTIVE" | "BLOCKED" || "ACTIVE",
