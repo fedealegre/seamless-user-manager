@@ -33,6 +33,13 @@ export interface CompanySearchConfig {
 export const defaultSearchConfig: CompanySearchConfig = {
   fields: [
     {
+      id: "id",
+      key: "id",
+      label: "User ID",
+      type: "text",
+      placeholder: "Search by User ID...",
+    },
+    {
       id: "name",
       key: "name",
       label: "Name",
@@ -40,32 +47,11 @@ export const defaultSearchConfig: CompanySearchConfig = {
       placeholder: "Search by name...",
     },
     {
-      id: "surname",
-      key: "surname",
-      label: "Surname",
+      id: "cellPhone",
+      key: "cellPhone",
+      label: "Cell Phone",
       type: "text",
-      placeholder: "Search by surname...",
-    },
-    {
-      id: "identifier",
-      key: "username",
-      label: "ID/Email",
-      type: "text",
-      placeholder: "Search by ID or email...",
-    },
-    {
-      id: "phone",
-      key: "phoneNumber",
-      label: "Phone",
-      type: "text",
-      placeholder: "Search by phone number...",
-    },
-    {
-      id: "walletId",
-      key: "walletId",
-      label: "Wallet ID",
-      type: "text",
-      placeholder: "Search by wallet ID...",
+      placeholder: "Search by cell phone number...",
     },
   ],
   searchOnLoad: false,
