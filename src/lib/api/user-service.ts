@@ -53,7 +53,7 @@ const mockUsers: User[] = [
 
 // Mock wallets data
 const mockWallets: { [userId: number]: Wallet[] } = {
-  1: [
+  827: [
     {
       id: 101,
       companyId: 1,
@@ -73,7 +73,7 @@ const mockWallets: { [userId: number]: Wallet[] } = {
       additionalInfo: { "walletType": "SECONDARY" }
     }
   ],
-  2: [
+  830: [
     {
       id: 201,
       companyId: 1,
@@ -84,7 +84,7 @@ const mockWallets: { [userId: number]: Wallet[] } = {
       additionalInfo: { "walletType": "PRIMARY" }
     }
   ],
-  3: [
+  848: [
     {
       id: 301,
       companyId: 1,
@@ -102,7 +102,7 @@ const mockTransactions: { [walletId: number]: Transaction[] } = {
   101: [
     {
       transactionId: "tx_10001",
-      customerId: "1",
+      customerId: "827",
       walletId: "101",
       date: new Date(Date.now() - 86400000).toISOString(), // yesterday
       status: "completed",
@@ -113,7 +113,7 @@ const mockTransactions: { [walletId: number]: Transaction[] } = {
     },
     {
       transactionId: "tx_10002",
-      customerId: "1",
+      customerId: "827",
       walletId: "101",
       date: new Date(Date.now() - 172800000).toISOString(), // 2 days ago
       status: "completed",
@@ -124,7 +124,7 @@ const mockTransactions: { [walletId: number]: Transaction[] } = {
     },
     {
       transactionId: "tx_10003",
-      customerId: "1",
+      customerId: "827",
       walletId: "101",
       date: new Date(Date.now() - 259200000).toISOString(), // 3 days ago
       status: "completed",
@@ -137,7 +137,7 @@ const mockTransactions: { [walletId: number]: Transaction[] } = {
   102: [
     {
       transactionId: "tx_20001",
-      customerId: "1",
+      customerId: "827",
       walletId: "102",
       date: new Date(Date.now() - 345600000).toISOString(), // 4 days ago
       status: "completed",
@@ -148,7 +148,7 @@ const mockTransactions: { [walletId: number]: Transaction[] } = {
     },
     {
       transactionId: "tx_20002",
-      customerId: "1",
+      customerId: "827",
       walletId: "102",
       date: new Date(Date.now() - 432000000).toISOString(), // 5 days ago
       status: "pending",
@@ -161,7 +161,7 @@ const mockTransactions: { [walletId: number]: Transaction[] } = {
   201: [
     {
       transactionId: "tx_30001",
-      customerId: "2",
+      customerId: "830",
       walletId: "201",
       date: new Date(Date.now() - 86400000).toISOString(), // yesterday
       status: "completed",
@@ -174,7 +174,7 @@ const mockTransactions: { [walletId: number]: Transaction[] } = {
   301: [
     {
       transactionId: "tx_40001",
-      customerId: "3",
+      customerId: "848",
       walletId: "301",
       date: new Date(Date.now() - 259200000).toISOString(), // 3 days ago
       status: "cancelled",
