@@ -1,4 +1,3 @@
-
 import { User, Wallet, Transaction, CompensationRequest } from "../types";
 import { UserService } from "./user-service-interface";
 import { mockUsers, mockWallets, mockTransactions } from "../mock/mock-users-data";
@@ -11,9 +10,22 @@ export class MockUserService implements UserService {
     
     // Filter logic for mock data
     return mockUsers.filter(user => {
+      // Filter by ID (exact match)
+      if (params.id && user.id.toString() !== params.id.toString()) {
+        return false;
+      }
+      
+      // Filter by name (partial match)
       if (params.name && !user.name.toLowerCase().includes(params.name.toLowerCase())) {
         return false;
       }
+      
+      // Filter by cell phone (partial match)
+      if (params.cellPhone && !user.cellPhone?.includes(params.cellPhone)) {
+        return false;
+      }
+      
+      // Keep the existing filters for backward compatibility
       if (params.surname && !user.surname?.toLowerCase().includes(params.surname.toLowerCase())) {
         return false;
       }
