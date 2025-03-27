@@ -36,7 +36,6 @@ export interface Wallet {
 
 export interface User {
     id: number;
-    publicId?: string;
     companyId: number;
     defaultWalletId?: number;
     username: string;
@@ -44,7 +43,9 @@ export interface User {
     surname: string;
     email?: string;
     phoneNumber?: string;
-    gender?: 'M' | 'F' | 'Other';
+    phoneCompany?: string;
+    cellPhone?: string;
+    gender?: string;
     governmentIdentification2?: string;
     governmentIdentificationType2?: string;
     governmentIdentification?: string;
@@ -58,7 +59,30 @@ export interface User {
     additionalInfo?: Record<string, string>;
     deleted?: boolean;
     blocked?: boolean;
-    status?: string;
+    creationDate?: string;
+    modificationDate?: string;
+    biometrics?: boolean;
+    ocr?: boolean;
+    cpg?: boolean;
+    address?: Address;
+    network?: Network;
+    blockDetails?: string[];
+}
+
+export interface Network {
+    network?: string;
+    identifier?: string;
+}
+
+export interface Address {
+    street?: string;
+    number?: string;
+    floor?: string;
+    department?: string;
+    zipCode?: string;
+    city?: string;
+    province?: string;
+    country?: string;
 }
 
 export interface CompensationRequest {
