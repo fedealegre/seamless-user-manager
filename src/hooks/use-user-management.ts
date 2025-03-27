@@ -4,18 +4,16 @@ import { useQuery } from "@tanstack/react-query";
 import { User } from "@/lib/api/types";
 import { useToast } from "@/hooks/use-toast";
 import { userService } from "@/lib/api/user-service";
+import { useCompanySearchConfig } from "@/hooks/use-company-search-config";
 
 interface SearchHistoryItem {
-  query: string;
-  searchBy: "name" | "surname" | "identifier" | "phone" | "walletId";
+  params: Record<string, string>;
   timestamp: number;
 }
 
 export function useUserManagement() {
-  const [searchParams, setSearchParams] = useState({
-    query: "",
-    searchBy: "name" as "name" | "surname" | "identifier" | "phone" | "walletId",
-  });
+  const { searchConfig } = useCompanySearchConfig();
+  const [searchParams, setSearchParams] = useState<Record<string, string>>({});
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showBlockDialog, setShowBlockDialog] = useState(false);
   const [showUnblockDialog, setShowUnblockDialog] = useState(false);
@@ -41,45 +39,30 @@ export function useUserManagement() {
   const { data: users, isLoading, refetch } = useQuery({
     queryKey: ["users", searchParams],
     queryFn: () => {
-      const params: any = {};
-      
-      if (searchParams.query) {
-        if (searchParams.searchBy === "name") {
-          params.name = searchParams.query;
-        } else if (searchParams.searchBy === "surname") {
-          params.surname = searchParams.query;
-        } else if (searchParams.searchBy === "phone") {
-          params.phoneNumber = searchParams.query;
-        } else if (searchParams.searchBy === "walletId") {
-          params.walletId = searchParams.query;
-        } else {
-          params.identifier = searchParams.query;
-        }
-      }
-      
-      return userService.searchUsers(params);
+      return userService.searchUsers(searchParams);
     },
     enabled: false, // Don't run on mount, only when explicitly triggered
   });
 
-  const saveSearchToHistory = () => {
-    if (searchParams.query.trim() === "") return;
+  const saveSearchToHistory = (params: Record<string, string>) => {
+    // Don't save empty searches
+    if (Object.keys(params).length === 0) return;
     
     const newItem: SearchHistoryItem = {
-      ...searchParams,
+      params,
       timestamp: Date.now()
     };
     
-    // Add to the front, limit to 10 items
-    const updatedHistory = [
-      newItem,
-      ...searchHistory.filter(item => 
-        !(item.query === newItem.query && item.searchBy === newItem.searchBy)
-      )
-    ].slice(0, 10);
+    // Add to the front, limit to 10 items, avoid duplicates
+    const isDuplicate = searchHistory.some(item => 
+      JSON.stringify(item.params) === JSON.stringify(newItem.params)
+    );
     
-    setSearchHistory(updatedHistory);
-    localStorage.setItem('userSearchHistory', JSON.stringify(updatedHistory));
+    if (!isDuplicate) {
+      const updatedHistory = [newItem, ...searchHistory].slice(0, 10);
+      setSearchHistory(updatedHistory);
+      localStorage.setItem('userSearchHistory', JSON.stringify(updatedHistory));
+    }
   };
 
   const clearSearchHistory = () => {
@@ -87,18 +70,19 @@ export function useUserManagement() {
     localStorage.removeItem('userSearchHistory');
   };
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchParams.query.trim() === "") {
+  const handleSearch = (params: Record<string, string>) => {
+    // Check if we have at least one non-empty search parameter
+    if (Object.keys(params).length === 0) {
       toast({
         title: "Error",
-        description: "Please enter a search term",
+        description: "Please enter at least one search term",
         variant: "destructive",
       });
       return;
     }
     
-    saveSearchToHistory();
+    setSearchParams(params);
+    saveSearchToHistory(params);
     refetch();
   };
 
@@ -171,6 +155,11 @@ export function useUserManagement() {
     }
   };
 
+  const executeSearch = (params: Record<string, string>) => {
+    setSearchParams(params);
+    refetch();
+  };
+
   return {
     users,
     isLoading,
@@ -189,6 +178,8 @@ export function useUserManagement() {
     handleBlockUser,
     handleUnblockUser,
     searchHistory,
-    clearSearchHistory
+    clearSearchHistory,
+    executeSearch,
+    searchConfig
   };
 }

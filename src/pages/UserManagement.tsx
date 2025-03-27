@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -7,7 +8,8 @@ import UsersTable from "@/components/users/UsersTable";
 import UsersLoadingSkeleton from "@/components/users/UsersLoadingSkeleton";
 import UserActionDialogs from "@/components/users/UserActionDialogs";
 import { useNavigate } from "react-router-dom";
-import { Clock } from "lucide-react";
+import { Clock, ArrowUpRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const UserManagement = () => {
   
@@ -15,7 +17,6 @@ const UserManagement = () => {
     users,
     isLoading,
     searchParams,
-    setSearchParams,
     handleSearch,
     selectedUser,
     setSelectedUser,
@@ -29,7 +30,9 @@ const UserManagement = () => {
     handleBlockUser,
     handleUnblockUser,
     searchHistory,
-    clearSearchHistory
+    clearSearchHistory,
+    executeSearch,
+    searchConfig
   } = useUserManagement();
 
   const navigate = useNavigate();
@@ -57,9 +60,8 @@ const UserManagement = () => {
           
           <TabsContent value="search" className="mt-6">
             <UserSearchBar 
-              searchParams={searchParams}
-              setSearchParams={setSearchParams}
-              handleSearch={handleSearch}
+              searchConfig={searchConfig}
+              onSearch={handleSearch}
             />
             
             <Card className="mt-6">
@@ -120,26 +122,27 @@ const UserManagement = () => {
                         <CardContent className="p-4">
                           <div className="flex flex-wrap justify-between items-start gap-2">
                             <div className="flex-1">
-                              <p className="font-medium text-sm">
-                                {item.searchBy === "name" ? "Name" : 
-                                 item.searchBy === "surname" ? "Surname" : 
-                                 "ID/Email"}:
-                                <span className="ml-2 text-muted-foreground">{item.query}</span>
-                              </p>
+                              {Object.entries(item.params).map(([key, value]) => (
+                                <p key={key} className="font-medium text-sm">
+                                  {searchConfig.fields.find(f => f.id === key)?.label || key}:
+                                  <span className="ml-2 text-muted-foreground">{value}</span>
+                                </p>
+                              ))}
                               <p className="text-xs text-muted-foreground">
                                 {new Date(item.timestamp).toLocaleString()}
                               </p>
                             </div>
-                            <button 
+                            <Button 
+                              variant="outline"
+                              size="sm"
                               onClick={() => {
-                                setSearchParams(item);
-                                handleSearch(new Event('submit') as any);
+                                executeSearch(item.params);
                                 setActiveTab("search");
                               }}
-                              className="px-3 py-1 text-xs bg-primary text-primary-foreground rounded-full"
                             >
                               Search Again
-                            </button>
+                              <ArrowUpRight className="ml-2 h-4 w-4" />
+                            </Button>
                           </div>
                         </CardContent>
                       </Card>
