@@ -37,6 +37,7 @@ export interface Wallet {
 export interface User {
     id: number;
     companyId: number;
+    publicId?: string;
     defaultWalletId?: number;
     username: string;
     name: string;
@@ -59,6 +60,7 @@ export interface User {
     additionalInfo?: Record<string, string>;
     deleted?: boolean;
     blocked?: boolean;
+    status?: string;
     creationDate?: string;
     modificationDate?: string;
     biometrics?: boolean;
