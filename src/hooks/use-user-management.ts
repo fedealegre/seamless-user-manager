@@ -11,6 +11,10 @@ interface SearchHistoryItem {
   timestamp: number;
 }
 
+// Key for storing search params in localStorage
+const SEARCH_PARAMS_STORAGE_KEY = 'userSearchParams';
+const SEARCH_HISTORY_STORAGE_KEY = 'userSearchHistory';
+
 export function useUserManagement() {
   const { searchConfig } = useCompanySearchConfig();
   const [searchParams, setSearchParams] = useState<Record<string, string>>({});
@@ -22,9 +26,10 @@ export function useUserManagement() {
   
   const { toast } = useToast();
 
-  // Load search history from localStorage on component mount
+  // Load search history and params from localStorage on component mount
   useEffect(() => {
-    const savedHistory = localStorage.getItem('userSearchHistory');
+    // Load search history
+    const savedHistory = localStorage.getItem(SEARCH_HISTORY_STORAGE_KEY);
     if (savedHistory) {
       try {
         const parsedHistory = JSON.parse(savedHistory);
@@ -36,18 +41,30 @@ export function useUserManagement() {
         setSearchHistory(validHistory);
       } catch (e) {
         console.error("Error loading search history:", e);
-        localStorage.removeItem('userSearchHistory');
+        localStorage.removeItem(SEARCH_HISTORY_STORAGE_KEY);
+      }
+    }
+
+    // Load last search params
+    const savedParams = localStorage.getItem(SEARCH_PARAMS_STORAGE_KEY);
+    if (savedParams) {
+      try {
+        const parsedParams = JSON.parse(savedParams);
+        if (parsedParams && Object.keys(parsedParams).length > 0) {
+          setSearchParams(parsedParams);
+        }
+      } catch (e) {
+        console.error("Error loading search params:", e);
+        localStorage.removeItem(SEARCH_PARAMS_STORAGE_KEY);
       }
     }
   }, []);
 
-  // Query for users
+  // Query for users - enabled by default if we have searchParams
   const { data: users, isLoading, refetch } = useQuery({
     queryKey: ["users", searchParams],
-    queryFn: () => {
-      return userService.searchUsers(searchParams);
-    },
-    enabled: false, // Don't run on mount, only when explicitly triggered
+    queryFn: () => userService.searchUsers(searchParams),
+    enabled: Object.keys(searchParams).length > 0, // Run immediately if we have search params
   });
 
   const saveSearchToHistory = (params: Record<string, string>) => {
@@ -67,13 +84,13 @@ export function useUserManagement() {
     if (!isDuplicate) {
       const updatedHistory = [newItem, ...searchHistory].slice(0, 10);
       setSearchHistory(updatedHistory);
-      localStorage.setItem('userSearchHistory', JSON.stringify(updatedHistory));
+      localStorage.setItem(SEARCH_HISTORY_STORAGE_KEY, JSON.stringify(updatedHistory));
     }
   };
 
   const clearSearchHistory = () => {
     setSearchHistory([]);
-    localStorage.removeItem('userSearchHistory');
+    localStorage.removeItem(SEARCH_HISTORY_STORAGE_KEY);
   };
 
   const handleSearch = (params: Record<string, string>) => {
@@ -87,8 +104,14 @@ export function useUserManagement() {
       return;
     }
     
+    // Save search params to state and localStorage for persistence
     setSearchParams(params);
+    localStorage.setItem(SEARCH_PARAMS_STORAGE_KEY, JSON.stringify(params));
+    
+    // Add to search history
     saveSearchToHistory(params);
+    
+    // Manually trigger the query
     refetch();
   };
 
@@ -164,7 +187,11 @@ export function useUserManagement() {
   const executeSearch = (params: Record<string, string>) => {
     if (!params || Object.keys(params).length === 0) return;
     
+    // Save to state and localStorage
     setSearchParams(params);
+    localStorage.setItem(SEARCH_PARAMS_STORAGE_KEY, JSON.stringify(params));
+    
+    // Trigger search
     refetch();
   };
 
