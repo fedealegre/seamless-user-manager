@@ -19,9 +19,9 @@ import { X, PlusCircle } from 'lucide-react';
 
 // Define schema for basic user information
 const userFormSchema = z.object({
-  name: z.string().min(2, { message: "Name must be at least 2 characters" }),
-  surname: z.string().min(2, { message: "Surname must be at least 2 characters" }),
-  username: z.string().min(3, { message: "Username must be at least 3 characters" }),
+  name: z.string().optional().nullable(),
+  surname: z.string().optional().nullable(),
+  username: z.string().optional().nullable(),
   email: z.string().email({ message: "Please enter a valid email address" }).optional().nullable(),
   phoneNumber: z.string().optional().nullable(),
   birthDate: z.string().optional().nullable(),
