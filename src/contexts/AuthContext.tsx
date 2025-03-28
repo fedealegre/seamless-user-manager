@@ -54,7 +54,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           surname: "Alegre",
           roles: ["admin"],
           state: "active",
-          username: ADMIN_USERNAME,
           last_login: new Date().toISOString()
         };
         
