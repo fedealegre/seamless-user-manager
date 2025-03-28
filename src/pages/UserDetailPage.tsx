@@ -1,6 +1,6 @@
 
-import React, { useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useUserDetails } from "@/hooks/use-user-details";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -14,6 +14,16 @@ import { UserTransactionsTab } from "@/components/users/UserTransactionsTab";
 const UserDetailPage = () => {
   const { userId } = useParams<{ userId: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Read tab from URL query parameters
+  const urlParams = new URLSearchParams(location.search);
+  const tabFromUrl = urlParams.get('tab');
+  
+  // Set initial tab state based on URL or default to 'info'
+  const [activeTab, setActiveTab] = useState<string>(
+    tabFromUrl === 'wallets' || tabFromUrl === 'transactions' ? tabFromUrl : 'info'
+  );
   
   const { 
     user, 
@@ -28,9 +38,28 @@ const UserDetailPage = () => {
       console.error("Error loading user details:", error);
     }
   }, [error]);
+  
+  // Update tab when URL parameters change
+  useEffect(() => {
+    if (tabFromUrl === 'wallets' || tabFromUrl === 'transactions') {
+      setActiveTab(tabFromUrl);
+    }
+  }, [tabFromUrl]);
 
   const handleBack = () => {
     navigate("/users");
+  };
+  
+  // Update URL when tab changes
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    
+    // Only add query param if it's not the default 'info' tab
+    if (value !== 'info') {
+      navigate(`/users/${userId}?tab=${value}`, { replace: true });
+    } else {
+      navigate(`/users/${userId}`, { replace: true });
+    }
   };
 
   if (isLoadingUser) {
@@ -96,7 +125,7 @@ const UserDetailPage = () => {
         </div>
       </div>
 
-      <Tabs defaultValue="info" className="w-full">
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
         <TabsList className="w-full sm:w-auto grid grid-cols-3 sm:inline-flex">
           <TabsTrigger value="info">Personal Info</TabsTrigger>
           <TabsTrigger value="wallets">Wallets</TabsTrigger>

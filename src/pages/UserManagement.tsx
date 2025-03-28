@@ -41,6 +41,14 @@ const UserManagement = () => {
   const handleViewUserDetails = (userId: number) => {
     navigate(`/users/${userId}`);
   };
+  
+  const handleViewUserWallets = (userId: number) => {
+    navigate(`/users/${userId}?tab=wallets`);
+  };
+  
+  const handleViewUserTransactions = (userId: number) => {
+    navigate(`/users/${userId}?tab=transactions`);
+  };
 
   return (
     <>
@@ -85,6 +93,8 @@ const UserManagement = () => {
                     setShowBlockDialog={setShowBlockDialog}
                     setShowUnblockDialog={setShowUnblockDialog}
                     onViewDetails={handleViewUserDetails}
+                    onViewWallets={handleViewUserWallets}
+                    onViewTransactions={handleViewUserTransactions}
                   />
                 )}
               </CardContent>

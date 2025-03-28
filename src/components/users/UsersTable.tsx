@@ -1,7 +1,7 @@
 
 import React from "react";
 import { User } from "@/lib/api/types";
-import { MoreVertical, Eye, Lock, LockOpen, X, UserIcon } from "lucide-react";
+import { MoreVertical, Eye, Lock, LockOpen, X, UserIcon, Wallet, CreditCard } from "lucide-react";
 import { 
   Table, 
   TableBody, 
@@ -29,6 +29,8 @@ interface UsersTableProps {
   setShowBlockDialog: (show: boolean) => void;
   setShowUnblockDialog: (show: boolean) => void;
   onViewDetails: (userId: number) => void;
+  onViewWallets?: (userId: number) => void;
+  onViewTransactions?: (userId: number) => void;
 }
 
 const UsersTable: React.FC<UsersTableProps> = ({
@@ -38,7 +40,14 @@ const UsersTable: React.FC<UsersTableProps> = ({
   setShowBlockDialog,
   setShowUnblockDialog,
   onViewDetails,
+  onViewWallets,
+  onViewTransactions
 }) => {
+  // Helper function to determine if a user is blocked
+  const isUserBlocked = (user: User) => {
+    return user.status === "BLOCKED" || user.blocked === true;
+  };
+
   return (
     <div className="rounded-md border overflow-hidden">
       <Table>
@@ -79,8 +88,8 @@ const UsersTable: React.FC<UsersTableProps> = ({
                 </TableCell>
                 <TableCell>
                   <Badge 
-                    variant={user.status === "ACTIVE" ? "outline" : "destructive"}
-                    className={user.status === "ACTIVE" ? "bg-green-100 text-green-800 hover:bg-green-100" : ""}
+                    variant={!isUserBlocked(user) ? "outline" : "destructive"}
+                    className={!isUserBlocked(user) ? "bg-green-100 text-green-800 hover:bg-green-100" : ""}
                   >
                     {user.status || (user.blocked ? "BLOCKED" : "ACTIVE")}
                   </Badge>
@@ -98,8 +107,21 @@ const UsersTable: React.FC<UsersTableProps> = ({
                       <DropdownMenuItem onClick={() => onViewDetails(user.id)}>
                         <Eye size={16} className="mr-2" /> View Details
                       </DropdownMenuItem>
+                      
+                      {onViewWallets && (
+                        <DropdownMenuItem onClick={() => onViewWallets(user.id)}>
+                          <Wallet size={16} className="mr-2" /> View Wallets
+                        </DropdownMenuItem>
+                      )}
+                      
+                      {onViewTransactions && (
+                        <DropdownMenuItem onClick={() => onViewTransactions(user.id)}>
+                          <CreditCard size={16} className="mr-2" /> View Transactions
+                        </DropdownMenuItem>
+                      )}
+                      
                       <DropdownMenuSeparator />
-                      {user.status === "ACTIVE" || !user.blocked ? (
+                      {!isUserBlocked(user) ? (
                         <DropdownMenuItem 
                           onClick={() => {
                             setSelectedUser(user);
