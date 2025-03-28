@@ -1,7 +1,7 @@
 
 import React from "react";
 import { User } from "@/lib/api/types";
-import { MoreVertical, Eye, Lock, LockOpen, X, Wallet, FileText, UserIcon } from "lucide-react";
+import { MoreVertical, Eye, Lock, LockOpen, X, UserIcon } from "lucide-react";
 import { 
   Table, 
   TableBody, 
@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 interface UsersTableProps {
   users: User[];
@@ -39,13 +40,13 @@ const UsersTable: React.FC<UsersTableProps> = ({
   onViewDetails,
 }) => {
   return (
-    <div className="rounded-md border">
+    <div className="rounded-md border overflow-hidden">
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>User</TableHead>
-            <TableHead>ID</TableHead>
-            <TableHead>Contact</TableHead>
+            <TableHead>User ID</TableHead>
+            <TableHead>Name</TableHead>
+            <TableHead>Cell Phone</TableHead>
             <TableHead>Status</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
@@ -54,24 +55,27 @@ const UsersTable: React.FC<UsersTableProps> = ({
           {users && users.length > 0 ? (
             users.map((user) => (
               <TableRow key={user.id}>
+                <TableCell className="font-medium">
+                  {user.id}
+                  {user.publicId && <div className="text-xs text-muted-foreground truncate max-w-[180px]">{user.publicId}</div>}
+                </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-full bg-muted/50 flex items-center justify-center">
-                      <UserIcon size={16} />
-                    </div>
+                    <Avatar className="h-8 w-8">
+                      <AvatarFallback className="bg-primary/10 text-primary">
+                        {user.name.charAt(0)}{user.surname?.charAt(0) || ''}
+                      </AvatarFallback>
+                    </Avatar>
                     <div>
                       <div className="font-medium">{user.name} {user.surname}</div>
-                      <div className="text-sm text-muted-foreground">@{user.username}</div>
+                      {user.username && <div className="text-xs text-muted-foreground">@{user.username}</div>}
                     </div>
                   </div>
                 </TableCell>
                 <TableCell>
-                  <div className="text-sm">{user.id}</div>
-                  {user.publicId && <div className="text-xs text-muted-foreground">{user.publicId}</div>}
-                </TableCell>
-                <TableCell>
-                  {user.email && <div className="text-sm">{user.email}</div>}
-                  {user.phoneNumber && <div className="text-sm">{user.phoneNumber}</div>}
+                  {user.cellPhone || 
+                   (user.phoneNumber && <span className="text-sm">{user.phoneNumber}</span>) || 
+                   <span className="text-muted-foreground text-sm">Not provided</span>}
                 </TableCell>
                 <TableCell>
                   <Badge 
@@ -93,12 +97,6 @@ const UsersTable: React.FC<UsersTableProps> = ({
                       <DropdownMenuSeparator />
                       <DropdownMenuItem onClick={() => onViewDetails(user.id)}>
                         <Eye size={16} className="mr-2" /> View Details
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => onViewDetails(user.id)}>
-                        <Wallet size={16} className="mr-2" /> View Wallets
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => onViewDetails(user.id)}>
-                        <FileText size={16} className="mr-2" /> Transactions
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       {user.status === "ACTIVE" || !user.blocked ? (
