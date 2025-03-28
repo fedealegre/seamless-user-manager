@@ -22,7 +22,11 @@ const userFormSchema = z.object({
   name: z.string().optional().nullable(),
   surname: z.string().optional().nullable(),
   username: z.string().optional().nullable(),
-  email: z.string().email({ message: "Please enter a valid email address" }).optional().nullable(),
+  email: z.string().refine(
+    // This makes the field optional but validates when it has a value
+    (val) => !val || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val),
+    { message: "Please enter a valid email address or leave it empty" }
+  ).optional().nullable(),
   phoneNumber: z.string().optional().nullable(),
   birthDate: z.string().optional().nullable(),
   nationality: z.string().optional().nullable(),
