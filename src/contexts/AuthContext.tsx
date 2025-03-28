@@ -14,6 +14,10 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Admin user credentials for direct login
+const ADMIN_USERNAME = "fede.alegre";
+const ADMIN_PASSWORD = "backoffice";
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<BackofficeUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -40,6 +44,39 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (credentials: LoginRequest) => {
     try {
       setIsLoading(true);
+      
+      // Check if credentials match our hardcoded admin user
+      if (credentials.userName === ADMIN_USERNAME && credentials.password === ADMIN_PASSWORD) {
+        // Create admin user object
+        const adminUser: BackofficeUser = {
+          id: "admin-1",
+          name: "Federico",
+          surname: "Alegre",
+          roles: ["admin"],
+          state: "active",
+          username: ADMIN_USERNAME,
+          last_login: new Date().toISOString()
+        };
+        
+        // Store admin user and mock token
+        setUser(adminUser);
+        localStorage.setItem("user", JSON.stringify(adminUser));
+        localStorage.setItem("token", "mock-admin-token-" + Date.now());
+        localStorage.setItem("refreshToken", "mock-admin-refresh-token-" + Date.now());
+        
+        // Store token expiration (24 hours)
+        const expiresAt = Date.now() + (24 * 60 * 60 * 1000);
+        localStorage.setItem("expiresAt", expiresAt.toString());
+        
+        toast({
+          title: "Login successful",
+          description: `Welcome back, Federico!`,
+        });
+        
+        return;
+      }
+      
+      // If not the admin user, proceed with regular API login
       const response = await api.login(credentials);
       
       // Store user and token
