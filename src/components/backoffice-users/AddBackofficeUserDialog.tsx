@@ -37,6 +37,7 @@ interface AddBackofficeUserDialogProps {
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters" }),
   surname: z.string().min(2, { message: "Surname must be at least 2 characters" }),
+  email: z.string().min(2, { message: "Email must be at least 2 characters" }),
   roles: z.array(z.string()).min(1, { message: "At least one role must be selected" }),
 });
 
@@ -58,6 +59,7 @@ const AddBackofficeUserDialog: React.FC<AddBackofficeUserDialogProps> = ({
     defaultValues: {
       name: "",
       surname: "",
+      email: "",
       roles: [],
     },
   });
@@ -91,6 +93,7 @@ const AddBackofficeUserDialog: React.FC<AddBackofficeUserDialogProps> = ({
     const newUser: BackofficeUser = {
       name: values.name,
       surname: values.surname,
+      email: values.email,
       roles: values.roles,
       state: "active",
     };
@@ -145,6 +148,20 @@ const AddBackofficeUserDialog: React.FC<AddBackofficeUserDialogProps> = ({
                   <FormLabel>Last Name</FormLabel>
                   <FormControl>
                     <Input placeholder="Enter last name" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="email"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter email" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
