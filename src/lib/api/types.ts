@@ -40,7 +40,7 @@ export interface User {
     publicId?: string;
     defaultWalletId?: number;
     username?: string; // Made optional to match mock data
-    name: string;
+    name?: string; // Made optional to match mock data
     surname?: string; // Made optional to match mock data
     email?: string;
     phoneNumber?: string;
@@ -103,6 +103,7 @@ export interface BackofficeUser {
     id?: string;
     name: string;
     surname: string;
+    email?: string;
     roles: string[];
     state: 'active' | 'blocked';
     last_login?: string;
