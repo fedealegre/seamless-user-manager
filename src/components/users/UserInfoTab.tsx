@@ -8,6 +8,7 @@ import { EditUserInfoForm } from "./EditUserInfoForm";
 import { userService } from "@/lib/api/user-service";
 import { useQueryClient } from "@tanstack/react-query";
 import { formatFieldName, parseDate } from "@/lib/utils";
+import { useUserFieldSettings } from "@/hooks/use-user-field-settings";
 
 interface UserInfoTabProps {
   user: User;
@@ -16,6 +17,7 @@ interface UserInfoTabProps {
 export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
   const [isEditing, setIsEditing] = useState(false);
   const queryClient = useQueryClient();
+  const { isFieldVisible, isFieldEditable, isLoaded } = useUserFieldSettings();
 
   // Helper function to format dates
   const formatDate = (dateString?: string): string => {
@@ -94,13 +96,28 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
     );
   }
 
+  // Field visibility check helper
+  const shouldRenderField = (fieldName: string) => {
+    return isLoaded && isFieldVisible(fieldName);
+  };
+
+  // Check if the edit button should be visible
+  // There should be at least one editable field
+  const hasEditableFields = isLoaded && [
+    "name", "surname", "username", "email", "phoneNumber", 
+    "birthDate", "nationality", "gender", "language", "region",
+    "additionalInfo"
+  ].some(field => isFieldEditable(field));
+
   return (
     <div className="space-y-6">
-      <div className="flex justify-end">
-        <Button onClick={() => setIsEditing(true)}>
-          Edit Information
-        </Button>
-      </div>
+      {hasEditableFields && (
+        <div className="flex justify-end">
+          <Button onClick={() => setIsEditing(true)}>
+            Edit Information
+          </Button>
+        </div>
+      )}
       
       <Card>
         <CardHeader>
@@ -109,48 +126,68 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-4">
-              <div>
-                <h3 className="text-sm font-medium text-muted-foreground">Full Name</h3>
-                <p>{formatDisplayValue(user.name)} {formatDisplayValue(user.surname)}</p>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium text-muted-foreground">Username</h3>
-                <p>{formatDisplayValue(user.username)}</p>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium text-muted-foreground">Status</h3>
-                <div>{renderStatus()}</div>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium text-muted-foreground">Email</h3>
-                <p>{formatDisplayValue(user.email)}</p>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium text-muted-foreground">Phone Number</h3>
-                <p>{formatDisplayValue(user.phoneNumber || user.cellPhone)}</p>
-              </div>
+              {shouldRenderField("name") && shouldRenderField("surname") && (
+                <div>
+                  <h3 className="text-sm font-medium text-muted-foreground">Full Name</h3>
+                  <p>{formatDisplayValue(user.name)} {formatDisplayValue(user.surname)}</p>
+                </div>
+              )}
+              {shouldRenderField("username") && (
+                <div>
+                  <h3 className="text-sm font-medium text-muted-foreground">Username</h3>
+                  <p>{formatDisplayValue(user.username)}</p>
+                </div>
+              )}
+              {shouldRenderField("status") && (
+                <div>
+                  <h3 className="text-sm font-medium text-muted-foreground">Status</h3>
+                  <div>{renderStatus()}</div>
+                </div>
+              )}
+              {shouldRenderField("email") && (
+                <div>
+                  <h3 className="text-sm font-medium text-muted-foreground">Email</h3>
+                  <p>{formatDisplayValue(user.email)}</p>
+                </div>
+              )}
+              {shouldRenderField("phoneNumber") && (
+                <div>
+                  <h3 className="text-sm font-medium text-muted-foreground">Phone Number</h3>
+                  <p>{formatDisplayValue(user.phoneNumber || user.cellPhone)}</p>
+                </div>
+              )}
             </div>
             <div className="space-y-4">
-              <div>
-                <h3 className="text-sm font-medium text-muted-foreground">Birth Date</h3>
-                <p>{formatDate(user.birthDate)}</p>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium text-muted-foreground">Nationality</h3>
-                <p>{formatDisplayValue(user.nationality)}</p>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium text-muted-foreground">Gender</h3>
-                <p>{user.gender === 'M' ? 'Male' : user.gender === 'F' ? 'Female' : formatDisplayValue(user.gender)}</p>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium text-muted-foreground">Language</h3>
-                <p>{formatDisplayValue(user.language)}</p>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium text-muted-foreground">Region</h3>
-                <p>{formatDisplayValue(user.region)}</p>
-              </div>
+              {shouldRenderField("birthDate") && (
+                <div>
+                  <h3 className="text-sm font-medium text-muted-foreground">Birth Date</h3>
+                  <p>{formatDate(user.birthDate)}</p>
+                </div>
+              )}
+              {shouldRenderField("nationality") && (
+                <div>
+                  <h3 className="text-sm font-medium text-muted-foreground">Nationality</h3>
+                  <p>{formatDisplayValue(user.nationality)}</p>
+                </div>
+              )}
+              {shouldRenderField("gender") && (
+                <div>
+                  <h3 className="text-sm font-medium text-muted-foreground">Gender</h3>
+                  <p>{user.gender === 'M' ? 'Male' : user.gender === 'F' ? 'Female' : formatDisplayValue(user.gender)}</p>
+                </div>
+              )}
+              {shouldRenderField("language") && (
+                <div>
+                  <h3 className="text-sm font-medium text-muted-foreground">Language</h3>
+                  <p>{formatDisplayValue(user.language)}</p>
+                </div>
+              )}
+              {shouldRenderField("region") && (
+                <div>
+                  <h3 className="text-sm font-medium text-muted-foreground">Region</h3>
+                  <p>{formatDisplayValue(user.region)}</p>
+                </div>
+              )}
             </div>
           </div>
         </CardContent>
@@ -177,7 +214,7 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
               </div>
             </div>
             <div className="space-y-4">
-              {user.governmentIdentificationType && (
+              {shouldRenderField("governmentIdentificationType") && shouldRenderField("governmentIdentification") && user.governmentIdentificationType && (
                 <div>
                   <h3 className="text-sm font-medium text-muted-foreground">
                     {formatDisplayValue(user.governmentIdentificationType)}
@@ -185,7 +222,7 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
                   <p>{formatDisplayValue(user.governmentIdentification)}</p>
                 </div>
               )}
-              {user.governmentIdentificationType2 && (
+              {shouldRenderField("governmentIdentificationType2") && shouldRenderField("governmentIdentification2") && user.governmentIdentificationType2 && (
                 <div>
                   <h3 className="text-sm font-medium text-muted-foreground">
                     {formatDisplayValue(user.governmentIdentificationType2)}
@@ -198,14 +235,16 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Additional Information</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {renderAdditionalInfo()}
-        </CardContent>
-      </Card>
+      {shouldRenderField("additionalInfo") && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Additional Information</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {renderAdditionalInfo()}
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 };

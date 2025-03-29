@@ -1,49 +1,31 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
-import { User } from "@/lib/api/types";
 import { useAuth } from "@/contexts/AuthContext";
 import { Save } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-
-interface FieldSettings {
-  fieldName: string;
-  displayName: string;
-  isVisible: boolean;
-  isEditable: boolean;
-}
+import { useUserFieldSettings, FieldSetting } from "@/hooks/use-user-field-settings";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const UserFieldSettings = () => {
   const { toast } = useToast();
   const { user } = useAuth();
   const isAdmin = user?.roles.includes("admin");
-
-  // Get user fields from the User interface
-  const initialFieldSettings: FieldSettings[] = [
-    { fieldName: "name", displayName: "First Name", isVisible: true, isEditable: true },
-    { fieldName: "surname", displayName: "Last Name", isVisible: true, isEditable: true },
-    { fieldName: "username", displayName: "Username", isVisible: true, isEditable: true },
-    { fieldName: "email", displayName: "Email", isVisible: true, isEditable: true },
-    { fieldName: "phoneNumber", displayName: "Phone Number", isVisible: true, isEditable: true },
-    { fieldName: "gender", displayName: "Gender", isVisible: true, isEditable: true },
-    { fieldName: "birthDate", displayName: "Birth Date", isVisible: true, isEditable: true },
-    { fieldName: "nationality", displayName: "Nationality", isVisible: true, isEditable: true },
-    { fieldName: "language", displayName: "Language", isVisible: true, isEditable: true },
-    { fieldName: "region", displayName: "Region", isVisible: true, isEditable: true },
-    { fieldName: "status", displayName: "Status", isVisible: true, isEditable: true },
-    { fieldName: "hasPin", displayName: "Has PIN", isVisible: true, isEditable: false },
-    { fieldName: "timeZone", displayName: "Time Zone", isVisible: true, isEditable: true },
-    { fieldName: "governmentIdentification", displayName: "Government ID", isVisible: true, isEditable: false },
-    { fieldName: "governmentIdentificationType", displayName: "Government ID Type", isVisible: true, isEditable: false },
-    { fieldName: "additionalInfo", displayName: "Additional Information", isVisible: true, isEditable: true },
-  ];
-
-  const [fieldSettings, setFieldSettings] = useState<FieldSettings[]>(initialFieldSettings);
+  const { fieldSettings, saveSettings, isLoaded } = useUserFieldSettings();
+  
+  const [localSettings, setLocalSettings] = useState<FieldSetting[]>([]);
   const [isSaving, setIsSaving] = useState(false);
+  const [hasChanges, setHasChanges] = useState(false);
+
+  // Initialize local settings once the settings are loaded
+  useEffect(() => {
+    if (isLoaded) {
+      setLocalSettings([...fieldSettings]);
+    }
+  }, [fieldSettings, isLoaded]);
 
   // Check if user has admin role
   if (!isAdmin) {
@@ -60,36 +42,60 @@ const UserFieldSettings = () => {
     );
   }
 
+  // Show loading state
+  if (!isLoaded) {
+    return (
+      <div className="container mx-auto py-4">
+        <div className="mb-6">
+          <Skeleton className="h-10 w-64 mb-2" />
+          <Skeleton className="h-4 w-96" />
+        </div>
+        <Card>
+          <CardHeader>
+            <Skeleton className="h-6 w-48 mb-2" />
+            <Skeleton className="h-4 w-96" />
+          </CardHeader>
+          <CardContent>
+            <Skeleton className="h-64 w-full" />
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   const handleToggleVisibility = (index: number) => {
-    setFieldSettings(prev => {
-      const updated = [...prev];
-      updated[index] = { ...updated[index], isVisible: !updated[index].isVisible };
-      return updated;
-    });
+    const updated = [...localSettings];
+    updated[index] = { 
+      ...updated[index], 
+      isVisible: !updated[index].isVisible,
+      // If a field is not visible, it cannot be editable
+      isEditable: !updated[index].isVisible ? false : updated[index].isEditable
+    };
+    setLocalSettings(updated);
+    setHasChanges(true);
   };
 
   const handleToggleEditability = (index: number) => {
-    setFieldSettings(prev => {
-      const updated = [...prev];
-      updated[index] = { ...updated[index], isEditable: !updated[index].isEditable };
-      return updated;
-    });
+    const updated = [...localSettings];
+    updated[index] = { ...updated[index], isEditable: !updated[index].isEditable };
+    setLocalSettings(updated);
+    setHasChanges(true);
   };
 
   const handleSaveSettings = () => {
     setIsSaving(true);
     
-    // Simulate API call to save settings
+    // Save settings to localStorage using our hook
+    saveSettings(localSettings);
+    
     setTimeout(() => {
-      // In a real app, we would save these settings to the backend
-      localStorage.setItem('userFieldSettings', JSON.stringify(fieldSettings));
-      
       setIsSaving(false);
+      setHasChanges(false);
       toast({
         title: "Settings saved",
         description: "User field settings have been updated successfully.",
       });
-    }, 1000);
+    }, 500);
   };
 
   return (
@@ -103,7 +109,7 @@ const UserFieldSettings = () => {
         </div>
         <Button 
           onClick={handleSaveSettings} 
-          disabled={isSaving}
+          disabled={isSaving || !hasChanges}
           className="flex items-center gap-2"
         >
           <Save size={16} />
@@ -115,7 +121,7 @@ const UserFieldSettings = () => {
         <CardHeader>
           <CardTitle>User Field Configuration</CardTitle>
           <CardDescription>
-            Toggle visibility and editability for each user field in the backoffice
+            Toggle visibility and editability for each user field in the backoffice. Changes will apply to the User Detail pages.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -128,7 +134,7 @@ const UserFieldSettings = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {fieldSettings.map((field, index) => (
+              {localSettings.map((field, index) => (
                 <TableRow key={field.fieldName}>
                   <TableCell className="font-medium">{field.displayName}</TableCell>
                   <TableCell className="text-center">
