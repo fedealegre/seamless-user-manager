@@ -46,6 +46,7 @@ const BackofficeUsersTable: React.FC<BackofficeUsersTableProps> = ({
         <TableHeader>
           <TableRow>
             <TableHead>User</TableHead>
+            <TableHead>Email</TableHead>
             <TableHead>Roles</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Last Login</TableHead>
@@ -69,6 +70,7 @@ const BackofficeUsersTable: React.FC<BackofficeUsersTableProps> = ({
                     </div>
                   </div>
                 </TableCell>
+                <TableCell>{user.email || "—"}</TableCell>
                 <TableCell>
                   <div className="flex flex-wrap gap-1">
                     {user.roles && user.roles.map((role) => (
@@ -99,6 +101,9 @@ const BackofficeUsersTable: React.FC<BackofficeUsersTableProps> = ({
                     <DropdownMenuContent align="end">
                       <DropdownMenuLabel>Actions</DropdownMenuLabel>
                       <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={() => onUserAction(user, "edit")}>
+                        <Pencil size={16} className="mr-2" /> Edit User
+                      </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => onUserAction(user, "editRoles")}>
                         <Shield size={16} className="mr-2" /> Edit Roles
                       </DropdownMenuItem>
@@ -130,7 +135,7 @@ const BackofficeUsersTable: React.FC<BackofficeUsersTableProps> = ({
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={5} className="h-24 text-center">
+              <TableCell colSpan={6} className="h-24 text-center">
                 No backoffice users found. Try a different search or add a new user.
               </TableCell>
             </TableRow>

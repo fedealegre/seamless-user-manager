@@ -1,8 +1,9 @@
+
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { apiService } from "@/lib/api";
 import { AuditLog } from "@/lib/api/types";
-import { format, parseISO, subDays } from "date-fns";
+import { format, parseISO } from "date-fns";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { RefreshCw, FileCog } from "lucide-react";
@@ -17,8 +18,8 @@ import ExportCSVButton from "@/components/common/ExportCSVButton";
 
 const AuditLogs = () => {
   const [filters, setFilters] = useState<FilterParams>({
-    startDate: subDays(new Date(), 7),
-    endDate: new Date(),
+    startDate: undefined,
+    endDate: undefined,
     user: "",
     operationType: "all",
   });
@@ -47,8 +48,8 @@ const AuditLogs = () => {
 
   const resetFilters = () => {
     setFilters({
-      startDate: subDays(new Date(), 7),
-      endDate: new Date(),
+      startDate: undefined,
+      endDate: undefined,
       user: "",
       operationType: "all",
     });

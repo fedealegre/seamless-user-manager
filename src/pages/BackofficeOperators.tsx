@@ -9,6 +9,7 @@ import DeleteBackofficeUserDialog from "@/components/backoffice-users/DeleteBack
 import BlockBackofficeUserDialog from "@/components/backoffice-users/BlockBackofficeUserDialog";
 import UnblockBackofficeUserDialog from "@/components/backoffice-users/UnblockBackofficeUserDialog";
 import EditRolesDialog from "@/components/backoffice-users/EditRolesDialog";
+import EditBackofficeUserDialog from "@/components/backoffice-users/EditBackofficeUserDialog";
 import BackofficeUsersLoadingSkeleton from "@/components/backoffice-users/BackofficeUsersLoadingSkeleton";
 import { Button } from "@/components/ui/button";
 import { UserPlus, Search, AlertTriangle, RefreshCw } from "lucide-react";
@@ -25,6 +26,7 @@ const BackofficeOperators: React.FC = () => {
   const [showBlockDialog, setShowBlockDialog] = useState(false);
   const [showUnblockDialog, setShowUnblockDialog] = useState(false);
   const [showEditRolesDialog, setShowEditRolesDialog] = useState(false);
+  const [showEditUserDialog, setShowEditUserDialog] = useState(false);
   const [selectedUser, setSelectedUser] = useState<BackofficeUser | null>(null);
 
   // Fetch backoffice users
@@ -47,6 +49,7 @@ const BackofficeOperators: React.FC = () => {
           user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
           user.surname.toLowerCase().includes(searchQuery.toLowerCase()) ||
           user.id?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          (user.email && user.email.toLowerCase().includes(searchQuery.toLowerCase())) ||
           (user.roles && user.roles.some(role => role.toLowerCase().includes(searchQuery.toLowerCase())))
       )
     : users;
@@ -66,6 +69,9 @@ const BackofficeOperators: React.FC = () => {
         break;
       case "editRoles":
         setShowEditRolesDialog(true);
+        break;
+      case "edit":
+        setShowEditUserDialog(true);
         break;
       default:
         break;
@@ -87,7 +93,7 @@ const BackofficeOperators: React.FC = () => {
           <div className="flex items-center gap-2 mt-2">
             <Search className="h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search by name, ID, or role..."
+              placeholder="Search by name, ID, email, or role..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="h-9 w-full md:w-[300px]"
@@ -156,6 +162,14 @@ const BackofficeOperators: React.FC = () => {
           open={showEditRolesDialog}
           user={selectedUser}
           onClose={() => setShowEditRolesDialog(false)}
+        />
+      )}
+
+      {selectedUser && showEditUserDialog && (
+        <EditBackofficeUserDialog
+          open={showEditUserDialog}
+          user={selectedUser}
+          onClose={() => setShowEditUserDialog(false)}
         />
       )}
     </div>

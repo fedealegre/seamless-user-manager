@@ -37,6 +37,24 @@ const mockBackofficeUsers: BackofficeUser[] = [
     roles: ["support"],
     state: "active",
     last_login: "2023-09-02T11:00:00Z"
+  },
+  {
+    id: "3",
+    name: "Operations",
+    surname: "Manager",
+    email: "operations@example.com",
+    roles: ["operations", "reporting"],
+    state: "active",
+    last_login: "2023-09-03T09:30:00Z"
+  },
+  {
+    id: "4",
+    name: "Finance",
+    surname: "Analyst",
+    email: "finance@example.com",
+    roles: ["finance"],
+    state: "blocked",
+    last_login: "2023-08-25T14:20:00Z"
   }
 ];
 
@@ -73,6 +91,51 @@ const mockAuditLogs: AuditLog[] = [
     previousValue: JSON.stringify({ limit: 1000 }),
     newValue: JSON.stringify({ limit: 5000 }),
     entity: "anti_fraud_rule"
+  },
+  {
+    id: "log3",
+    dateTime: "2023-09-03T14:30:00Z",
+    user: "support@example.com",
+    operationType: "user_block",
+    previousValue: JSON.stringify({ state: "active" }),
+    newValue: JSON.stringify({ state: "blocked" }),
+    entity: "user"
+  },
+  {
+    id: "log4",
+    dateTime: "2023-09-04T09:15:00Z",
+    user: "admin@example.com",
+    operationType: "permission_change",
+    previousValue: JSON.stringify({ roles: ["support"] }),
+    newValue: JSON.stringify({ roles: ["support", "reporting"] }),
+    entity: "backoffice_user"
+  },
+  {
+    id: "log5",
+    dateTime: "2023-09-05T16:45:00Z",
+    user: "operations@example.com",
+    operationType: "transaction_cancel",
+    previousValue: JSON.stringify({ status: "pending" }),
+    newValue: JSON.stringify({ status: "cancelled" }),
+    entity: "transaction"
+  },
+  {
+    id: "log6",
+    dateTime: "2023-09-06T11:20:00Z",
+    user: "finance@example.com",
+    operationType: "compensation",
+    previousValue: "",
+    newValue: JSON.stringify({ amount: 500, reason: "Service issue" }),
+    entity: "transaction"
+  },
+  {
+    id: "log7",
+    dateTime: "2023-09-07T13:10:00Z",
+    user: "admin@example.com",
+    operationType: "config_change",
+    previousValue: JSON.stringify({ field_visibility: { email: true } }),
+    newValue: JSON.stringify({ field_visibility: { email: false } }),
+    entity: "settings"
   }
 ];
 
@@ -153,6 +216,9 @@ apiService.getAuditLogs = async (
   if (operationType) {
     filteredLogs = filteredLogs.filter(log => log.operationType === operationType);
   }
+  
+  // Sort by date (newest first)
+  filteredLogs.sort((a, b) => new Date(b.dateTime).getTime() - new Date(a.dateTime).getTime());
   
   return filteredLogs;
 };
