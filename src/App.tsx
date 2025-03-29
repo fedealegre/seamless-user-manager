@@ -20,6 +20,7 @@ import AntiFraudRules from "./pages/AntiFraudRules";
 import AuditLogs from "./pages/AuditLogs";
 import BackofficeOperators from "./pages/BackofficeOperators";
 import CompanySettings from "./pages/CompanySettings";
+import UserFieldSettings from "./pages/UserFieldSettings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
@@ -62,6 +63,7 @@ const App = () => (
                   <Route path="/audit-logs" element={<AuditLogs />} />
                   <Route path="/backoffice-operators" element={<BackofficeOperators />} />
                   <Route path="/company-settings" element={<CompanySettings />} />
+                  <Route path="/user-field-settings" element={<UserFieldSettings />} />
                 </Route>
                 
                 {/* Catch-all Route */}

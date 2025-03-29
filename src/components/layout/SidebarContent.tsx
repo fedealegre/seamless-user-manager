@@ -9,7 +9,8 @@ import {
   Clock, 
   User, 
   BarChart3,
-  Settings
+  Settings,
+  UserCog
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
@@ -33,7 +34,7 @@ const sidebarSections: SidebarSection[] = [
     title: "Management",
     items: [
       { title: "Dashboard", icon: BarChart3, path: "/dashboard" },
-      { title: "User Management", icon: Users, path: "/users" }, // Removed badge
+      { title: "User Management", icon: Users, path: "/users" },
       { title: "Wallets", icon: Wallet, path: "/wallets" },
       { title: "Transactions", icon: FileText, path: "/transactions" }
     ]
@@ -49,7 +50,8 @@ const sidebarSections: SidebarSection[] = [
   {
     title: "Settings",
     items: [
-      { title: "Company Settings", icon: Settings, path: "/company-settings", roles: ["admin"] }
+      { title: "Company Settings", icon: Settings, path: "/company-settings", roles: ["admin"] },
+      { title: "User Field Settings", icon: UserCog, path: "/user-field-settings", roles: ["admin"] }
     ]
   }
 ];
