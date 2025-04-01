@@ -18,7 +18,6 @@ export interface Transaction {
     removed?: boolean;
     lastIdTransaction?: string;
     length?: number;
-    transactionType?: string;
     amount?: number;
     date?: string;
 }
