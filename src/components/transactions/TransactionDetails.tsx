@@ -191,7 +191,7 @@ const TransactionDetails: React.FC<TransactionDetailsProps> = ({
           </div>
           
           {/* Flow Visualization */}
-          {(transaction.transactiontype === 'TRANSFER_CASH_IN' || transaction.transactiontype === 'TRANSFER_CASH_OUT') && (
+          {(transaction.transactionType === 'TRANSFER_CASH_IN' || transaction.transactionType === 'TRANSFER_CASH_OUT') && (
             <div className="p-4 mt-4 border rounded-md">
               <div className="flex items-center justify-between">
                 <div className="text-center">
