@@ -13,7 +13,8 @@ export interface Transaction {
     destinationTransactionId?: string;
     status?: string;
     currency?: string;
-    type?: string;
+    transactionType?: string;
+    movementType?: string;
     removed?: boolean;
     lastIdTransaction?: string;
     length?: number;
