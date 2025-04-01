@@ -48,7 +48,7 @@ const TransactionDetails: React.FC<TransactionDetailsProps> = ({
         <DialogHeader>
           <DialogTitle>Transaction Details</DialogTitle>
           <DialogDescription>
-            Complete information for transaction {transaction.transactionId}
+            Complete information for transaction {transaction.id}
           </DialogDescription>
         </DialogHeader>
         
@@ -81,7 +81,7 @@ const TransactionDetails: React.FC<TransactionDetailsProps> = ({
             
             <div className="grid grid-cols-2 gap-2 p-3 border rounded-md">
               <div className="text-sm font-medium">Transaction ID</div>
-              <div className="text-sm">{transaction.transactionId}</div>
+              <div className="text-sm">{transaction.id}</div>
               
               {transaction.originalTransactionId && (
                 <>
