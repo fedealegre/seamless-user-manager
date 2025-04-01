@@ -278,25 +278,6 @@ export const useTransactionManagement = () => {
       }
     },
   };
-  
-  function handleApplyFilters(newFilters: TransactionFilters) {
-    setFilters(newFilters);
-    setPage(1);
-    setShowFilters(false);
-    refetch();
-  }
-  
-  function resetFilters() {
-    setFilters({
-      status: "",
-      transactionType: "",
-      startDate: "",
-      endDate: "",
-      currency: "",
-    });
-    setPage(1);
-    refetch();
-  }
 };
 
 export type UseTransactionManagementReturn = ReturnType<typeof useTransactionManagement>;
