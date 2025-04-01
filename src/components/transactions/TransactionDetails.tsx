@@ -122,7 +122,7 @@ const TransactionDetails: React.FC<TransactionDetailsProps> = ({
             
             <div className="grid grid-cols-2 gap-2 p-3 border rounded-md">
               <div className="text-sm font-medium">Type</div>
-              <div className="text-sm capitalize">{transaction.type || 'Unknown'}</div>
+              <div className="text-sm capitalize">{transaction.movementType || 'Unknown'}</div>
               
               <div className="text-sm font-medium">Amount</div>
               <div className="text-sm font-semibold">
@@ -191,7 +191,7 @@ const TransactionDetails: React.FC<TransactionDetailsProps> = ({
           </div>
           
           {/* Flow Visualization */}
-          {transaction.type === 'transfer' && (
+          {(transaction.transactiontype === 'TRANSFER_CASH_IN' || transaction.transactiontype === 'TRANSFER_CASH_OUT') && (
             <div className="p-4 mt-4 border rounded-md">
               <div className="flex items-center justify-between">
                 <div className="text-center">
