@@ -82,7 +82,7 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
                   {getTypeBadge(transaction.movementType)}
                 </TableCell>
                 <TableCell>
-                  <div className={`font-medium ${transaction..movementType === 'deposit' || transaction..movementType === 'INCOME' ? 'text-green-600' : transaction..movementType === 'OUTCOME' ? 'text-red-600' : ''}`}>
+                  <div className={`font-medium ${transaction.movementType === 'deposit' || transaction.movementType === 'INCOME' ? 'text-green-600' : transaction.movementType === 'OUTCOME' ? 'text-red-600' : ''}`}>
                     {formatCurrency(transaction.amount, transaction.currency)}
                   </div>
                 </TableCell>
