@@ -24,12 +24,14 @@ export const generateRandomTransaction = (): Transaction => {
   
   // Create the transaction
   const newTransaction: Transaction = {
-    transactionId: `tx_${Date.now().toString()}`,
+    id: Math.floor(Math.random() * 10000), // Generate a random ID
+    transactionId: `tx_${Date.now().toString()}`, // Use the required field from components
     customerId: randomUserId.toString(),
     walletId: randomWallet.id.toString(),
     date: new Date().toISOString(),
     status: randomStatus,
-    type: randomType,
+    type: randomType, // Using type field as required by components
+    transactionType: randomType, // Also setting transactionType for compatibility
     amount: randomAmount,
     currency: randomWallet.currency || "USD",
     reference: `Auto-generated ${randomType}`

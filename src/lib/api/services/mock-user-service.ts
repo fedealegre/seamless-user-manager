@@ -1,3 +1,4 @@
+
 import { User, Wallet, Transaction, CompensationRequest } from "../types";
 import { UserService } from "./user-service-interface";
 import { mockUsers, mockWallets, mockTransactions } from "../mock/mock-users-data";
@@ -114,12 +115,15 @@ export class MockUserService implements UserService {
     
     // Create a new transaction for the compensation
     const newTransaction: Transaction = {
+      id: Date.now(),
       transactionId: `comp_${Date.now()}`,
       customerId: userId,
       walletId: walletId.toString(),
       date: new Date().toISOString(),
       status: "completed",
       type: "compensation",
+      transactionType: "COMPENSATE",
+      movementType: "INCOME",
       amount: parseFloat(request.amount),
       currency: mockWallets[parseInt(userId)]?.find(w => w.id === walletId)?.currency || "USD",
       reference: request.reason

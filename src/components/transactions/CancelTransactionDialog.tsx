@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Transaction } from "@/lib/api/types";
 import {
@@ -49,6 +50,9 @@ const CancelTransactionDialog: React.FC<CancelTransactionDialogProps> = ({
     }).format(amount);
   };
 
+  // Get the transaction identifier (either transactionId or id)
+  const transactionIdentifier = transaction.transactionId || transaction.id;
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
@@ -65,7 +69,7 @@ const CancelTransactionDialog: React.FC<CancelTransactionDialogProps> = ({
               <XCircle size={16} className="text-amber-600" />
             </div>
             <div>
-              <div className="font-medium">Transaction ID: {transaction.transactionId}</div>
+              <div className="font-medium">Transaction ID: {transactionIdentifier}</div>
               <div className="text-sm text-muted-foreground">
                 Amount: {formatCurrency(transaction.amount, transaction.currency)}
               </div>

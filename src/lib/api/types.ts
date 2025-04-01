@@ -9,12 +9,14 @@ export interface Transaction {
     endDate?: string;
     reference?: string;
     id: number;
+    transactionId?: string; // Added to match usage in components
     originTransactionId?: string;
     destinationTransactionId?: string;
     status?: string;
     currency?: string;
-    transactionType?: string;
+    transactionType?: string; // Single definition
     movementType?: string;
+    type?: string; // Added to match usage in components
     removed?: boolean;
     lastIdTransaction?: string;
     length?: number;
@@ -24,7 +26,7 @@ export interface Transaction {
 
 export interface Wallet {
     id: number;
-    name?: string;
+    name?: string; // Kept to avoid breaking mockWallets
     status?: string;
     companyId: number;
     globalId?: string;

@@ -59,7 +59,7 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
               .map((transaction) => (
               <TableRow key={transaction.id}>
                 <TableCell>
-                  <div className="font-medium">{transaction.id}</div>
+                  <div className="font-medium">{transaction.transactionId || transaction.id}</div>
                   {transaction.reference && (
                     <div className="text-xs text-muted-foreground">
                       Ref: {transaction.reference}
@@ -79,10 +79,10 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
                   ) : '-'}
                 </TableCell>
                 <TableCell>
-                  {getTypeBadge(transaction.movementType)}
+                  {getTypeBadge(transaction.movementType || transaction.type)}
                 </TableCell>
                 <TableCell>
-                  <div className={`font-medium ${transaction.movementType === 'deposit' || transaction.movementType === 'INCOME' ? 'text-green-600' : transaction.movementType === 'OUTCOME' ? 'text-red-600' : ''}`}>
+                  <div className={`font-medium ${(transaction.movementType === 'deposit' || transaction.movementType === 'INCOME') ? 'text-green-600' : transaction.movementType === 'OUTCOME' ? 'text-red-600' : ''}`}>
                     {formatCurrency(transaction.amount, transaction.currency)}
                   </div>
                 </TableCell>

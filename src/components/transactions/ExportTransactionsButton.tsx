@@ -40,10 +40,10 @@ const ExportTransactionsButton: React.FC<ExportTransactionsButtonProps> = ({
       rows: transactions,
       mapRow: (transaction: Transaction) => {
         return [
-          transaction.transactionId,
+          transaction.transactionId || transaction.id,
           transaction.reference || '',
           transaction.date ? new Date(transaction.date).toLocaleDateString() : '',
-          transaction.type,
+          transaction.type || transaction.transactionType || transaction.movementType || '',
           transaction.amount,
           transaction.currency,
           transaction.status,

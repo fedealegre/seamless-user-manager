@@ -53,7 +53,7 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
   const handleCancelTransaction = (transaction: Transaction) => {
     toast({
       title: "Cancel Transaction",
-      description: `Cancellation of transaction ${transaction.transactionId} not implemented in this view`,
+      description: `Cancellation of transaction ${transaction.transactionId || transaction.id} not implemented in this view`,
     });
   };
 
@@ -77,7 +77,7 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
       const compensationRequest = {
         amount,
         reason,
-        transaction_code: selectedTransaction.transactionId,
+        transaction_code: selectedTransaction.transactionId || selectedTransaction.id.toString(),
         admin_user: "current-admin", // This should come from auth context in a real app
         transaction_type: "COMPENSATE" as const,
       };

@@ -57,7 +57,7 @@ export const useTransactionManagement = () => {
         
         if (searchTerm) {
           return txns.filter(t => 
-            t.transactionId.includes(searchTerm) || 
+            (t.transactionId?.includes(searchTerm) || t.id.toString().includes(searchTerm)) || 
             t.reference?.includes(searchTerm)
           );
         }
@@ -146,11 +146,14 @@ export const useTransactionManagement = () => {
     if (!selectedTransaction) return;
     
     try {
+      // Get transaction identifier (either id or transactionId)
+      const transactionIdentifier = selectedTransaction.transactionId || selectedTransaction.id.toString();
+      
       // Using the correct parameter order for cancelTransaction
-      await apiService.cancelTransaction(selectedTransaction.transactionId, reason);
+      await apiService.cancelTransaction(transactionIdentifier, reason);
       toast({
         title: "Transaction Cancelled",
-        description: `Transaction ${selectedTransaction.transactionId} has been cancelled successfully.`,
+        description: `Transaction ${transactionIdentifier} has been cancelled successfully.`,
       });
       refetch();
     } catch (error) {
@@ -223,24 +226,77 @@ export const useTransactionManagement = () => {
     filters,
     transactions,
     isLoading,
-    totalPages,
-    totalTransactions,
-    activeFiltersCount,
+    totalPages: Math.ceil((transactions?.length || 0) / pageSize),
+    totalTransactions: transactions?.length || 0,
+    activeFiltersCount: Object.values(filters).filter(v => v !== "").length,
     setSearchTerm,
     setShowFilters,
-    handleSearch,
-    handleViewDetails,
-    handleCancelTransaction,
-    handleCompensateCustomer,
+    handleSearch: (e: React.FormEvent) => {
+      e.preventDefault();
+      setPage(1);
+      refetch();
+    },
+    handleViewDetails: (transaction: Transaction) => {
+      setSelectedTransaction(transaction);
+      setShowDetailsDialog(true);
+    },
+    handleCancelTransaction: (transaction: Transaction) => {
+      setSelectedTransaction(transaction);
+      setShowCancelDialog(true);
+    },
+    handleCompensateCustomer: (transaction: Transaction) => {
+      setSelectedTransaction(transaction);
+      setShowCompensateDialog(true);
+    },
     handleApplyFilters,
     resetFilters,
     handleSubmitCancel,
     handleSubmitCompensation,
     setPage,
-    handleCloseDetailsDialog,
-    handleCloseCancelDialog,
-    handleCloseCompensateDialog,
+    handleCloseDetailsDialog: (open: boolean) => {
+      setShowDetailsDialog(open);
+      if (!open) {
+        setTimeout(() => {
+          setSelectedTransaction(null);
+        }, 300);
+      }
+    },
+    handleCloseCancelDialog: (open: boolean) => {
+      setShowCancelDialog(open);
+      if (!open) {
+        setTimeout(() => {
+          setSelectedTransaction(null);
+        }, 300);
+      }
+    },
+    handleCloseCompensateDialog: (open: boolean) => {
+      setShowCompensateDialog(open);
+      if (!open) {
+        setTimeout(() => {
+          setSelectedTransaction(null);
+        }, 300);
+      }
+    },
   };
+  
+  function handleApplyFilters(newFilters: TransactionFilters) {
+    setFilters(newFilters);
+    setPage(1);
+    setShowFilters(false);
+    refetch();
+  }
+  
+  function resetFilters() {
+    setFilters({
+      status: "",
+      transactionType: "",
+      startDate: "",
+      endDate: "",
+      currency: "",
+    });
+    setPage(1);
+    refetch();
+  }
 };
 
 export type UseTransactionManagementReturn = ReturnType<typeof useTransactionManagement>;
