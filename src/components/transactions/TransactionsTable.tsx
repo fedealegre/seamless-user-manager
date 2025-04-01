@@ -57,9 +57,9 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
             transactions
               .slice((page - 1) * pageSize, page * pageSize)
               .map((transaction) => (
-              <TableRow key={transaction.transactionId}>
+              <TableRow key={transaction.id}>
                 <TableCell>
-                  <div className="font-medium">{transaction.transactionId}</div>
+                  <div className="font-medium">{transaction.id}</div>
                   {transaction.reference && (
                     <div className="text-xs text-muted-foreground">
                       Ref: {transaction.reference}
