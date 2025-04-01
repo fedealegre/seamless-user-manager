@@ -25,6 +25,7 @@ export interface Transaction {
 
 export interface Wallet {
     id: number;
+    name?: string;
     status?: string;
     companyId: number;
     globalId?: string;
