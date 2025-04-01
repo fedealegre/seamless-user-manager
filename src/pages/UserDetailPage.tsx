@@ -122,7 +122,7 @@ const UserDetailPage = () => {
         <div>
           <h2 className="text-2xl font-semibold">{user.name} {user.surname}</h2>
           <p className="text-muted-foreground">{user.username}</p>
-          <p className="text-muted-foreground">{user.phoneNumber}</p>
+          <p className="text-muted-foreground">{user.cellPhone}</p>
         </div>
       </div>
 
