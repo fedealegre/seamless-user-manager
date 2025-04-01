@@ -8,7 +8,7 @@ export interface Transaction {
     initDate?: string;
     endDate?: string;
     reference?: string;
-    transactionId: string;
+    id: number;
     originTransactionId?: string;
     destinationTransactionId?: string;
     status?: string;
