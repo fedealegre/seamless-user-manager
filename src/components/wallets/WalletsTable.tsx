@@ -1,8 +1,9 @@
 
 import React from "react";
-import { Eye, ShieldOff, Shield } from "lucide-react";
+import { Edit, ExternalLink, Eye } from "lucide-react";
 import { Wallet } from "@/lib/api/types";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   Table,
   TableBody,
@@ -11,41 +12,43 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { useLanguage } from "@/contexts/LanguageContext";
 
 interface WalletsTableProps {
-  wallets: Wallet[];
-  userIds?: string[];
+  wallets: (Wallet & { userId?: string })[];
+  onSelectWallet?: (walletId: string) => void;
   showUser?: boolean;
-  onViewDetails?: (walletId: number) => void;
-  onBlockWallet?: (walletId: number) => void;
-  onUnblockWallet?: (walletId: number) => void;
-  onSelectWallet?: (walletId: string) => void; // Added this prop
 }
 
-export const WalletsTable: React.FC<WalletsTableProps> = ({
-  wallets,
-  userIds,
-  showUser = false,
-  onViewDetails,
-  onBlockWallet,
-  onUnblockWallet,
-  onSelectWallet, // Added this prop
-}) => {
-  const { t } = useLanguage();
-
-  const getStatusBadge = (status: string) => {
-    switch (status) {
+export const WalletsTable: React.FC<WalletsTableProps> = ({ wallets, onSelectWallet, showUser = false }) => {
+  // Helper function for wallet status badge
+  const getStatusBadge = (status?: string) => {
+    switch (status?.toLowerCase()) {
       case "active":
-        return <Badge className="bg-green-500">{t("active")}</Badge>;
+        return <Badge className="bg-green-500">Active</Badge>;
+      case "frozen":
+        return <Badge variant="outline" className="border-blue-500 text-blue-500">Frozen</Badge>;
       case "blocked":
-        return <Badge variant="destructive">{t("blocked")}</Badge>;
-      case "inactive":
-        return <Badge variant="secondary">{t("inactive")}</Badge>;
+        return <Badge variant="destructive">Blocked</Badge>;
+      case "pending":
+        return <Badge variant="outline" className="border-orange-500 text-orange-500">Pending</Badge>;
       default:
-        return <Badge variant="outline">{status}</Badge>;
+        return <Badge variant="secondary">{status || "Unknown"}</Badge>;
     }
+  };
+
+  // Format currency display
+  const formatCurrency = (amount?: number, currency?: string) => {
+    if (amount === undefined) return "-";
+    
+    // Basic formatting
+    let formatted = new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: currency || "USD",
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(amount);
+    
+    return formatted;
   };
 
   return (
@@ -54,81 +57,57 @@ export const WalletsTable: React.FC<WalletsTableProps> = ({
         <TableHeader>
           <TableRow>
             <TableHead>ID</TableHead>
-            {showUser && <TableHead>{t("userId")}</TableHead>}
-            <TableHead>{t("status")}</TableHead>
-            <TableHead>{t("currency")}</TableHead>
-            <TableHead className="text-right">{t("balance")}</TableHead>
-            <TableHead className="text-right">{t("availableBalance")}</TableHead>
-            <TableHead className="text-right">{t("actions")}</TableHead>
+            {showUser && <TableHead>User ID</TableHead>}
+            <TableHead>Status</TableHead>
+            <TableHead>Currency</TableHead>
+            <TableHead className="text-right">Balance</TableHead>
+            <TableHead className="text-right">Available Balance</TableHead>
+            <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {wallets.map((wallet, index) => (
-            <TableRow key={wallet.id} 
-              className={onSelectWallet ? "cursor-pointer hover:bg-muted" : ""} 
-              onClick={onSelectWallet ? () => onSelectWallet(wallet.id.toString()) : undefined}
-            >
-              <TableCell>{wallet.id}</TableCell>
-              {showUser && <TableCell>{userIds?.[index] || "-"}</TableCell>}
-              <TableCell>{getStatusBadge(wallet.status)}</TableCell>
-              <TableCell>{wallet.currency}</TableCell>
-              <TableCell className="text-right">
-                {wallet.balance.toLocaleString(undefined, {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}
-              </TableCell>
-              <TableCell className="text-right">
-                {wallet.availableBalance.toLocaleString(undefined, {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}
-              </TableCell>
-              <TableCell className="text-right">
-                <div className="flex justify-end gap-2">
-                  {onViewDetails && (
-                    <Button
-                      variant="outline"
-                      size="icon"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onViewDetails(wallet.id);
-                      }}
-                      title={t("viewDetails")}
-                    >
-                      <Eye className="h-4 w-4" />
-                    </Button>
-                  )}
-                  {wallet.status === "active" && onBlockWallet && (
-                    <Button
-                      variant="destructive"
-                      size="icon"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onBlockWallet(wallet.id);
-                      }}
-                      title={t("blockWallet")}
-                    >
-                      <Shield className="h-4 w-4" />
-                    </Button>
-                  )}
-                  {wallet.status === "blocked" && onUnblockWallet && (
-                    <Button
-                      variant="default"
-                      size="icon"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onUnblockWallet(wallet.id);
-                      }}
-                      title={t("unblockWallet")}
-                    >
-                      <ShieldOff className="h-4 w-4" />
-                    </Button>
-                  )}
-                </div>
+          {wallets.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={showUser ? 7 : 6} className="h-24 text-center">
+                No wallets found
               </TableCell>
             </TableRow>
-          ))}
+          ) : (
+            wallets.map((wallet) => (
+              <TableRow key={`${wallet.id}-${wallet.userId || ''}`}>
+                <TableCell className="font-medium">{wallet.id}</TableCell>
+                {showUser && <TableCell>{wallet.userId || '-'}</TableCell>}
+                <TableCell>{getStatusBadge(wallet.status)}</TableCell>
+                <TableCell>{wallet.currency || "-"}</TableCell>
+                <TableCell className="text-right">
+                  {formatCurrency(wallet.balance, wallet.currency)}
+                </TableCell>
+                <TableCell className="text-right">
+                  {formatCurrency(wallet.availableBalance, wallet.currency)}
+                </TableCell>
+                <TableCell className="text-right">
+                  <div className="flex justify-end gap-2">
+                    {onSelectWallet && (
+                      <Button 
+                        variant="outline" 
+                        size="icon" 
+                        onClick={() => onSelectWallet(wallet.id.toString())}
+                        title="View Transactions"
+                      >
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                    )}
+                    <Button variant="outline" size="icon">
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button variant="ghost" size="icon">
+                      <ExternalLink className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ))
+          )}
         </TableBody>
       </Table>
     </div>

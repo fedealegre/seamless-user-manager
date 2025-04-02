@@ -1,172 +1,185 @@
+
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
-import { Wallet } from "@/lib/api/types";
+import { Plus, Search, RefreshCw, Wallet, Users } from "lucide-react";
 import { userService } from "@/lib/api/user-service";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { WalletsTable } from "@/components/wallets/WalletsTable";
 import { WalletsLoadingSkeleton } from "@/components/wallets/WalletsLoadingSkeleton";
-import BackofficeLayout from "@/components/BackofficeLayout";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { useLanguage } from "@/contexts/LanguageContext";
+import { useToast } from "@/hooks/use-toast";
 
-const COLORS = ["#4f46e5", "#06b6d4", "#8b5cf6", "#ec4899"];
-
-const WalletManagement = () => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const { t } = useLanguage();
+const WalletManagement: React.FC = () => {
+  const [searchTerm, setSearchTerm] = useState("");
+  const { toast } = useToast();
   
-  const { data: allWallets, isLoading, error } = useQuery({
+  const { 
+    data: walletsWithUsers = [], 
+    isLoading, 
+    refetch,
+    isRefetching
+  } = useQuery({
     queryKey: ["all-wallets"],
     queryFn: async () => {
-      return userService.getAllWallets();
-    },
+      try {
+        const allWallets = await userService.getAllWallets();
+        return allWallets;
+      } catch (error) {
+        console.error("Failed to fetch wallets:", error);
+        toast({
+          title: "Error",
+          description: "Failed to load wallets",
+          variant: "destructive",
+        });
+        return [];
+      }
+    }
   });
 
-  const filteredWallets = allWallets?.filter((wallet) => {
-    const walletData = wallet.wallet;
-    const lowerCaseQuery = searchQuery.toLowerCase();
+  // Get all wallet objects for calculations
+  const allWallets = walletsWithUsers.map(item => item.wallet);
+
+  const filteredWallets = walletsWithUsers.filter(item => {
+    const wallet = item.wallet;
+    const walletMatch = 
+      wallet.id.toString().includes(searchTerm) || 
+      (wallet.currency && wallet.currency.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (wallet.status && wallet.status.toLowerCase().includes(searchTerm.toLowerCase()));
     
-    return (
-      walletData.id.toString().includes(lowerCaseQuery) ||
-      walletData.currency.toLowerCase().includes(lowerCaseQuery) ||
-      walletData.status.toLowerCase().includes(lowerCaseQuery) ||
-      wallet.userId.toLowerCase().includes(lowerCaseQuery)
-    );
+    // Also search by user ID
+    const userMatch = item.userId.includes(searchTerm);
+    
+    return walletMatch || userMatch;
   });
 
-  const activeWalletsCount = allWallets?.filter(item => item.wallet.status === "active").length || 0;
-  const blockedWalletsCount = allWallets?.filter(item => item.wallet.status === "blocked").length || 0;
-  
-  const currencyCounts: Record<string, number> = {};
-  allWallets?.forEach(item => {
-    const { currency } = item.wallet;
-    currencyCounts[currency] = (currencyCounts[currency] || 0) + 1;
-  });
-  
-  const topCurrencies = Object.entries(currencyCounts)
-    .map(([name, value]) => ({ name, value }))
-    .sort((a, b) => b.value - a.value)
-    .slice(0, 4);
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+  };
+
+  const handleRefresh = () => {
+    refetch();
+  };
 
   return (
-    <BackofficeLayout>
-      <div className="container mx-auto py-6">
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold tracking-tight">{t("wallets")}</h1>
+    <div className="flex flex-col gap-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Wallet Management</h1>
           <p className="text-muted-foreground">
-            {t("wallets")}
+            View and manage all wallets across the platform
           </p>
         </div>
-
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                {t("total")}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{allWallets?.length || 0}</div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                {t("activeWallets")}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{activeWalletsCount}</div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                {t("blockedWallets")}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{blockedWalletsCount}</div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
-                {t("topCurrencies")}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="pt-3">
-              {topCurrencies.length > 0 ? (
-                <ResponsiveContainer width="100%" height={100}>
-                  <PieChart>
-                    <Pie
-                      data={topCurrencies}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={25}
-                      outerRadius={40}
-                      paddingAngle={2}
-                      dataKey="value"
-                    >
-                      {topCurrencies.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip 
-                      formatter={(value, name) => [`${value}`, `${name}`]}
-                      labelFormatter={() => ""}
-                    />
-                  </PieChart>
-                </ResponsiveContainer>
-              ) : (
-                <div className="flex h-[100px] items-center justify-center">
-                  <p className="text-sm text-muted-foreground">{t("noResults")}</p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="mb-4">
-          <Input
-            placeholder={t("searchPlaceholder")}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="max-w-sm"
-          />
-        </div>
-
-        {isLoading ? (
-          <WalletsLoadingSkeleton showUser={true} />
-        ) : error ? (
-          <Card>
-            <CardContent className="py-10">
-              <div className="text-center text-muted-foreground">
-                Error loading wallets data
-              </div>
-            </CardContent>
-          </Card>
-        ) : filteredWallets && filteredWallets.length > 0 ? (
-          <WalletsTable 
-            wallets={filteredWallets.map(w => w.wallet)} 
-            userIds={filteredWallets.map(w => w.userId)}
-            showUser={true}
-          />
-        ) : (
-          <Card>
-            <CardContent className="py-10">
-              <div className="text-center text-muted-foreground">
-                {t("noResults")}
-              </div>
-            </CardContent>
-          </Card>
-        )}
+        <Button>
+          <Plus className="mr-2 h-4 w-4" />
+          Add Wallet
+        </Button>
       </div>
-    </BackofficeLayout>
+
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Total Wallets
+            </CardTitle>
+            <Wallet className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{allWallets.length}</div>
+            <p className="text-xs text-muted-foreground">
+              Across all users
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Active Wallets
+            </CardTitle>
+            <Wallet className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {allWallets.filter(wallet => wallet.status?.toLowerCase() === "active").length}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Currently active
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Total Balance
+            </CardTitle>
+            <Wallet className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              ${allWallets.reduce((sum, wallet) => sum + (wallet.balance || 0), 0).toLocaleString()}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              USD equivalent
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Users with Wallets
+            </CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {new Set(walletsWithUsers.map(item => item.userId)).size}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Total users with wallets
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>All Wallets</CardTitle>
+          <CardDescription>
+            Manage wallets for all users
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-between mb-4">
+            <form onSubmit={handleSearch} className="flex-1 max-w-sm">
+              <div className="relative">
+                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  type="search"
+                  placeholder="Search wallets..."
+                  className="pl-8"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
+            </form>
+            <Button variant="outline" onClick={handleRefresh} disabled={isRefetching}>
+              <RefreshCw className={`h-4 w-4 mr-2 ${isRefetching ? 'animate-spin' : ''}`} />
+              Refresh
+            </Button>
+          </div>
+
+          {isLoading ? (
+            <WalletsLoadingSkeleton showUser={true} />
+          ) : (
+            <WalletsTable wallets={filteredWallets.map(item => ({
+              ...item.wallet,
+              userId: item.userId
+            }))} 
+            showUser={true} />
+          )}
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 
