@@ -35,7 +35,7 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
   }, [wallets, selectedWalletId]);
 
   // Fetch transactions for the selected wallet using userService
-  const { data: transactions, isLoading } = useQuery({
+  const { data: transactions = [], isLoading } = useQuery({
     queryKey: ['user-transactions', userId, selectedWalletId],
     queryFn: () => {
       if (!selectedWalletId) return Promise.resolve([]);
@@ -100,7 +100,7 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
 
       toast({
         title: "Compensation Processed",
-        description: `Transaction ${result.transactionId} has been created for compensation`,
+        description: `Transaction has been created for compensation`,
       });
 
       // Close the dialog and refetch transactions

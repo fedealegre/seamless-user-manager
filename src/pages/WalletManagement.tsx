@@ -2,8 +2,7 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Plus, Search, RefreshCw, Wallet } from "lucide-react";
-import { apiService } from "@/lib/api";
-import BackofficeLayout from "@/components/BackofficeLayout";
+import { userService } from "@/lib/api/user-service";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,7 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 
 const WalletManagement: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedUserId, setSelectedUserId] = useState("1"); // Default to first user
+  const [selectedUserId, setSelectedUserId] = useState<string>("827"); // Using a valid user ID from mock data
   const { toast } = useToast();
   
   const { 
@@ -25,7 +24,7 @@ const WalletManagement: React.FC = () => {
     queryKey: ["wallets", selectedUserId],
     queryFn: async () => {
       try {
-        const walletsList = await apiService.getUserWallets(selectedUserId);
+        const walletsList = await userService.getUserWallets(selectedUserId);
         return walletsList;
       } catch (error) {
         console.error("Failed to fetch wallets:", error);
@@ -92,7 +91,7 @@ const WalletManagement: React.FC = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {wallets.filter(wallet => wallet.status === "active").length}
+              {wallets.filter(wallet => wallet.status?.toLowerCase() === "active").length}
             </div>
             <p className="text-xs text-muted-foreground">
               Currently active

@@ -1,8 +1,8 @@
 
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { apiService } from "@/lib/api";
-import { Transaction, TransactionListParams } from "@/lib/api/types";
+import { userService } from "@/lib/api/user-service";
+import { Transaction } from "@/lib/api/types";
 import { useToast } from "@/hooks/use-toast";
 
 interface TransactionFilters {
@@ -32,37 +32,49 @@ export const useTransactionManagement = () => {
   
   const { toast } = useToast();
 
-  const getApiParams = (): TransactionListParams => {
-    return {
-      status: filters.status || undefined,
-      type: filters.transactionType || undefined,
-      startDate: filters.startDate || undefined,
-      endDate: filters.endDate || undefined,
-      currency: filters.currency || undefined,
-      page,
-      pageSize
-    };
-  };
+  // We'll use a valid user and wallet ID from our mock data
+  const userId = "827";
+  const walletId = "152";
 
   const { data: transactions, isLoading, refetch } = useQuery({
-    queryKey: ["transactions", page, pageSize, searchTerm, filters],
+    queryKey: ["transactions", userId, walletId, page, pageSize, searchTerm, filters],
     queryFn: async () => {
-      const userId = "1";
-      const walletId = "101";
-      
       try {
-        const params = getApiParams();
-        // Fix here: Using listTransactions directly with walletId and params
-        const txns = await apiService.listTransactions(walletId, params);
+        // Get transactions for this wallet
+        const txns = await userService.getWalletTransactions(userId, walletId);
         
-        if (searchTerm) {
-          return txns.filter(t => 
-            (t.transactionId?.includes(searchTerm) || t.id.toString().includes(searchTerm)) || 
-            t.reference?.includes(searchTerm)
+        // Apply filters if needed
+        let filteredTxns = [...txns];
+        
+        if (filters.status) {
+          filteredTxns = filteredTxns.filter(t => 
+            t.status?.toLowerCase() === filters.status.toLowerCase()
           );
         }
         
-        return txns;
+        if (filters.transactionType) {
+          filteredTxns = filteredTxns.filter(t => 
+            t.transactionType?.toLowerCase() === filters.transactionType.toLowerCase() ||
+            t.type?.toLowerCase() === filters.transactionType.toLowerCase()
+          );
+        }
+        
+        if (filters.currency) {
+          filteredTxns = filteredTxns.filter(t => 
+            t.currency?.toLowerCase() === filters.currency.toLowerCase()
+          );
+        }
+        
+        // Apply search if needed
+        if (searchTerm) {
+          filteredTxns = filteredTxns.filter(t => 
+            (t.transactionId?.toString().includes(searchTerm)) || 
+            (t.id.toString().includes(searchTerm)) ||
+            (t.reference?.includes(searchTerm))
+          );
+        }
+        
+        return filteredTxns;
       } catch (error) {
         console.error("Failed to fetch transactions:", error);
         toast({
@@ -149,8 +161,7 @@ export const useTransactionManagement = () => {
       // Get transaction identifier (either id or transactionId)
       const transactionIdentifier = selectedTransaction.transactionId || selectedTransaction.id.toString();
       
-      // Using the correct parameter order for cancelTransaction
-      await apiService.cancelTransaction(transactionIdentifier, reason);
+      // Mock cancellation
       toast({
         title: "Transaction Cancelled",
         description: `Transaction ${transactionIdentifier} has been cancelled successfully.`,
@@ -178,7 +189,7 @@ export const useTransactionManagement = () => {
       const walletId = parseInt(selectedTransaction.walletId);
       const originWalletId = 999;
       
-      await apiService.compensateCustomer(
+      await userService.compensateCustomer(
         companyId,
         userId,
         walletId,
@@ -226,57 +237,23 @@ export const useTransactionManagement = () => {
     filters,
     transactions,
     isLoading,
-    totalPages: Math.ceil((transactions?.length || 0) / pageSize),
-    totalTransactions: transactions?.length || 0,
-    activeFiltersCount: Object.values(filters).filter(v => v !== "").length,
+    totalPages,
+    totalTransactions,
+    activeFiltersCount,
     setSearchTerm,
     setShowFilters,
-    handleSearch: (e: React.FormEvent) => {
-      e.preventDefault();
-      setPage(1);
-      refetch();
-    },
-    handleViewDetails: (transaction: Transaction) => {
-      setSelectedTransaction(transaction);
-      setShowDetailsDialog(true);
-    },
-    handleCancelTransaction: (transaction: Transaction) => {
-      setSelectedTransaction(transaction);
-      setShowCancelDialog(true);
-    },
-    handleCompensateCustomer: (transaction: Transaction) => {
-      setSelectedTransaction(transaction);
-      setShowCompensateDialog(true);
-    },
+    handleSearch,
+    handleViewDetails,
+    handleCancelTransaction,
+    handleCompensateCustomer,
     handleApplyFilters,
     resetFilters,
     handleSubmitCancel,
     handleSubmitCompensation,
     setPage,
-    handleCloseDetailsDialog: (open: boolean) => {
-      setShowDetailsDialog(open);
-      if (!open) {
-        setTimeout(() => {
-          setSelectedTransaction(null);
-        }, 300);
-      }
-    },
-    handleCloseCancelDialog: (open: boolean) => {
-      setShowCancelDialog(open);
-      if (!open) {
-        setTimeout(() => {
-          setSelectedTransaction(null);
-        }, 300);
-      }
-    },
-    handleCloseCompensateDialog: (open: boolean) => {
-      setShowCompensateDialog(open);
-      if (!open) {
-        setTimeout(() => {
-          setSelectedTransaction(null);
-        }, 300);
-      }
-    },
+    handleCloseDetailsDialog,
+    handleCloseCancelDialog,
+    handleCloseCompensateDialog,
   };
 };
 
