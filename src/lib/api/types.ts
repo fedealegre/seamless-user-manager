@@ -1,4 +1,3 @@
-
 // API types based on the OpenAPI specifications
 
 export interface Transaction {
@@ -22,6 +21,7 @@ export interface Transaction {
     length?: number;
     amount?: number;
     date?: string;
+    additionalInfo?: Record<string, any>; // Added to support mock data
 }
 
 export interface Wallet {
