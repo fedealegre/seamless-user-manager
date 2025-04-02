@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
@@ -27,7 +26,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ sidebarOpen }) => {
   const { user } = useAuth();
   const { t } = useLanguage();
 
-  const isAdmin = user?.role === "admin";
+  const isAdmin = user?.roles?.includes("admin");
   
   const mainMenuItems = [
     { path: "/dashboard", label: t("dashboard"), icon: LayoutDashboard },

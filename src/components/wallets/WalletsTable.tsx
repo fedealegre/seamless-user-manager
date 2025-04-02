@@ -21,6 +21,7 @@ interface WalletsTableProps {
   onViewDetails?: (walletId: number) => void;
   onBlockWallet?: (walletId: number) => void;
   onUnblockWallet?: (walletId: number) => void;
+  onSelectWallet?: (walletId: string) => void; // Added this prop
 }
 
 export const WalletsTable: React.FC<WalletsTableProps> = ({
@@ -30,6 +31,7 @@ export const WalletsTable: React.FC<WalletsTableProps> = ({
   onViewDetails,
   onBlockWallet,
   onUnblockWallet,
+  onSelectWallet, // Added this prop
 }) => {
   const { t } = useLanguage();
 
@@ -62,7 +64,10 @@ export const WalletsTable: React.FC<WalletsTableProps> = ({
         </TableHeader>
         <TableBody>
           {wallets.map((wallet, index) => (
-            <TableRow key={wallet.id}>
+            <TableRow key={wallet.id} 
+              className={onSelectWallet ? "cursor-pointer hover:bg-muted" : ""} 
+              onClick={onSelectWallet ? () => onSelectWallet(wallet.id.toString()) : undefined}
+            >
               <TableCell>{wallet.id}</TableCell>
               {showUser && <TableCell>{userIds?.[index] || "-"}</TableCell>}
               <TableCell>{getStatusBadge(wallet.status)}</TableCell>
@@ -85,7 +90,10 @@ export const WalletsTable: React.FC<WalletsTableProps> = ({
                     <Button
                       variant="outline"
                       size="icon"
-                      onClick={() => onViewDetails(wallet.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onViewDetails(wallet.id);
+                      }}
                       title={t("viewDetails")}
                     >
                       <Eye className="h-4 w-4" />
@@ -95,7 +103,10 @@ export const WalletsTable: React.FC<WalletsTableProps> = ({
                     <Button
                       variant="destructive"
                       size="icon"
-                      onClick={() => onBlockWallet(wallet.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onBlockWallet(wallet.id);
+                      }}
                       title={t("blockWallet")}
                     >
                       <Shield className="h-4 w-4" />
@@ -105,7 +116,10 @@ export const WalletsTable: React.FC<WalletsTableProps> = ({
                     <Button
                       variant="default"
                       size="icon"
-                      onClick={() => onUnblockWallet(wallet.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onUnblockWallet(wallet.id);
+                      }}
                       title={t("unblockWallet")}
                     >
                       <ShieldOff className="h-4 w-4" />

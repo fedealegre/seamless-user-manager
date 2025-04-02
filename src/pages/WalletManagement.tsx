@@ -1,9 +1,8 @@
-
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { Wallet } from "@/lib/api/types";
-import { getUserService } from "@/lib/api";
+import { userService } from "@/lib/api/user-service";
 import { WalletsTable } from "@/components/wallets/WalletsTable";
 import { WalletsLoadingSkeleton } from "@/components/wallets/WalletsLoadingSkeleton";
 import BackofficeLayout from "@/components/BackofficeLayout";
@@ -20,7 +19,6 @@ const WalletManagement = () => {
   const { data: allWallets, isLoading, error } = useQuery({
     queryKey: ["all-wallets"],
     queryFn: async () => {
-      const userService = getUserService();
       return userService.getAllWallets();
     },
   });
@@ -37,11 +35,9 @@ const WalletManagement = () => {
     );
   });
 
-  // Count wallets by status
   const activeWalletsCount = allWallets?.filter(item => item.wallet.status === "active").length || 0;
   const blockedWalletsCount = allWallets?.filter(item => item.wallet.status === "blocked").length || 0;
   
-  // Count wallets by currency for pie chart
   const currencyCounts: Record<string, number> = {};
   allWallets?.forEach(item => {
     const { currency } = item.wallet;
