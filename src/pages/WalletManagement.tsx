@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Plus, Search, RefreshCw, Wallet } from "lucide-react";
+import { Plus, Search, RefreshCw, Wallet, Users } from "lucide-react";
 import { userService } from "@/lib/api/user-service";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -12,20 +12,19 @@ import { useToast } from "@/hooks/use-toast";
 
 const WalletManagement: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedUserId, setSelectedUserId] = useState<string>("827"); // Using a valid user ID from mock data
   const { toast } = useToast();
   
   const { 
-    data: wallets = [], 
+    data: walletsWithUsers = [], 
     isLoading, 
     refetch,
     isRefetching
   } = useQuery({
-    queryKey: ["wallets", selectedUserId],
+    queryKey: ["all-wallets"],
     queryFn: async () => {
       try {
-        const walletsList = await userService.getUserWallets(selectedUserId);
-        return walletsList;
+        const allWallets = await userService.getAllWallets();
+        return allWallets;
       } catch (error) {
         console.error("Failed to fetch wallets:", error);
         toast({
@@ -38,11 +37,21 @@ const WalletManagement: React.FC = () => {
     }
   });
 
-  const filteredWallets = wallets.filter(wallet => 
-    wallet.id.toString().includes(searchTerm) || 
-    (wallet.currency && wallet.currency.toLowerCase().includes(searchTerm.toLowerCase())) ||
-    (wallet.status && wallet.status.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
+  // Get all wallet objects for calculations
+  const allWallets = walletsWithUsers.map(item => item.wallet);
+
+  const filteredWallets = walletsWithUsers.filter(item => {
+    const wallet = item.wallet;
+    const walletMatch = 
+      wallet.id.toString().includes(searchTerm) || 
+      (wallet.currency && wallet.currency.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (wallet.status && wallet.status.toLowerCase().includes(searchTerm.toLowerCase()));
+    
+    // Also search by user ID
+    const userMatch = item.userId.includes(searchTerm);
+    
+    return walletMatch || userMatch;
+  });
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,7 +67,7 @@ const WalletManagement: React.FC = () => {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Wallet Management</h1>
           <p className="text-muted-foreground">
-            View and manage user wallets
+            View and manage all wallets across the platform
           </p>
         </div>
         <Button>
@@ -76,7 +85,7 @@ const WalletManagement: React.FC = () => {
             <Wallet className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{wallets.length}</div>
+            <div className="text-2xl font-bold">{allWallets.length}</div>
             <p className="text-xs text-muted-foreground">
               Across all users
             </p>
@@ -91,7 +100,7 @@ const WalletManagement: React.FC = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {wallets.filter(wallet => wallet.status?.toLowerCase() === "active").length}
+              {allWallets.filter(wallet => wallet.status?.toLowerCase() === "active").length}
             </div>
             <p className="text-xs text-muted-foreground">
               Currently active
@@ -107,7 +116,7 @@ const WalletManagement: React.FC = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              ${wallets.reduce((sum, wallet) => sum + (wallet.balance || 0), 0).toLocaleString()}
+              ${allWallets.reduce((sum, wallet) => sum + (wallet.balance || 0), 0).toLocaleString()}
             </div>
             <p className="text-xs text-muted-foreground">
               USD equivalent
@@ -117,16 +126,16 @@ const WalletManagement: React.FC = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Average Balance
+              Users with Wallets
             </CardTitle>
-            <Wallet className="h-4 w-4 text-muted-foreground" />
+            <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              ${wallets.length ? (wallets.reduce((sum, wallet) => sum + (wallet.balance || 0), 0) / wallets.length).toLocaleString(undefined, {maximumFractionDigits: 2}) : '0'}
+              {new Set(walletsWithUsers.map(item => item.userId)).size}
             </div>
             <p className="text-xs text-muted-foreground">
-              Per wallet
+              Total users with wallets
             </p>
           </CardContent>
         </Card>
@@ -134,9 +143,9 @@ const WalletManagement: React.FC = () => {
 
       <Card>
         <CardHeader>
-          <CardTitle>User Wallets</CardTitle>
+          <CardTitle>All Wallets</CardTitle>
           <CardDescription>
-            Manage wallets for user ID: {selectedUserId}
+            Manage wallets for all users
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -160,9 +169,13 @@ const WalletManagement: React.FC = () => {
           </div>
 
           {isLoading ? (
-            <WalletsLoadingSkeleton />
+            <WalletsLoadingSkeleton showUser={true} />
           ) : (
-            <WalletsTable wallets={filteredWallets} />
+            <WalletsTable wallets={filteredWallets.map(item => ({
+              ...item.wallet,
+              userId: item.userId
+            }))} 
+            showUser={true} />
           )}
         </CardContent>
       </Card>

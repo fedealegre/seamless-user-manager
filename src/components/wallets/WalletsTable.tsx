@@ -14,11 +14,12 @@ import {
 } from "@/components/ui/table";
 
 interface WalletsTableProps {
-  wallets: Wallet[];
+  wallets: (Wallet & { userId?: string })[];
   onSelectWallet?: (walletId: string) => void;
+  showUser?: boolean;
 }
 
-export const WalletsTable: React.FC<WalletsTableProps> = ({ wallets, onSelectWallet }) => {
+export const WalletsTable: React.FC<WalletsTableProps> = ({ wallets, onSelectWallet, showUser = false }) => {
   // Helper function for wallet status badge
   const getStatusBadge = (status?: string) => {
     switch (status?.toLowerCase()) {
@@ -56,6 +57,7 @@ export const WalletsTable: React.FC<WalletsTableProps> = ({ wallets, onSelectWal
         <TableHeader>
           <TableRow>
             <TableHead>ID</TableHead>
+            {showUser && <TableHead>User ID</TableHead>}
             <TableHead>Status</TableHead>
             <TableHead>Currency</TableHead>
             <TableHead className="text-right">Balance</TableHead>
@@ -66,14 +68,15 @@ export const WalletsTable: React.FC<WalletsTableProps> = ({ wallets, onSelectWal
         <TableBody>
           {wallets.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={6} className="h-24 text-center">
+              <TableCell colSpan={showUser ? 7 : 6} className="h-24 text-center">
                 No wallets found
               </TableCell>
             </TableRow>
           ) : (
             wallets.map((wallet) => (
-              <TableRow key={wallet.id}>
+              <TableRow key={`${wallet.id}-${wallet.userId || ''}`}>
                 <TableCell className="font-medium">{wallet.id}</TableCell>
+                {showUser && <TableCell>{wallet.userId || '-'}</TableCell>}
                 <TableCell>{getStatusBadge(wallet.status)}</TableCell>
                 <TableCell>{wallet.currency || "-"}</TableCell>
                 <TableCell className="text-right">

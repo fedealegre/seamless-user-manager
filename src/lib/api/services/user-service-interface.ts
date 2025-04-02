@@ -9,6 +9,7 @@ export interface UserService {
   blockUser(userId: string): Promise<void>;
   unblockUser(userId: string): Promise<void>;
   getUserWallets(userId: string): Promise<Wallet[]>;
+  getAllWallets(): Promise<{ wallet: Wallet; userId: string }[]>;
   getWalletTransactions(userId: string, walletId: string): Promise<Transaction[]>;
   compensateCustomer(
     companyId: number,

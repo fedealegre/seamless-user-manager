@@ -98,6 +98,23 @@ export class MockUserService implements UserService {
     return mockWallets[parseInt(userId)] || [];
   }
 
+  async getAllWallets(): Promise<{ wallet: Wallet; userId: string }[]> {
+    console.log("Using mock data for getAllWallets");
+    const allWallets: { wallet: Wallet; userId: string }[] = [];
+    
+    // Iterate through all users and their wallets
+    Object.entries(mockWallets).forEach(([userId, wallets]) => {
+      wallets.forEach(wallet => {
+        allWallets.push({
+          wallet,
+          userId
+        });
+      });
+    });
+    
+    return allWallets;
+  }
+
   async getWalletTransactions(userId: string, walletId: string): Promise<Transaction[]> {
     console.log("Using mock data for getWalletTransactions", userId, walletId);
     // Return transactions for the specified wallet or empty array if none exist
