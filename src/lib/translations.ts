@@ -608,7 +608,7 @@ const translations: Translations = {
     en: "Failed to block user",
     es: "Error al bloquear usuario"
   },
-  "user-not-found": {
+  "user-not-found-may-be-deleted": {
     en: "User not found. The user may have been deleted",
     es: "Usuario no encontrado. Es posible que el usuario haya sido eliminado"
   },
@@ -676,10 +676,6 @@ const translations: Translations = {
     en: "Search Users",
     es: "Buscar Usuarios"
   },
-  "users": {
-    en: "Users",
-    es: "Usuarios"
-  },
   "users-found": {
     en: "users found",
     es: "usuarios encontrados"
@@ -718,10 +714,6 @@ const translations: Translations = {
     en: "Add New Operator",
     es: "Agregar Nuevo Operador"
   },
-  "backoffice-operators": {
-    en: "Backoffice Operators",
-    es: "Operadores de Back Office"
-  },
   "search-by-name-id-email-role": {
     en: "Search by name, ID, email, or role...",
     es: "Buscar por nombre, ID, correo electrónico o rol..."
@@ -740,17 +732,9 @@ const translations: Translations = {
   },
   
   // User Field Settings Page
-  "user-field-settings": {
-    en: "User Field Settings",
-    es: "Configuración de Campos de Usuario"
-  },
   "configure-user-fields-backoffice": {
     en: "Configure which user fields are visible and editable in the backoffice",
     es: "Configurar qué campos de usuario son visibles y editables en el back office"
-  },
-  "save-settings": {
-    en: "Save Settings",
-    es: "Guardar Configuración"
   },
   "saving": {
     en: "Saving...",
@@ -775,10 +759,6 @@ const translations: Translations = {
   "editable": {
     en: "Editable",
     es: "Editable"
-  },
-  "settings-saved": {
-    en: "Settings saved",
-    es: "Configuración guardada"
   },
   "user-field-settings-updated": {
     en: "User field settings have been updated successfully.",
@@ -826,10 +806,6 @@ const translations: Translations = {
     en: "Limit Amount",
     es: "Monto Límite"
   },
-  "transaction-types": {
-    en: "Transaction Types",
-    es: "Tipos de Transacción"
-  },
   "enter-transaction-type": {
     en: "Enter transaction type",
     es: "Ingrese tipo de transacción"
@@ -861,10 +837,6 @@ const translations: Translations = {
   "application-period": {
     en: "Application Period",
     es: "Período de Aplicación"
-  },
-  "transaction-types": {
-    en: "Transaction Types",
-    es: "Tipos de Transacción"
   },
   "daily": {
     en: "Daily",
@@ -920,10 +892,6 @@ const translations: Translations = {
   },
   
   // Company Settings Page
-  "company-settings": {
-    en: "Company Settings",
-    es: "Configuración de la Compañía"
-  },
   "manage-company-info-config": {
     en: "Manage company information and configuration",
     es: "Gestionar información y configuración de la compañía"
