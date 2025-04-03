@@ -250,6 +250,10 @@ const translations: Translations = {
     en: "Wallet Transactions",
     es: "Transacciones de billetera"
   },
+  "wallet": {
+    en: "Wallet",
+    es: "Billetera"
+  },
   
   // Additional UI text
   "back-to-wallets": {
@@ -267,6 +271,92 @@ const translations: Translations = {
   "error": {
     en: "Error",
     es: "Error"
+  },
+  
+  // Export related
+  "export-csv": {
+    en: "Export CSV",
+    es: "Exportar CSV"
+  },
+  "no-data-to-export": {
+    en: "No data to export",
+    es: "No hay datos para exportar"
+  },
+  "export-successful": {
+    en: "Export Successful",
+    es: "Exportación Exitosa"
+  },
+  "data-exported-successfully": {
+    en: "The data has been exported to CSV successfully",
+    es: "Los datos han sido exportados a CSV exitosamente"
+  },
+  "user-id": {
+    en: "User ID",
+    es: "ID de usuario"
+  },
+  "transactions-found": {
+    en: "transactions found",
+    es: "transacciones encontradas"
+  },
+  "monitor-and-manage-payment-transactions": {
+    en: "Monitor and manage payment transactions",
+    es: "Monitorear y gestionar transacciones de pagos"
+  },
+  "transactions": {
+    en: "Transactions",
+    es: "Transacciones"
+  },
+  "income": {
+    en: "Income",
+    es: "Ingreso"
+  },
+  "outcome": {
+    en: "Outcome",
+    es: "Egreso"
+  },
+  "transaction-cancellation-not-implemented": {
+    en: "Transaction cancellation not implemented for",
+    es: "Cancelación de transacción no implementada para"
+  },
+  "cancel-transaction": {
+    en: "Cancel Transaction",
+    es: "Cancelar Transacción"
+  },
+  "compensate": {
+    en: "Compensate",
+    es: "Compensar"
+  },
+  "customer": {
+    en: "Customer",
+    es: "Cliente"
+  },
+  "details": {
+    en: "Details",
+    es: "Detalles"
+  },
+  "transactions-for-wallet": {
+    en: "Transactions for wallet",
+    es: "Transacciones para la billetera"
+  },
+  "user-transactions": {
+    en: "User Transactions",
+    es: "Transacciones de Usuario"
+  },
+  "view-wallet-transactions": {
+    en: "View wallet transactions",
+    es: "Ver transacciones de billetera"
+  },
+  "wallets": {
+    en: "Wallets",
+    es: "Billeteras"
+  },
+  "found": {
+    en: "found",
+    es: "encontradas"
+  },
+  "click-wallet-view-transactions": {
+    en: "Click on a wallet to view its transactions",
+    es: "Haga clic en una billetera para ver sus transacciones"
   },
 };
 

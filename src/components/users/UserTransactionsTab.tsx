@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { userService } from "@/lib/api/user-service";
@@ -12,6 +11,8 @@ import TransactionDetails from "@/components/transactions/TransactionDetails";
 import CompensateCustomerDialog from "@/components/transactions/CompensateCustomerDialog";
 import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
 import { translate } from "@/lib/translations";
+import ExportCSVButton from "@/components/common/ExportCSVButton";
+import { formatDateTime } from "@/lib/date-utils";
 
 interface UserTransactionsTabProps {
   userId: string;
@@ -23,7 +24,7 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
   const [page, setPage] = useState(1);
   const pageSize = 10;
   const { toast } = useToast();
-  const { settings } = useBackofficeSettings();
+  const { settings, formatDateTime } = useBackofficeSettings();
   const t = (key: string) => translate(key, settings.language);
   
   // Dialog states
@@ -77,16 +78,14 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
     }
 
     try {
-      // Assuming these are required fields for compensation
       const compensationRequest = {
         amount,
         reason,
         transaction_code: selectedTransaction.transactionId || selectedTransaction.id.toString(),
-        admin_user: "current-admin", // This should come from auth context in a real app
+        admin_user: "current-admin",
         transaction_type: "COMPENSATE" as const,
       };
 
-      // Use the company ID from the wallet if available, or use a default
       const companyId = selectedTransaction.customerId 
         ? parseInt(selectedTransaction.customerId)
         : 1;
@@ -107,7 +106,6 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
         description: t("compensation-transaction-created"),
       });
 
-      // Close the dialog and refetch transactions
       setShowCompensateDialog(false);
       setSelectedTransaction(null);
     } catch (error: any) {
@@ -119,13 +117,58 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
     }
   };
 
+  // Function to find the wallet by ID
+  const findWallet = (walletId: string) => {
+    return wallets.find(wallet => wallet.id.toString() === walletId);
+  };
+
+  // Function to map transaction data for CSV export
+  const mapTransactionToCSV = (transaction: Transaction) => {
+    const wallet = findWallet(transaction.walletId);
+    
+    return [
+      transaction.transactionId || transaction.id.toString(),
+      transaction.reference || '',
+      transaction.date ? formatDateTime(new Date(transaction.date)) : '',
+      t(transaction.type?.toLowerCase() || transaction.movementType?.toLowerCase() || 'unknown'),
+      transaction.amount?.toString() || '',
+      transaction.currency || wallet?.currency || '',
+      t(transaction.status?.toLowerCase() || 'unknown'),
+      userId,
+      wallet?.id.toString() || '',
+    ];
+  };
+
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>{t("user-transactions")}</CardTitle>
-        <CardDescription>
-          {t("view-wallet-transactions")}
-        </CardDescription>
+      <CardHeader className="flex flex-row items-center justify-between">
+        <div>
+          <CardTitle>{t("user-transactions")}</CardTitle>
+          <CardDescription>
+            {t("view-wallet-transactions")}
+          </CardDescription>
+        </div>
+        
+        {transactions && transactions.length > 0 && (
+          <ExportCSVButton
+            filename={`user-${userId}-transactions-${new Date().toISOString().slice(0, 10)}`}
+            headers={[
+              t('transaction-id'), 
+              t('reference'), 
+              t('date'), 
+              t('type'), 
+              t('amount'), 
+              t('currency'), 
+              t('status'),
+              t('user-id'),
+              t('wallet-id')
+            ]}
+            data={transactions}
+            mapRow={mapTransactionToCSV}
+          >
+            {t('export-csv')}
+          </ExportCSVButton>
+        )}
       </CardHeader>
       <CardContent>
         {wallets.length === 0 ? (
@@ -139,7 +182,7 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
             <TabsList className="mb-4 w-full h-auto flex-wrap">
               {wallets.map((wallet) => (
                 <TabsTrigger key={wallet.id} value={wallet.id.toString()}>
-                  {wallet.currency} {t("wallets")} ({wallet.id})
+                  {wallet.currency} {t("wallet")} ({wallet.id})
                 </TabsTrigger>
               ))}
             </TabsList>
