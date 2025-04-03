@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
@@ -31,6 +30,7 @@ import {
   BackofficeSettings as SettingsType 
 } from "@/contexts/BackofficeSettingsContext";
 import { toast } from "@/hooks/use-toast";
+import { translate } from "@/lib/translations";
 
 const BackofficeSettings = () => {
   const { settings, updateSettings } = useBackofficeSettings();
@@ -39,8 +39,6 @@ const BackofficeSettings = () => {
   
   // Get the translate function based on current language
   const getTranslation = (key: string): string => {
-    // Import directly here to avoid circular dependency
-    const { translate } = require("@/lib/translations");
     return translate(key, settings.language);
   };
   
