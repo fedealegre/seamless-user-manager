@@ -8,6 +8,9 @@ export function cn(...inputs: ClassValue[]) {
 
 export function formatDate(date: Date): string {
   try {
+    // This function is kept for backward compatibility
+    // New code should use the formatDateInTimezone from date-utils.ts
+    // or useBackofficeSettings().formatDate
     return new Intl.DateTimeFormat('en-US', {
       year: 'numeric',
       month: 'short',

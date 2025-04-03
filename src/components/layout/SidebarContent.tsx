@@ -10,9 +10,12 @@ import {
   User, 
   BarChart3,
   Settings,
-  UserCog
+  UserCog,
+  Sliders
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
+import { translate } from "@/lib/translations";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 
@@ -22,36 +25,42 @@ interface SidebarItem {
   path: string;
   badge?: number | string;
   roles?: string[];
+  translationKey: string;
 }
 
 interface SidebarSection {
   title: string;
+  translationKey: string;
   items: SidebarItem[];
 }
 
 const sidebarSections: SidebarSection[] = [
   {
     title: "Management",
+    translationKey: "management",
     items: [
-      { title: "Dashboard", icon: BarChart3, path: "/dashboard" },
-      { title: "User Management", icon: Users, path: "/users" },
-      { title: "Wallets", icon: Wallet, path: "/wallets" },
-      { title: "Transactions", icon: FileText, path: "/transactions" }
+      { title: "Dashboard", translationKey: "dashboard", icon: BarChart3, path: "/dashboard" },
+      { title: "User Management", translationKey: "users", icon: Users, path: "/users" },
+      { title: "Wallets", translationKey: "wallets", icon: Wallet, path: "/wallets" },
+      { title: "Transactions", translationKey: "transactions", icon: FileText, path: "/transactions" }
     ]
   },
   {
     title: "Security",
+    translationKey: "security",
     items: [
-      { title: "Anti-Fraud Rules", icon: Shield, path: "/anti-fraud" },
-      { title: "Audit Logs", icon: Clock, path: "/audit-logs" },
-      { title: "Backoffice Operators", icon: User, path: "/backoffice-operators" }
+      { title: "Anti-Fraud Rules", translationKey: "anti-fraud", icon: Shield, path: "/anti-fraud" },
+      { title: "Audit Logs", translationKey: "audit-logs", icon: Clock, path: "/audit-logs" },
+      { title: "Backoffice Operators", translationKey: "backoffice-operators", icon: User, path: "/backoffice-operators" }
     ]
   },
   {
     title: "Settings",
+    translationKey: "settings",
     items: [
-      { title: "Company Settings", icon: Settings, path: "/company-settings", roles: ["admin"] },
-      { title: "User Field Settings", icon: UserCog, path: "/user-field-settings", roles: ["admin"] }
+      { title: "Company Settings", translationKey: "company-settings", icon: Settings, path: "/company-settings", roles: ["admin"] },
+      { title: "User Field Settings", translationKey: "user-field-settings", icon: UserCog, path: "/user-field-settings", roles: ["admin"] },
+      { title: "Backoffice Settings", translationKey: "backoffice-settings", icon: Sliders, path: "/backoffice-settings" }
     ]
   }
 ];
@@ -62,6 +71,7 @@ interface SidebarContentProps {
 
 const SidebarContent: React.FC<SidebarContentProps> = ({ sidebarOpen }) => {
   const { user } = useAuth();
+  const { settings } = useBackofficeSettings();
   const location = useLocation();
 
   const hasRequiredRoles = (item: SidebarItem) => {
@@ -81,7 +91,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ sidebarOpen }) => {
             {sidebarOpen && (
               <div className="px-4 mb-2">
                 <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                  {section.title}
+                  {translate(section.translationKey, settings.language)}
                 </h2>
               </div>
             )}
@@ -100,7 +110,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ sidebarOpen }) => {
                     <item.icon size={18} />
                     {sidebarOpen && (
                       <>
-                        <span className="ml-3">{item.title}</span>
+                        <span className="ml-3">{translate(item.translationKey, settings.language)}</span>
                         {item.badge && (
                           <Badge 
                             variant="outline" 

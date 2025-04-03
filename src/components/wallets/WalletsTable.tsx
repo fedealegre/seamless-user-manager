@@ -12,6 +12,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
+import { translate } from "@/lib/translations";
 
 interface WalletsTableProps {
   wallets: (Wallet & { userId?: string })[];
@@ -20,19 +22,25 @@ interface WalletsTableProps {
 }
 
 export const WalletsTable: React.FC<WalletsTableProps> = ({ wallets, onSelectWallet, showUser = false }) => {
+  const { settings } = useBackofficeSettings();
+  const t = (key: string) => translate(key, settings.language);
+  
   // Helper function for wallet status badge
   const getStatusBadge = (status?: string) => {
-    switch (status?.toLowerCase()) {
+    const statusKey = status?.toLowerCase() || "unknown";
+    const translatedStatus = t(statusKey);
+    
+    switch (statusKey) {
       case "active":
-        return <Badge className="bg-green-500">Active</Badge>;
+        return <Badge className="bg-green-500">{translatedStatus}</Badge>;
       case "frozen":
-        return <Badge variant="outline" className="border-blue-500 text-blue-500">Frozen</Badge>;
+        return <Badge variant="outline" className="border-blue-500 text-blue-500">{translatedStatus}</Badge>;
       case "blocked":
-        return <Badge variant="destructive">Blocked</Badge>;
+        return <Badge variant="destructive">{translatedStatus}</Badge>;
       case "pending":
-        return <Badge variant="outline" className="border-orange-500 text-orange-500">Pending</Badge>;
+        return <Badge variant="outline" className="border-orange-500 text-orange-500">{translatedStatus}</Badge>;
       default:
-        return <Badge variant="secondary">{status || "Unknown"}</Badge>;
+        return <Badge variant="secondary">{status || t("unknown")}</Badge>;
     }
   };
 
@@ -40,8 +48,11 @@ export const WalletsTable: React.FC<WalletsTableProps> = ({ wallets, onSelectWal
   const formatCurrency = (amount?: number, currency?: string) => {
     if (amount === undefined) return "-";
     
+    // Format according to the current language setting
+    const locale = settings.language === "en" ? "en-US" : "es-ES";
+    
     // Basic formatting
-    let formatted = new Intl.NumberFormat("en-US", {
+    let formatted = new Intl.NumberFormat(locale, {
       style: "currency",
       currency: currency || "USD",
       minimumFractionDigits: 2,
@@ -57,19 +68,19 @@ export const WalletsTable: React.FC<WalletsTableProps> = ({ wallets, onSelectWal
         <TableHeader>
           <TableRow>
             <TableHead>ID</TableHead>
-            {showUser && <TableHead>User ID</TableHead>}
-            <TableHead>Status</TableHead>
-            <TableHead>Currency</TableHead>
-            <TableHead className="text-right">Balance</TableHead>
-            <TableHead className="text-right">Available Balance</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
+            {showUser && <TableHead>{t("users")}</TableHead>}
+            <TableHead>{t("status")}</TableHead>
+            <TableHead>{t("Currency")}</TableHead>
+            <TableHead className="text-right">{t("Balance")}</TableHead>
+            <TableHead className="text-right">{t("Available Balance")}</TableHead>
+            <TableHead className="text-right">{t("actions")}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {wallets.length === 0 ? (
             <TableRow>
               <TableCell colSpan={showUser ? 7 : 6} className="h-24 text-center">
-                No wallets found
+                {settings.language === "en" ? "No wallets found" : "No se encontraron billeteras"}
               </TableCell>
             </TableRow>
           ) : (
@@ -92,12 +103,12 @@ export const WalletsTable: React.FC<WalletsTableProps> = ({ wallets, onSelectWal
                         variant="outline" 
                         size="icon" 
                         onClick={() => onSelectWallet(wallet.id.toString())}
-                        title="View Transactions"
+                        title={t("view")}
                       >
                         <Eye className="h-4 w-4" />
                       </Button>
                     )}
-                    <Button variant="outline" size="icon">
+                    <Button variant="outline" size="icon" title={t("edit")}>
                       <Edit className="h-4 w-4" />
                     </Button>
                     <Button variant="ghost" size="icon">
