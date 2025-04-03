@@ -14,7 +14,7 @@ const translations: Translations = {
   // Common
   "dashboard": {
     en: "Dashboard",
-    es: "Panel de control"
+    es: "Dashboard"
   },
   "users": {
     en: "User Management",
@@ -42,7 +42,7 @@ const translations: Translations = {
   },
   "company-settings": {
     en: "Company Settings",
-    es: "Configuración de la empresa"
+    es: "Configuración de la compañía"
   },
   "user-field-settings": {
     en: "User Field Settings",
@@ -50,7 +50,7 @@ const translations: Translations = {
   },
   "backoffice-settings": {
     en: "Backoffice Settings",
-    es: "Configuración del Back Office"
+    es: "Configuración del BackOffice"
   },
   
   // Settings page
