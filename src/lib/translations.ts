@@ -406,6 +406,10 @@ const translations: Translations = {
     en: "Error",
     es: "Error"
   },
+  "success": {
+    en: "Success",
+    es: "Éxito"
+  },
   
   // Export related
   "export-csv": {
@@ -619,6 +623,358 @@ const translations: Translations = {
   "block-user": {
     en: "Block User",
     es: "Bloquear Usuario"
+  },
+  
+  // User Detail Page
+  "user-detail": {
+    en: "User Details",
+    es: "Detalles del Usuario"
+  },
+  "view-manage-user-info": {
+    en: "View and manage user information",
+    es: "Ver y gestionar información del usuario"
+  },
+  "back": {
+    en: "Back",
+    es: "Atrás"
+  },
+  "personal-info": {
+    en: "Personal Info",
+    es: "Información Personal"
+  },
+  "user-not-found": {
+    en: "User not found",
+    es: "Usuario no encontrado"
+  },
+  "requested-user-not-found": {
+    en: "The requested user could not be found",
+    es: "El usuario solicitado no pudo ser encontrado"
+  },
+  "back-to-user-management": {
+    en: "Back to User Management",
+    es: "Volver a Gestión de Usuarios"
+  },
+  
+  // User Management Page
+  "user-management": {
+    en: "User Management",
+    es: "Gestión de Usuarios"
+  },
+  "manage-monitor-customer-accounts": {
+    en: "Manage and monitor customer accounts",
+    es: "Gestionar y monitorear cuentas de clientes"
+  },
+  "search-users": {
+    en: "Search Users",
+    es: "Buscar Usuarios"
+  },
+  "search-history": {
+    en: "Search History",
+    es: "Historial de Búsqueda"
+  },
+  "search-users-button": {
+    en: "Search Users",
+    es: "Buscar Usuarios"
+  },
+  "users": {
+    en: "Users",
+    es: "Usuarios"
+  },
+  "users-found": {
+    en: "users found",
+    es: "usuarios encontrados"
+  },
+  "no-users-found": {
+    en: "No users found",
+    es: "No se encontraron usuarios"
+  },
+  "recent-searches": {
+    en: "Recent Searches",
+    es: "Búsquedas Recientes"
+  },
+  "your-recent-user-searches": {
+    en: "Your recent user searches",
+    es: "Sus búsquedas recientes de usuarios"
+  },
+  "clear-all": {
+    en: "Clear All",
+    es: "Borrar Todo"
+  },
+  "no-recent-searches": {
+    en: "No recent searches",
+    es: "No hay búsquedas recientes"
+  },
+  "search-again": {
+    en: "Search Again",
+    es: "Buscar Nuevamente"
+  },
+  
+  // Backoffice Operators Page
+  "backoffice-operators-management": {
+    en: "Backoffice Operators Management",
+    es: "Gestión de Operadores de Back Office"
+  },
+  "add-new-operator": {
+    en: "Add New Operator",
+    es: "Agregar Nuevo Operador"
+  },
+  "backoffice-operators": {
+    en: "Backoffice Operators",
+    es: "Operadores de Back Office"
+  },
+  "search-by-name-id-email-role": {
+    en: "Search by name, ID, email, or role...",
+    es: "Buscar por nombre, ID, correo electrónico o rol..."
+  },
+  "error-loading-operators": {
+    en: "Error Loading Operators",
+    es: "Error al Cargar Operadores"
+  },
+  "failed-load-backoffice-operators": {
+    en: "Failed to load backoffice operators. Please try again.",
+    es: "Error al cargar los operadores de back office. Por favor, inténtelo de nuevo."
+  },
+  "retry": {
+    en: "Retry",
+    es: "Reintentar"
+  },
+  
+  // User Field Settings Page
+  "user-field-settings": {
+    en: "User Field Settings",
+    es: "Configuración de Campos de Usuario"
+  },
+  "configure-user-fields-backoffice": {
+    en: "Configure which user fields are visible and editable in the backoffice",
+    es: "Configurar qué campos de usuario son visibles y editables en el back office"
+  },
+  "save-settings": {
+    en: "Save Settings",
+    es: "Guardar Configuración"
+  },
+  "saving": {
+    en: "Saving...",
+    es: "Guardando..."
+  },
+  "user-field-configuration": {
+    en: "User Field Configuration",
+    es: "Configuración de Campos de Usuario"
+  },
+  "toggle-visibility-editability": {
+    en: "Toggle visibility and editability for each user field in the backoffice. Changes will apply to the User Detail pages.",
+    es: "Active/desactive la visibilidad y la editabilidad de cada campo de usuario en el back office. Los cambios se aplicarán a las páginas de Detalle de Usuario."
+  },
+  "field": {
+    en: "Field",
+    es: "Campo"
+  },
+  "visible": {
+    en: "Visible",
+    es: "Visible"
+  },
+  "editable": {
+    en: "Editable",
+    es: "Editable"
+  },
+  "settings-saved": {
+    en: "Settings saved",
+    es: "Configuración guardada"
+  },
+  "user-field-settings-updated": {
+    en: "User field settings have been updated successfully.",
+    es: "La configuración de campos de usuario se ha actualizado exitosamente."
+  },
+  "access-denied": {
+    en: "Access Denied",
+    es: "Acceso Denegado"
+  },
+  "no-permission-access-user-field-settings": {
+    en: "You don't have permission to access User Field Settings.",
+    es: "No tiene permiso para acceder a la Configuración de Campos de Usuario."
+  },
+  "required-role": {
+    en: "Required role:",
+    es: "Rol requerido:"
+  },
+  
+  // Anti-Fraud Rules Page
+  "anti-fraud-rules": {
+    en: "Anti-Fraud Rules",
+    es: "Reglas Anti-Fraude"
+  },
+  "manage-transaction-limits-security": {
+    en: "Manage transaction limits and security rules",
+    es: "Gestionar límites de transacción y reglas de seguridad"
+  },
+  "add-new-rule": {
+    en: "Add New Rule",
+    es: "Agregar Nueva Regla"
+  },
+  "add-new-anti-fraud-rule": {
+    en: "Add New Anti-Fraud Rule",
+    es: "Agregar Nueva Regla Anti-Fraude"
+  },
+  "create-new-rule": {
+    en: "Create a new rule to limit transaction amounts over a specific time period.",
+    es: "Crear una nueva regla para limitar los montos de transacción durante un período de tiempo específico."
+  },
+  "time-period": {
+    en: "Time Period",
+    es: "Período de Tiempo"
+  },
+  "limit-amount": {
+    en: "Limit Amount",
+    es: "Monto Límite"
+  },
+  "transaction-types": {
+    en: "Transaction Types",
+    es: "Tipos de Transacción"
+  },
+  "enter-transaction-type": {
+    en: "Enter transaction type",
+    es: "Ingrese tipo de transacción"
+  },
+  "add": {
+    en: "Add",
+    es: "Agregar"
+  },
+  "save-rule": {
+    en: "Save Rule",
+    es: "Guardar Regla"
+  },
+  "rules-limit-transaction-amounts": {
+    en: "Rules that limit transaction amounts over specific time periods",
+    es: "Reglas que limitan los montos de transacción durante períodos de tiempo específicos"
+  },
+  "no-anti-fraud-rules-configured": {
+    en: "No anti-fraud rules configured yet.",
+    es: "Aún no hay reglas anti-fraude configuradas."
+  },
+  "add-your-first-rule": {
+    en: "Add Your First Rule",
+    es: "Agregar Su Primera Regla"
+  },
+  "rule-id": {
+    en: "Rule ID",
+    es: "ID de Regla"
+  },
+  "application-period": {
+    en: "Application Period",
+    es: "Período de Aplicación"
+  },
+  "transaction-types": {
+    en: "Transaction Types",
+    es: "Tipos de Transacción"
+  },
+  "daily": {
+    en: "Daily",
+    es: "Diario"
+  },
+  "monthly": {
+    en: "Monthly",
+    es: "Mensual"
+  },
+  "yearly": {
+    en: "Yearly",
+    es: "Anual"
+  },
+  "edit-anti-fraud-rule": {
+    en: "Edit Anti-Fraud Rule",
+    es: "Editar Regla Anti-Fraude"
+  },
+  "modify-existing-rule": {
+    en: "Modify the existing rule parameters.",
+    es: "Modificar los parámetros de la regla existente."
+  },
+  "update-rule": {
+    en: "Update Rule",
+    es: "Actualizar Regla"
+  },
+  "rule-added-success": {
+    en: "Anti-fraud rule has been added successfully.",
+    es: "La regla anti-fraude ha sido agregada exitosamente."
+  },
+  "failed-add-rule": {
+    en: "Failed to add anti-fraud rule. Please try again.",
+    es: "Error al agregar la regla anti-fraude. Por favor, inténtelo de nuevo."
+  },
+  "rule-updated-success": {
+    en: "Anti-fraud rule has been updated successfully.",
+    es: "La regla anti-fraude ha sido actualizada exitosamente."
+  },
+  "failed-update-rule": {
+    en: "Failed to update anti-fraud rule. Please try again.",
+    es: "Error al actualizar la regla anti-fraude. Por favor, inténtelo de nuevo."
+  },
+  "rule-deleted-success": {
+    en: "Anti-fraud rule has been deleted successfully.",
+    es: "La regla anti-fraude ha sido eliminada exitosamente."
+  },
+  "failed-delete-rule": {
+    en: "Failed to delete anti-fraud rule. Please try again.",
+    es: "Error al eliminar la regla anti-fraude. Por favor, inténtelo de nuevo."
+  },
+  "confirm-delete-rule": {
+    en: "Are you sure you want to delete this rule?",
+    es: "¿Está seguro de que desea eliminar esta regla?"
+  },
+  
+  // Company Settings Page
+  "company-settings": {
+    en: "Company Settings",
+    es: "Configuración de la Compañía"
+  },
+  "manage-company-info-config": {
+    en: "Manage company information and configuration",
+    es: "Gestionar información y configuración de la compañía"
+  },
+  "company-information": {
+    en: "Company Information",
+    es: "Información de la Compañía"
+  },
+  "notifications": {
+    en: "Notifications",
+    es: "Notificaciones"
+  },
+  "financial": {
+    en: "Financial",
+    es: "Financiero"
+  },
+  "update-company-info-branding": {
+    en: "Update your company information and branding settings",
+    es: "Actualizar información de la compañía y configuración de marca"
+  },
+  "notification-settings": {
+    en: "Notification Settings",
+    es: "Configuración de Notificaciones"
+  },
+  "configure-how-when-notifications": {
+    en: "Configure how and when notifications are sent to users",
+    es: "Configurar cómo y cuándo se envían notificaciones a los usuarios"
+  },
+  "financial-settings": {
+    en: "Financial Settings",
+    es: "Configuración Financiera"
+  },
+  "configure-tax-rates-commissions": {
+    en: "Configure tax rates and commission percentages",
+    es: "Configurar tasas de impuestos y porcentajes de comisión"
+  },
+  "company-information-updated": {
+    en: "Company information updated",
+    es: "Información de la compañía actualizada"
+  },
+  "changes-saved-successfully": {
+    en: "Your changes have been saved successfully.",
+    es: "Sus cambios se han guardado exitosamente."
+  },
+  "notification-settings-updated": {
+    en: "Notification settings updated",
+    es: "Configuración de notificaciones actualizada"
+  },
+  "financial-settings-updated": {
+    en: "Financial settings updated",
+    es: "Configuración financiera actualizada"
   }
 };
 

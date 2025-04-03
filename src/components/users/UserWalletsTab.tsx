@@ -5,7 +5,6 @@ import { WalletsTable } from "@/components/wallets/WalletsTable";
 import { WalletsLoadingSkeleton } from "@/components/wallets/WalletsLoadingSkeleton";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserTransactionsTab } from "./UserTransactionsTab";
 import { useToast } from "@/hooks/use-toast";
 import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";

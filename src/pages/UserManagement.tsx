@@ -10,8 +10,12 @@ import UserActionDialogs from "@/components/users/UserActionDialogs";
 import { useNavigate } from "react-router-dom";
 import { Clock, ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
+import { translate } from "@/lib/translations";
 
 const UserManagement = () => {
+  const { settings } = useBackofficeSettings();
+  const t = (key: string) => translate(key, settings.language);
   
   const {
     users,
@@ -55,15 +59,15 @@ const UserManagement = () => {
       <div className="space-y-6">
         <div className="flex flex-col md:flex-row justify-between md:items-center gap-4">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">User Management</h1>
-            <p className="text-muted-foreground">Manage and monitor customer accounts</p>
+            <h1 className="text-3xl font-bold tracking-tight">{t("user-management")}</h1>
+            <p className="text-muted-foreground">{t("manage-monitor-customer-accounts")}</p>
           </div>
         </div>
         
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="search">Search Users</TabsTrigger>
-            <TabsTrigger value="history">Search History</TabsTrigger>
+            <TabsTrigger value="search">{t("search-users")}</TabsTrigger>
+            <TabsTrigger value="history">{t("search-history")}</TabsTrigger>
           </TabsList>
           
           <TabsContent value="search" className="mt-6">
@@ -74,12 +78,12 @@ const UserManagement = () => {
             
             <Card className="mt-6">
               <CardHeader className="py-4">
-                <CardTitle>Users</CardTitle>
+                <CardTitle>{t("users")}</CardTitle>
                 <CardDescription>
-                  {isLoading ? "Loading..." : 
+                  {isLoading ? t("loading") : 
                     users && users.length > 0 
-                      ? `${users.length} users found` 
-                      : "No users found"}
+                      ? `${users.length} ${t("users-found")}` 
+                      : t("no-users-found")}
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -105,25 +109,25 @@ const UserManagement = () => {
             <Card>
               <CardHeader className="py-4">
                 <div className="flex justify-between items-center">
-                  <CardTitle>Recent Searches</CardTitle>
+                  <CardTitle>{t("recent-searches")}</CardTitle>
                   {searchHistory.length > 0 && (
                     <button 
                       onClick={clearSearchHistory}
                       className="text-sm text-destructive hover:underline"
                     >
-                      Clear All
+                      {t("clear-all")}
                     </button>
                   )}
                 </div>
                 <CardDescription>
-                  Your recent user searches
+                  {t("your-recent-user-searches")}
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 {searchHistory.length === 0 ? (
                   <div className="flex flex-col items-center justify-center py-8 text-center">
                     <Clock className="h-12 w-12 text-muted-foreground mb-4" />
-                    <p className="text-muted-foreground">No recent searches</p>
+                    <p className="text-muted-foreground">{t("no-recent-searches")}</p>
                   </div>
                 ) : (
                   <div className="space-y-4">
@@ -152,7 +156,7 @@ const UserManagement = () => {
                                 }
                               }}
                             >
-                              Search Again
+                              {t("search-again")}
                               <ArrowUpRight className="ml-2 h-4 w-4" />
                             </Button>
                           </div>

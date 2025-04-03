@@ -1,12 +1,14 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { CompanySearchConfig, SearchField } from "@/lib/api/types/company-config";
+import { CompanySearchConfig } from "@/lib/api/types/company-config";
 import { Form, FormField, FormItem, FormLabel, FormControl } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
+import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
+import { translate } from "@/lib/translations";
 
 interface UserSearchBarProps {
   searchConfig: CompanySearchConfig;
@@ -17,6 +19,9 @@ const UserSearchBar: React.FC<UserSearchBarProps> = ({
   searchConfig,
   onSearch,
 }) => {
+  const { settings } = useBackofficeSettings();
+  const t = (key: string) => translate(key, settings.language);
+  
   const form = useForm<Record<string, string>>({
     defaultValues: searchConfig.fields.reduce((acc, field) => {
       acc[field.id] = field.defaultValue || "";
@@ -70,7 +75,7 @@ const UserSearchBar: React.FC<UserSearchBarProps> = ({
             <div className="flex justify-end">
               <Button type="submit" className="w-full md:w-auto">
                 <Search className="mr-2 h-4 w-4" />
-                Search Users
+                {t("search-users-button")}
               </Button>
             </div>
           </form>

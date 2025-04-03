@@ -17,9 +17,14 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
+import { translate } from "@/lib/translations";
 
 const BackofficeOperators: React.FC = () => {
   const { toast } = useToast();
+  const { settings } = useBackofficeSettings();
+  const t = (key: string) => translate(key, settings.language);
+  
   const [searchQuery, setSearchQuery] = useState("");
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -81,19 +86,19 @@ const BackofficeOperators: React.FC = () => {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">Backoffice Operators Management</h1>
+        <h1 className="text-2xl font-bold">{t("backoffice-operators-management")}</h1>
         <Button onClick={() => setShowAddDialog(true)}>
-          <UserPlus className="mr-2 h-4 w-4" /> Add New Operator
+          <UserPlus className="mr-2 h-4 w-4" /> {t("add-new-operator")}
         </Button>
       </div>
 
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle>Backoffice Operators</CardTitle>
+          <CardTitle>{t("backoffice-operators")}</CardTitle>
           <div className="flex items-center gap-2 mt-2">
             <Search className="h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search by name, ID, email, or role..."
+              placeholder={t("search-by-name-id-email-role")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="h-9 w-full md:w-[300px]"
@@ -107,13 +112,13 @@ const BackofficeOperators: React.FC = () => {
             <div className="space-y-4">
               <Alert variant="destructive">
                 <AlertTriangle className="h-4 w-4" />
-                <AlertTitle>Error Loading Operators</AlertTitle>
+                <AlertTitle>{t("error-loading-operators")}</AlertTitle>
                 <AlertDescription>
-                  {error instanceof Error ? error.message : "Failed to load backoffice operators. Please try again."}
+                  {error instanceof Error ? error.message : t("failed-load-backoffice-operators")}
                 </AlertDescription>
               </Alert>
               <Button variant="outline" onClick={() => refetch()} className="mt-2">
-                <RefreshCw className="h-4 w-4 mr-2" /> Retry
+                <RefreshCw className="h-4 w-4 mr-2" /> {t("retry")}
               </Button>
             </div>
           ) : (

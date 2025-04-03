@@ -9,10 +9,15 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Save } from "lucide-react";
 import { useUserFieldSettings, FieldSetting } from "@/hooks/use-user-field-settings";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
+import { translate } from "@/lib/translations";
 
 const UserFieldSettings = () => {
   const { toast } = useToast();
   const { user } = useAuth();
+  const { settings } = useBackofficeSettings();
+  const t = (key: string) => translate(key, settings.language);
+  
   const isAdmin = user?.roles.includes("admin");
   const { fieldSettings, saveSettings, isLoaded } = useUserFieldSettings();
   
@@ -31,12 +36,12 @@ const UserFieldSettings = () => {
   if (!isAdmin) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[calc(100vh-10rem)]">
-        <div className="text-4xl font-bold text-destructive mb-2">Access Denied</div>
+        <div className="text-4xl font-bold text-destructive mb-2">{t("access-denied")}</div>
         <p className="text-lg text-muted-foreground mb-6">
-          You don't have permission to access User Field Settings.
+          {t("no-permission-access-user-field-settings")}
         </p>
         <p className="text-sm text-muted-foreground">
-          Required role: admin
+          {t("required-role")}: admin
         </p>
       </div>
     );
@@ -92,8 +97,8 @@ const UserFieldSettings = () => {
       setIsSaving(false);
       setHasChanges(false);
       toast({
-        title: "Settings saved",
-        description: "User field settings have been updated successfully.",
+        title: t("settings-saved"),
+        description: t("user-field-settings-updated"),
       });
     }, 500);
   };
@@ -102,9 +107,9 @@ const UserFieldSettings = () => {
     <div className="container mx-auto py-4">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">User Field Settings</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t("user-field-settings")}</h1>
           <p className="text-muted-foreground">
-            Configure which user fields are visible and editable in the backoffice
+            {t("configure-user-fields-backoffice")}
           </p>
         </div>
         <Button 
@@ -113,24 +118,24 @@ const UserFieldSettings = () => {
           className="flex items-center gap-2"
         >
           <Save size={16} />
-          {isSaving ? "Saving..." : "Save Settings"}
+          {isSaving ? t("saving") : t("save-settings")}
         </Button>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle>User Field Configuration</CardTitle>
+          <CardTitle>{t("user-field-configuration")}</CardTitle>
           <CardDescription>
-            Toggle visibility and editability for each user field in the backoffice. Changes will apply to the User Detail pages.
+            {t("toggle-visibility-editability")}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[300px]">Field</TableHead>
-                <TableHead className="text-center">Visible</TableHead>
-                <TableHead className="text-center">Editable</TableHead>
+                <TableHead className="w-[300px]">{t("field")}</TableHead>
+                <TableHead className="text-center">{t("visible")}</TableHead>
+                <TableHead className="text-center">{t("editable")}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

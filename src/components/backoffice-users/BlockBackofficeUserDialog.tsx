@@ -83,7 +83,7 @@ const BlockBackofficeUserDialog: React.FC<BlockBackofficeUserDialogProps> = ({
           <AlertDialogTitle>{t("block-backoffice-user")}</AlertDialogTitle>
           <AlertDialogDescription>
             {t("block-confirmation")} {user.name} {user.surname}? 
-            {t("block-warning")}.
+            {t("block-warning")}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
