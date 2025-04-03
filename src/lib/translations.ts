@@ -58,9 +58,25 @@ const translations: Translations = {
     en: "Language",
     es: "Idioma"
   },
+  "language-description": {
+    en: "Select the language for the backoffice interface",
+    es: "Seleccione el idioma para la interfaz del back office"
+  },
+  "select-language": {
+    en: "Select language",
+    es: "Seleccionar idioma"
+  },
   "timezone": {
     en: "Time Zone",
     es: "Zona horaria"
+  },
+  "timezone-description": {
+    en: "All dates will be displayed in this timezone",
+    es: "Todas las fechas se mostrarán en esta zona horaria"
+  },
+  "select-timezone": {
+    en: "Select timezone",
+    es: "Seleccionar zona horaria"
   },
   "save-settings": {
     en: "Save Settings",
@@ -69,6 +85,22 @@ const translations: Translations = {
   "settings-saved": {
     en: "Settings saved successfully",
     es: "Configuración guardada exitosamente"
+  },
+  "error-saving-settings": {
+    en: "Error saving settings",
+    es: "Error al guardar la configuración"
+  },
+  "date-time-preview": {
+    en: "Date & Time Preview",
+    es: "Vista previa de fecha y hora"
+  },
+  "date-time-preview-description": {
+    en: "Preview how dates will be displayed with current settings",
+    es: "Vista previa de cómo se mostrarán las fechas con la configuración actual"
+  },
+  "current-date-time": {
+    en: "Current date and time:",
+    es: "Fecha y hora actual:"
   },
   
   // Management section
@@ -133,6 +165,108 @@ const translations: Translations = {
   "search": {
     en: "Search",
     es: "Buscar"
+  },
+  
+  // Transaction related
+  "transaction-id": {
+    en: "Transaction ID",
+    es: "ID de transacción"
+  },
+  "reference": {
+    en: "Reference",
+    es: "Referencia"
+  },
+  "date": {
+    en: "Date",
+    es: "Fecha"
+  },
+  "type": {
+    en: "Type", 
+    es: "Tipo"
+  },
+  "amount": {
+    en: "Amount",
+    es: "Monto"
+  },
+  "currency": {
+    en: "Currency",
+    es: "Moneda"
+  },
+  "completed": {
+    en: "Completed",
+    es: "Completado"
+  },
+  "cancelled": {
+    en: "Cancelled",
+    es: "Cancelado"
+  },
+  "failed": {
+    en: "Failed", 
+    es: "Fallido"
+  },
+  "deposit": {
+    en: "Deposit",
+    es: "Depósito"
+  },
+  "withdrawal": {
+    en: "Withdrawal",
+    es: "Retiro"
+  },
+  "transfer": {
+    en: "Transfer",
+    es: "Transferencia"
+  },
+  "compensation": {
+    en: "Compensation",
+    es: "Compensación"
+  },
+  
+  // Wallet related
+  "balance": {
+    en: "Balance",
+    es: "Saldo"
+  },
+  "available-balance": {
+    en: "Available Balance",
+    es: "Saldo disponible"
+  },
+  "wallet-id": {
+    en: "Wallet ID",
+    es: "ID de billetera"
+  },
+  "no-wallets-found": {
+    en: "No wallets found",
+    es: "No se encontraron billeteras"
+  },
+  "no-transactions-found": {
+    en: "No transactions found",
+    es: "No se encontraron transacciones"
+  },
+  "user-wallets": {
+    en: "User Wallets",
+    es: "Billeteras del usuario"
+  },
+  "wallet-transactions": {
+    en: "Wallet Transactions",
+    es: "Transacciones de billetera"
+  },
+  
+  // Additional UI text
+  "back-to-wallets": {
+    en: "Back to Wallets",
+    es: "Volver a Billeteras"
+  },
+  "loading": {
+    en: "Loading...",
+    es: "Cargando..."
+  },
+  "unknown": {
+    en: "Unknown",
+    es: "Desconocido"
+  },
+  "error": {
+    en: "Error",
+    es: "Error"
   },
 };
 

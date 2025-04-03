@@ -70,9 +70,9 @@ export const WalletsTable: React.FC<WalletsTableProps> = ({ wallets, onSelectWal
             <TableHead>ID</TableHead>
             {showUser && <TableHead>{t("users")}</TableHead>}
             <TableHead>{t("status")}</TableHead>
-            <TableHead>{t("Currency")}</TableHead>
-            <TableHead className="text-right">{t("Balance")}</TableHead>
-            <TableHead className="text-right">{t("Available Balance")}</TableHead>
+            <TableHead>{t("currency")}</TableHead>
+            <TableHead className="text-right">{t("balance")}</TableHead>
+            <TableHead className="text-right">{t("available-balance")}</TableHead>
             <TableHead className="text-right">{t("actions")}</TableHead>
           </TableRow>
         </TableHeader>
@@ -80,7 +80,7 @@ export const WalletsTable: React.FC<WalletsTableProps> = ({ wallets, onSelectWal
           {wallets.length === 0 ? (
             <TableRow>
               <TableCell colSpan={showUser ? 7 : 6} className="h-24 text-center">
-                {settings.language === "en" ? "No wallets found" : "No se encontraron billeteras"}
+                {t("no-wallets-found")}
               </TableCell>
             </TableRow>
           ) : (

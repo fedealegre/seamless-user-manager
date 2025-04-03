@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
@@ -71,7 +72,7 @@ const BackofficeSettings = () => {
     } catch (error) {
       console.error("Failed to save settings:", error);
       toast({
-        title: "Error saving settings",
+        title: getTranslation("error-saving-settings"),
         variant: "destructive",
       });
     } finally {
@@ -79,22 +80,59 @@ const BackofficeSettings = () => {
     }
   };
   
-  // List of timezones
+  // Comprehensive list of timezones
   const timezones = [
     "UTC",
-    "America/New_York",
-    "America/Chicago",
-    "America/Denver",
-    "America/Los_Angeles",
+    // Americas
+    "America/New_York", // Eastern Time
+    "America/Chicago", // Central Time
+    "America/Denver", // Mountain Time
+    "America/Los_Angeles", // Pacific Time
+    "America/Anchorage", // Alaska
+    "America/Adak", // Hawaii-Aleutian
+    "Pacific/Honolulu", // Hawaii
+    "America/Toronto",
+    "America/Vancouver",
+    "America/Mexico_City",
+    "America/Bogota",
+    "America/Lima",
+    "America/Santiago",
+    "America/Buenos_Aires",
+    "America/Sao_Paulo",
+    "America/Caracas",
+    // Europe
     "Europe/London",
     "Europe/Paris",
     "Europe/Berlin",
+    "Europe/Madrid",
+    "Europe/Rome",
+    "Europe/Amsterdam",
+    "Europe/Brussels",
+    "Europe/Vienna",
     "Europe/Moscow",
-    "Asia/Tokyo",
-    "Asia/Shanghai",
+    "Europe/Athens",
+    "Europe/Istanbul",
+    // Asia
+    "Asia/Jerusalem",
     "Asia/Dubai",
+    "Asia/Kolkata",
+    "Asia/Bangkok",
+    "Asia/Singapore",
+    "Asia/Hong_Kong",
+    "Asia/Shanghai",
+    "Asia/Tokyo",
+    "Asia/Seoul",
+    // Oceania
     "Australia/Sydney",
-    "Pacific/Auckland"
+    "Australia/Melbourne",
+    "Australia/Perth",
+    "Australia/Brisbane",
+    "Pacific/Auckland",
+    // Africa
+    "Africa/Cairo",
+    "Africa/Johannesburg",
+    "Africa/Nairobi",
+    "Africa/Lagos"
   ];
 
   return (
@@ -113,9 +151,7 @@ const BackofficeSettings = () => {
               <CardTitle>{getTranslation("language")}</CardTitle>
             </div>
             <CardDescription>
-              {settings.language === "en" 
-                ? "Select the language for the backoffice interface"
-                : "Seleccione el idioma para la interfaz del back office"}
+              {getTranslation("language-description")}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -133,7 +169,7 @@ const BackofficeSettings = () => {
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select language" />
+                            <SelectValue placeholder={getTranslation("select-language")} />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -157,10 +193,10 @@ const BackofficeSettings = () => {
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Select timezone" />
+                            <SelectValue placeholder={getTranslation("select-timezone")} />
                           </SelectTrigger>
                         </FormControl>
-                        <SelectContent>
+                        <SelectContent className="max-h-80">
                           {timezones.map((tz) => (
                             <SelectItem key={tz} value={tz}>
                               {tz}
@@ -169,9 +205,7 @@ const BackofficeSettings = () => {
                         </SelectContent>
                       </Select>
                       <FormDescription>
-                        {settings.language === "en"
-                          ? "All dates will be displayed in this timezone"
-                          : "Todas las fechas se mostrarán en esta zona horaria"}
+                        {getTranslation("timezone-description")}
                       </FormDescription>
                     </FormItem>
                   )}
@@ -194,21 +228,17 @@ const BackofficeSettings = () => {
             <div className="flex items-center gap-2">
               <Globe className="h-5 w-5 text-primary" />
               <CardTitle>
-                {settings.language === "en" 
-                  ? "Date & Time Preview" 
-                  : "Vista previa de fecha y hora"}
+                {getTranslation("date-time-preview")}
               </CardTitle>
             </div>
             <CardDescription>
-              {settings.language === "en"
-                ? "Preview how dates will be displayed with current settings"
-                : "Vista previa de cómo se mostrarán las fechas con la configuración actual"}
+              {getTranslation("date-time-preview-description")}
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="p-4 border rounded-md">
               <div className="mb-2 text-sm font-medium text-muted-foreground">
-                {settings.language === "en" ? "Current date and time:" : "Fecha y hora actual:"}
+                {getTranslation("current-date-time")}
               </div>
               <div className="text-lg font-medium">
                 {new Intl.DateTimeFormat(

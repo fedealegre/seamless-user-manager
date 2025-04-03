@@ -50,6 +50,16 @@ export const formatDateForInput = (
       timeZone: timezone
     });
     
+    const parts = formatter.formatToParts(date);
+    const year = parts.find(part => part.type === 'year')?.value;
+    const month = parts.find(part => part.type === 'month')?.value;
+    const day = parts.find(part => part.type === 'day')?.value;
+    
+    if (year && month && day) {
+      return `${year}-${month}-${day}`;
+    }
+    
+    // Fallback
     return formatter.format(date).split("/").join("-");
   } catch (error) {
     console.error("Error formatting date for input:", error);
@@ -62,9 +72,69 @@ export const getCurrentDateInTimezone = (timezone: string = "UTC"): Date => {
   // Create a date in the local timezone
   const date = new Date();
   
+  // Get the current time in ISO format
+  const isoDate = date.toISOString();
+  
   // Convert it to a string in the target timezone
-  const dateString = date.toLocaleString("en-US", { timeZone: timezone });
+  const formatter = new Intl.DateTimeFormat("en-US", {
+    timeZone: timezone,
+    year: 'numeric',
+    month: 'numeric',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+    hour12: false
+  });
+  
+  // Format the date and parse it back
+  const dateString = formatter.format(date);
   
   // Parse it back to a Date object
   return new Date(dateString);
+};
+
+// Format time difference (e.g., "2 hours ago")
+export const formatTimeDifference = (
+  date: Date | string | number,
+  locale: string = "en-US",
+  timezone: string = "UTC"
+): string => {
+  if (!date) return "";
+  
+  const dateObj = typeof date === "string" || typeof date === "number" 
+    ? new Date(date) 
+    : date;
+  
+  // Current date in the specified timezone
+  const now = new Date();
+  
+  // Calculate the difference in milliseconds
+  const diffMs = now.getTime() - dateObj.getTime();
+  
+  // Convert to seconds, minutes, hours, days
+  const diffSec = Math.floor(diffMs / 1000);
+  const diffMin = Math.floor(diffSec / 60);
+  const diffHours = Math.floor(diffMin / 60);
+  const diffDays = Math.floor(diffHours / 24);
+  
+  // Format based on the difference
+  if (diffDays > 30) {
+    // If more than a month, just show the date
+    return formatDateInTimezone(dateObj, timezone, locale);
+  } else if (diffDays > 0) {
+    return locale.startsWith("es") 
+      ? `hace ${diffDays} ${diffDays === 1 ? 'día' : 'días'}`
+      : `${diffDays} ${diffDays === 1 ? 'day' : 'days'} ago`;
+  } else if (diffHours > 0) {
+    return locale.startsWith("es")
+      ? `hace ${diffHours} ${diffHours === 1 ? 'hora' : 'horas'}`
+      : `${diffHours} ${diffHours === 1 ? 'hour' : 'hours'} ago`;
+  } else if (diffMin > 0) {
+    return locale.startsWith("es")
+      ? `hace ${diffMin} ${diffMin === 1 ? 'minuto' : 'minutos'}`
+      : `${diffMin} ${diffMin === 1 ? 'minute' : 'minutes'} ago`;
+  } else {
+    return locale.startsWith("es") ? "justo ahora" : "just now";
+  }
 };

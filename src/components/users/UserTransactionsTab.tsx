@@ -10,6 +10,8 @@ import TransactionsLoadingSkeleton from "@/components/transactions/TransactionsL
 import { useToast } from "@/hooks/use-toast";
 import TransactionDetails from "@/components/transactions/TransactionDetails";
 import CompensateCustomerDialog from "@/components/transactions/CompensateCustomerDialog";
+import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
+import { translate } from "@/lib/translations";
 
 interface UserTransactionsTabProps {
   userId: string;
@@ -21,6 +23,8 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
   const [page, setPage] = useState(1);
   const pageSize = 10;
   const { toast } = useToast();
+  const { settings } = useBackofficeSettings();
+  const t = (key: string) => translate(key, settings.language);
   
   // Dialog states
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
@@ -52,8 +56,8 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
 
   const handleCancelTransaction = (transaction: Transaction) => {
     toast({
-      title: "Cancel Transaction",
-      description: `Cancellation of transaction ${transaction.transactionId || transaction.id} not implemented in this view`,
+      title: t("cancel-transaction"),
+      description: `${t("transaction-cancellation-not-implemented")} ${transaction.transactionId || transaction.id}`,
     });
   };
 
@@ -65,8 +69,8 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
   const handleCompensateSubmit = async (amount: string, reason: string) => {
     if (!selectedTransaction || !selectedWalletId) {
       toast({
-        title: "Error",
-        description: "Missing transaction or wallet information",
+        title: t("error"),
+        description: t("missing-transaction-wallet-info"),
         variant: "destructive",
       });
       return;
@@ -99,8 +103,8 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
       );
 
       toast({
-        title: "Compensation Processed",
-        description: `Transaction has been created for compensation`,
+        title: t("compensation-processed"),
+        description: t("compensation-transaction-created"),
       });
 
       // Close the dialog and refetch transactions
@@ -108,8 +112,8 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
       setSelectedTransaction(null);
     } catch (error: any) {
       toast({
-        title: "Compensation Failed",
-        description: error.message || "An error occurred while processing the compensation",
+        title: t("compensation-failed"),
+        description: error.message || t("compensation-error"),
         variant: "destructive",
       });
     }
@@ -118,14 +122,14 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
   return (
     <Card>
       <CardHeader>
-        <CardTitle>User Transactions</CardTitle>
+        <CardTitle>{t("user-transactions")}</CardTitle>
         <CardDescription>
-          View transactions for each wallet
+          {t("view-wallet-transactions")}
         </CardDescription>
       </CardHeader>
       <CardContent>
         {wallets.length === 0 ? (
-          <p className="text-center py-6 text-muted-foreground">No wallets found for this user</p>
+          <p className="text-center py-6 text-muted-foreground">{t("no-wallets-found")}</p>
         ) : (
           <Tabs 
             value={selectedWalletId || ""}
@@ -135,7 +139,7 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
             <TabsList className="mb-4 w-full h-auto flex-wrap">
               {wallets.map((wallet) => (
                 <TabsTrigger key={wallet.id} value={wallet.id.toString()}>
-                  {wallet.currency} Wallet ({wallet.id})
+                  {wallet.currency} {t("wallets")} ({wallet.id})
                 </TabsTrigger>
               ))}
             </TabsList>
@@ -155,7 +159,7 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
                       handleCompensateCustomer={handleCompensateCustomer}
                     />
                   ) : (
-                    <p className="text-center py-6 text-muted-foreground">No transactions found for this wallet</p>
+                    <p className="text-center py-6 text-muted-foreground">{t("no-transactions-found")}</p>
                   )
                 )}
               </TabsContent>

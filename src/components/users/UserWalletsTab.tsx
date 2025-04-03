@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { UserTransactionsTab } from "./UserTransactionsTab";
 import { useToast } from "@/hooks/use-toast";
+import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
+import { translate } from "@/lib/translations";
 
 interface UserWalletsTabProps {
   userId: string;
@@ -19,6 +21,8 @@ export const UserWalletsTab: React.FC<UserWalletsTabProps> = ({ userId, wallets,
   const [selectedWalletId, setSelectedWalletId] = useState<string | null>(null);
   const [showTransactions, setShowTransactions] = useState<boolean>(false);
   const { toast } = useToast();
+  const { settings } = useBackofficeSettings();
+  const t = (key: string) => translate(key, settings.language);
 
   // Set first wallet as selected when wallets load
   React.useEffect(() => {
@@ -41,13 +45,13 @@ export const UserWalletsTab: React.FC<UserWalletsTabProps> = ({ userId, wallets,
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <div>
-            <CardTitle>Wallet Transactions</CardTitle>
+            <CardTitle>{t("wallet-transactions")}</CardTitle>
             <CardDescription>
-              Transactions for wallet ID: {selectedWalletId}
+              {t("transactions-for-wallet")} {selectedWalletId}
             </CardDescription>
           </div>
           <Button variant="outline" onClick={handleBackToWallets}>
-            Back to Wallets
+            {t("back-to-wallets")}
           </Button>
         </CardHeader>
         <CardContent>
@@ -63,11 +67,11 @@ export const UserWalletsTab: React.FC<UserWalletsTabProps> = ({ userId, wallets,
   return (
     <Card>
       <CardHeader>
-        <CardTitle>User Wallets</CardTitle>
+        <CardTitle>{t("user-wallets")}</CardTitle>
         <CardDescription>
-          {isLoading ? "Loading..." : wallets.length > 0 
-            ? `${wallets.length} wallets found. Click on a wallet to view transactions.` 
-            : "No wallets found for this user"}
+          {isLoading ? t("loading") : wallets.length > 0 
+            ? `${wallets.length} ${t("wallets")} ${t("found")}. ${t("click-wallet-view-transactions")}` 
+            : t("no-wallets-found")}
         </CardDescription>
       </CardHeader>
       <CardContent>

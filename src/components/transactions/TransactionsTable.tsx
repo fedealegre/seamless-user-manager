@@ -1,9 +1,8 @@
 
 import React from "react";
 import { Transaction } from "@/lib/api/types";
-import { formatDistance } from "date-fns";
 import { MoreVertical, Eye, XCircle, CircleDollarSign } from "lucide-react";
-import { getStatusBadge, getTypeBadge, formatCurrency } from "./transaction-utils";
+import { getTranslatedStatusBadge, getTranslatedTypeBadge, formatCurrency } from "./transaction-utils";
 import { 
   Table, 
   TableBody, 
@@ -21,6 +20,9 @@ import {
   DropdownMenuItem 
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
+import { translate } from "@/lib/translations";
+import { formatTimeDifference } from "@/lib/date-utils";
 
 interface TransactionsTableProps {
   transactions: Transaction[];
@@ -39,17 +41,21 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
   handleCancelTransaction,
   handleCompensateCustomer,
 }) => {
+  const { settings, formatDateTime } = useBackofficeSettings();
+  const t = (key: string) => translate(key, settings.language);
+  const locale = settings.language === "en" ? "en-US" : "es-ES";
+  
   return (
     <div className="rounded-md border">
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Transaction ID</TableHead>
-            <TableHead>Date</TableHead>
-            <TableHead>Type</TableHead>
-            <TableHead>Amount</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
+            <TableHead>{t("transaction-id")}</TableHead>
+            <TableHead>{t("date")}</TableHead>
+            <TableHead>{t("type")}</TableHead>
+            <TableHead>{t("amount")}</TableHead>
+            <TableHead>{t("status")}</TableHead>
+            <TableHead className="text-right">{t("actions")}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -62,7 +68,7 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
                   <div className="font-medium">{transaction.transactionId || transaction.id}</div>
                   {transaction.reference && (
                     <div className="text-xs text-muted-foreground">
-                      Ref: {transaction.reference}
+                      {t("reference")}: {transaction.reference}
                     </div>
                   )}
                 </TableCell>
@@ -70,24 +76,28 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
                   {transaction.date ? (
                     <>
                       <div className="font-medium">
-                        {new Date(transaction.date).toLocaleDateString()}
+                        {formatDateTime(new Date(transaction.date))}
                       </div>
                       <div className="text-xs text-muted-foreground">
-                        {formatDistance(new Date(transaction.date), new Date(), { addSuffix: true })}
+                        {formatTimeDifference(
+                          new Date(transaction.date), 
+                          locale,
+                          settings.timezone
+                        )}
                       </div>
                     </>
                   ) : '-'}
                 </TableCell>
                 <TableCell>
-                  {getTypeBadge(transaction.movementType || transaction.type)}
+                  {getTranslatedTypeBadge(transaction.movementType || transaction.type, settings.language)}
                 </TableCell>
                 <TableCell>
                   <div className={`font-medium ${(transaction.movementType === 'deposit' || transaction.movementType === 'INCOME') ? 'text-green-600' : transaction.movementType === 'OUTCOME' ? 'text-red-600' : ''}`}>
-                    {formatCurrency(transaction.amount, transaction.currency)}
+                    {formatCurrency(transaction.amount, transaction.currency, locale)}
                   </div>
                 </TableCell>
                 <TableCell>
-                  {getStatusBadge(transaction.status)}
+                  {getTranslatedStatusBadge(transaction.status, settings.language)}
                 </TableCell>
                 <TableCell className="text-right">
                   <DropdownMenu>
@@ -97,23 +107,23 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                      <DropdownMenuLabel>{t("actions")}</DropdownMenuLabel>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem onClick={() => handleViewDetails(transaction)}>
-                        <Eye size={16} className="mr-2" /> View Details
+                        <Eye size={16} className="mr-2" /> {t("view")} {t("details")}
                       </DropdownMenuItem>
                       {transaction.status === "pending" && (
                         <DropdownMenuItem 
                           onClick={() => handleCancelTransaction(transaction)}
                           className="text-amber-600"
                         >
-                          <XCircle size={16} className="mr-2" /> Cancel Transaction
+                          <XCircle size={16} className="mr-2" /> {t("cancel")} {t("transaction")}
                         </DropdownMenuItem>
                       )}
                       <DropdownMenuItem 
                         onClick={() => handleCompensateCustomer(transaction)}
                       >
-                        <CircleDollarSign size={16} className="mr-2" /> Compensate Customer
+                        <CircleDollarSign size={16} className="mr-2" /> {t("compensate")} {t("customer")}
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -123,7 +133,7 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
           ) : (
             <TableRow>
               <TableCell colSpan={6} className="h-24 text-center">
-                No transactions found. Try a different search or filter.
+                {t("no-transactions-found")}
               </TableCell>
             </TableRow>
           )}

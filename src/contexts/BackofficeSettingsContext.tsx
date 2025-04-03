@@ -1,5 +1,6 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { formatDateInTimezone } from "@/lib/date-utils";
 
 // Define the available languages
 export type Language = "en" | "es";
@@ -20,7 +21,9 @@ const DEFAULT_SETTINGS: BackofficeSettings = {
 interface BackofficeSettingsContextType {
   settings: BackofficeSettings;
   updateSettings: (settings: Partial<BackofficeSettings>) => void;
-  formatDate: (date: Date | string | number) => string;
+  formatDate: (date: Date | string | number, options?: Intl.DateTimeFormatOptions) => string;
+  formatTime: (date: Date | string | number) => string;
+  formatDateTime: (date: Date | string | number) => string;
 }
 
 // Create the context
@@ -28,6 +31,8 @@ const BackofficeSettingsContext = createContext<BackofficeSettingsContextType>({
   settings: DEFAULT_SETTINGS,
   updateSettings: () => {},
   formatDate: () => "",
+  formatTime: () => "",
+  formatDateTime: () => "",
 });
 
 // Storage key for localStorage
@@ -66,31 +71,52 @@ export const BackofficeSettingsProvider: React.FC<{ children: React.ReactNode }>
     });
   };
 
-  // Function to format dates according to the selected timezone
-  const formatDate = (date: Date | string | number): string => {
+  // Function to format dates according to the selected timezone and language
+  const formatDate = (date: Date | string | number, options?: Intl.DateTimeFormatOptions): string => {
     if (!date) return "";
     
-    const dateObj = typeof date === "string" || typeof date === "number" 
-      ? new Date(date) 
-      : date;
+    const locale = settings.language === "en" ? "en-US" : "es-ES";
+    const defaultOptions: Intl.DateTimeFormatOptions = {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      ...options
+    };
     
-    try {
-      return new Intl.DateTimeFormat("en-US", {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-        timeZone: settings.timezone
-      }).format(dateObj);
-    } catch (error) {
-      console.error("Error formatting date:", error);
-      return String(date);
-    }
+    return formatDateInTimezone(date, settings.timezone, locale, defaultOptions);
+  };
+  
+  // Function to format time only
+  const formatTime = (date: Date | string | number): string => {
+    return formatDate(date, {
+      year: undefined,
+      month: undefined,
+      day: undefined,
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit"
+    });
+  };
+  
+  // Function to format full date and time
+  const formatDateTime = (date: Date | string | number): string => {
+    return formatDate(date, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit"
+    });
   };
 
   return (
-    <BackofficeSettingsContext.Provider value={{ settings, updateSettings, formatDate }}>
+    <BackofficeSettingsContext.Provider value={{ 
+      settings, 
+      updateSettings, 
+      formatDate,
+      formatTime,
+      formatDateTime
+    }}>
       {children}
     </BackofficeSettingsContext.Provider>
   );
