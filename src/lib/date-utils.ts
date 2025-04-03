@@ -138,3 +138,8 @@ export const formatTimeDifference = (
     return locale.startsWith("es") ? "justo ahora" : "just now";
   }
 };
+
+// Add the missing formatDateTime function for backward compatibility
+export const formatDateTime = (date: Date | string | number): string => {
+  return formatDateInTimezone(date);
+};

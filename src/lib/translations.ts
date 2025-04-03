@@ -302,10 +302,6 @@ const translations: Translations = {
     en: "Monitor and manage payment transactions",
     es: "Monitorear y gestionar transacciones de pagos"
   },
-  "transactions": {
-    en: "Transactions",
-    es: "Transacciones"
-  },
   "income": {
     en: "Income",
     es: "Ingreso"
@@ -346,10 +342,6 @@ const translations: Translations = {
     en: "View wallet transactions",
     es: "Ver transacciones de billetera"
   },
-  "wallets": {
-    en: "Wallets",
-    es: "Billeteras"
-  },
   "found": {
     en: "found",
     es: "encontradas"
@@ -358,6 +350,26 @@ const translations: Translations = {
     en: "Click on a wallet to view its transactions",
     es: "Haga clic en una billetera para ver sus transacciones"
   },
+  "missing-transaction-wallet-info": {
+    en: "Missing transaction or wallet information",
+    es: "Falta información de transacción o billetera"
+  },
+  "compensation-processed": {
+    en: "Compensation Processed",
+    es: "Compensación Procesada"
+  },
+  "compensation-transaction-created": {
+    en: "Compensation transaction has been created successfully",
+    es: "La transacción de compensación ha sido creada exitosamente"
+  },
+  "compensation-failed": {
+    en: "Compensation Failed",
+    es: "Compensación Fallida"
+  },
+  "compensation-error": {
+    en: "An error occurred during the compensation process",
+    es: "Ocurrió un error durante el proceso de compensación"
+  }
 };
 
 // Get translation for a key

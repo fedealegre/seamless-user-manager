@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { userService } from "@/lib/api/user-service";
@@ -12,7 +13,6 @@ import CompensateCustomerDialog from "@/components/transactions/CompensateCustom
 import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
 import { translate } from "@/lib/translations";
 import ExportCSVButton from "@/components/common/ExportCSVButton";
-import { formatDateTime } from "@/lib/date-utils";
 
 interface UserTransactionsTabProps {
   userId: string;
