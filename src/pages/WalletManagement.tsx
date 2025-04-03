@@ -70,10 +70,6 @@ const WalletManagement: React.FC = () => {
             View and manage all wallets across the platform
           </p>
         </div>
-        <Button>
-          <Plus className="mr-2 h-4 w-4" />
-          Add Wallet
-        </Button>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
