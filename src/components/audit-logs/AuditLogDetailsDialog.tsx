@@ -3,6 +3,8 @@ import React from "react";
 import { AuditLog } from "@/lib/api/types";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
+import { translate } from "@/lib/translations";
 import {
   Dialog,
   DialogContent,
@@ -29,6 +31,9 @@ const AuditLogDetailsDialog: React.FC<AuditLogDetailsDialogProps> = ({
   getBadgeColor,
   getOperationTypeDetails,
 }) => {
+  const { settings } = useBackofficeSettings();
+  const t = (key: string) => translate(key, settings.language);
+  
   if (!log) return null;
 
   const { icon: IconComponent, label } = getOperationTypeDetails(log.operationType);
@@ -37,26 +42,26 @@ const AuditLogDetailsDialog: React.FC<AuditLogDetailsDialogProps> = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle>Audit Log Details</DialogTitle>
+          <DialogTitle>{t("audit-log-details")}</DialogTitle>
           <DialogDescription>
-            Detailed information about the selected audit log entry.
+            {t("detailed-info-audit-log")}
           </DialogDescription>
         </DialogHeader>
         
         <div className="space-y-4 py-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
-              <p className="text-sm font-medium text-muted-foreground">Timestamp</p>
+              <p className="text-sm font-medium text-muted-foreground">{t("timestamp")}</p>
               <p className="font-medium">{formatDateTime(log.dateTime)}</p>
             </div>
             
             <div className="space-y-1">
-              <p className="text-sm font-medium text-muted-foreground">User</p>
+              <p className="text-sm font-medium text-muted-foreground">{t("user")}</p>
               <p className="font-medium">{log.user}</p>
             </div>
             
             <div className="space-y-1">
-              <p className="text-sm font-medium text-muted-foreground">Operation Type</p>
+              <p className="text-sm font-medium text-muted-foreground">{t("operation-type")}</p>
               <div>
                 <Badge 
                   variant="outline" 
@@ -71,14 +76,14 @@ const AuditLogDetailsDialog: React.FC<AuditLogDetailsDialogProps> = ({
             </div>
             
             <div className="space-y-1">
-              <p className="text-sm font-medium text-muted-foreground">Entity</p>
+              <p className="text-sm font-medium text-muted-foreground">{t("entity")}</p>
               <p className="font-medium">{log.entity || "N/A"}</p>
             </div>
           </div>
           
           <div className="border-t pt-4">
             <div className="space-y-1 mb-3">
-              <p className="text-sm font-medium text-muted-foreground">Previous Value</p>
+              <p className="text-sm font-medium text-muted-foreground">{t("previous-value")}</p>
               <div className="border rounded-md p-3 bg-muted/30">
                 <pre className="text-xs overflow-auto whitespace-pre-wrap">
                   {log.previousValue || "N/A"}
@@ -87,7 +92,7 @@ const AuditLogDetailsDialog: React.FC<AuditLogDetailsDialogProps> = ({
             </div>
             
             <div className="space-y-1">
-              <p className="text-sm font-medium text-muted-foreground">New Value</p>
+              <p className="text-sm font-medium text-muted-foreground">{t("new-value")}</p>
               <div className="border rounded-md p-3 bg-muted/30">
                 <pre className="text-xs overflow-auto whitespace-pre-wrap">
                   {log.newValue || "N/A"}

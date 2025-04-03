@@ -260,6 +260,10 @@ const translations: Translations = {
     en: "Search",
     es: "Buscar"
   },
+  "refresh": {
+    en: "Refresh",
+    es: "Actualizar"
+  },
   
   // Transaction related
   "transaction-id": {
@@ -347,6 +351,42 @@ const translations: Translations = {
   "wallet": {
     en: "Wallet",
     es: "Billetera"
+  },
+  "all-wallets": {
+    en: "All Wallets",
+    es: "Todas las Billeteras"
+  },
+  "manage-wallets-for-all-users": {
+    en: "Manage wallets for all users",
+    es: "Administrar billeteras para todos los usuarios"
+  },
+  "search-wallets": {
+    en: "Search wallets...",
+    es: "Buscar billeteras..."
+  },
+  "across-all-users": {
+    en: "Across all users",
+    es: "A través de todos los usuarios"
+  },
+  "currently-active": {
+    en: "Currently active",
+    es: "Actualmente activas"
+  },
+  "total-balance": {
+    en: "Total Balance",
+    es: "Saldo Total"
+  },
+  "usd-equivalent": {
+    en: "USD equivalent",
+    es: "Equivalente en USD"
+  },
+  "users-with-wallets": {
+    en: "Users with Wallets",
+    es: "Usuarios con Billeteras"
+  },
+  "total-users-with-wallets": {
+    en: "Total users with wallets",
+    es: "Total de usuarios con billeteras"
   },
   
   // Additional UI text
@@ -463,6 +503,122 @@ const translations: Translations = {
   "compensation-error": {
     en: "An error occurred during the compensation process",
     es: "Ocurrió un error durante el proceso de compensación"
+  },
+  
+  // Audit log related
+  "audit-log-details": {
+    en: "Audit Log Details",
+    es: "Detalles del Registro de Auditoría"
+  },
+  "detailed-info-audit-log": {
+    en: "Detailed information about the selected audit log entry",
+    es: "Información detallada sobre la entrada de registro de auditoría seleccionada"
+  },
+  "timestamp": {
+    en: "Timestamp",
+    es: "Marca de tiempo"
+  },
+  "user": {
+    en: "User",
+    es: "Usuario"
+  },
+  "operation-type": {
+    en: "Operation Type",
+    es: "Tipo de Operación"
+  },
+  "entity": {
+    en: "Entity",
+    es: "Entidad"
+  },
+  "previous-value": {
+    en: "Previous Value",
+    es: "Valor Anterior"
+  },
+  "new-value": {
+    en: "New Value",
+    es: "Nuevo Valor"
+  },
+  "start-date": {
+    en: "Start Date",
+    es: "Fecha de Inicio"
+  },
+  "end-date": {
+    en: "End Date",
+    es: "Fecha de Fin"
+  },
+  "search-by-user": {
+    en: "Search by user",
+    es: "Buscar por usuario"
+  },
+  "all-operations": {
+    en: "All operations",
+    es: "Todas las operaciones"
+  },
+  "operation-types": {
+    en: "Operation Types",
+    es: "Tipos de Operación"
+  },
+  "reset-filters": {
+    en: "Reset Filters",
+    es: "Restablecer Filtros"
+  },
+  "date-time": {
+    en: "Date & Time",
+    es: "Fecha y Hora"
+  },
+  "operation": {
+    en: "Operation",
+    es: "Operación"
+  },
+  "no-log-entries-found": {
+    en: "No log entries found",
+    es: "No se encontraron entradas de registro"
+  },
+  "adjust-filters": {
+    en: "Try adjusting your filters or checking back later",
+    es: "Intente ajustar sus filtros o vuelva más tarde"
+  },
+  "view-details": {
+    en: "View Details",
+    es: "Ver Detalles"
+  },
+  
+  // Backoffice users
+  "block-backoffice-user": {
+    en: "Block Backoffice User",
+    es: "Bloquear Usuario de Backoffice"
+  },
+  "block-confirmation": {
+    en: "Are you sure you want to block",
+    es: "¿Está seguro de que desea bloquear"
+  },
+  "block-warning": {
+    en: "They will no longer be able to access the backoffice system",
+    es: "Ya no podrán acceder al sistema de backoffice"
+  },
+  "user-blocked-success": {
+    en: "User blocked successfully",
+    es: "Usuario bloqueado exitosamente"
+  },
+  "failed-block-user": {
+    en: "Failed to block user",
+    es: "Error al bloquear usuario"
+  },
+  "user-not-found": {
+    en: "User not found. The user may have been deleted",
+    es: "Usuario no encontrado. Es posible que el usuario haya sido eliminado"
+  },
+  "cannot-block-without-id": {
+    en: "Cannot block user without an ID",
+    es: "No se puede bloquear al usuario sin un ID"
+  },
+  "blocking": {
+    en: "Blocking...",
+    es: "Bloqueando..."
+  },
+  "block-user": {
+    en: "Block User",
+    es: "Bloquear Usuario"
   }
 };
 

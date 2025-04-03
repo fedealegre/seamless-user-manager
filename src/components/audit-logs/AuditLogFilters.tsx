@@ -4,6 +4,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { DatePicker } from "@/components/ui/date-picker";
+import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
+import { translate } from "@/lib/translations";
 import {
   Select,
   SelectContent,
@@ -33,13 +35,16 @@ const AuditLogFilters = ({
   onFilterChange: (key: keyof FilterParams, value: any) => void;
   onReset: () => void;
 }) => {
+  const { settings } = useBackofficeSettings();
+  const t = (key: string) => translate(key, settings.language);
+  
   return (
     <Card>
       <CardContent className="p-4 pt-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="space-y-2">
             <label className="text-sm font-medium" htmlFor="start-date">
-              Start Date
+              {t("start-date")}
             </label>
             <DatePicker
               id="start-date"
@@ -51,7 +56,7 @@ const AuditLogFilters = ({
           
           <div className="space-y-2">
             <label className="text-sm font-medium" htmlFor="end-date">
-              End Date
+              {t("end-date")}
             </label>
             <DatePicker
               id="end-date"
@@ -63,11 +68,11 @@ const AuditLogFilters = ({
           
           <div className="space-y-2">
             <label className="text-sm font-medium" htmlFor="user">
-              User
+              {t("user")}
             </label>
             <Input
               id="user"
-              placeholder="Search by user"
+              placeholder={t("search-by-user")}
               value={filters.user}
               onChange={(e) => onFilterChange("user", e.target.value)}
               className="w-full"
@@ -76,19 +81,19 @@ const AuditLogFilters = ({
           
           <div className="space-y-2">
             <label className="text-sm font-medium" htmlFor="operation-type">
-              Operation Type
+              {t("operation-type")}
             </label>
             <Select
               value={filters.operationType}
               onValueChange={(value) => onFilterChange("operationType", value)}
             >
               <SelectTrigger id="operation-type" className="w-full">
-                <SelectValue placeholder="All operations" />
+                <SelectValue placeholder={t("all-operations")} />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectLabel>Operation Types</SelectLabel>
-                  <SelectItem value="all">All operations</SelectItem>
+                  <SelectLabel>{t("operation-types")}</SelectLabel>
+                  <SelectItem value="all">{t("all-operations")}</SelectItem>
                   {operationTypes.map((op) => (
                     <SelectItem key={op.id} value={op.id}>
                       {op.label}
@@ -102,7 +107,7 @@ const AuditLogFilters = ({
         
         <div className="flex justify-end mt-4">
           <Button variant="outline" onClick={onReset} className="ml-2">
-            Reset Filters
+            {t("reset-filters")}
           </Button>
         </div>
       </CardContent>

@@ -9,10 +9,14 @@ import { Input } from "@/components/ui/input";
 import { WalletsTable } from "@/components/wallets/WalletsTable";
 import { WalletsLoadingSkeleton } from "@/components/wallets/WalletsLoadingSkeleton";
 import { useToast } from "@/hooks/use-toast";
+import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
+import { translate } from "@/lib/translations";
 
 const WalletManagement: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const { toast } = useToast();
+  const { settings } = useBackofficeSettings();
+  const t = (key: string) => translate(key, settings.language);
   
   const { 
     data: walletsWithUsers = [], 
@@ -28,8 +32,8 @@ const WalletManagement: React.FC = () => {
       } catch (error) {
         console.error("Failed to fetch wallets:", error);
         toast({
-          title: "Error",
-          description: "Failed to load wallets",
+          title: t("error"),
+          description: t("no-wallets-found"),
           variant: "destructive",
         });
         return [];
@@ -65,9 +69,9 @@ const WalletManagement: React.FC = () => {
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Wallet Management</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t("wallets")}</h1>
           <p className="text-muted-foreground">
-            View and manage all wallets across the platform
+            {t("monitor-and-manage-payment-transactions")}
           </p>
         </div>
       </div>
@@ -76,21 +80,21 @@ const WalletManagement: React.FC = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Total Wallets
+              {t("total-users")}
             </CardTitle>
             <Wallet className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{allWallets.length}</div>
             <p className="text-xs text-muted-foreground">
-              Across all users
+              {t("across-all-users")}
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Active Wallets
+              {t("active-wallets")}
             </CardTitle>
             <Wallet className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
@@ -99,14 +103,14 @@ const WalletManagement: React.FC = () => {
               {allWallets.filter(wallet => wallet.status?.toLowerCase() === "active").length}
             </div>
             <p className="text-xs text-muted-foreground">
-              Currently active
+              {t("currently-active")}
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Total Balance
+              {t("total-balance")}
             </CardTitle>
             <Wallet className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
@@ -115,14 +119,14 @@ const WalletManagement: React.FC = () => {
               ${allWallets.reduce((sum, wallet) => sum + (wallet.balance || 0), 0).toLocaleString()}
             </div>
             <p className="text-xs text-muted-foreground">
-              USD equivalent
+              {t("usd-equivalent")}
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Users with Wallets
+              {t("users-with-wallets")}
             </CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
@@ -131,7 +135,7 @@ const WalletManagement: React.FC = () => {
               {new Set(walletsWithUsers.map(item => item.userId)).size}
             </div>
             <p className="text-xs text-muted-foreground">
-              Total users with wallets
+              {t("total-users-with-wallets")}
             </p>
           </CardContent>
         </Card>
@@ -139,9 +143,9 @@ const WalletManagement: React.FC = () => {
 
       <Card>
         <CardHeader>
-          <CardTitle>All Wallets</CardTitle>
+          <CardTitle>{t("all-wallets")}</CardTitle>
           <CardDescription>
-            Manage wallets for all users
+            {t("manage-wallets-for-all-users")}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -151,7 +155,7 @@ const WalletManagement: React.FC = () => {
                 <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
                   type="search"
-                  placeholder="Search wallets..."
+                  placeholder={t("search-wallets")}
                   className="pl-8"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
@@ -160,7 +164,7 @@ const WalletManagement: React.FC = () => {
             </form>
             <Button variant="outline" onClick={handleRefresh} disabled={isRefetching}>
               <RefreshCw className={`h-4 w-4 mr-2 ${isRefetching ? 'animate-spin' : ''}`} />
-              Refresh
+              {t("refresh")}
             </Button>
           </div>
 

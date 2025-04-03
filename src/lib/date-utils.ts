@@ -1,4 +1,3 @@
-
 /**
  * Utility functions for date formatting with timezone support
  */
@@ -139,7 +138,29 @@ export const formatTimeDifference = (
   }
 };
 
-// Add the missing formatDateTime function for backward compatibility
-export const formatDateTime = (date: Date | string | number): string => {
-  return formatDateInTimezone(date);
+// Format date in timezone according to locale
+export const formatDateTime = (
+  date: Date | string | number,
+  timezone: string = 'UTC',
+  locale: string = 'en-US',
+  options: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  }
+): string => {
+  const dateObj = new Date(date);
+  
+  try {
+    return new Intl.DateTimeFormat(locale, {
+      ...options,
+      timeZone: timezone
+    }).format(dateObj);
+  } catch (error) {
+    console.error('Error formatting date:', error);
+    // Fallback to default format in case of error
+    return dateObj.toLocaleString(locale);
+  }
 };

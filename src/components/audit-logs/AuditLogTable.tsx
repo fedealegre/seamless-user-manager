@@ -5,6 +5,8 @@ import { Clock, FileText, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
+import { translate } from "@/lib/translations";
 import {
   Table,
   TableBody,
@@ -34,6 +36,9 @@ const AuditLogTable: React.FC<AuditLogTableProps> = ({
   onViewDetails,
   onExport,
 }) => {
+  const { settings } = useBackofficeSettings();
+  const t = (key: string) => translate(key, settings.language);
+
   if (isLoading) {
     return (
       <div className="space-y-4">
@@ -60,18 +65,18 @@ const AuditLogTable: React.FC<AuditLogTableProps> = ({
             className="flex items-center gap-2"
           >
             <Download size={16} />
-            Export CSV
+            {t("export-csv")}
           </Button>
         </div>
       )}
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Date & Time</TableHead>
-            <TableHead>User</TableHead>
-            <TableHead>Operation</TableHead>
-            <TableHead>Entity</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
+            <TableHead>{t("date-time")}</TableHead>
+            <TableHead>{t("user")}</TableHead>
+            <TableHead>{t("operation")}</TableHead>
+            <TableHead>{t("entity")}</TableHead>
+            <TableHead className="text-right">{t("actions")}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -110,7 +115,7 @@ const AuditLogTable: React.FC<AuditLogTableProps> = ({
                       size="sm"
                       onClick={() => onViewDetails(log)}
                     >
-                      <FileText size={14} className="mr-1" /> View Details
+                      <FileText size={14} className="mr-1" /> {t("view-details")}
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -121,8 +126,8 @@ const AuditLogTable: React.FC<AuditLogTableProps> = ({
               <TableCell colSpan={5} className="h-24 text-center">
                 <div className="flex flex-col items-center justify-center">
                   <FileText size={24} className="text-muted-foreground mb-2" />
-                  <p>No log entries found</p>
-                  <p className="text-sm text-muted-foreground mt-1">Try adjusting your filters or checking back later</p>
+                  <p>{t("no-log-entries-found")}</p>
+                  <p className="text-sm text-muted-foreground mt-1">{t("adjust-filters")}</p>
                 </div>
               </TableCell>
             </TableRow>
@@ -134,4 +139,3 @@ const AuditLogTable: React.FC<AuditLogTableProps> = ({
 };
 
 export default AuditLogTable;
-

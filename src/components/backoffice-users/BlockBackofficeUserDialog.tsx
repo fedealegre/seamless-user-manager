@@ -3,7 +3,9 @@ import React from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiService as api } from "@/lib/api";
 import { BackofficeUser } from "@/lib/api/types";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
+import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
+import { translate } from "@/lib/translations";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -28,31 +30,33 @@ const BlockBackofficeUserDialog: React.FC<BlockBackofficeUserDialogProps> = ({
 }) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { settings } = useBackofficeSettings();
+  const t = (key: string) => translate(key, settings.language);
 
   const blockUserMutation = useMutation({
     mutationFn: (userId: string) => api.blockBackofficeUser(userId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["backofficeUsers"] });
       toast({
-        title: "Success",
-        description: "User blocked successfully",
+        title: t("success"),
+        description: t("user-blocked-success"),
       });
       onClose();
     },
     onError: (error) => {
-      let errorMessage = "Failed to block user";
+      let errorMessage = t("failed-block-user");
       
       if (error instanceof Error) {
         // Extract specific error message
         if (error.message.includes("Not Found")) {
-          errorMessage = "User not found. The user may have been deleted.";
+          errorMessage = t("user-not-found");
         } else {
           errorMessage = error.message;
         }
       }
       
       toast({
-        title: "Error",
+        title: t("error"),
         description: errorMessage,
         variant: "destructive",
       });
@@ -64,8 +68,8 @@ const BlockBackofficeUserDialog: React.FC<BlockBackofficeUserDialogProps> = ({
       blockUserMutation.mutate(user.id);
     } else {
       toast({
-        title: "Error",
-        description: "Cannot block user without an ID",
+        title: t("error"),
+        description: t("cannot-block-without-id"),
         variant: "destructive",
       });
       onClose();
@@ -76,24 +80,24 @@ const BlockBackofficeUserDialog: React.FC<BlockBackofficeUserDialogProps> = ({
     <AlertDialog open={open} onOpenChange={onClose}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Block Backoffice User</AlertDialogTitle>
+          <AlertDialogTitle>{t("block-backoffice-user")}</AlertDialogTitle>
           <AlertDialogDescription>
-            Are you sure you want to block {user.name} {user.surname}? 
-            They will no longer be able to access the backoffice system.
+            {t("block-confirmation")} {user.name} {user.surname}? 
+            {t("block-warning")}.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel 
             disabled={blockUserMutation.isPending}
           >
-            Cancel
+            {t("cancel")}
           </AlertDialogCancel>
           <AlertDialogAction 
             onClick={handleBlock} 
             disabled={blockUserMutation.isPending}
             className="bg-amber-600 text-white hover:bg-amber-700"
           >
-            {blockUserMutation.isPending ? "Blocking..." : "Block User"}
+            {blockUserMutation.isPending ? t("blocking") : t("block-user")}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
