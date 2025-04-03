@@ -53,6 +53,100 @@ const translations: Translations = {
     es: "Configuración del BackOffice"
   },
   
+  // Dashboard specific
+  "total-users": {
+    en: "Total Users",
+    es: "Usuarios Totales"
+  },
+  "total-registered-users": {
+    en: "Total registered users",
+    es: "Total de usuarios registrados"
+  },
+  "active-wallets": {
+    en: "Active Wallets",
+    es: "Billeteras Activas"
+  },
+  "wallets-with-activity": {
+    en: "Wallets with activity in last 30 days",
+    es: "Billeteras con actividad en los últimos 30 días"
+  },
+  "transactions-7d": {
+    en: "Transactions (7d)",
+    es: "Transacciones (7d)"
+  },
+  "transactions-last-7-days": {
+    en: "Transactions in the last 7 days",
+    es: "Transacciones en los últimos 7 días"
+  },
+  "flagged-transactions": {
+    en: "Flagged Transactions",
+    es: "Transacciones Marcadas"
+  },
+  "transactions-flagged-suspicious": {
+    en: "Transactions flagged as suspicious",
+    es: "Transacciones marcadas como sospechosas"
+  },
+  "transaction-overview": {
+    en: "Transaction Overview",
+    es: "Resumen de Transacciones"
+  },
+  "transaction-volume-count": {
+    en: "Transaction volume and count over time",
+    es: "Volumen y recuento de transacciones a lo largo del tiempo"
+  },
+  "transaction-volume": {
+    en: "Transaction Volume ($)",
+    es: "Volumen de Transacciones ($)"
+  },
+  "transaction-count": {
+    en: "Transaction Count",
+    es: "Recuento de Transacciones"
+  },
+  "transaction-types": {
+    en: "Transaction Types",
+    es: "Tipos de Transacciones"
+  },
+  "distribution-by-category": {
+    en: "Distribution by transaction category",
+    es: "Distribución por categoría de transacción"
+  },
+  "user-growth": {
+    en: "User Growth",
+    es: "Crecimiento de Usuarios"
+  },
+  "new-user-registrations": {
+    en: "New user registrations over time",
+    es: "Nuevos registros de usuarios a lo largo del tiempo"
+  },
+  "new-users": {
+    en: "New Users",
+    es: "Nuevos Usuarios"
+  },
+  "recent-alerts": {
+    en: "Recent Alerts",
+    es: "Alertas Recientes"
+  },
+  "security-system-alerts": {
+    en: "Security and system alerts",
+    es: "Alertas de seguridad y sistema"
+  },
+  "day": {
+    en: "Day",
+    es: "Día"
+  },
+  "week": {
+    en: "Week",
+    es: "Semana"
+  },
+  "month": {
+    en: "Month",
+    es: "Mes"
+  },
+  "year": {
+    en: "Year",
+    es: "Año"
+  },
+  
   // Settings page
   "language": {
     en: "Language",
