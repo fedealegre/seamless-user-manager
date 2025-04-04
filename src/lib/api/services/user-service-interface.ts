@@ -1,6 +1,11 @@
 
 import { User, Wallet, Transaction, CompensationRequest, ResetPasswordRequest, ResetPasswordResponse } from "../types";
 
+export interface ChangeTransactionStatusRequest {
+  newStatus: 'cancelled' | 'rejected' | 'confirmed' | 'approved';
+  reason: string;
+}
+
 export interface UserService {
   searchUsers(params: any): Promise<User[]>;
   getUserData(userId: string): Promise<User>;
@@ -20,4 +25,9 @@ export interface UserService {
     request: CompensationRequest
   ): Promise<any>;
   generateRandomTransaction(): Promise<Transaction>;
+  changeTransactionStatus(
+    walletId: string,
+    transactionId: string,
+    request: ChangeTransactionStatusRequest
+  ): Promise<Transaction>;
 }

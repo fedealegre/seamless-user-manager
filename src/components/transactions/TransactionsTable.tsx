@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Transaction } from "@/lib/api/types";
-import { MoreVertical, Eye, XCircle, CircleDollarSign } from "lucide-react";
+import { MoreVertical, Eye, XCircle, CircleDollarSign, RefreshCw } from "lucide-react";
 import { getTranslatedStatusBadge, getTranslatedTypeBadge, formatCurrency } from "./transaction-utils";
 import { 
   Table, 
@@ -31,6 +31,7 @@ interface TransactionsTableProps {
   handleViewDetails: (transaction: Transaction) => void;
   handleCancelTransaction: (transaction: Transaction) => void;
   handleCompensateCustomer: (transaction: Transaction) => void;
+  handleChangeStatus?: (transaction: Transaction) => void;
 }
 
 const TransactionsTable: React.FC<TransactionsTableProps> = ({
@@ -40,6 +41,7 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
   handleViewDetails,
   handleCancelTransaction,
   handleCompensateCustomer,
+  handleChangeStatus,
 }) => {
   const { settings, formatDateTime } = useBackofficeSettings();
   const t = (key: string) => translate(key, settings.language);
@@ -118,6 +120,13 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
                           className="text-amber-600"
                         >
                           <XCircle size={16} className="mr-2" /> {t("cancel")} {t("transaction")}
+                        </DropdownMenuItem>
+                      )}
+                      {transaction.status === "pending" && handleChangeStatus && (
+                        <DropdownMenuItem 
+                          onClick={() => handleChangeStatus(transaction)}
+                        >
+                          <RefreshCw size={16} className="mr-2" /> {t("change")} {t("status")}
                         </DropdownMenuItem>
                       )}
                       <DropdownMenuItem 

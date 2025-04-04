@@ -20,6 +20,7 @@ export const useTransactionManagement = () => {
   const [showDetailsDialog, setShowDetailsDialog] = useState(false);
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [showCompensateDialog, setShowCompensateDialog] = useState(false);
+  const [showChangeStatusDialog, setShowChangeStatusDialog] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
   const [filters, setFilters] = useState<TransactionFilters>({
     status: "",
@@ -130,6 +131,53 @@ export const useTransactionManagement = () => {
     }
   };
 
+  const handleChangeStatus = (transaction: Transaction) => {
+    setSelectedTransaction(transaction);
+    setShowChangeStatusDialog(true);
+  };
+
+  const handleCloseChangeStatusDialog = (open: boolean) => {
+    setShowChangeStatusDialog(open);
+    if (!open) {
+      setTimeout(() => {
+        setSelectedTransaction(null);
+      }, 300);
+    }
+  };
+
+  const handleSubmitStatusChange = async (newStatus: string, reason: string) => {
+    if (!selectedTransaction) return;
+    
+    try {
+      const transactionIdentifier = selectedTransaction.transactionId || selectedTransaction.id.toString();
+      
+      await userService.changeTransactionStatus(
+        walletId,
+        transactionIdentifier,
+        {
+          newStatus: newStatus as 'cancelled' | 'rejected' | 'confirmed' | 'approved',
+          reason
+        }
+      );
+      
+      toast({
+        title: "Status Updated",
+        description: `Transaction ${transactionIdentifier} status has been changed to ${newStatus}`,
+      });
+      refetch();
+    } catch (error) {
+      console.error("Failed to change transaction status:", error);
+      toast({
+        title: "Error",
+        description: "Failed to change transaction status. Only pending transactions can be modified.",
+        variant: "destructive",
+      });
+    } finally {
+      setShowChangeStatusDialog(false);
+      setSelectedTransaction(null);
+    }
+  };
+
   const handleApplyFilters = (newFilters: TransactionFilters) => {
     setFilters(newFilters);
     setPage(1);
@@ -227,6 +275,7 @@ export const useTransactionManagement = () => {
     showDetailsDialog,
     showCancelDialog,
     showCompensateDialog,
+    showChangeStatusDialog,
     selectedTransaction,
     filters,
     transactions,
@@ -240,14 +289,17 @@ export const useTransactionManagement = () => {
     handleViewDetails,
     handleCancelTransaction,
     handleCompensateCustomer,
+    handleChangeStatus,
     handleApplyFilters,
     resetFilters,
     handleSubmitCancel,
     handleSubmitCompensation,
+    handleSubmitStatusChange,
     setPage,
     handleCloseDetailsDialog,
     handleCloseCancelDialog,
     handleCloseCompensateDialog,
+    handleCloseChangeStatusDialog,
   };
 };
 

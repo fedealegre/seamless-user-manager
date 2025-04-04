@@ -9,6 +9,7 @@ import TransactionsLoadingSkeleton from "@/components/transactions/TransactionsL
 import { useToast } from "@/hooks/use-toast";
 import TransactionDetails from "@/components/transactions/TransactionDetails";
 import CompensateCustomerDialog from "@/components/transactions/CompensateCustomerDialog";
+import ChangeTransactionStatusDialog from "@/components/transactions/ChangeTransactionStatusDialog";
 import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
 import { translate } from "@/lib/translations";
 import ExportCSVButton from "@/components/common/ExportCSVButton";
@@ -30,6 +31,7 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
   const [showTransactionDetails, setShowTransactionDetails] = useState(false);
   const [showCompensateDialog, setShowCompensateDialog] = useState(false);
+  const [showChangeStatusDialog, setShowChangeStatusDialog] = useState(false);
 
   // Get the first wallet ID when wallets are loaded
   React.useEffect(() => {
@@ -66,11 +68,12 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
     setShowCompensateDialog(true);
   };
 
-  const handleCompensateSubmit = async (
-    amount: string, 
-    reason: string, 
-    compensationType: 'credit' | 'adjustment'
-  ) => {
+  const handleChangeStatus = (transaction: Transaction) => {
+    setSelectedTransaction(transaction);
+    setShowChangeStatusDialog(true);
+  };
+
+  const handleSubmitStatusChange = async (newStatus: string, reason: string) => {
     if (!selectedTransaction || !selectedWalletId) {
       toast({
         title: t("error"),
@@ -81,41 +84,34 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
     }
 
     try {
-      const compensationRequest = {
-        amount,
-        reason,
-        transaction_code: selectedTransaction.transactionId || selectedTransaction.id.toString(),
-        admin_user: "current-admin",
-        transaction_type: "COMPENSATE" as const,
-        compensation_type: compensationType
-      };
-
-      const companyId = selectedTransaction.customerId 
-        ? parseInt(selectedTransaction.customerId)
-        : 1;
-
-      const originWalletId = parseInt(selectedWalletId);
-      const walletId = parseInt(selectedWalletId);
-
-      const result = await userService.compensateCustomer(
-        companyId,
-        userId,
-        walletId,
-        originWalletId,
-        compensationRequest
+      const transactionIdentifier = selectedTransaction.transactionId || selectedTransaction.id.toString();
+      
+      await userService.changeTransactionStatus(
+        selectedWalletId,
+        transactionIdentifier,
+        {
+          newStatus: newStatus as 'cancelled' | 'rejected' | 'confirmed' | 'approved',
+          reason
+        }
       );
-
+      
       toast({
-        title: t("compensation-processed"),
-        description: t("compensation-transaction-created"),
+        title: t("status-updated"),
+        description: t("transaction-status-changed-success"),
       });
-
-      setShowCompensateDialog(false);
+      
+      // Refresh transactions
+      if (selectedWalletId) {
+        // Trigger a refetch
+        queryClient.invalidateQueries(['user-transactions', userId, selectedWalletId]);
+      }
+      
+      setShowChangeStatusDialog(false);
       setSelectedTransaction(null);
     } catch (error: any) {
       toast({
-        title: t("compensation-failed"),
-        description: error.message || t("compensation-error"),
+        title: t("status-change-failed"),
+        description: error.message || t("only-pending-transactions"),
         variant: "destructive",
       });
     }
@@ -204,6 +200,7 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
                       handleViewDetails={handleViewDetails}
                       handleCancelTransaction={handleCancelTransaction}
                       handleCompensateCustomer={handleCompensateCustomer}
+                      handleChangeStatus={handleChangeStatus}
                     />
                   ) : (
                     <p className="text-center py-6 text-muted-foreground">{t("no-transactions-found")}</p>
@@ -231,6 +228,16 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
           open={showCompensateDialog}
           onOpenChange={setShowCompensateDialog}
           onSubmit={handleCompensateSubmit}
+        />
+      )}
+
+      {/* Change Transaction Status Dialog */}
+      {selectedTransaction && (
+        <ChangeTransactionStatusDialog
+          transaction={selectedTransaction}
+          open={showChangeStatusDialog}
+          onOpenChange={setShowChangeStatusDialog}
+          onSubmit={handleSubmitStatusChange}
         />
       )}
     </Card>

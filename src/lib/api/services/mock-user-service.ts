@@ -1,5 +1,6 @@
+
 import { User, Wallet, Transaction, CompensationRequest, ResetPasswordRequest, ResetPasswordResponse } from "../types";
-import { UserService } from "./user-service-interface";
+import { UserService, ChangeTransactionStatusRequest } from "./user-service-interface";
 import { mockUsers, mockWallets, mockTransactions } from "../mock/mock-users-data";
 import { generateRandomTransaction } from "./transaction-generator";
 
@@ -201,5 +202,46 @@ export class MockUserService implements UserService {
   async generateRandomTransaction(): Promise<Transaction> {
     console.log("Generating random transaction");
     return generateRandomTransaction();
+  }
+
+  async changeTransactionStatus(
+    walletId: string,
+    transactionId: string,
+    request: ChangeTransactionStatusRequest
+  ): Promise<Transaction> {
+    console.log("Using mock data for changeTransactionStatus", walletId, transactionId, request);
+    
+    if (!mockTransactions[parseInt(walletId)]) {
+      throw new Error(`Wallet with ID ${walletId} not found`);
+    }
+    
+    const transactionIndex = mockTransactions[parseInt(walletId)].findIndex(
+      t => (t.transactionId === transactionId || t.id.toString() === transactionId)
+    );
+    
+    if (transactionIndex === -1) {
+      throw new Error(`Transaction with ID ${transactionId} not found`);
+    }
+    
+    const transaction = mockTransactions[parseInt(walletId)][transactionIndex];
+    
+    if (transaction.status !== 'pending') {
+      throw new Error(`Transaction with ID ${transactionId} is not in pending status`);
+    }
+    
+    // Update the transaction status
+    transaction.status = request.newStatus;
+    
+    // Add reason to additional info
+    if (!transaction.additionalInfo) {
+      transaction.additionalInfo = {};
+    }
+    transaction.additionalInfo.statusChangeReason = request.reason;
+    transaction.additionalInfo.statusChangeDate = new Date().toISOString();
+    
+    // Save the updated transaction back to the mock data
+    mockTransactions[parseInt(walletId)][transactionIndex] = transaction;
+    
+    return transaction;
   }
 }

@@ -1,4 +1,3 @@
-
 import { Language } from "@/contexts/BackofficeSettingsContext";
 
 // Define translation keys and their values
@@ -796,7 +795,7 @@ const translations: Record<string, Record<string, string>> = {
   },
   "create-new-rule": {
     en: "Create a new rule to limit transaction amounts over a specific time period.",
-    es: "Crear una nueva regla para limitar los montos de transacción durante un período de tiempo específico."
+    es: "Crear una nueva regla para limitar los montos de transacción durante un per��odo de tiempo específico."
   },
   "time-period": {
     en: "Time Period",
@@ -1091,6 +1090,72 @@ const translations: Record<string, Record<string, string>> = {
   "close": {
     en: "Close",
     es: "Cerrar"
+  },
+  
+  // Transaction status change related translations
+  "change-transaction-status": {
+    en: "Change Transaction Status",
+    es: "Cambiar Estado de Transacción"
+  },
+  "change-status-description": {
+    en: "Update the status of this pending transaction",
+    es: "Actualizar el estado de esta transacción pendiente"
+  },
+  "change": {
+    en: "Change",
+    es: "Cambiar"
+  },
+  "status": {
+    en: "Status",
+    es: "Estado"
+  },
+  "new-status": {
+    en: "New Status",
+    es: "Nuevo Estado"
+  },
+  "select-new-status": {
+    en: "Select a new status",
+    es: "Seleccionar un nuevo estado"
+  },
+  "reason-for-status-change": {
+    en: "Reason for Status Change",
+    es: "Motivo del Cambio de Estado"
+  },
+  "status-change-reason-placeholder": {
+    en: "Explain why you are changing the status of this transaction...",
+    es: "Explique por qué está cambiando el estado de esta transacción..."
+  },
+  "update-status": {
+    en: "Update Status",
+    es: "Actualizar Estado"
+  },
+  "confirmed": {
+    en: "Confirmed",
+    es: "Confirmado"
+  },
+  "approved": {
+    en: "Approved",
+    es: "Aprobado"
+  },
+  "rejected": {
+    en: "Rejected",
+    es: "Rechazado"
+  },
+  "status-updated": {
+    en: "Status Updated",
+    es: "Estado Actualizado"
+  },
+  "transaction-status-changed-success": {
+    en: "Transaction status has been changed successfully",
+    es: "El estado de la transacción se ha cambiado exitosamente"
+  },
+  "status-change-failed": {
+    en: "Status Change Failed",
+    es: "Cambio de Estado Fallido"
+  },
+  "only-pending-transactions": {
+    en: "Only pending transactions can be modified",
+    es: "Solo las transacciones pendientes pueden ser modificadas"
   }
 };
 
@@ -1109,4 +1174,3 @@ export const translate = (key: string, language: Language): string => {
 export const useTranslation = (language: Language) => {
   return (key: string): string => translate(key, language);
 };
-
