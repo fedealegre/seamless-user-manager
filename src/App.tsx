@@ -13,6 +13,7 @@ import { TransactionGeneratorProvider } from "@/contexts/TransactionGeneratorCon
 // Pages
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
+import Analytics from "./pages/Analytics";
 import UserManagement from "./pages/UserManagement";
 import UserDetailPage from "./pages/UserDetailPage";
 import TransactionManagement from "./pages/TransactionManagement";
@@ -24,6 +25,11 @@ import CompanySettings from "./pages/CompanySettings";
 import UserFieldSettings from "./pages/UserFieldSettings";
 import BackofficeSettings from "./pages/BackofficeSettings";
 import NotFound from "./pages/NotFound";
+
+// Report Pages
+import TransactionTypes from "./pages/reports/TransactionTypes";
+import TransactionDetails from "./pages/reports/TransactionDetails";
+import WalletBalances from "./pages/reports/WalletBalances";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -54,11 +60,17 @@ const App = () => (
                   {/* Private Routes */}
                   <Route element={<PrivateRoute />}>
                     <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/analytics" element={<Analytics />} />
                     <Route path="/users" element={<UserManagement />} />
                     <Route path="/users/:userId" element={<UserDetailPage />} />
                     <Route path="/wallets" element={<WalletManagement />} />
                     <Route path="/transactions" element={<TransactionManagement />} />
                     <Route path="/backoffice-settings" element={<BackofficeSettings />} />
+                    
+                    {/* Report Routes */}
+                    <Route path="/reports/transaction-types" element={<TransactionTypes />} />
+                    <Route path="/reports/transaction-details" element={<TransactionDetails />} />
+                    <Route path="/reports/wallet-balances" element={<WalletBalances />} />
                   </Route>
                   
                   {/* Admin-only Routes */}

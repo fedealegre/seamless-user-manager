@@ -1,4 +1,3 @@
-
 import { Language } from "@/contexts/BackofficeSettingsContext";
 
 // Define translation keys and their values
@@ -1023,6 +1022,218 @@ const translations: Record<string, Record<string, string>> = {
   "reset-password-warning": {
     en: "This action will generate a new temporary password.",
     es: "Esta acción generará una nueva contraseña temporalmente."
+  },
+  
+  // Dashboard and Analytics translations
+  "analytics": {
+    en: "Analytics",
+    es: "Analítica"
+  },
+  "analytics-dashboard": {
+    en: "Analytics Dashboard",
+    es: "Panel de Analítica"
+  },
+  "available-balance": {
+    en: "Available Balance",
+    es: "Saldo Disponible"
+  },
+  "total-balances-all-wallets": {
+    en: "Total balances across all user wallets",
+    es: "Saldos totales de todas las billeteras de usuarios"
+  },
+  "registered-users": {
+    en: "Registered Users",
+    es: "Usuarios Registrados"
+  },
+  "wallet-daily-behavior": {
+    en: "Wallet Daily Behavior",
+    es: "Comportamiento Diario de la Billetera"
+  },
+  "balance-transaction-evolution": {
+    en: "Balance and transaction amounts evolution",
+    es: "Evolución de saldos y montos de transacciones"
+  },
+  "wallet-balance": {
+    en: "Wallet Balance",
+    es: "Saldo de Billetera"
+  },
+  "accumulated-user-management": {
+    en: "Accumulated User Management",
+    es: "Gestión de Usuarios Acumulados"
+  },
+  "user-growth-by-status": {
+    en: "User growth by status over time",
+    es: "Crecimiento de usuarios por estado a lo largo del tiempo"
+  },
+  "total-users": {
+    en: "Total Users",
+    es: "Usuarios Totales"
+  },
+  "active-users": {
+    en: "Active Users",
+    es: "Usuarios Activos"
+  },
+  "blocked-users": {
+    en: "Blocked Users",
+    es: "Usuarios Bloqueados"
+  },
+  "pending-users": {
+    en: "Pending Users",
+    es: "Usuarios Pendientes"
+  },
+  "billing-data": {
+    en: "Billing Data",
+    es: "Datos de Facturación"
+  },
+  "monthly-accumulated-transactions": {
+    en: "Monthly accumulated transactions",
+    es: "Transacciones acumuladas mensuales"
+  },
+  "billing-amount": {
+    en: "Billing Amount",
+    es: "Monto de Facturación"
+  },
+  "count": {
+    en: "Count",
+    es: "Cantidad"
+  },
+  "amount": {
+    en: "Amount",
+    es: "Monto"
+  },
+  "date-range": {
+    en: "Date Range",
+    es: "Rango de Fechas"
+  },
+  "start-date": {
+    en: "Start Date",
+    es: "Fecha de Inicio"
+  },
+  "end-date": {
+    en: "End Date",
+    es: "Fecha de Fin"
+  },
+  "clear-dates": {
+    en: "Clear Dates",
+    es: "Limpiar Fechas"
+  },
+  "error-loading-dashboard": {
+    en: "Error Loading Dashboard",
+    es: "Error al Cargar el Panel"
+  },
+  
+  // Reports translations
+  "reports": {
+    en: "Reports",
+    es: "Informes"
+  },
+  "transaction-type-report": {
+    en: "Transaction Type Report",
+    es: "Informe por Tipo de Transacción"
+  },
+  "transaction-details-report": {
+    en: "Transaction Details Report",
+    es: "Informe de Detalles de Transacciones"
+  },
+  "wallet-balances-report": {
+    en: "Wallet Balances Report",
+    es: "Informe de Saldos de Billeteras"
+  },
+  "transaction-types-report": {
+    en: "Transaction Types Report",
+    es: "Informe de Tipos de Transacciones"
+  },
+  "filters": {
+    en: "Filters",
+    es: "Filtros"
+  },
+  "transaction-types": {
+    en: "Transaction Types",
+    es: "Tipos de Transacciones"
+  },
+  "transaction-evolution": {
+    en: "Transaction Evolution",
+    es: "Evolución de Transacciones"
+  },
+  "monthly-transaction-amounts-by-type": {
+    en: "Monthly transaction amounts by type",
+    es: "Montos de transacciones mensuales por tipo"
+  },
+  "transaction-summary-by-type": {
+    en: "Transaction Summary by Type",
+    es: "Resumen de Transacciones por Tipo"
+  },
+  "counts-and-amounts-by-transaction-type": {
+    en: "Counts and amounts by transaction type",
+    es: "Recuentos y montos por tipo de transacción"
+  },
+  "transaction-type": {
+    en: "Transaction Type",
+    es: "Tipo de Transacción"
+  },
+  "transaction-count": {
+    en: "Transaction Count",
+    es: "Cantidad de Transacciones"
+  },
+  "transaction-amount": {
+    en: "Transaction Amount",
+    es: "Monto de Transacción"
+  },
+  "no-data-available": {
+    en: "No data available",
+    es: "No hay datos disponibles"
+  },
+  "all-transaction-types": {
+    en: "All Transaction Types",
+    es: "Todos los Tipos de Transacciones"
+  },
+  "all-user-types": {
+    en: "All User Types",
+    es: "Todos los Tipos de Usuarios"
+  },
+  "user-type": {
+    en: "User Type",
+    es: "Tipo de Usuario"
+  },
+  "transaction-details": {
+    en: "Transaction Details",
+    es: "Detalles de Transacciones"
+  },
+  "showing-transactions-count": {
+    en: "Showing {count} transactions",
+    es: "Mostrando {count} transacciones"
+  },
+  "error-loading-report": {
+    en: "Error Loading Report",
+    es: "Error al Cargar el Informe"
+  },
+  "wallet-balances": {
+    en: "Wallet Balances",
+    es: "Saldos de Billeteras"
+  },
+  "showing-wallets-count": {
+    en: "Showing {count} wallets",
+    es: "Mostrando {count} billeteras"
+  },
+  "balance-summary": {
+    en: "Balance Summary",
+    es: "Resumen de Saldo"
+  },
+  "balance-by-user-type": {
+    en: "Balance by User Type",
+    es: "Saldo por Tipo de Usuario"
+  },
+  "personal": {
+    en: "Personal",
+    es: "Personal"
+  },
+  "business": {
+    en: "Business",
+    es: "Empresa"
+  },
+  "merchant": {
+    en: "Merchant",
+    es: "Comerciante"
   }
 };
 
