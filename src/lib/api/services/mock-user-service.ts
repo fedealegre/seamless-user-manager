@@ -1,36 +1,22 @@
-
+import { User, Wallet, Transaction, CompensationRequest, ResetPasswordRequest, ResetPasswordResponse } from "../types";
 import { UserService } from "./user-service-interface";
-import { 
-  User, 
-  Wallet, 
-  Transaction, 
-  CompensationRequest, 
-  ResetPasswordRequest, 
-  ResetPasswordResponse,
-  ChangeTransactionStatusRequest,
-  ChangeTransactionStatusResponse
-} from "../types";
-import { mockUsers } from "@/mocks/mock-users";
-import { mockWallets } from "@/mocks/mock-wallets";
-import { mockTransactions, generateRandomTransaction } from "@/mocks/mock-transactions";
+import { mockUsers, mockWallets, mockTransactions } from "../mock/mock-users-data";
+import { generateRandomTransaction } from "./transaction-generator";
 
+// The actual service implementation that uses mock data
 export class MockUserService implements UserService {
-  private users: User[] = [...mockUsers];
-  private wallets: Record<number, Wallet[]> = {...mockWallets};
-  private transactions: Record<number, Transaction[]> = {...mockTransactions};
-
   async searchUsers(params: any): Promise<User[]> {
     console.log("Using mock data for searchUsers", params);
     
     // Filter logic for mock data
-    return this.users.filter(user => {
+    return mockUsers.filter(user => {
       // Filter by ID (exact match)
       if (params.id && user.id.toString() !== params.id.toString()) {
         return false;
       }
       
       // Filter by name (partial match)
-      if (params.name && !user.name?.toLowerCase().includes(params.name.toLowerCase())) {
+      if (params.name && !user.name.toLowerCase().includes(params.name.toLowerCase())) {
         return false;
       }
       
@@ -55,7 +41,7 @@ export class MockUserService implements UserService {
 
   async getUserData(userId: string): Promise<User> {
     console.log("Using mock data for getUserData");
-    const user = this.users.find(u => u.id.toString() === userId);
+    const user = mockUsers.find(u => u.id.toString() === userId);
     if (!user) {
       throw new Error(`User with ID ${userId} not found`);
     }
@@ -64,7 +50,7 @@ export class MockUserService implements UserService {
 
   async updateUser(userId: string, userData: Partial<User>): Promise<User> {
     console.log("Using mock data for updateUser", userData);
-    const userIndex = this.users.findIndex(u => u.id.toString() === userId);
+    const userIndex = mockUsers.findIndex(u => u.id.toString() === userId);
     
     if (userIndex === -1) {
       throw new Error(`User with ID ${userId} not found`);
@@ -72,26 +58,26 @@ export class MockUserService implements UserService {
     
     // Update the user with new data
     const updatedUser = {
-      ...this.users[userIndex],
+      ...mockUsers[userIndex],
       ...userData
     };
     
-    this.users[userIndex] = updatedUser;
+    mockUsers[userIndex] = updatedUser;
     
     return updatedUser;
   }
 
   async deleteUser(userId: string): Promise<void> {
     console.log("Using mock data for deleteUser");
-    const index = this.users.findIndex(u => u.id.toString() === userId);
+    const index = mockUsers.findIndex(u => u.id.toString() === userId);
     if (index !== -1) {
-      this.users.splice(index, 1);
+      mockUsers.splice(index, 1);
     }
   }
 
   async blockUser(userId: string): Promise<void> {
     console.log("Using mock data for blockUser");
-    const user = this.users.find(u => u.id.toString() === userId);
+    const user = mockUsers.find(u => u.id.toString() === userId);
     if (user) {
       user.status = 'BLOCKED';
     }
@@ -99,7 +85,7 @@ export class MockUserService implements UserService {
 
   async unblockUser(userId: string): Promise<void> {
     console.log("Using mock data for unblockUser");
-    const user = this.users.find(u => u.id.toString() === userId);
+    const user = mockUsers.find(u => u.id.toString() === userId);
     if (user) {
       user.status = 'ACTIVE';
     }
@@ -109,7 +95,7 @@ export class MockUserService implements UserService {
     console.log("Using mock data for resetPassword", request);
     
     // Check if user exists
-    const user = this.users.find(u => u.id.toString() === request.userId);
+    const user = mockUsers.find(u => u.id.toString() === request.userId);
     if (!user) {
       return {
         success: false,
@@ -133,7 +119,7 @@ export class MockUserService implements UserService {
   async getUserWallets(userId: string): Promise<Wallet[]> {
     console.log("Using mock data for getUserWallets", userId);
     // Return wallets for the specified user or empty array if none exist
-    return this.wallets[parseInt(userId)] || [];
+    return mockWallets[parseInt(userId)] || [];
   }
 
   async getAllWallets(): Promise<{ wallet: Wallet; userId: string }[]> {
@@ -141,7 +127,7 @@ export class MockUserService implements UserService {
     const allWallets: { wallet: Wallet; userId: string }[] = [];
     
     // Iterate through all users and their wallets
-    Object.entries(this.wallets).forEach(([userId, wallets]) => {
+    Object.entries(mockWallets).forEach(([userId, wallets]) => {
       wallets.forEach(wallet => {
         allWallets.push({
           wallet,
@@ -156,7 +142,7 @@ export class MockUserService implements UserService {
   async getWalletTransactions(userId: string, walletId: string): Promise<Transaction[]> {
     console.log("Using mock data for getWalletTransactions", userId, walletId);
     // Return transactions for the specified wallet or empty array if none exist
-    return this.transactions[parseInt(walletId)] || [];
+    return mockTransactions[parseInt(walletId)] || [];
   }
 
   async compensateCustomer(
@@ -186,7 +172,7 @@ export class MockUserService implements UserService {
       transactionType: "COMPENSATE",
       movementType: amount >= 0 ? "INCOME" : "OUTCOME",
       amount: amount,
-      currency: (this.wallets[parseInt(userId)] || []).find(w => w.id === walletId)?.currency || "USD",
+      currency: mockWallets[parseInt(userId)]?.find(w => w.id === walletId)?.currency || "USD",
       reference: `${request.compensation_type}: ${request.reason}`,
       additionalInfo: {
         compensationType: request.compensation_type
@@ -194,13 +180,13 @@ export class MockUserService implements UserService {
     };
     
     // Add the transaction to the mock data
-    if (!this.transactions[walletId]) {
-      this.transactions[walletId] = [];
+    if (!mockTransactions[walletId]) {
+      mockTransactions[walletId] = [];
     }
-    this.transactions[walletId].unshift(newTransaction);
+    mockTransactions[walletId].unshift(newTransaction);
     
     // Update the wallet balance
-    const wallet = (this.wallets[parseInt(userId)] || []).find(w => w.id === walletId);
+    const wallet = mockWallets[parseInt(userId)]?.find(w => w.id === walletId);
     if (wallet) {
       wallet.balance = (wallet.balance || 0) + amount;
       wallet.availableBalance = (wallet.availableBalance || 0) + amount;
@@ -215,56 +201,5 @@ export class MockUserService implements UserService {
   async generateRandomTransaction(): Promise<Transaction> {
     console.log("Generating random transaction");
     return generateRandomTransaction();
-  }
-
-  async changeTransactionStatus(
-    transactionId: string | number,
-    request: ChangeTransactionStatusRequest
-  ): Promise<ChangeTransactionStatusResponse> {
-    const txIdStr = transactionId.toString();
-    
-    // Find the transaction by ID across all wallets
-    let foundTransaction: Transaction | undefined;
-    let walletId: number | undefined;
-    
-    // Search through all wallets for the transaction
-    Object.entries(this.transactions).forEach(([wId, transactions]) => {
-      const found = transactions.find(t => 
-        t.transactionId === txIdStr || t.id.toString() === txIdStr
-      );
-      if (found) {
-        foundTransaction = found;
-        walletId = parseInt(wId);
-      }
-    });
-    
-    if (!foundTransaction) {
-      return {
-        success: false,
-        message: `Transaction with ID ${txIdStr} not found`
-      };
-    }
-    
-    if (foundTransaction.status !== 'pending') {
-      return {
-        success: false,
-        message: `Only pending transactions can be changed. Current status: ${foundTransaction.status}`
-      };
-    }
-    
-    // Update the transaction status
-    foundTransaction.status = request.status;
-    foundTransaction.additionalInfo = {
-      ...foundTransaction.additionalInfo,
-      statusChangeReason: request.reason,
-      statusChangedAt: new Date().toISOString(),
-      previousStatus: 'pending'
-    };
-    
-    return {
-      success: true,
-      message: `Transaction status changed to ${request.status}`,
-      transaction: { ...foundTransaction }
-    };
   }
 }

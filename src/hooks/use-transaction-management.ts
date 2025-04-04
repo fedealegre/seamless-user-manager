@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { userService } from "@/lib/api/user-service";
-import { Transaction, ChangeTransactionStatusRequest } from "@/lib/api/types";
+import { Transaction } from "@/lib/api/types";
 import { useToast } from "@/hooks/use-toast";
 
 interface TransactionFilters {
@@ -20,7 +20,6 @@ export const useTransactionManagement = () => {
   const [showDetailsDialog, setShowDetailsDialog] = useState(false);
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [showCompensateDialog, setShowCompensateDialog] = useState(false);
-  const [showChangeStatusDialog, setShowChangeStatusDialog] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
   const [filters, setFilters] = useState<TransactionFilters>({
     status: "",
@@ -131,57 +130,6 @@ export const useTransactionManagement = () => {
     }
   };
 
-  const handleChangeStatus = (transaction: Transaction) => {
-    setSelectedTransaction(transaction);
-    setShowChangeStatusDialog(true);
-  };
-
-  const handleCloseChangeStatusDialog = (open: boolean) => {
-    setShowChangeStatusDialog(open);
-    if (!open) {
-      setTimeout(() => {
-        setSelectedTransaction(null);
-      }, 300);
-    }
-  };
-
-  const handleSubmitStatusChange = async (request: ChangeTransactionStatusRequest) => {
-    if (!selectedTransaction) return;
-    
-    try {
-      const transactionIdentifier = selectedTransaction.transactionId || selectedTransaction.id.toString();
-      
-      const response = await userService.changeTransactionStatus(
-        transactionIdentifier,
-        request
-      );
-      
-      if (response.success) {
-        toast({
-          title: "Status Changed",
-          description: `Transaction ${transactionIdentifier} status has been changed to ${request.status} successfully.`,
-        });
-        refetch();
-      } else {
-        toast({
-          title: "Error",
-          description: response.message || "Failed to change transaction status.",
-          variant: "destructive",
-        });
-      }
-    } catch (error) {
-      console.error("Failed to change transaction status:", error);
-      toast({
-        title: "Error",
-        description: "Failed to change transaction status. An unexpected error occurred.",
-        variant: "destructive",
-      });
-    } finally {
-      setShowChangeStatusDialog(false);
-      setSelectedTransaction(null);
-    }
-  };
-
   const handleApplyFilters = (newFilters: TransactionFilters) => {
     setFilters(newFilters);
     setPage(1);
@@ -268,7 +216,7 @@ export const useTransactionManagement = () => {
   };
 
   const totalTransactions = transactions?.length || 0;
-  const totalPages = Math.ceil((transactions?.length || 0) / pageSize);
+  const totalPages = Math.ceil(totalTransactions / pageSize);
   const activeFiltersCount = Object.values(filters).filter(v => v !== "").length;
 
   return {
@@ -279,7 +227,6 @@ export const useTransactionManagement = () => {
     showDetailsDialog,
     showCancelDialog,
     showCompensateDialog,
-    showChangeStatusDialog,
     selectedTransaction,
     filters,
     transactions,
@@ -293,17 +240,14 @@ export const useTransactionManagement = () => {
     handleViewDetails,
     handleCancelTransaction,
     handleCompensateCustomer,
-    handleChangeStatus,
     handleApplyFilters,
     resetFilters,
     handleSubmitCancel,
     handleSubmitCompensation,
-    handleSubmitStatusChange,
     setPage,
     handleCloseDetailsDialog,
     handleCloseCancelDialog,
     handleCloseCompensateDialog,
-    handleCloseChangeStatusDialog,
   };
 };
 

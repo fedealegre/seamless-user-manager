@@ -1,4 +1,3 @@
-
 // API types based on the OpenAPI specifications
 
 export interface Transaction {
@@ -113,18 +112,6 @@ export interface ResetPasswordResponse {
 
 export interface CancelTransactionRequest {
     reason: string;
-}
-
-// New interface for changing transaction status
-export interface ChangeTransactionStatusRequest {
-    status: 'cancelled' | 'rejected' | 'confirmed' | 'approved';
-    reason: string;
-}
-
-export interface ChangeTransactionStatusResponse {
-    success: boolean;
-    message: string;
-    transaction?: Transaction;
 }
 
 export interface BackofficeUser {
