@@ -1,178 +1,149 @@
-import { UserService, ChangeTransactionStatusRequest } from "../user-service-interface";
-import { User, Wallet, Transaction, CompensationRequest, ResetPasswordRequest, ResetPasswordResponse } from "../types";
-import { mockUsers, mockWallets } from "../mock/mock-users-data";
 
+import { User, Wallet, Transaction, CompensationRequest, ResetPasswordRequest, ResetPasswordResponse } from "../types";
+import { UserService, ChangeTransactionStatusRequest } from "./user-service-interface";
+import { mockUsers, mockWallets, mockTransactions } from "../mock/mock-users-data";
+import { generateRandomTransaction } from "./transaction-generator";
+
+// The actual service implementation that uses mock data
 export class MockUserService implements UserService {
   async searchUsers(params: any): Promise<User[]> {
-    console.log('MockUserService searchUsers called with params:', params);
+    console.log("Using mock data for searchUsers", params);
     
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 500));
-
-    let filteredUsers = mockUsers;
-
-    if (params.name) {
-      filteredUsers = filteredUsers.filter(user =>
-        user.name && user.name.toLowerCase().includes(params.name.toLowerCase())
-      );
-    }
-
-    if (params.surname) {
-      filteredUsers = filteredUsers.filter(user =>
-        user.surname && user.surname.toLowerCase().includes(params.surname.toLowerCase())
-      );
-    }
-
-    if (params.identifier) {
-      filteredUsers = filteredUsers.filter(user =>
-        user.governmentIdentification && user.governmentIdentification.includes(params.identifier)
-      );
-    }
-
-    return filteredUsers;
+    // Filter logic for mock data
+    return mockUsers.filter(user => {
+      // Filter by ID (exact match)
+      if (params.id && user.id.toString() !== params.id.toString()) {
+        return false;
+      }
+      
+      // Filter by name (partial match)
+      if (params.name && !user.name.toLowerCase().includes(params.name.toLowerCase())) {
+        return false;
+      }
+      
+      // Filter by cell phone (partial match)
+      if (params.cellPhone && !user.cellPhone?.includes(params.cellPhone)) {
+        return false;
+      }
+      
+      // Keep the existing filters for backward compatibility
+      if (params.surname && !user.surname?.toLowerCase().includes(params.surname.toLowerCase())) {
+        return false;
+      }
+      if (params.identifier && 
+          !user.username?.toLowerCase().includes(params.identifier.toLowerCase()) &&
+          !user.email?.toLowerCase().includes(params.identifier.toLowerCase()) &&
+          !user.phoneNumber?.includes(params.identifier)) {
+        return false;
+      }
+      return true;
+    });
   }
 
   async getUserData(userId: string): Promise<User> {
-    console.log('MockUserService getUserData called with userId:', userId);
-    
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 500));
-
-    const user = mockUsers.find(user => user.id.toString() === userId);
+    console.log("Using mock data for getUserData");
+    const user = mockUsers.find(u => u.id.toString() === userId);
     if (!user) {
-      throw new Error('User not found');
+      throw new Error(`User with ID ${userId} not found`);
     }
     return user;
   }
 
   async updateUser(userId: string, userData: Partial<User>): Promise<User> {
-    console.log(`MockUserService updateUser called for userId: ${userId} with data:`, userData);
+    console.log("Using mock data for updateUser", userData);
+    const userIndex = mockUsers.findIndex(u => u.id.toString() === userId);
     
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 500));
-
-    const userIndex = mockUsers.findIndex(user => user.id.toString() === userId);
     if (userIndex === -1) {
-      throw new Error('User not found');
+      throw new Error(`User with ID ${userId} not found`);
     }
-
-    // Update the user with the provided data
-    mockUsers[userIndex] = { ...mockUsers[userIndex], ...userData };
-    return mockUsers[userIndex];
+    
+    // Update the user with new data
+    const updatedUser = {
+      ...mockUsers[userIndex],
+      ...userData
+    };
+    
+    mockUsers[userIndex] = updatedUser;
+    
+    return updatedUser;
   }
 
   async deleteUser(userId: string): Promise<void> {
-    console.log('MockUserService deleteUser called with userId:', userId);
-    
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 500));
-
-    const userIndex = mockUsers.findIndex(user => user.id.toString() === userId);
-    if (userIndex === -1) {
-      throw new Error('User not found');
+    console.log("Using mock data for deleteUser");
+    const index = mockUsers.findIndex(u => u.id.toString() === userId);
+    if (index !== -1) {
+      mockUsers.splice(index, 1);
     }
-
-    // Remove the user from the mock data
-    mockUsers.splice(userIndex, 1);
   }
 
   async blockUser(userId: string): Promise<void> {
-    console.log('MockUserService blockUser called with userId:', userId);
-    
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 500));
-
-    const userIndex = mockUsers.findIndex(user => user.id.toString() === userId);
-    if (userIndex === -1) {
-      throw new Error('User not found');
+    console.log("Using mock data for blockUser");
+    const user = mockUsers.find(u => u.id.toString() === userId);
+    if (user) {
+      user.status = 'BLOCKED';
     }
-
-    // Update the user's status to blocked
-    mockUsers[userIndex].blocked = true;
-    mockUsers[userIndex].status = 'blocked';
   }
 
   async unblockUser(userId: string): Promise<void> {
-    console.log('MockUserService unblockUser called with userId:', userId);
-    
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 500));
-
-    const userIndex = mockUsers.findIndex(user => user.id.toString() === userId);
-    if (userIndex === -1) {
-      throw new Error('User not found');
+    console.log("Using mock data for unblockUser");
+    const user = mockUsers.find(u => u.id.toString() === userId);
+    if (user) {
+      user.status = 'ACTIVE';
     }
-
-    // Update the user's status to unblocked
-    mockUsers[userIndex].blocked = false;
-    mockUsers[userIndex].status = 'active';
   }
 
   async resetPassword(request: ResetPasswordRequest): Promise<ResetPasswordResponse> {
-    console.log('MockUserService resetPassword called with request:', request);
+    console.log("Using mock data for resetPassword", request);
     
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 500));
-
-    // In a real implementation, you would reset the password here
-    // and possibly send a temporary password to the user's email.
-
-    // For the mock, we'll just return a successful response with a temporary password.
+    // Check if user exists
+    const user = mockUsers.find(u => u.id.toString() === request.userId);
+    if (!user) {
+      return {
+        success: false,
+        message: `User with ID ${request.userId} not found`
+      };
+    }
+    
+    // Generate a temporary password (in a real implementation, this would be more secure)
+    const temporaryPassword = Math.random().toString(36).slice(-8);
+    
+    // In a real implementation, we would hash the password and update it in the database
+    // For mock purposes, we'll just return the temporary password
+    
     return {
       success: true,
-      message: 'Password reset successfully. A temporary password has been sent to the user\'s email.',
-      temporaryPassword: 'TEMP-PASSWORD-123'
+      message: "Password has been reset successfully",
+      temporaryPassword: temporaryPassword
     };
   }
 
   async getUserWallets(userId: string): Promise<Wallet[]> {
-    console.log('MockUserService getUserWallets called with userId:', userId);
+    console.log("Using mock data for getUserWallets", userId);
+    // Return wallets for the specified user or empty array if none exist
+    return mockWallets[parseInt(userId)] || [];
+  }
+
+  async getAllWallets(): Promise<{ wallet: Wallet; userId: string }[]> {
+    console.log("Using mock data for getAllWallets");
+    const allWallets: { wallet: Wallet; userId: string }[] = [];
     
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 500));
-
-    const user = mockUsers.find(user => user.id.toString() === userId);
-    if (!user) {
-      throw new Error('User not found');
-    }
-
-    // Find the wallets associated with the user
-    const userWallets = mockWallets.find(w => w.userId.toString() === userId)?.wallets || [];
-    return userWallets;
+    // Iterate through all users and their wallets
+    Object.entries(mockWallets).forEach(([userId, wallets]) => {
+      wallets.forEach(wallet => {
+        allWallets.push({
+          wallet,
+          userId
+        });
+      });
+    });
+    
+    return allWallets;
   }
 
   async getWalletTransactions(userId: string, walletId: string): Promise<Transaction[]> {
-    console.log(`MockUserService getWalletTransactions called for userId: ${userId}, walletId: ${walletId}`);
-    
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 500));
-
-    // Mock transaction data
-    const mockTransactions: Transaction[] = Array.from({ length: 10 }, (_, i) => ({
-      id: i + 1,
-      transactionId: `TXN-${i + 1}`,
-      customerId: userId,
-      walletId: walletId,
-      initDate: new Date().toISOString(),
-      endDate: new Date().toISOString(),
-      reference: `REF-${i + 1}`,
-      originTransactionId: `OTXN-${i + 1}`,
-      destinationTransactionId: `DTXN-${i + 1}`,
-      status: i % 2 === 0 ? 'completed' : 'pending',
-      currency: 'USD',
-      type: i % 3 === 0 ? 'deposit' : 'withdrawal',
-      removed: false,
-      lastIdTransaction: `LID-${i + 1}`,
-      length: 10,
-      transactionType: 'Generic',
-      amount: (i + 1) * 10,
-      date: new Date().toISOString(),
-      additionalInfo: {
-        description: `Mock transaction ${i + 1}`
-      }
-    }));
-
-    return mockTransactions;
+    console.log("Using mock data for getWalletTransactions", userId, walletId);
+    // Return transactions for the specified wallet or empty array if none exist
+    return mockTransactions[parseInt(walletId)] || [];
   }
 
   async compensateCustomer(
@@ -182,17 +153,55 @@ export class MockUserService implements UserService {
     originWalletId: number,
     request: CompensationRequest
   ): Promise<any> {
-    console.log(`Compensating customer ${userId} in wallet ${walletId}`);
-    console.log('Compensation details:', request);
+    console.log("Using mock data for compensateCustomer");
     
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 500));
+    // Check if the amount is valid based on compensation type
+    const amount = parseFloat(request.amount);
+    if (request.compensation_type === 'credit' && amount <= 0) {
+      throw new Error("Credit compensation must have a positive amount");
+    }
     
-    // Return a successful response
-    return {
-      message: "Compensation processed successfully",
-      transactionId: `COMP-${Date.now()}`
+    // Create a new transaction for the compensation
+    const newTransaction: Transaction = {
+      id: Date.now(),
+      transactionId: `comp_${Date.now()}`,
+      customerId: userId,
+      walletId: walletId.toString(),
+      date: new Date().toISOString(),
+      status: "completed",
+      type: "compensation",
+      transactionType: "COMPENSATE",
+      movementType: amount >= 0 ? "INCOME" : "OUTCOME",
+      amount: amount,
+      currency: mockWallets[parseInt(userId)]?.find(w => w.id === walletId)?.currency || "USD",
+      reference: `${request.compensation_type}: ${request.reason}`,
+      additionalInfo: {
+        compensationType: request.compensation_type
+      }
     };
+    
+    // Add the transaction to the mock data
+    if (!mockTransactions[walletId]) {
+      mockTransactions[walletId] = [];
+    }
+    mockTransactions[walletId].unshift(newTransaction);
+    
+    // Update the wallet balance
+    const wallet = mockWallets[parseInt(userId)]?.find(w => w.id === walletId);
+    if (wallet) {
+      wallet.balance = (wallet.balance || 0) + amount;
+      wallet.availableBalance = (wallet.availableBalance || 0) + amount;
+    }
+    
+    return { 
+      message: `Compensated user ${userId} with ${request.amount} (${request.compensation_type})`,
+      transactionId: newTransaction.transactionId
+    };
+  }
+
+  async generateRandomTransaction(): Promise<Transaction> {
+    console.log("Generating random transaction");
+    return generateRandomTransaction();
   }
 
   async changeTransactionStatus(
@@ -200,59 +209,39 @@ export class MockUserService implements UserService {
     transactionId: string,
     request: ChangeTransactionStatusRequest
   ): Promise<Transaction> {
-    console.log(`Changing transaction ${transactionId} status to ${request.newStatus}`);
-    console.log('Reason:', request.reason);
+    console.log("Using mock data for changeTransactionStatus", walletId, transactionId, request);
     
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 500));
+    if (!mockTransactions[parseInt(walletId)]) {
+      throw new Error(`Wallet with ID ${walletId} not found`);
+    }
     
-    // Return the updated transaction (a mock response)
-    const updatedTransaction: Transaction = {
-      id: parseInt(transactionId) || Math.floor(Math.random() * 10000),
-      transactionId: transactionId,
-      customerId: "mock-customer-id",
-      walletId: walletId,
-      status: request.newStatus,
-      date: new Date().toISOString(),
-      amount: 100,
-      type: "payment",
-      currency: "USD"
-    };
-    
-    return updatedTransaction;
-  }
-
-  async getAllWallets(): Promise<{ wallet: Wallet; userId: string }[]> {
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
-    // Create an array of wallets with associated user IDs
-    const allWallets = mockWallets.flatMap(userWallets => 
-      userWallets.wallets.map(wallet => ({
-        wallet,
-        userId: userWallets.userId
-      }))
+    const transactionIndex = mockTransactions[parseInt(walletId)].findIndex(
+      t => (t.transactionId === transactionId || t.id.toString() === transactionId)
     );
     
-    return allWallets;
-  }
-
-  async generateRandomTransaction(): Promise<Transaction> {
-    // Generate a random transaction for testing/demonstration purposes
-    const types = ["deposit", "withdrawal", "transfer", "payment", "refund"];
-    const statuses = ["completed", "pending", "failed", "cancelled"];
+    if (transactionIndex === -1) {
+      throw new Error(`Transaction with ID ${transactionId} not found`);
+    }
     
-    const randomTransaction: Transaction = {
-      id: Math.floor(Math.random() * 10000),
-      transactionId: `TX-${Date.now().toString()}`,
-      customerId: `CU-${Math.floor(Math.random() * 1000)}`,
-      walletId: `W-${Math.floor(Math.random() * 100)}`,
-      type: types[Math.floor(Math.random() * types.length)],
-      status: statuses[Math.floor(Math.random() * statuses.length)],
-      date: new Date().toISOString(),
-      amount: Math.floor(Math.random() * 1000) + 10,
-      currency: "USD"
-    };
+    const transaction = mockTransactions[parseInt(walletId)][transactionIndex];
     
-    return randomTransaction;
+    if (transaction.status !== 'pending') {
+      throw new Error(`Transaction with ID ${transactionId} is not in pending status`);
+    }
+    
+    // Update the transaction status
+    transaction.status = request.newStatus;
+    
+    // Add reason to additional info
+    if (!transaction.additionalInfo) {
+      transaction.additionalInfo = {};
+    }
+    transaction.additionalInfo.statusChangeReason = request.reason;
+    transaction.additionalInfo.statusChangeDate = new Date().toISOString();
+    
+    // Save the updated transaction back to the mock data
+    mockTransactions[parseInt(walletId)][transactionIndex] = transaction;
+    
+    return transaction;
   }
 }
