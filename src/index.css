@@ -107,6 +107,37 @@
                 border-color 0.3s ease, 
                 box-shadow 0.3s ease !important;
   }
+  
+  /* All CSS variables transition for smooth color changes */
+  :root {
+    transition: --background 0.3s ease,
+                --foreground 0.3s ease,
+                --card 0.3s ease,
+                --card-foreground 0.3s ease,
+                --popover 0.3s ease,
+                --popover-foreground 0.3s ease,
+                --primary 0.3s ease,
+                --primary-foreground 0.3s ease,
+                --secondary 0.3s ease,
+                --secondary-foreground 0.3s ease,
+                --muted 0.3s ease,
+                --muted-foreground 0.3s ease,
+                --accent 0.3s ease,
+                --accent-foreground 0.3s ease,
+                --destructive 0.3s ease,
+                --destructive-foreground 0.3s ease,
+                --border 0.3s ease,
+                --input 0.3s ease,
+                --ring 0.3s ease,
+                --sidebar-background 0.3s ease,
+                --sidebar-foreground 0.3s ease,
+                --sidebar-primary 0.3s ease,
+                --sidebar-primary-foreground 0.3s ease,
+                --sidebar-accent 0.3s ease,
+                --sidebar-accent-foreground 0.3s ease,
+                --sidebar-border 0.3s ease,
+                --sidebar-ring 0.3s ease;
+  }
 }
 
 @layer components {
@@ -128,5 +159,10 @@
 
   .sidebar-menu-item {
     @apply flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200;
+  }
+  
+  /* Color scheme preview components */
+  .color-preview-swatch {
+    @apply h-8 w-full rounded-md flex items-center justify-center text-xs font-medium shadow-sm;
   }
 }
