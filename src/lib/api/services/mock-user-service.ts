@@ -1,3 +1,4 @@
+
 import { UserService } from "./user-service-interface";
 import { 
   User, 
@@ -11,7 +12,7 @@ import {
 } from "../types";
 import { mockUsers } from "@/mocks/mock-users";
 import { mockWallets } from "@/mocks/mock-wallets";
-import { mockTransactions } from "@/mocks/mock-transactions";
+import { mockTransactions, generateRandomTransaction } from "@/mocks/mock-transactions";
 
 export class MockUserService implements UserService {
   private users: User[] = [...mockUsers];
