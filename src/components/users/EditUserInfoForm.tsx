@@ -18,6 +18,13 @@ import { useToast } from "@/hooks/use-toast";
 import { formatFieldName, formatDateForInput, parseDate } from "@/lib/utils";
 import { X, PlusCircle } from 'lucide-react';
 import { useUserFieldSettings } from "@/hooks/use-user-field-settings";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 // Dynamic schema builder based on field settings
 const createUserFormSchema = (isFieldEditable: (fieldName: string) => boolean) => {
@@ -56,7 +63,7 @@ const createUserFormSchema = (isFieldEditable: (fieldName: string) => boolean) =
   }
   
   if (isFieldEditable("gender")) {
-    schemaObj.gender = z.enum(["M", "F", "Other"]).optional().nullable();
+    schemaObj.gender = z.enum(["M", "F", "Other", "unspecified"]).optional().nullable();
   }
   
   if (isFieldEditable("language")) {
@@ -119,7 +126,7 @@ export const EditUserInfoForm: React.FC<EditUserInfoFormProps> = ({
     if (isFieldEditable("phoneNumber")) defaultValues.phoneNumber = user.phoneNumber || "";
     if (isFieldEditable("birthDate")) defaultValues.birthDate = birthDateValue;
     if (isFieldEditable("nationality")) defaultValues.nationality = user.nationality || "";
-    if (isFieldEditable("gender")) defaultValues.gender = (user.gender as "M" | "F" | "Other") || undefined;
+    if (isFieldEditable("gender")) defaultValues.gender = (user.gender as "M" | "F" | "Other") || "unspecified";
     if (isFieldEditable("language")) defaultValues.language = user.language || "";
     if (isFieldEditable("region")) defaultValues.region = user.region || "";
     if (isFieldEditable("status")) defaultValues.status = user.status as "ACTIVE" | "BLOCKED" || "ACTIVE";
@@ -324,16 +331,22 @@ export const EditUserInfoForm: React.FC<EditUserInfoFormProps> = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Gender</FormLabel>
-                  <select
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
-                    value={field.value || ""}
-                    onChange={(e) => field.onChange(e.target.value || null)}
+                  <Select
+                    value={field.value || "unspecified"}
+                    onValueChange={(value) => field.onChange(value)}
                   >
-                    <option value="">Select gender</option>
-                    <option value="M">Male</option>
-                    <option value="F">Female</option>
-                    <option value="Other">Other</option>
-                  </select>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select gender" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="unspecified">Select gender</SelectItem>
+                      <SelectItem value="M">Male</SelectItem>
+                      <SelectItem value="F">Female</SelectItem>
+                      <SelectItem value="Other">Other</SelectItem>
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
