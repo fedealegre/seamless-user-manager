@@ -37,6 +37,7 @@ import { toast } from "@/hooks/use-toast";
 import { translate } from "@/lib/translations";
 import { Switch } from "@/components/ui/switch";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const BackofficeSettings = () => {
   const { settings, updateSettings } = useBackofficeSettings();
@@ -154,251 +155,281 @@ const BackofficeSettings = () => {
         </h1>
       </div>
       
-      <div className="grid gap-6 md:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <Languages className="h-5 w-5 text-primary" />
-              <CardTitle>{getTranslation("language")}</CardTitle>
-            </div>
-            <CardDescription>
-              {getTranslation("language-description")}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                <FormField
-                  control={form.control}
-                  name="language"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{getTranslation("language")}</FormLabel>
-                      <Select 
-                        onValueChange={field.onChange} 
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder={getTranslation("select-language")} />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="en">English</SelectItem>
-                          <SelectItem value="es">Español</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </FormItem>
-                  )}
-                />
-                
-                <FormField
-                  control={form.control}
-                  name="timezone"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{getTranslation("timezone")}</FormLabel>
-                      <Select 
-                        onValueChange={field.onChange} 
-                        defaultValue={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder={getTranslation("select-timezone")} />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent className="max-h-80">
-                          {timezones.map((tz) => (
-                            <SelectItem key={tz} value={tz}>
-                              {tz}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormDescription>
-                        {getTranslation("timezone-description")}
-                      </FormDescription>
-                    </FormItem>
-                  )}
-                />
-                
-                {isAdmin && (
-                  <>
-                    <FormField
-                      control={form.control}
-                      name="primaryColor"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>{getTranslation("primary-color")}</FormLabel>
-                          <div className="flex items-center gap-2">
-                            <div 
-                              className="w-6 h-6 rounded-full border"
-                              style={{ backgroundColor: field.value }}
-                            />
-                            <FormControl>
-                              <Input 
-                                type="color" 
-                                {...field} 
-                                className="w-12 h-8 p-1"
-                              />
-                            </FormControl>
-                          </div>
-                          <FormDescription>
-                            {getTranslation("primary-color-description")}
-                          </FormDescription>
-                        </FormItem>
-                      )}
-                    />
-                    
-                    <FormField
-                      control={form.control}
-                      name="defaultTheme"
-                      render={({ field }) => (
-                        <FormItem className="space-y-3">
-                          <FormLabel>{getTranslation("default-theme")}</FormLabel>
-                          <FormControl>
-                            <RadioGroup
-                              onValueChange={field.onChange}
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <Tabs defaultValue="language-timezone" className="w-full">
+            <TabsList className="mb-4">
+              <TabsTrigger value="language-timezone">
+                {getTranslation("language-timezone")}
+              </TabsTrigger>
+              {isAdmin && (
+                <TabsTrigger value="theme">
+                  {getTranslation("theme")}
+                </TabsTrigger>
+              )}
+            </TabsList>
+            
+            {/* Language and Timezone Tab */}
+            <TabsContent value="language-timezone" className="space-y-6">
+              <div className="grid gap-6 md:grid-cols-2">
+                <Card>
+                  <CardHeader>
+                    <div className="flex items-center gap-2">
+                      <Languages className="h-5 w-5 text-primary" />
+                      <CardTitle>{getTranslation("language")}</CardTitle>
+                    </div>
+                    <CardDescription>
+                      {getTranslation("language-description")}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-6">
+                      <FormField
+                        control={form.control}
+                        name="language"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>{getTranslation("language")}</FormLabel>
+                            <Select 
+                              onValueChange={field.onChange} 
                               defaultValue={field.value}
-                              className="flex space-x-4"
                             >
-                              <FormItem className="flex items-center space-x-2 space-y-0">
-                                <FormControl>
-                                  <RadioGroupItem value="light" />
-                                </FormControl>
-                                <FormLabel className="font-normal cursor-pointer">
-                                  {getTranslation("light")}
-                                </FormLabel>
-                              </FormItem>
-                              <FormItem className="flex items-center space-x-2 space-y-0">
-                                <FormControl>
-                                  <RadioGroupItem value="dark" />
-                                </FormControl>
-                                <FormLabel className="font-normal cursor-pointer">
-                                  {getTranslation("dark")}
-                                </FormLabel>
-                              </FormItem>
-                              <FormItem className="flex items-center space-x-2 space-y-0">
-                                <FormControl>
-                                  <RadioGroupItem value="system" />
-                                </FormControl>
-                                <FormLabel className="font-normal cursor-pointer">
-                                  {getTranslation("system")}
-                                </FormLabel>
-                              </FormItem>
-                            </RadioGroup>
-                          </FormControl>
-                          <FormDescription>
-                            {getTranslation("default-theme-description")}
-                          </FormDescription>
-                        </FormItem>
-                      )}
-                    />
-                  </>
-                )}
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder={getTranslation("select-language")} />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="en">English</SelectItem>
+                                <SelectItem value="es">Español</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </FormItem>
+                        )}
+                      />
+                      
+                      <FormField
+                        control={form.control}
+                        name="timezone"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>{getTranslation("timezone")}</FormLabel>
+                            <Select 
+                              onValueChange={field.onChange} 
+                              defaultValue={field.value}
+                            >
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder={getTranslation("select-timezone")} />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent className="max-h-80">
+                                {timezones.map((tz) => (
+                                  <SelectItem key={tz} value={tz}>
+                                    {tz}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <FormDescription>
+                              {getTranslation("timezone-description")}
+                            </FormDescription>
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
                 
-                <Button 
-                  type="submit" 
-                  disabled={isSubmitting}
-                  className="w-full md:w-auto"
-                >
-                  {getTranslation("save-settings")}
-                </Button>
-              </form>
-            </Form>
-          </CardContent>
-        </Card>
-        
-        <div className="space-y-6">
-          <Card>
-            <CardHeader>
-              <div className="flex items-center gap-2">
-                <Globe className="h-5 w-5 text-primary" />
-                <CardTitle>
-                  {getTranslation("date-time-preview")}
-                </CardTitle>
+                <Card>
+                  <CardHeader>
+                    <div className="flex items-center gap-2">
+                      <Globe className="h-5 w-5 text-primary" />
+                      <CardTitle>
+                        {getTranslation("date-time-preview")}
+                      </CardTitle>
+                    </div>
+                    <CardDescription>
+                      {getTranslation("date-time-preview-description")}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="p-4 border rounded-md">
+                      <div className="mb-2 text-sm font-medium text-muted-foreground">
+                        {getTranslation("current-date-time")}
+                      </div>
+                      <div className="text-lg font-medium">
+                        {new Intl.DateTimeFormat(
+                          settings.language === "en" ? "en-US" : "es-ES", 
+                          {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                            second: "2-digit",
+                            timeZone: form.watch("timezone") || settings.timezone,
+                            timeZoneName: "short"
+                          }
+                        ).format(new Date())}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
-              <CardDescription>
-                {getTranslation("date-time-preview-description")}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="p-4 border rounded-md">
-                <div className="mb-2 text-sm font-medium text-muted-foreground">
-                  {getTranslation("current-date-time")}
-                </div>
-                <div className="text-lg font-medium">
-                  {new Intl.DateTimeFormat(
-                    settings.language === "en" ? "en-US" : "es-ES", 
-                    {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      second: "2-digit",
-                      timeZone: form.watch("timezone") || settings.timezone,
-                      timeZoneName: "short"
-                    }
-                  ).format(new Date())}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          
-          {isAdmin && (
-            <Card>
-              <CardHeader>
-                <div className="flex items-center gap-2">
-                  <Palette className="h-5 w-5 text-primary" />
-                  <CardTitle>
-                    {getTranslation("theme-preview")}
-                  </CardTitle>
-                </div>
-                <CardDescription>
-                  {getTranslation("theme-preview-description")}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-4">
-                  <div className="flex flex-wrap gap-2">
-                    <div className="p-4 rounded-md bg-primary text-primary-foreground">
-                      {getTranslation("primary")}
-                    </div>
-                    <div className="p-4 rounded-md bg-secondary text-secondary-foreground">
-                      {getTranslation("secondary")}
-                    </div>
-                    <div className="p-4 rounded-md bg-accent text-accent-foreground">
-                      {getTranslation("accent")}
-                    </div>
-                    <div className="p-4 rounded-md bg-muted text-muted-foreground">
-                      {getTranslation("muted")}
-                    </div>
-                    <div className="p-4 rounded-md bg-destructive text-destructive-foreground">
-                      {getTranslation("destructive")}
-                    </div>
-                  </div>
+            </TabsContent>
+            
+            {/* Theme Tab - Only visible to admins */}
+            {isAdmin && (
+              <TabsContent value="theme" className="space-y-6">
+                <div className="grid gap-6 md:grid-cols-2">
+                  <Card>
+                    <CardHeader>
+                      <div className="flex items-center gap-2">
+                        <Palette className="h-5 w-5 text-primary" />
+                        <CardTitle>{getTranslation("theme-settings")}</CardTitle>
+                      </div>
+                      <CardDescription>
+                        {getTranslation("theme-settings-description")}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-6">
+                        <FormField
+                          control={form.control}
+                          name="primaryColor"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>{getTranslation("primary-color")}</FormLabel>
+                              <div className="flex items-center gap-2">
+                                <div 
+                                  className="w-6 h-6 rounded-full border"
+                                  style={{ backgroundColor: field.value }}
+                                />
+                                <FormControl>
+                                  <Input 
+                                    type="color" 
+                                    {...field} 
+                                    className="w-12 h-8 p-1"
+                                  />
+                                </FormControl>
+                              </div>
+                              <FormDescription>
+                                {getTranslation("primary-color-description")}
+                              </FormDescription>
+                            </FormItem>
+                          )}
+                        />
+                        
+                        <FormField
+                          control={form.control}
+                          name="defaultTheme"
+                          render={({ field }) => (
+                            <FormItem className="space-y-3">
+                              <FormLabel>{getTranslation("default-theme")}</FormLabel>
+                              <FormControl>
+                                <RadioGroup
+                                  onValueChange={field.onChange}
+                                  defaultValue={field.value}
+                                  className="flex space-x-4"
+                                >
+                                  <FormItem className="flex items-center space-x-2 space-y-0">
+                                    <FormControl>
+                                      <RadioGroupItem value="light" />
+                                    </FormControl>
+                                    <FormLabel className="font-normal cursor-pointer">
+                                      {getTranslation("light")}
+                                    </FormLabel>
+                                  </FormItem>
+                                  <FormItem className="flex items-center space-x-2 space-y-0">
+                                    <FormControl>
+                                      <RadioGroupItem value="dark" />
+                                    </FormControl>
+                                    <FormLabel className="font-normal cursor-pointer">
+                                      {getTranslation("dark")}
+                                    </FormLabel>
+                                  </FormItem>
+                                  <FormItem className="flex items-center space-x-2 space-y-0">
+                                    <FormControl>
+                                      <RadioGroupItem value="system" />
+                                    </FormControl>
+                                    <FormLabel className="font-normal cursor-pointer">
+                                      {getTranslation("system")}
+                                    </FormLabel>
+                                  </FormItem>
+                                </RadioGroup>
+                              </FormControl>
+                              <FormDescription>
+                                {getTranslation("default-theme-description")}
+                              </FormDescription>
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                    </CardContent>
+                  </Card>
                   
-                  <div className="flex gap-2">
-                    <Button variant="default">
-                      {getTranslation("default")}
-                    </Button>
-                    <Button variant="secondary">
-                      {getTranslation("secondary")}
-                    </Button>
-                    <Button variant="outline">
-                      {getTranslation("outline")}
-                    </Button>
-                    <Button variant="ghost">
-                      {getTranslation("ghost")}
-                    </Button>
-                  </div>
+                  <Card>
+                    <CardHeader>
+                      <div className="flex items-center gap-2">
+                        <Palette className="h-5 w-5 text-primary" />
+                        <CardTitle>{getTranslation("theme-preview")}</CardTitle>
+                      </div>
+                      <CardDescription>
+                        {getTranslation("theme-preview-description")}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="space-y-4">
+                        <div className="flex flex-wrap gap-2">
+                          <div className="p-4 rounded-md bg-primary text-primary-foreground">
+                            {getTranslation("primary")}
+                          </div>
+                          <div className="p-4 rounded-md bg-secondary text-secondary-foreground">
+                            {getTranslation("secondary")}
+                          </div>
+                          <div className="p-4 rounded-md bg-accent text-accent-foreground">
+                            {getTranslation("accent")}
+                          </div>
+                          <div className="p-4 rounded-md bg-muted text-muted-foreground">
+                            {getTranslation("muted")}
+                          </div>
+                          <div className="p-4 rounded-md bg-destructive text-destructive-foreground">
+                            {getTranslation("destructive")}
+                          </div>
+                        </div>
+                        
+                        <div className="flex gap-2">
+                          <Button variant="default">
+                            {getTranslation("default")}
+                          </Button>
+                          <Button variant="secondary">
+                            {getTranslation("secondary")}
+                          </Button>
+                          <Button variant="outline">
+                            {getTranslation("outline")}
+                          </Button>
+                          <Button variant="ghost">
+                            {getTranslation("ghost")}
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
                 </div>
-              </CardContent>
-            </Card>
-          )}
-        </div>
-      </div>
+              </TabsContent>
+            )}
+          </Tabs>
+          
+          <Button 
+            type="submit" 
+            disabled={isSubmitting}
+            className="w-full md:w-auto"
+          >
+            {getTranslation("save-settings")}
+          </Button>
+        </form>
+      </Form>
     </div>
   );
 };
