@@ -111,9 +111,11 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
         description: t("compensation-transaction-created"),
       });
       
-      // Refresh transactions
+      // Refresh transactions - fixed the invalidate query syntax
       if (selectedWalletId) {
-        queryClient.invalidateQueries(['user-transactions', userId, selectedWalletId]);
+        queryClient.invalidateQueries({
+          queryKey: ['user-transactions', userId, selectedWalletId]
+        });
       }
       
       setShowCompensateDialog(false);
@@ -154,10 +156,11 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
         description: t("transaction-status-changed-success"),
       });
       
-      // Refresh transactions
+      // Refresh transactions - fixed the invalidate query syntax
       if (selectedWalletId) {
-        // Trigger a refetch
-        queryClient.invalidateQueries(['user-transactions', userId, selectedWalletId]);
+        queryClient.invalidateQueries({
+          queryKey: ['user-transactions', userId, selectedWalletId]
+        });
       }
       
       setShowChangeStatusDialog(false);

@@ -1,3 +1,4 @@
+
 import { Language } from "@/contexts/BackofficeSettingsContext";
 
 // Define translation keys and their values
@@ -1023,6 +1024,16 @@ const translations: Record<string, Record<string, string>> = {
     en: "This action will generate a new temporary password.",
     es: "Esta acción generará una nueva contraseña temporalmente."
   }
+};
+
+// Export the translate function
+export const translate = (key: string, language: Language = "en"): string => {
+  if (!translations[key]) {
+    console.warn(`Translation key not found: ${key}`);
+    return key;
+  }
+  
+  return translations[key][language] || translations[key]["en"] || key;
 };
 
 export default translations;
