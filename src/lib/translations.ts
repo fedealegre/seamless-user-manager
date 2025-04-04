@@ -9,7 +9,7 @@ interface Translations {
 }
 
 // Translations dictionary
-const translations: Translations = {
+const translations: Record<string, Record<string, string>> = {
   // Common
   "dashboard": {
     en: "Dashboard",
@@ -1009,6 +1009,27 @@ const translations: Translations = {
     en: "Please provide a reason for compensation",
     es: "Por favor, proporcione un motivo para la compensación"
   },
+  
+  // Reset password translations
+  "reset-password": "Reset Password",
+  "reset-password-for-user": "Reset password for user",
+  "reset-password-warning": "This action will generate a new temporary password.",
+  "reason-for-reset": "Reason for password reset",
+  "reason-required": "Reason is required",
+  "reason-placeholder": "Provide a reason for resetting this user's password",
+  "resetting": "Resetting...",
+  "password-reset-success": "Password Reset Successful",
+  "password-reset-success-description": "A temporary password has been generated.",
+  "password-reset-error": "Password Reset Failed",
+  "password-reset-unknown-error": "An unknown error occurred while resetting the password.",
+  "important": "Important",
+  "reset-password-audit-notice": "This action will be logged in the audit trail.",
+  "password-reset-complete": "Password Reset Complete",
+  "password-reset-complete-description": "The user's password has been reset. Please share the temporary password with the user securely.",
+  "temporary-password": "Temporary Password",
+  "password-copied": "Password Copied",
+  "password-copied-description": "Temporary password copied to clipboard.",
+  "password-share-securely": "Share this temporary password with the user through a secure channel. The user will be required to change this password on their first login."
 };
 
 // Get translation for a key

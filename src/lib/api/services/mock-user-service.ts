@@ -1,5 +1,4 @@
-
-import { User, Wallet, Transaction, CompensationRequest } from "../types";
+import { User, Wallet, Transaction, CompensationRequest, ResetPasswordRequest, ResetPasswordResponse } from "../types";
 import { UserService } from "./user-service-interface";
 import { mockUsers, mockWallets, mockTransactions } from "../mock/mock-users-data";
 import { generateRandomTransaction } from "./transaction-generator";
@@ -90,6 +89,31 @@ export class MockUserService implements UserService {
     if (user) {
       user.status = 'ACTIVE';
     }
+  }
+
+  async resetPassword(request: ResetPasswordRequest): Promise<ResetPasswordResponse> {
+    console.log("Using mock data for resetPassword", request);
+    
+    // Check if user exists
+    const user = mockUsers.find(u => u.id.toString() === request.userId);
+    if (!user) {
+      return {
+        success: false,
+        message: `User with ID ${request.userId} not found`
+      };
+    }
+    
+    // Generate a temporary password (in a real implementation, this would be more secure)
+    const temporaryPassword = Math.random().toString(36).slice(-8);
+    
+    // In a real implementation, we would hash the password and update it in the database
+    // For mock purposes, we'll just return the temporary password
+    
+    return {
+      success: true,
+      message: "Password has been reset successfully",
+      temporaryPassword: temporaryPassword
+    };
   }
 
   async getUserWallets(userId: string): Promise<Wallet[]> {

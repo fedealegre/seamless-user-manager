@@ -1,4 +1,3 @@
-
 // API types based on the OpenAPI specifications
 
 export interface Transaction {
@@ -98,6 +97,17 @@ export interface CompensationRequest {
     admin_user: string;
     transaction_type: 'COMPENSATE';
     compensation_type: 'credit' | 'adjustment';
+}
+
+export interface ResetPasswordRequest {
+    userId: string;
+    reason: string;
+}
+
+export interface ResetPasswordResponse {
+    success: boolean;
+    message: string;
+    temporaryPassword?: string;
 }
 
 export interface CancelTransactionRequest {

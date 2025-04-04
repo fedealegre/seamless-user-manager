@@ -1,5 +1,5 @@
 
-import { User, Wallet, Transaction, CompensationRequest } from "../types";
+import { User, Wallet, Transaction, CompensationRequest, ResetPasswordRequest, ResetPasswordResponse } from "../types";
 
 export interface UserService {
   searchUsers(params: any): Promise<User[]>;
@@ -8,6 +8,7 @@ export interface UserService {
   deleteUser(userId: string): Promise<void>;
   blockUser(userId: string): Promise<void>;
   unblockUser(userId: string): Promise<void>;
+  resetPassword(request: ResetPasswordRequest): Promise<ResetPasswordResponse>;
   getUserWallets(userId: string): Promise<Wallet[]>;
   getAllWallets(): Promise<{ wallet: Wallet; userId: string }[]>;
   getWalletTransactions(userId: string, walletId: string): Promise<Transaction[]>;

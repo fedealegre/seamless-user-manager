@@ -5,10 +5,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { EditUserInfoForm } from "./EditUserInfoForm";
+import { ResetPasswordDialog } from "./ResetPasswordDialog";
 import { userService } from "@/lib/api/user-service";
 import { useQueryClient } from "@tanstack/react-query";
 import { formatFieldName, parseDate } from "@/lib/utils";
 import { useUserFieldSettings } from "@/hooks/use-user-field-settings";
+import { Key } from "lucide-react";
+import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
+import { translate } from "@/lib/translations";
 
 interface UserInfoTabProps {
   user: User;
@@ -16,8 +20,11 @@ interface UserInfoTabProps {
 
 export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
   const [isEditing, setIsEditing] = useState(false);
+  const [showResetPasswordDialog, setShowResetPasswordDialog] = useState(false);
   const queryClient = useQueryClient();
   const { isFieldVisible, isFieldEditable, isLoaded } = useUserFieldSettings();
+  const { settings } = useBackofficeSettings();
+  const t = (key: string) => translate(key, settings.language);
 
   // Helper function to format dates
   const formatDate = (dateString?: string): string => {
@@ -77,6 +84,10 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
     queryClient.invalidateQueries({ queryKey: ['user', user.id.toString()] });
   };
 
+  const handleResetPassword = () => {
+    setShowResetPasswordDialog(true);
+  };
+
   if (isEditing) {
     return (
       <div className="space-y-6">
@@ -111,13 +122,22 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
 
   return (
     <div className="space-y-6">
-      {hasEditableFields && (
-        <div className="flex justify-end">
+      <div className="flex justify-end gap-3">
+        <Button 
+          variant="outline" 
+          onClick={handleResetPassword}
+          className="flex items-center gap-2"
+        >
+          <Key className="h-4 w-4" />
+          {t("reset-password")}
+        </Button>
+        
+        {hasEditableFields && (
           <Button onClick={() => setIsEditing(true)}>
             Edit Information
           </Button>
-        </div>
-      )}
+        )}
+      </div>
       
       <Card>
         <CardHeader>
@@ -244,6 +264,16 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
             {renderAdditionalInfo()}
           </CardContent>
         </Card>
+      )}
+      
+      {/* Reset Password Dialog */}
+      {showResetPasswordDialog && (
+        <ResetPasswordDialog
+          open={showResetPasswordDialog}
+          userId={user.id.toString()}
+          userName={`${user.name} ${user.surname}`}
+          onClose={() => setShowResetPasswordDialog(false)}
+        />
       )}
     </div>
   );
