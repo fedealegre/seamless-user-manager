@@ -1,5 +1,5 @@
 
-import { User, Wallet, Transaction, CompensationRequest, ResetPasswordRequest, ResetPasswordResponse } from "../types";
+import { User, Wallet, Transaction, CompensationRequest, ResetPasswordRequest, ResetPasswordResponse, ChangeTransactionStatusRequest, ChangeTransactionStatusResponse } from "../types";
 
 export interface UserService {
   searchUsers(params: any): Promise<User[]>;
@@ -20,4 +20,8 @@ export interface UserService {
     request: CompensationRequest
   ): Promise<any>;
   generateRandomTransaction(): Promise<Transaction>;
+  changeTransactionStatus(
+    transactionId: string | number,
+    request: ChangeTransactionStatusRequest
+  ): Promise<ChangeTransactionStatusResponse>;
 }

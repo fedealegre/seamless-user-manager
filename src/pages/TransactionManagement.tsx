@@ -7,6 +7,7 @@ import TransactionFilters from "@/components/transactions/TransactionFilters";
 import TransactionDetails from "@/components/transactions/TransactionDetails";
 import CancelTransactionDialog from "@/components/transactions/CancelTransactionDialog";
 import CompensateCustomerDialog from "@/components/transactions/CompensateCustomerDialog";
+import ChangeTransactionStatusDialog from "@/components/transactions/ChangeTransactionStatusDialog";
 import TransactionSearchBar from "@/components/transactions/TransactionSearchBar";
 import FilterButton from "@/components/transactions/FilterButton";
 import TransactionsTable from "@/components/transactions/TransactionsTable";
@@ -28,6 +29,7 @@ const TransactionManagement = () => {
     showDetailsDialog,
     showCancelDialog,
     showCompensateDialog,
+    showChangeStatusDialog,
     selectedTransaction,
     filters,
     transactions,
@@ -41,14 +43,17 @@ const TransactionManagement = () => {
     handleViewDetails,
     handleCancelTransaction,
     handleCompensateCustomer,
+    handleChangeStatus,
     handleApplyFilters,
     resetFilters,
     handleSubmitCancel,
     handleSubmitCompensation,
+    handleSubmitStatusChange,
     setPage,
     handleCloseDetailsDialog,
     handleCloseCancelDialog,
     handleCloseCompensateDialog,
+    handleCloseChangeStatusDialog,
   } = useTransactionManagement();
   
   const { settings, formatDateTime } = useBackofficeSettings();
@@ -146,6 +151,7 @@ const TransactionManagement = () => {
                   handleViewDetails={handleViewDetails}
                   handleCancelTransaction={handleCancelTransaction}
                   handleCompensateCustomer={handleCompensateCustomer}
+                  handleChangeStatus={handleChangeStatus}
                 />
                 
                 {transactions && transactions.length > 0 && (
@@ -189,6 +195,16 @@ const TransactionManagement = () => {
           onOpenChange={handleCloseCompensateDialog}
           transaction={selectedTransaction}
           onSubmit={handleSubmitCompensation}
+        />
+      )}
+      
+      {/* Change Transaction Status Dialog */}
+      {selectedTransaction && (
+        <ChangeTransactionStatusDialog
+          open={showChangeStatusDialog}
+          onOpenChange={handleCloseChangeStatusDialog}
+          transaction={selectedTransaction}
+          onSubmit={handleSubmitStatusChange}
         />
       )}
     </>
