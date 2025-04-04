@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { userService } from "@/lib/api/user-service";
@@ -32,7 +31,6 @@ export const useTransactionManagement = () => {
   
   const { toast } = useToast();
 
-  // We'll use a valid user and wallet ID from our mock data
   const userId = "827";
   const walletId = "152";
 
@@ -40,10 +38,8 @@ export const useTransactionManagement = () => {
     queryKey: ["transactions", userId, walletId, page, pageSize, searchTerm, filters],
     queryFn: async () => {
       try {
-        // Get transactions for this wallet
         const txns = await userService.getWalletTransactions(userId, walletId);
         
-        // Apply filters if needed
         let filteredTxns = [...txns];
         
         if (filters.status) {
@@ -65,7 +61,6 @@ export const useTransactionManagement = () => {
           );
         }
         
-        // Apply search if needed
         if (searchTerm) {
           filteredTxns = filteredTxns.filter(t => 
             (t.transactionId?.toString().includes(searchTerm)) || 
@@ -158,10 +153,8 @@ export const useTransactionManagement = () => {
     if (!selectedTransaction) return;
     
     try {
-      // Get transaction identifier (either id or transactionId)
       const transactionIdentifier = selectedTransaction.transactionId || selectedTransaction.id.toString();
       
-      // Mock cancellation
       toast({
         title: "Transaction Cancelled",
         description: `Transaction ${transactionIdentifier} has been cancelled successfully.`,
@@ -180,7 +173,7 @@ export const useTransactionManagement = () => {
     }
   };
 
-  const handleSubmitCompensation = async (amount: string, reason: string) => {
+  const handleSubmitCompensation = async (amount: string, reason: string, compensationType: 'credit' | 'adjustment') => {
     if (!selectedTransaction) return;
     
     try {
@@ -199,7 +192,8 @@ export const useTransactionManagement = () => {
           reason,
           transaction_code: `COMP-${Date.now()}`,
           admin_user: "Current Admin",
-          transaction_type: "COMPENSATE"
+          transaction_type: "COMPENSATE",
+          compensation_type: compensationType
         }
       );
       

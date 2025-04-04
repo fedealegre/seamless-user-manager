@@ -65,6 +65,7 @@ export interface CompensationRequest {
     transaction_code: string;
     admin_user: string;
     transaction_type: 'COMPENSATE';
+    compensation_type: 'credit' | 'adjustment';
 }
 
 export interface CancelTransactionRequest {

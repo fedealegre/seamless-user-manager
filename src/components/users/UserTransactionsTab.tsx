@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { userService } from "@/lib/api/user-service";
@@ -67,7 +66,11 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
     setShowCompensateDialog(true);
   };
 
-  const handleCompensateSubmit = async (amount: string, reason: string) => {
+  const handleCompensateSubmit = async (
+    amount: string, 
+    reason: string, 
+    compensationType: 'credit' | 'adjustment'
+  ) => {
     if (!selectedTransaction || !selectedWalletId) {
       toast({
         title: t("error"),
@@ -84,6 +87,7 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
         transaction_code: selectedTransaction.transactionId || selectedTransaction.id.toString(),
         admin_user: "current-admin",
         transaction_type: "COMPENSATE" as const,
+        compensation_type: compensationType
       };
 
       const companyId = selectedTransaction.customerId 

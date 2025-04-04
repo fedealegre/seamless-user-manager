@@ -1,4 +1,3 @@
-
 import { Language } from "@/contexts/BackofficeSettingsContext";
 
 // Define translation keys and their values
@@ -943,7 +942,73 @@ const translations: Translations = {
   "financial-settings-updated": {
     en: "Financial settings updated",
     es: "Configuración financiera actualizada"
-  }
+  },
+  
+  // Compensation related translations
+  "compensate-customer": {
+    en: "Compensate Customer",
+    es: "Compensar Cliente"
+  },
+  "provide-compensation-description": {
+    en: "Provide compensation to the customer related to this transaction.",
+    es: "Proporcionar compensación al cliente relacionada con esta transacción."
+  },
+  "compensation-type": {
+    en: "Compensation Type",
+    es: "Tipo de Compensación"
+  },
+  "credit": {
+    en: "Credit",
+    es: "Abono"
+  },
+  "adjustment": {
+    en: "Adjustment",
+    es: "Ajuste"
+  },
+  "credit-description": {
+    en: "Credit only allows positive amounts that increase the customer's balance.",
+    es: "El abono solo permite montos positivos que aumentan el saldo del cliente."
+  },
+  "adjustment-description": {
+    en: "Adjustment allows both positive and negative amounts for balance corrections.",
+    es: "El ajuste permite montos positivos y negativos para correcciones de saldo."
+  },
+  "compensation-amount": {
+    en: "Compensation Amount",
+    es: "Monto de Compensación"
+  },
+  "reason-for-compensation": {
+    en: "Reason for Compensation",
+    es: "Motivo de la Compensación"
+  },
+  "explain-compensation-reason": {
+    en: "Explain why this compensation is being provided...",
+    es: "Explique por qué se proporciona esta compensación..."
+  },
+  "create-new-compensation-transaction": {
+    en: "This will create a new compensation transaction in the customer's wallet.",
+    es: "Esto creará una nueva transacción de compensación en la billetera del cliente."
+  },
+  "process-compensation": {
+    en: "Process Compensation",
+    es: "Procesar Compensación"
+  },
+  "please-enter-valid-amount": {
+    en: "Please enter a valid amount",
+    es: "Por favor, ingrese un monto válido"
+  },
+  "credit-must-be-positive": {
+    en: "Credit amount must be positive",
+    es: "El monto del abono debe ser positivo"
+  },
+  "please-select-compensation-type": {
+    en: "Please select a compensation type",
+    es: "Por favor, seleccione un tipo de compensación"
+  },
+  "please-provide-reason": {
+    en: "Please provide a reason for compensation",
+    es: "Por favor, proporcione un motivo para la compensación"
+  },
 };
 
 // Get translation for a key

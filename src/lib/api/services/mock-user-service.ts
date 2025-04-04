@@ -130,6 +130,12 @@ export class MockUserService implements UserService {
   ): Promise<any> {
     console.log("Using mock data for compensateCustomer");
     
+    // Check if the amount is valid based on compensation type
+    const amount = parseFloat(request.amount);
+    if (request.compensation_type === 'credit' && amount <= 0) {
+      throw new Error("Credit compensation must have a positive amount");
+    }
+    
     // Create a new transaction for the compensation
     const newTransaction: Transaction = {
       id: Date.now(),
@@ -140,10 +146,13 @@ export class MockUserService implements UserService {
       status: "completed",
       type: "compensation",
       transactionType: "COMPENSATE",
-      movementType: "INCOME",
-      amount: parseFloat(request.amount),
+      movementType: amount >= 0 ? "INCOME" : "OUTCOME",
+      amount: amount,
       currency: mockWallets[parseInt(userId)]?.find(w => w.id === walletId)?.currency || "USD",
-      reference: request.reason
+      reference: `${request.compensation_type}: ${request.reason}`,
+      additionalInfo: {
+        compensationType: request.compensation_type
+      }
     };
     
     // Add the transaction to the mock data
@@ -155,12 +164,12 @@ export class MockUserService implements UserService {
     // Update the wallet balance
     const wallet = mockWallets[parseInt(userId)]?.find(w => w.id === walletId);
     if (wallet) {
-      wallet.balance = (wallet.balance || 0) + parseFloat(request.amount);
-      wallet.availableBalance = (wallet.availableBalance || 0) + parseFloat(request.amount);
+      wallet.balance = (wallet.balance || 0) + amount;
+      wallet.availableBalance = (wallet.availableBalance || 0) + amount;
     }
     
     return { 
-      message: `Compensated user ${userId} with ${request.amount}`,
+      message: `Compensated user ${userId} with ${request.amount} (${request.compensation_type})`,
       transactionId: newTransaction.transactionId
     };
   }
