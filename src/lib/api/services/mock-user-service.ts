@@ -16,8 +16,8 @@ import { mockTransactions, generateRandomTransaction } from "@/mocks/mock-transa
 
 export class MockUserService implements UserService {
   private users: User[] = [...mockUsers];
-  private wallets: Wallet[] = [...mockWallets];
-  private transactions: Transaction[] = [...mockTransactions];
+  private wallets: Record<number, Wallet[]> = {...mockWallets};
+  private transactions: Record<number, Transaction[]> = {...mockTransactions};
 
   async searchUsers(params: any): Promise<User[]> {
     console.log("Using mock data for searchUsers", params);
@@ -186,7 +186,7 @@ export class MockUserService implements UserService {
       transactionType: "COMPENSATE",
       movementType: amount >= 0 ? "INCOME" : "OUTCOME",
       amount: amount,
-      currency: this.wallets[parseInt(userId)]?.find(w => w.id === walletId)?.currency || "USD",
+      currency: (this.wallets[parseInt(userId)] || []).find(w => w.id === walletId)?.currency || "USD",
       reference: `${request.compensation_type}: ${request.reason}`,
       additionalInfo: {
         compensationType: request.compensation_type
@@ -200,7 +200,7 @@ export class MockUserService implements UserService {
     this.transactions[walletId].unshift(newTransaction);
     
     // Update the wallet balance
-    const wallet = this.wallets[parseInt(userId)]?.find(w => w.id === walletId);
+    const wallet = (this.wallets[parseInt(userId)] || []).find(w => w.id === walletId);
     if (wallet) {
       wallet.balance = (wallet.balance || 0) + amount;
       wallet.availableBalance = (wallet.availableBalance || 0) + amount;
@@ -223,29 +223,39 @@ export class MockUserService implements UserService {
   ): Promise<ChangeTransactionStatusResponse> {
     const txIdStr = transactionId.toString();
     
-    // Find the transaction by ID
-    const transaction = this.transactions.find(t => 
-      t.transactionId === txIdStr || t.id.toString() === txIdStr
-    );
+    // Find the transaction by ID across all wallets
+    let foundTransaction: Transaction | undefined;
+    let walletId: number | undefined;
     
-    if (!transaction) {
+    // Search through all wallets for the transaction
+    Object.entries(this.transactions).forEach(([wId, transactions]) => {
+      const found = transactions.find(t => 
+        t.transactionId === txIdStr || t.id.toString() === txIdStr
+      );
+      if (found) {
+        foundTransaction = found;
+        walletId = parseInt(wId);
+      }
+    });
+    
+    if (!foundTransaction) {
       return {
         success: false,
         message: `Transaction with ID ${txIdStr} not found`
       };
     }
     
-    if (transaction.status !== 'pending') {
+    if (foundTransaction.status !== 'pending') {
       return {
         success: false,
-        message: `Only pending transactions can be changed. Current status: ${transaction.status}`
+        message: `Only pending transactions can be changed. Current status: ${foundTransaction.status}`
       };
     }
     
     // Update the transaction status
-    transaction.status = request.status;
-    transaction.additionalInfo = {
-      ...transaction.additionalInfo,
+    foundTransaction.status = request.status;
+    foundTransaction.additionalInfo = {
+      ...foundTransaction.additionalInfo,
       statusChangeReason: request.reason,
       statusChangedAt: new Date().toISOString(),
       previousStatus: 'pending'
@@ -254,7 +264,7 @@ export class MockUserService implements UserService {
     return {
       success: true,
       message: `Transaction status changed to ${request.status}`,
-      transaction: { ...transaction }
+      transaction: { ...foundTransaction }
     };
   }
 }
