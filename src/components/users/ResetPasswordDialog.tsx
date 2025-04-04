@@ -187,7 +187,7 @@ export const ResetPasswordDialog: React.FC<ResetPasswordDialogProps> = ({
               </AlertDialogTitle>
               <AlertDialogDescription>
                 {t("password-reset-complete-description")}
-              </AlertDescription>
+              </AlertDialogDescription>
             </AlertDialogHeader>
             
             <div className="my-4 space-y-4">
