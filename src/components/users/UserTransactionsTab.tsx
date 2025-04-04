@@ -1,5 +1,6 @@
+
 import React, { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { userService } from "@/lib/api/user-service";
 import { Wallet, Transaction } from "@/lib/api/types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -26,6 +27,7 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
   const { toast } = useToast();
   const { settings, formatDateTime } = useBackofficeSettings();
   const t = (key: string) => translate(key, settings.language);
+  const queryClient = useQueryClient();
   
   // Dialog states
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
@@ -71,6 +73,58 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
   const handleChangeStatus = (transaction: Transaction) => {
     setSelectedTransaction(transaction);
     setShowChangeStatusDialog(true);
+  };
+
+  const handleCompensateSubmit = async (amount: string, reason: string, compensationType: 'credit' | 'adjustment') => {
+    if (!selectedTransaction || !selectedWalletId) {
+      toast({
+        title: t("error"),
+        description: t("missing-transaction-wallet-info"),
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const companyId = 1;
+      const userId = selectedTransaction.customerId;
+      const walletId = parseInt(selectedTransaction.walletId);
+      const originWalletId = 999;
+      
+      await userService.compensateCustomer(
+        companyId,
+        userId,
+        walletId,
+        originWalletId,
+        {
+          amount,
+          reason,
+          transaction_code: `COMP-${Date.now()}`,
+          admin_user: "Current Admin",
+          transaction_type: "COMPENSATE",
+          compensation_type: compensationType
+        }
+      );
+      
+      toast({
+        title: t("compensation-processed"),
+        description: t("compensation-transaction-created"),
+      });
+      
+      // Refresh transactions
+      if (selectedWalletId) {
+        queryClient.invalidateQueries(['user-transactions', userId, selectedWalletId]);
+      }
+      
+      setShowCompensateDialog(false);
+      setSelectedTransaction(null);
+    } catch (error: any) {
+      toast({
+        title: t("compensation-failed"),
+        description: error.message || t("compensation-error"),
+        variant: "destructive",
+      });
+    }
   };
 
   const handleSubmitStatusChange = async (newStatus: string, reason: string) => {
