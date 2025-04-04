@@ -1,4 +1,3 @@
-
 import { Language } from "@/contexts/BackofficeSettingsContext";
 
 // Define translation keys and their values
@@ -943,6 +942,80 @@ const translations: Translations = {
   "financial-settings-updated": {
     en: "Financial settings updated",
     es: "Configuración financiera actualizada"
+  },
+  
+  // Theme Settings
+  "theme": {
+    en: "Theme",
+    es: "Tema"
+  },
+  "light": {
+    en: "Light",
+    es: "Claro"
+  },
+  "dark": {
+    en: "Dark",
+    es: "Oscuro"
+  },
+  "system": {
+    en: "System",
+    es: "Sistema"
+  },
+  "primary-color": {
+    en: "Primary Color",
+    es: "Color Primario"
+  },
+  "primary-color-description": {
+    en: "Select the primary color for the backoffice interface",
+    es: "Seleccione el color primario para la interfaz del back office"
+  },
+  "default-theme": {
+    en: "Default Theme",
+    es: "Tema Predeterminado"
+  },
+  "default-theme-description": {
+    en: "Select the default theme for all backoffice users",
+    es: "Seleccione el tema predeterminado para todos los usuarios del back office"
+  },
+  "theme-preview": {
+    en: "Theme Preview",
+    es: "Vista Previa del Tema"
+  },
+  "theme-preview-description": {
+    en: "Preview of the selected theme and colors",
+    es: "Vista previa del tema y colores seleccionados"
+  },
+  "primary": {
+    en: "Primary",
+    es: "Primario"
+  },
+  "secondary": {
+    en: "Secondary",
+    es: "Secundario"
+  },
+  "accent": {
+    en: "Accent",
+    es: "Acento"
+  },
+  "muted": {
+    en: "Muted",
+    es: "Atenuado"
+  },
+  "destructive": {
+    en: "Destructive",
+    es: "Destructivo"
+  },
+  "default": {
+    en: "Default",
+    es: "Predeterminado"
+  },
+  "outline": {
+    en: "Outline",
+    es: "Contorno"
+  },
+  "ghost": {
+    en: "Ghost",
+    es: "Fantasma"
   }
 };
 

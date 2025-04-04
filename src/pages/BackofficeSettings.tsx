@@ -1,6 +1,7 @@
 
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 import { 
   Card, 
   CardContent, 
@@ -9,6 +10,7 @@ import {
   CardTitle 
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { 
   Form, 
   FormControl, 
@@ -24,17 +26,21 @@ import {
   SelectTrigger, 
   SelectValue 
 } from "@/components/ui/select";
-import { Globe, Languages } from "lucide-react";
+import { Globe, Languages, Palette } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { 
   useBackofficeSettings, 
-  BackofficeSettings as SettingsType 
+  BackofficeSettings as SettingsType,
+  Theme
 } from "@/contexts/BackofficeSettingsContext";
 import { toast } from "@/hooks/use-toast";
 import { translate } from "@/lib/translations";
+import { Switch } from "@/components/ui/switch";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 const BackofficeSettings = () => {
   const { settings, updateSettings } = useBackofficeSettings();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   
@@ -43,11 +49,16 @@ const BackofficeSettings = () => {
     return translate(key, settings.language);
   };
   
+  // Check if user is admin
+  const isAdmin = user?.role === "admin";
+  
   // Form setup with defaults from current settings
   const form = useForm<SettingsType>({
     defaultValues: {
       language: settings.language,
-      timezone: settings.timezone
+      timezone: settings.timezone,
+      primaryColor: settings.primaryColor,
+      defaultTheme: settings.defaultTheme
     }
   });
   
@@ -211,6 +222,81 @@ const BackofficeSettings = () => {
                   )}
                 />
                 
+                {isAdmin && (
+                  <>
+                    <FormField
+                      control={form.control}
+                      name="primaryColor"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{getTranslation("primary-color")}</FormLabel>
+                          <div className="flex items-center gap-2">
+                            <div 
+                              className="w-6 h-6 rounded-full border"
+                              style={{ backgroundColor: field.value }}
+                            />
+                            <FormControl>
+                              <Input 
+                                type="color" 
+                                {...field} 
+                                className="w-12 h-8 p-1"
+                              />
+                            </FormControl>
+                          </div>
+                          <FormDescription>
+                            {getTranslation("primary-color-description")}
+                          </FormDescription>
+                        </FormItem>
+                      )}
+                    />
+                    
+                    <FormField
+                      control={form.control}
+                      name="defaultTheme"
+                      render={({ field }) => (
+                        <FormItem className="space-y-3">
+                          <FormLabel>{getTranslation("default-theme")}</FormLabel>
+                          <FormControl>
+                            <RadioGroup
+                              onValueChange={field.onChange}
+                              defaultValue={field.value}
+                              className="flex space-x-4"
+                            >
+                              <FormItem className="flex items-center space-x-2 space-y-0">
+                                <FormControl>
+                                  <RadioGroupItem value="light" />
+                                </FormControl>
+                                <FormLabel className="font-normal cursor-pointer">
+                                  {getTranslation("light")}
+                                </FormLabel>
+                              </FormItem>
+                              <FormItem className="flex items-center space-x-2 space-y-0">
+                                <FormControl>
+                                  <RadioGroupItem value="dark" />
+                                </FormControl>
+                                <FormLabel className="font-normal cursor-pointer">
+                                  {getTranslation("dark")}
+                                </FormLabel>
+                              </FormItem>
+                              <FormItem className="flex items-center space-x-2 space-y-0">
+                                <FormControl>
+                                  <RadioGroupItem value="system" />
+                                </FormControl>
+                                <FormLabel className="font-normal cursor-pointer">
+                                  {getTranslation("system")}
+                                </FormLabel>
+                              </FormItem>
+                            </RadioGroup>
+                          </FormControl>
+                          <FormDescription>
+                            {getTranslation("default-theme-description")}
+                          </FormDescription>
+                        </FormItem>
+                      )}
+                    />
+                  </>
+                )}
+                
                 <Button 
                   type="submit" 
                   disabled={isSubmitting}
@@ -223,41 +309,95 @@ const BackofficeSettings = () => {
           </CardContent>
         </Card>
         
-        <Card>
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <Globe className="h-5 w-5 text-primary" />
-              <CardTitle>
-                {getTranslation("date-time-preview")}
-              </CardTitle>
-            </div>
-            <CardDescription>
-              {getTranslation("date-time-preview-description")}
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="p-4 border rounded-md">
-              <div className="mb-2 text-sm font-medium text-muted-foreground">
-                {getTranslation("current-date-time")}
+        <div className="space-y-6">
+          <Card>
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <Globe className="h-5 w-5 text-primary" />
+                <CardTitle>
+                  {getTranslation("date-time-preview")}
+                </CardTitle>
               </div>
-              <div className="text-lg font-medium">
-                {new Intl.DateTimeFormat(
-                  settings.language === "en" ? "en-US" : "es-ES", 
-                  {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    second: "2-digit",
-                    timeZone: form.watch("timezone") || settings.timezone,
-                    timeZoneName: "short"
-                  }
-                ).format(new Date())}
+              <CardDescription>
+                {getTranslation("date-time-preview-description")}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="p-4 border rounded-md">
+                <div className="mb-2 text-sm font-medium text-muted-foreground">
+                  {getTranslation("current-date-time")}
+                </div>
+                <div className="text-lg font-medium">
+                  {new Intl.DateTimeFormat(
+                    settings.language === "en" ? "en-US" : "es-ES", 
+                    {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      second: "2-digit",
+                      timeZone: form.watch("timezone") || settings.timezone,
+                      timeZoneName: "short"
+                    }
+                  ).format(new Date())}
+                </div>
               </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+          
+          {isAdmin && (
+            <Card>
+              <CardHeader>
+                <div className="flex items-center gap-2">
+                  <Palette className="h-5 w-5 text-primary" />
+                  <CardTitle>
+                    {getTranslation("theme-preview")}
+                  </CardTitle>
+                </div>
+                <CardDescription>
+                  {getTranslation("theme-preview-description")}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-4">
+                  <div className="flex flex-wrap gap-2">
+                    <div className="p-4 rounded-md bg-primary text-primary-foreground">
+                      {getTranslation("primary")}
+                    </div>
+                    <div className="p-4 rounded-md bg-secondary text-secondary-foreground">
+                      {getTranslation("secondary")}
+                    </div>
+                    <div className="p-4 rounded-md bg-accent text-accent-foreground">
+                      {getTranslation("accent")}
+                    </div>
+                    <div className="p-4 rounded-md bg-muted text-muted-foreground">
+                      {getTranslation("muted")}
+                    </div>
+                    <div className="p-4 rounded-md bg-destructive text-destructive-foreground">
+                      {getTranslation("destructive")}
+                    </div>
+                  </div>
+                  
+                  <div className="flex gap-2">
+                    <Button variant="default">
+                      {getTranslation("default")}
+                    </Button>
+                    <Button variant="secondary">
+                      {getTranslation("secondary")}
+                    </Button>
+                    <Button variant="outline">
+                      {getTranslation("outline")}
+                    </Button>
+                    <Button variant="ghost">
+                      {getTranslation("ghost")}
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -94,19 +94,32 @@
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
+  
+  /* Theme transition for smooth theme switching */
+  body {
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+  
+  /* Applied when changing themes */
+  body.theme-transition * {
+    transition: background-color 0.3s ease, 
+                color 0.3s ease, 
+                border-color 0.3s ease, 
+                box-shadow 0.3s ease !important;
+  }
 }
 
 @layer components {
   .glass-card {
-    @apply bg-white/80 backdrop-blur-md border border-white/20 shadow-md;
+    @apply bg-white/80 dark:bg-black/40 backdrop-blur-md border border-white/20 dark:border-white/10 shadow-md;
   }
   
   .glass-input {
-    @apply bg-white/50 backdrop-blur-sm border border-white/20 focus:border-primary/50 focus:ring-2 focus:ring-primary/30 outline-none transition duration-200;
+    @apply bg-white/50 dark:bg-black/20 backdrop-blur-sm border border-white/20 dark:border-white/10 focus:border-primary/50 focus:ring-2 focus:ring-primary/30 outline-none transition duration-200;
   }
   
   .glass-button {
-    @apply bg-white/60 backdrop-blur-sm hover:bg-white/80 transition-all duration-200 shadow-sm border border-white/30;
+    @apply bg-white/60 dark:bg-white/10 backdrop-blur-sm hover:bg-white/80 dark:hover:bg-white/20 transition-all duration-200 shadow-sm border border-white/30 dark:border-white/5;
   }
   
   .transition-slide {

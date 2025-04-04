@@ -1,10 +1,11 @@
 
 import React from "react";
 import { Link } from "react-router-dom";
-import { Menu, Bell } from "lucide-react";
+import { Menu, Bell, Sun, Moon, Laptop } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import UserProfile from "./UserProfile";
 import { useCompanySettings } from "@/contexts/CompanySettingsContext";
+import { useBackofficeSettings, Theme } from "@/contexts/BackofficeSettingsContext";
 import { 
   DropdownMenu, 
   DropdownMenuContent, 
@@ -13,13 +14,33 @@ import {
   DropdownMenuSeparator, 
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
+import { translate } from "@/lib/translations";
 
 interface HeaderProps {
   toggleSidebar: () => void;
 }
 
 const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
-  const { settings } = useCompanySettings();
+  const { settings: companySettings } = useCompanySettings();
+  const { settings, userTheme, setUserTheme } = useBackofficeSettings();
+  
+  const getTranslation = (key: string): string => {
+    return translate(key, settings.language);
+  };
+  
+  // Theme icon based on current theme
+  const ThemeIcon = () => {
+    switch (userTheme) {
+      case "light":
+        return <Sun size={18} />;
+      case "dark":
+        return <Moon size={18} />;
+      case "system":
+        return <Laptop size={18} />;
+      default:
+        return <Sun size={18} />;
+    }
+  };
   
   return (
     <header className="h-16 border-b border-border flex items-center justify-between px-4 lg:px-6">
@@ -32,7 +53,7 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
         >
           <Menu size={18} />
         </Button>
-        <h1 className="text-xl font-semibold lg:hidden">{settings.backofficeTitle}</h1>
+        <h1 className="text-xl font-semibold lg:hidden">{companySettings.backofficeTitle}</h1>
         <Button 
           variant="ghost" 
           size="icon"
@@ -44,6 +65,40 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
       </div>
       
       <div className="flex items-center gap-3">
+        {/* Theme Switcher */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" size="icon">
+              <ThemeIcon />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>{getTranslation("theme")}</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem 
+              onClick={() => setUserTheme("light")}
+              className={userTheme === "light" ? "bg-accent" : ""}
+            >
+              <Sun className="mr-2 h-4 w-4" />
+              <span>{getTranslation("light")}</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem 
+              onClick={() => setUserTheme("dark")}
+              className={userTheme === "dark" ? "bg-accent" : ""}
+            >
+              <Moon className="mr-2 h-4 w-4" />
+              <span>{getTranslation("dark")}</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem 
+              onClick={() => setUserTheme("system")}
+              className={userTheme === "system" ? "bg-accent" : ""}
+            >
+              <Laptop className="mr-2 h-4 w-4" />
+              <span>{getTranslation("system")}</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" size="icon" className="relative">
