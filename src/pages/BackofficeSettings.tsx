@@ -49,8 +49,8 @@ const BackofficeSettings = () => {
     return translate(key, settings.language);
   };
   
-  // Check if user is admin
-  const isAdmin = user?.role === "admin";
+  // Check if user is admin - fixing the error by using 'roles' instead of 'role'
+  const isAdmin = user?.roles?.includes("admin");
   
   // Form setup with defaults from current settings
   const form = useForm<SettingsType>({
