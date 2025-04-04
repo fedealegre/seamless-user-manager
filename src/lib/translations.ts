@@ -1,3 +1,4 @@
+
 import { Language } from "@/contexts/BackofficeSettingsContext";
 
 // Define translation keys and their values
@@ -1011,25 +1012,86 @@ const translations: Record<string, Record<string, string>> = {
   },
   
   // Reset password translations
-  "reset-password": "Reset Password",
-  "reset-password-for-user": "Reset password for user",
-  "reset-password-warning": "This action will generate a new temporary password.",
-  "reason-for-reset": "Reason for password reset",
-  "reason-required": "Reason is required",
-  "reason-placeholder": "Provide a reason for resetting this user's password",
-  "resetting": "Resetting...",
-  "password-reset-success": "Password Reset Successful",
-  "password-reset-success-description": "A temporary password has been generated.",
-  "password-reset-error": "Password Reset Failed",
-  "password-reset-unknown-error": "An unknown error occurred while resetting the password.",
-  "important": "Important",
-  "reset-password-audit-notice": "This action will be logged in the audit trail.",
-  "password-reset-complete": "Password Reset Complete",
-  "password-reset-complete-description": "The user's password has been reset. Please share the temporary password with the user securely.",
-  "temporary-password": "Temporary Password",
-  "password-copied": "Password Copied",
-  "password-copied-description": "Temporary password copied to clipboard.",
-  "password-share-securely": "Share this temporary password with the user through a secure channel. The user will be required to change this password on their first login."
+  "reset-password": {
+    en: "Reset Password",
+    es: "Restablecer Contraseña"
+  },
+  "reset-password-for-user": {
+    en: "Reset password for user",
+    es: "Restablecer contraseña para usuario"
+  },
+  "reset-password-warning": {
+    en: "This action will generate a new temporary password.",
+    es: "Esta acción generará una nueva contraseña temporal."
+  },
+  "reason-for-reset": {
+    en: "Reason for password reset",
+    es: "Motivo para restablecer la contraseña"
+  },
+  "reason-required": {
+    en: "Reason is required",
+    es: "El motivo es obligatorio"
+  },
+  "reason-placeholder": {
+    en: "Provide a reason for resetting this user's password",
+    es: "Proporcione un motivo para restablecer la contraseña de este usuario"
+  },
+  "resetting": {
+    en: "Resetting...",
+    es: "Restableciendo..."
+  },
+  "password-reset-success": {
+    en: "Password Reset Successful",
+    es: "Restablecimiento de Contraseña Exitoso"
+  },
+  "password-reset-success-description": {
+    en: "A temporary password has been generated.",
+    es: "Se ha generado una contraseña temporal."
+  },
+  "password-reset-error": {
+    en: "Password Reset Failed",
+    es: "Error al Restablecer la Contraseña"
+  },
+  "password-reset-unknown-error": {
+    en: "An unknown error occurred while resetting the password.",
+    es: "Ocurrió un error desconocido al restablecer la contraseña."
+  },
+  "important": {
+    en: "Important",
+    es: "Importante"
+  },
+  "reset-password-audit-notice": {
+    en: "This action will be logged in the audit trail.",
+    es: "Esta acción se registrará en el historial de auditoría."
+  },
+  "password-reset-complete": {
+    en: "Password Reset Complete",
+    es: "Restablecimiento de Contraseña Completado"
+  },
+  "password-reset-complete-description": {
+    en: "The user's password has been reset. Please share the temporary password with the user securely.",
+    es: "La contraseña del usuario ha sido restablecida. Por favor, comparta la contraseña temporal con el usuario de forma segura."
+  },
+  "temporary-password": {
+    en: "Temporary Password",
+    es: "Contraseña Temporal"
+  },
+  "password-copied": {
+    en: "Password Copied",
+    es: "Contraseña Copiada"
+  },
+  "password-copied-description": {
+    en: "Temporary password copied to clipboard.",
+    es: "Contraseña temporal copiada al portapapeles."
+  },
+  "password-share-securely": {
+    en: "Share this temporary password with the user through a secure channel. The user will be required to change this password on their first login.",
+    es: "Comparta esta contraseña temporal con el usuario a través de un canal seguro. El usuario deberá cambiar esta contraseña en su primer inicio de sesión."
+  },
+  "close": {
+    en: "Close",
+    es: "Cerrar"
+  }
 };
 
 // Get translation for a key
@@ -1047,3 +1109,4 @@ export const translate = (key: string, language: Language): string => {
 export const useTranslation = (language: Language) => {
   return (key: string): string => translate(key, language);
 };
+
