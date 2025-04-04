@@ -30,7 +30,7 @@ export class MockUserService implements UserService {
       }
       
       // Filter by name (partial match)
-      if (params.name && !user.name.toLowerCase().includes(params.name.toLowerCase())) {
+      if (params.name && !user.name?.toLowerCase().includes(params.name.toLowerCase())) {
         return false;
       }
       
