@@ -795,7 +795,7 @@ const translations: Record<string, Record<string, string>> = {
   },
   "create-new-rule": {
     en: "Create a new rule to limit transaction amounts over a specific time period.",
-    es: "Crear una nueva regla para limitar los montos de transacción durante un perodo de tiempo específico."
+    es: "Crear una nueva regla para limitar los montos de transacción durante un perido de tiempo específico."
   },
   "time-period": {
     en: "Time Period",
@@ -1021,4 +1021,8 @@ const translations: Record<string, Record<string, string>> = {
   },
   "reset-password-warning": {
     en: "This action will generate a new temporary password.",
-    es: "Esta acción generará una nueva contraseña
+    es: "Esta acción generará una nueva contraseña temporalmente."
+  }
+};
+
+export default translations;
