@@ -51,23 +51,27 @@ const App = () => (
                   {/* Redirect from root to dashboard */}
                   <Route path="/" element={<Navigate to="/dashboard" replace />} />
                   
-                  {/* Private Routes */}
-                  <Route element={<PrivateRoute />}>
+                  {/* Routes for Analista, Operador, Compensador, Configurador */}
+                  <Route element={<PrivateRoute allowedRoles={["analista", "operador", "compensador", "configurador"]} />}>
                     <Route path="/dashboard" element={<Dashboard />} />
+                  </Route>
+                  
+                  {/* Routes for Operador, Compensador, Configurador */}
+                  <Route element={<PrivateRoute allowedRoles={["operador", "compensador", "configurador"]} />}>
                     <Route path="/users" element={<UserManagement />} />
                     <Route path="/users/:userId" element={<UserDetailPage />} />
                     <Route path="/wallets" element={<WalletManagement />} />
                     <Route path="/transactions" element={<TransactionManagement />} />
-                    <Route path="/backoffice-settings" element={<BackofficeSettings />} />
                   </Route>
                   
-                  {/* Admin-only Routes */}
-                  <Route element={<PrivateRoute allowedRoles={["admin"]} />}>
+                  {/* Routes for Configurador only */}
+                  <Route element={<PrivateRoute allowedRoles={["configurador"]} />}>
                     <Route path="/anti-fraud" element={<AntiFraudRules />} />
                     <Route path="/audit-logs" element={<AuditLogs />} />
                     <Route path="/backoffice-operators" element={<BackofficeOperators />} />
                     <Route path="/company-settings" element={<CompanySettings />} />
                     <Route path="/user-field-settings" element={<UserFieldSettings />} />
+                    <Route path="/backoffice-settings" element={<BackofficeSettings />} />
                   </Route>
                   
                   {/* Catch-all Route */}

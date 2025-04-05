@@ -47,12 +47,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       // Check if credentials match our hardcoded admin user
       if (credentials.userName === ADMIN_USERNAME && credentials.password === ADMIN_PASSWORD) {
-        // Create admin user object
+        // Create admin user object with the new roles
         const adminUser: BackofficeUser = {
           id: "admin-1",
           name: "Federico",
           surname: "Alegre",
-          roles: ["admin"],
+          roles: ["configurador", "compensador", "operador", "analista"],
           state: "active",
           last_login: new Date().toISOString()
         };

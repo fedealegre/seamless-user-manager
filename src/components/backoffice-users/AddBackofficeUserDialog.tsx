@@ -7,6 +7,8 @@ import { useToast } from "@/components/ui/use-toast";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
+import { translate } from "@/lib/translations";
 import {
   Dialog,
   DialogContent,
@@ -42,9 +44,10 @@ const formSchema = z.object({
 });
 
 const roleOptions = [
-  { id: "admin", label: "Admin" },
-  { id: "support", label: "Support" },
-  { id: "finance", label: "Finance" },
+  { id: "configurador", label: "Configurador" },
+  { id: "compensador", label: "Compensador" },
+  { id: "operador", label: "Operador" },
+  { id: "analista", label: "Analista" },
 ];
 
 const AddBackofficeUserDialog: React.FC<AddBackofficeUserDialogProps> = ({
@@ -53,6 +56,8 @@ const AddBackofficeUserDialog: React.FC<AddBackofficeUserDialogProps> = ({
 }) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { settings } = useBackofficeSettings();
+  const t = (key: string) => translate(key, settings.language);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -69,20 +74,20 @@ const AddBackofficeUserDialog: React.FC<AddBackofficeUserDialogProps> = ({
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["backofficeUsers"] });
       toast({
-        title: "Success",
-        description: "Backoffice user created successfully",
+        title: t("success"),
+        description: t("user-created-successfully"),
       });
       onClose();
     },
     onError: (error) => {
-      let errorMessage = "Failed to create user";
+      let errorMessage = t("failed-create-user");
       
       if (error instanceof Error) {
         errorMessage = error.message;
       }
       
       toast({
-        title: "Error",
+        title: t("error"),
         description: errorMessage,
         variant: "destructive",
       });
@@ -105,20 +110,20 @@ const AddBackofficeUserDialog: React.FC<AddBackofficeUserDialogProps> = ({
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px]" onClick={(e) => e.stopPropagation()}>
         <DialogHeader>
-          <DialogTitle>Add New Backoffice User</DialogTitle>
+          <DialogTitle>{t("add-new-operator")}</DialogTitle>
           <DialogDescription>
-            Create a new backoffice user with specific roles
+            {t("create-backoffice-user-with-roles")}
           </DialogDescription>
         </DialogHeader>
 
         {createUserMutation.isError && (
           <Alert variant="destructive" className="mb-4">
             <AlertTriangle className="h-4 w-4" />
-            <AlertTitle>Error</AlertTitle>
+            <AlertTitle>{t("error")}</AlertTitle>
             <AlertDescription>
               {createUserMutation.error instanceof Error 
                 ? createUserMutation.error.message 
-                : "Failed to create user. Please try again."
+                : t("failed-create-user")
               }
             </AlertDescription>
           </Alert>
@@ -131,9 +136,9 @@ const AddBackofficeUserDialog: React.FC<AddBackofficeUserDialogProps> = ({
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>First Name</FormLabel>
+                  <FormLabel>{t("first-name")}</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter first name" {...field} />
+                    <Input placeholder={t("enter-first-name")} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -145,9 +150,9 @@ const AddBackofficeUserDialog: React.FC<AddBackofficeUserDialogProps> = ({
               name="surname"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Last Name</FormLabel>
+                  <FormLabel>{t("last-name")}</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter last name" {...field} />
+                    <Input placeholder={t("enter-last-name")} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -159,9 +164,9 @@ const AddBackofficeUserDialog: React.FC<AddBackofficeUserDialogProps> = ({
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>{t("email")}</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter email" {...field} />
+                    <Input placeholder={t("enter-email")} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -174,7 +179,7 @@ const AddBackofficeUserDialog: React.FC<AddBackofficeUserDialogProps> = ({
               render={() => (
                 <FormItem>
                   <div className="mb-4">
-                    <FormLabel>Roles</FormLabel>
+                    <FormLabel>{t("roles")}</FormLabel>
                   </div>
                   <div className="space-y-2">
                     {roleOptions.map((role) => (
@@ -200,7 +205,7 @@ const AddBackofficeUserDialog: React.FC<AddBackofficeUserDialogProps> = ({
                                 />
                               </FormControl>
                               <FormLabel className="font-normal">
-                                {role.label}
+                                {t(role.id)}
                               </FormLabel>
                             </FormItem>
                           );
@@ -220,13 +225,13 @@ const AddBackofficeUserDialog: React.FC<AddBackofficeUserDialogProps> = ({
                 onClick={onClose}
                 disabled={createUserMutation.isPending}
               >
-                Cancel
+                {t("cancel")}
               </Button>
               <Button 
                 type="submit" 
                 disabled={createUserMutation.isPending}
               >
-                {createUserMutation.isPending ? "Creating..." : "Create User"}
+                {createUserMutation.isPending ? t("creating") : t("create-user")}
               </Button>
             </DialogFooter>
           </form>

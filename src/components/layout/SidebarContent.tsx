@@ -39,28 +39,28 @@ const sidebarSections: SidebarSection[] = [
     title: "Management",
     translationKey: "management",
     items: [
-      { title: "Dashboard", translationKey: "dashboard", icon: BarChart3, path: "/dashboard" },
-      { title: "User Management", translationKey: "users", icon: Users, path: "/users" },
-      { title: "Wallets", translationKey: "wallets", icon: Wallet, path: "/wallets" },
-      { title: "Transactions", translationKey: "transactions", icon: FileText, path: "/transactions" }
+      { title: "Dashboard", translationKey: "dashboard", icon: BarChart3, path: "/dashboard", roles: ["analista", "operador", "compensador", "configurador"] },
+      { title: "User Management", translationKey: "users", icon: Users, path: "/users", roles: ["operador", "compensador", "configurador"] },
+      { title: "Wallets", translationKey: "wallets", icon: Wallet, path: "/wallets", roles: ["operador", "compensador", "configurador"] },
+      { title: "Transactions", translationKey: "transactions", icon: FileText, path: "/transactions", roles: ["operador", "compensador", "configurador"] }
     ]
   },
   {
     title: "Security",
     translationKey: "security",
     items: [
-      { title: "Anti-Fraud Rules", translationKey: "anti-fraud", icon: Shield, path: "/anti-fraud" },
-      { title: "Audit Logs", translationKey: "audit-logs", icon: Clock, path: "/audit-logs" },
-      { title: "Backoffice Operators", translationKey: "backoffice-operators", icon: User, path: "/backoffice-operators" }
+      { title: "Anti-Fraud Rules", translationKey: "anti-fraud", icon: Shield, path: "/anti-fraud", roles: ["configurador"] },
+      { title: "Audit Logs", translationKey: "audit-logs", icon: Clock, path: "/audit-logs", roles: ["configurador"] },
+      { title: "Backoffice Operators", translationKey: "backoffice-operators", icon: User, path: "/backoffice-operators", roles: ["configurador"] }
     ]
   },
   {
     title: "Settings",
     translationKey: "settings",
     items: [
-      { title: "Company Settings", translationKey: "company-settings", icon: Settings, path: "/company-settings", roles: ["admin"] },
-      { title: "User Field Settings", translationKey: "user-field-settings", icon: UserCog, path: "/user-field-settings", roles: ["admin"] },
-      { title: "Backoffice Settings", translationKey: "backoffice-settings", icon: Sliders, path: "/backoffice-settings" }
+      { title: "Company Settings", translationKey: "company-settings", icon: Settings, path: "/company-settings", roles: ["configurador"] },
+      { title: "User Field Settings", translationKey: "user-field-settings", icon: UserCog, path: "/user-field-settings", roles: ["configurador"] },
+      { title: "Backoffice Settings", translationKey: "backoffice-settings", icon: Sliders, path: "/backoffice-settings", roles: ["configurador"] }
     ]
   }
 ];

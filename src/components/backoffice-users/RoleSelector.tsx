@@ -1,8 +1,10 @@
 
-import React, { useState } from "react";
+import React from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertTriangle } from "lucide-react";
+import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
+import { translate } from "@/lib/translations";
 
 interface RoleSelectorProps {
   selectedRoles: string[];
@@ -11,9 +13,10 @@ interface RoleSelectorProps {
 }
 
 const roleOptions = [
-  { id: "admin", label: "Admin" },
-  { id: "support", label: "Support" },
-  { id: "finance", label: "Finance" },
+  { id: "configurador", label: "Configurador" },
+  { id: "compensador", label: "Compensador" },
+  { id: "operador", label: "Operador" },
+  { id: "analista", label: "Analista" },
 ];
 
 const RoleSelector: React.FC<RoleSelectorProps> = ({ 
@@ -21,12 +24,15 @@ const RoleSelector: React.FC<RoleSelectorProps> = ({
   onRoleToggle, 
   errorMessage 
 }) => {
+  const { settings } = useBackofficeSettings();
+  const t = (key: string) => translate(key, settings.language);
+
   return (
     <div className="py-4">
       {errorMessage && (
         <Alert variant="destructive" className="mb-4">
           <AlertTriangle className="h-4 w-4" />
-          <AlertTitle>Error</AlertTitle>
+          <AlertTitle>{t("error")}</AlertTitle>
           <AlertDescription>{errorMessage}</AlertDescription>
         </Alert>
       )}
@@ -54,7 +60,7 @@ const RoleSelector: React.FC<RoleSelectorProps> = ({
       
       {selectedRoles.length === 0 && (
         <p className="text-sm text-destructive mt-2">
-          User must have at least one role
+          {t("user-must-have-one-role")}
         </p>
       )}
     </div>
