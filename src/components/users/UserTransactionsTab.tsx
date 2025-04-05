@@ -14,6 +14,7 @@ import ChangeTransactionStatusDialog from "@/components/transactions/ChangeTrans
 import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
 import { translate } from "@/lib/translations";
 import ExportCSVButton from "@/components/common/ExportCSVButton";
+import { usePermissions } from "@/hooks/use-permissions";
 
 interface UserTransactionsTabProps {
   userId: string;
@@ -28,6 +29,7 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
   const { settings, formatDateTime } = useBackofficeSettings();
   const t = (key: string) => translate(key, settings.language);
   const queryClient = useQueryClient();
+  const { canCancelTransaction, canChangeTransactionStatus } = usePermissions();
   
   // Dialog states
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
@@ -59,6 +61,15 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
   };
 
   const handleCancelTransaction = (transaction: Transaction) => {
+    if (!canCancelTransaction()) {
+      toast({
+        title: t("access-denied"),
+        description: t("only-compensator-can-cancel-transaction"),
+        variant: "destructive",
+      });
+      return;
+    }
+    
     toast({
       title: t("cancel-transaction"),
       description: `${t("transaction-cancellation-not-implemented")} ${transaction.transactionId || transaction.id}`,
@@ -71,6 +82,15 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
   };
 
   const handleChangeStatus = (transaction: Transaction) => {
+    if (!canChangeTransactionStatus()) {
+      toast({
+        title: t("access-denied"),
+        description: t("only-compensator-can-change-status"),
+        variant: "destructive",
+      });
+      return;
+    }
+    
     setSelectedTransaction(transaction);
     setShowChangeStatusDialog(true);
   };

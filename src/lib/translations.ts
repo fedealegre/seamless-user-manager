@@ -1,4 +1,3 @@
-
 export const translate = (key: string, language: string = 'en'): string => {
   const translations: Record<string, Record<string, string>> = {
     en: {
@@ -111,7 +110,11 @@ export const translate = (key: string, language: string = 'en'): string => {
       'temporary-password': 'Temporary Password',
       'password-copied': 'Password Copied',
       'password-copied-description': 'Password copied to clipboard',
-      'password-share-securely': 'Share this password securely with the user. It will not be displayed again after you close this dialog.'
+      'password-share-securely': 'Share this password securely with the user. It will not be displayed again after you close this dialog.',
+      
+      // New translations for role-based permissions
+      'only-compensator-can-cancel-transaction': 'Only users with the compensator role can cancel transactions',
+      'only-compensator-can-change-status': 'Only users with the compensator role can change transaction status'
     },
     es: {
       // Common
@@ -223,7 +226,11 @@ export const translate = (key: string, language: string = 'en'): string => {
       'temporary-password': 'Contraseña Temporal',
       'password-copied': 'Contraseña Copiada',
       'password-copied-description': 'Contraseña copiada al portapapeles',
-      'password-share-securely': 'Comparta esta contraseña de forma segura con el usuario. No se mostrará nuevamente después de cerrar este diálogo.'
+      'password-share-securely': 'Comparta esta contraseña de forma segura con el usuario. No se mostrará nuevamente después de cerrar este diálogo.',
+      
+      // New translations for role-based permissions
+      'only-compensator-can-cancel-transaction': 'Solo los usuarios con rol de compensador pueden cancelar transacciones',
+      'only-compensator-can-change-status': 'Solo los usuarios con rol de compensador pueden cambiar el estado de las transacciones'
     }
   };
 

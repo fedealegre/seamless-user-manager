@@ -23,6 +23,8 @@ import { Button } from "@/components/ui/button";
 import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
 import { translate } from "@/lib/translations";
 import { formatTimeDifference } from "@/lib/date-utils";
+import { usePermissions } from "@/hooks/use-permissions";
+import { useToast } from "@/hooks/use-toast";
 
 interface TransactionsTableProps {
   transactions: Transaction[];
@@ -46,6 +48,16 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
   const { settings, formatDateTime } = useBackofficeSettings();
   const t = (key: string) => translate(key, settings.language);
   const locale = settings.language === "en" ? "en-US" : "es-ES";
+  const { canChangeTransactionStatus, canCancelTransaction } = usePermissions();
+  const { toast } = useToast();
+  
+  const handleRestrictedAction = (actionType: string) => {
+    toast({
+      title: t("access-denied"),
+      description: t(`only-compensator-can-${actionType}`),
+      variant: "destructive",
+    });
+  };
   
   return (
     <div className="rounded-md border">
@@ -116,7 +128,10 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
                       </DropdownMenuItem>
                       {transaction.status === "pending" && (
                         <DropdownMenuItem 
-                          onClick={() => handleCancelTransaction(transaction)}
+                          onClick={() => canCancelTransaction() 
+                            ? handleCancelTransaction(transaction)
+                            : handleRestrictedAction("cancel-transaction")
+                          }
                           className="text-amber-600"
                         >
                           <XCircle size={16} className="mr-2" /> {t("cancel")} {t("transaction")}
@@ -124,7 +139,10 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
                       )}
                       {transaction.status === "pending" && handleChangeStatus && (
                         <DropdownMenuItem 
-                          onClick={() => handleChangeStatus(transaction)}
+                          onClick={() => canChangeTransactionStatus() 
+                            ? handleChangeStatus(transaction)
+                            : handleRestrictedAction("change-status")
+                          }
                         >
                           <RefreshCw size={16} className="mr-2" /> {t("change")} {t("status")}
                         </DropdownMenuItem>

@@ -1,8 +1,12 @@
+
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { userService } from "@/lib/api/user-service";
 import { Transaction } from "@/lib/api/types";
 import { useToast } from "@/hooks/use-toast";
+import { usePermissions } from "@/hooks/use-permissions";
+import { translate } from "@/lib/translations";
+import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
 
 interface TransactionFilters {
   status: string;
@@ -31,6 +35,9 @@ export const useTransactionManagement = () => {
   });
   
   const { toast } = useToast();
+  const { canCancelTransaction, canChangeTransactionStatus } = usePermissions();
+  const { settings } = useBackofficeSettings();
+  const t = (key: string) => translate(key, settings.language);
 
   const userId = "827";
   const walletId = "152";
@@ -104,34 +111,29 @@ export const useTransactionManagement = () => {
   };
 
   const handleCancelTransaction = (transaction: Transaction) => {
+    if (!canCancelTransaction()) {
+      toast({
+        title: t("access-denied"),
+        description: t("only-compensator-can-cancel-transaction"),
+        variant: "destructive",
+      });
+      return;
+    }
+    
     setSelectedTransaction(transaction);
     setShowCancelDialog(true);
   };
 
-  const handleCloseCancelDialog = (open: boolean) => {
-    setShowCancelDialog(open);
-    if (!open) {
-      setTimeout(() => {
-        setSelectedTransaction(null);
-      }, 300);
-    }
-  };
-
-  const handleCompensateCustomer = (transaction: Transaction) => {
-    setSelectedTransaction(transaction);
-    setShowCompensateDialog(true);
-  };
-
-  const handleCloseCompensateDialog = (open: boolean) => {
-    setShowCompensateDialog(open);
-    if (!open) {
-      setTimeout(() => {
-        setSelectedTransaction(null);
-      }, 300);
-    }
-  };
-
   const handleChangeStatus = (transaction: Transaction) => {
+    if (!canChangeTransactionStatus()) {
+      toast({
+        title: t("access-denied"),
+        description: t("only-compensator-can-change-status"),
+        variant: "destructive",
+      });
+      return;
+    }
+    
     setSelectedTransaction(transaction);
     setShowChangeStatusDialog(true);
   };
@@ -147,6 +149,17 @@ export const useTransactionManagement = () => {
 
   const handleSubmitStatusChange = async (newStatus: string, reason: string) => {
     if (!selectedTransaction) return;
+    
+    if (!canChangeTransactionStatus()) {
+      toast({
+        title: t("access-denied"),
+        description: t("only-compensator-can-change-status"),
+        variant: "destructive",
+      });
+      setShowChangeStatusDialog(false);
+      setSelectedTransaction(null);
+      return;
+    }
     
     try {
       const transactionIdentifier = selectedTransaction.transactionId || selectedTransaction.id.toString();
@@ -178,27 +191,19 @@ export const useTransactionManagement = () => {
     }
   };
 
-  const handleApplyFilters = (newFilters: TransactionFilters) => {
-    setFilters(newFilters);
-    setPage(1);
-    setShowFilters(false);
-    refetch();
-  };
-
-  const resetFilters = () => {
-    setFilters({
-      status: "",
-      transactionType: "",
-      startDate: "",
-      endDate: "",
-      currency: "",
-    });
-    setPage(1);
-    refetch();
-  };
-
   const handleSubmitCancel = async (reason: string) => {
     if (!selectedTransaction) return;
+    
+    if (!canCancelTransaction()) {
+      toast({
+        title: t("access-denied"),
+        description: t("only-compensator-can-cancel-transaction"),
+        variant: "destructive",
+      });
+      setShowCancelDialog(false);
+      setSelectedTransaction(null);
+      return;
+    }
     
     try {
       const transactionIdentifier = selectedTransaction.transactionId || selectedTransaction.id.toString();
