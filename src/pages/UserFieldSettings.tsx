@@ -18,7 +18,7 @@ const UserFieldSettings = () => {
   const { settings } = useBackofficeSettings();
   const t = (key: string) => translate(key, settings.language);
   
-  const isAdmin = user?.roles.includes("admin");
+  const isAdmin = user?.roles.includes("configurador");
   const { fieldSettings, saveSettings, isLoaded } = useUserFieldSettings();
   
   const [localSettings, setLocalSettings] = useState<FieldSetting[]>([]);
@@ -41,7 +41,7 @@ const UserFieldSettings = () => {
           {t("no-permission-access-user-field-settings")}
         </p>
         <p className="text-sm text-muted-foreground">
-          {t("required-role")}: admin
+          {t("required-role")}: configurator
         </p>
       </div>
     );
