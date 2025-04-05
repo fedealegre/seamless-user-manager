@@ -124,6 +124,11 @@ export const useTransactionManagement = () => {
     setShowCancelDialog(true);
   };
 
+  const handleCompensateCustomer = (transaction: Transaction) => {
+    setSelectedTransaction(transaction);
+    setShowCompensateDialog(true);
+  };
+
   const handleChangeStatus = (transaction: Transaction) => {
     if (!canChangeTransactionStatus()) {
       toast({
@@ -138,6 +143,24 @@ export const useTransactionManagement = () => {
     setShowChangeStatusDialog(true);
   };
 
+  const handleCloseCancelDialog = (open: boolean) => {
+    setShowCancelDialog(open);
+    if (!open) {
+      setTimeout(() => {
+        setSelectedTransaction(null);
+      }, 300);
+    }
+  };
+  
+  const handleCloseCompensateDialog = (open: boolean) => {
+    setShowCompensateDialog(open);
+    if (!open) {
+      setTimeout(() => {
+        setSelectedTransaction(null);
+      }, 300);
+    }
+  };
+
   const handleCloseChangeStatusDialog = (open: boolean) => {
     setShowChangeStatusDialog(open);
     if (!open) {
@@ -145,6 +168,24 @@ export const useTransactionManagement = () => {
         setSelectedTransaction(null);
       }, 300);
     }
+  };
+
+  const handleApplyFilters = (newFilters: TransactionFilters) => {
+    setFilters(newFilters);
+    setPage(1);
+    refetch();
+  };
+  
+  const resetFilters = () => {
+    setFilters({
+      status: "",
+      transactionType: "",
+      startDate: "",
+      endDate: "",
+      currency: "",
+    });
+    setPage(1);
+    refetch();
   };
 
   const handleSubmitStatusChange = async (newStatus: string, reason: string) => {
