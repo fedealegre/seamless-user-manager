@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { api } from "@/lib/api";
 import { BackofficeUser, LoginRequest } from "@/lib/api/types";
@@ -24,7 +23,7 @@ const BACKOFFICE_USERS = [
       name: "Federico",
       surname: "Alegre",
       roles: ["configurador", "compensador", "operador", "analista"],
-      state: "active",
+      state: "active" as const,
       last_login: new Date().toISOString()
     }
   },
@@ -36,7 +35,7 @@ const BACKOFFICE_USERS = [
       name: "Operator",
       surname: "User",
       roles: ["operador"],
-      state: "active",
+      state: "active" as const,
       last_login: new Date().toISOString()
     }
   },
@@ -48,7 +47,7 @@ const BACKOFFICE_USERS = [
       name: "Compensator",
       surname: "User",
       roles: ["compensador"],
-      state: "active",
+      state: "active" as const,
       last_login: new Date().toISOString()
     }
   },
@@ -60,7 +59,7 @@ const BACKOFFICE_USERS = [
       name: "Analyst",
       surname: "User",
       roles: ["analista"],
-      state: "active",
+      state: "active" as const,
       last_login: new Date().toISOString()
     }
   },
@@ -72,7 +71,7 @@ const BACKOFFICE_USERS = [
       name: "Configurator",
       surname: "User",
       roles: ["configurador"],
-      state: "active",
+      state: "active" as const,
       last_login: new Date().toISOString()
     }
   }
