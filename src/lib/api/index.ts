@@ -1,4 +1,3 @@
-
 import { ApiClient } from "./api-client";
 import { OAuth2Client } from "./oauth-client";
 import { BackofficeUser, AntiFraudRule, AuditLog } from "./types";
@@ -25,7 +24,7 @@ const mockBackofficeUsers: BackofficeUser[] = [
     name: "Admin",
     surname: "User",
     email: "admin@example.com",
-    roles: ["admin"],
+    roles: ["configurador"],
     state: "active",
     last_login: "2023-09-01T10:00:00Z"
   },
@@ -34,7 +33,7 @@ const mockBackofficeUsers: BackofficeUser[] = [
     name: "Support",
     surname: "User",
     email: "support@example.com",
-    roles: ["support"],
+    roles: ["operador"],
     state: "active",
     last_login: "2023-09-02T11:00:00Z"
   },
@@ -43,7 +42,7 @@ const mockBackofficeUsers: BackofficeUser[] = [
     name: "Operations",
     surname: "Manager",
     email: "operations@example.com",
-    roles: ["operations", "reporting"],
+    roles: ["operador", "analista"],
     state: "active",
     last_login: "2023-09-03T09:30:00Z"
   },
@@ -52,7 +51,7 @@ const mockBackofficeUsers: BackofficeUser[] = [
     name: "Finance",
     surname: "Analyst",
     email: "finance@example.com",
-    roles: ["finance"],
+    roles: ["compensador"],
     state: "blocked",
     last_login: "2023-08-25T14:20:00Z"
   }

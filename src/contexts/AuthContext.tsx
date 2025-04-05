@@ -14,9 +14,69 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Admin user credentials for direct login
-const ADMIN_USERNAME = "fede.alegre";
-const ADMIN_PASSWORD = "backoffice";
+// Backoffice user credentials for direct login
+const BACKOFFICE_USERS = [
+  {
+    username: "fede.alegre",
+    password: "backoffice",
+    user: {
+      id: "admin-1",
+      name: "Federico",
+      surname: "Alegre",
+      roles: ["configurador", "compensador", "operador", "analista"],
+      state: "active",
+      last_login: new Date().toISOString()
+    }
+  },
+  {
+    username: "operador",
+    password: "operador",
+    user: {
+      id: "operator-1",
+      name: "Operator",
+      surname: "User",
+      roles: ["operador"],
+      state: "active",
+      last_login: new Date().toISOString()
+    }
+  },
+  {
+    username: "compensador",
+    password: "compensador",
+    user: {
+      id: "compensator-1",
+      name: "Compensator",
+      surname: "User",
+      roles: ["compensador"],
+      state: "active",
+      last_login: new Date().toISOString()
+    }
+  },
+  {
+    username: "analista",
+    password: "analista",
+    user: {
+      id: "analyst-1",
+      name: "Analyst",
+      surname: "User",
+      roles: ["analista"],
+      state: "active",
+      last_login: new Date().toISOString()
+    }
+  },
+  {
+    username: "configurador",
+    password: "configurador",
+    user: {
+      id: "configurator-1",
+      name: "Configurator",
+      surname: "User",
+      roles: ["configurador"],
+      state: "active",
+      last_login: new Date().toISOString()
+    }
+  }
+];
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<BackofficeUser | null>(null);
@@ -45,23 +105,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       setIsLoading(true);
       
-      // Check if credentials match our hardcoded admin user
-      if (credentials.userName === ADMIN_USERNAME && credentials.password === ADMIN_PASSWORD) {
-        // Create admin user object with the new roles
-        const adminUser: BackofficeUser = {
-          id: "admin-1",
-          name: "Federico",
-          surname: "Alegre",
-          roles: ["configurador", "compensador", "operador", "analista"],
-          state: "active",
-          last_login: new Date().toISOString()
-        };
-        
-        // Store admin user and mock token
-        setUser(adminUser);
-        localStorage.setItem("user", JSON.stringify(adminUser));
-        localStorage.setItem("token", "mock-admin-token-" + Date.now());
-        localStorage.setItem("refreshToken", "mock-admin-refresh-token-" + Date.now());
+      // Check if credentials match one of our backoffice users
+      const matchedUser = BACKOFFICE_USERS.find(
+        u => u.username === credentials.userName && u.password === credentials.password
+      );
+      
+      if (matchedUser) {
+        // Store user and mock token
+        setUser(matchedUser.user);
+        localStorage.setItem("user", JSON.stringify(matchedUser.user));
+        localStorage.setItem("token", "mock-token-" + Date.now());
+        localStorage.setItem("refreshToken", "mock-refresh-token-" + Date.now());
         
         // Store token expiration (24 hours)
         const expiresAt = Date.now() + (24 * 60 * 60 * 1000);
@@ -69,13 +123,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         
         toast({
           title: "Login successful",
-          description: `Welcome back, Federico!`,
+          description: `Welcome back, ${matchedUser.user.name}!`,
         });
         
         return;
       }
       
-      // If not the admin user, proceed with regular API login
+      // If not a backoffice user, proceed with regular API login
       const response = await api.login(credentials);
       
       // Store user and token
