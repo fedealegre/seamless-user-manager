@@ -21,8 +21,8 @@ const CompanySettings = () => {
   const { settings, updateSettings } = useCompanySettings();
   const [isLoading, setIsLoading] = useState(false);
 
-  // Check if user has admin role
-  const isAdmin = user?.roles.includes("admin");
+  // Check if user has configurator role
+  const isAdmin = user?.roles.includes("configurador");
 
   if (!isAdmin) {
     return (
@@ -32,7 +32,7 @@ const CompanySettings = () => {
           You don't have permission to access Company Settings.
         </p>
         <p className="text-sm text-muted-foreground">
-          Required role: admin
+          Required role: configurador
         </p>
       </div>
     );
