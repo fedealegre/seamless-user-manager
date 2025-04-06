@@ -93,7 +93,7 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
       <div className="space-y-6">
         <Card>
           <CardHeader>
-            <CardTitle>Edit User Information</CardTitle>
+            <CardTitle>{t("edit-profile")}</CardTitle>
           </CardHeader>
           <CardContent>
             <EditUserInfoForm 
@@ -134,7 +134,7 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
         
         {hasEditableFields && (
           <Button onClick={() => setIsEditing(true)}>
-            Edit Information
+            {t("edit")} {t("information")}
           </Button>
         )}
       </div>

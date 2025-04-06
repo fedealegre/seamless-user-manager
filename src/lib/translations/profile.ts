@@ -1,0 +1,45 @@
+
+export const profileTranslations = {
+  en: {
+    'my-account': 'My Account',
+    'profile': 'Profile',
+    'log-out': 'Log out',
+    'edit-profile': 'Edit Profile',
+    'change-password': 'Change Password',
+    'account-settings': 'Account Settings',
+    'language-preferences': 'Language Preferences',
+    'notification-preferences': 'Notification Preferences',
+    'security-settings': 'Security Settings',
+    'profile-updated': 'Profile updated successfully',
+    'update-failed': 'Failed to update profile',
+    'save-changes': 'Save Changes',
+    'cancel': 'Cancel',
+    'password-changed': 'Password changed successfully',
+    'reset-password': 'Reset Password',
+    'current-password': 'Current Password',
+    'new-password': 'New Password',
+    'confirm-password': 'Confirm Password',
+    'passwords-dont-match': 'Passwords don\'t match'
+  },
+  es: {
+    'my-account': 'Mi Cuenta',
+    'profile': 'Perfil',
+    'log-out': 'Cerrar sesión',
+    'edit-profile': 'Editar Perfil',
+    'change-password': 'Cambiar Contraseña',
+    'account-settings': 'Configuración de Cuenta',
+    'language-preferences': 'Preferencias de Idioma',
+    'notification-preferences': 'Preferencias de Notificación',
+    'security-settings': 'Configuración de Seguridad',
+    'profile-updated': 'Perfil actualizado con éxito',
+    'update-failed': 'No se pudo actualizar el perfil',
+    'save-changes': 'Guardar Cambios',
+    'cancel': 'Cancelar',
+    'password-changed': 'Contraseña cambiada con éxito',
+    'reset-password': 'Restablecer Contraseña',
+    'current-password': 'Contraseña Actual',
+    'new-password': 'Nueva Contraseña',
+    'confirm-password': 'Confirmar Contraseña',
+    'passwords-dont-match': 'Las contraseñas no coinciden'
+  }
+};

@@ -13,6 +13,8 @@ import {
   DropdownMenuSeparator, 
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
+import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
+import { translate } from "@/lib/translations";
 
 interface UserProfileProps {
   type: "sidebar" | "header";
@@ -22,6 +24,8 @@ interface UserProfileProps {
 const UserProfile: React.FC<UserProfileProps> = ({ type, sidebarOpen }) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const { settings } = useBackofficeSettings();
+  const t = (key: string) => translate(key, settings.language);
   
   const handleLogout = () => {
     logout();
@@ -77,13 +81,13 @@ const UserProfile: React.FC<UserProfileProps> = ({ type, sidebarOpen }) => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuLabel>My Account</DropdownMenuLabel>
+        <DropdownMenuLabel>{t('my-account')}</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem>
-          <User size={16} className="mr-2" /> Profile
+          <User size={16} className="mr-2" /> {t('profile')}
         </DropdownMenuItem>
         <DropdownMenuItem onClick={handleLogout}>
-          <LogOut size={16} className="mr-2" /> Log out
+          <LogOut size={16} className="mr-2" /> {t('log-out')}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
