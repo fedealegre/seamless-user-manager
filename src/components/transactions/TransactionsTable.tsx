@@ -74,9 +74,7 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
         </TableHeader>
         <TableBody>
           {transactions && transactions.length > 0 ? (
-            transactions
-              .slice((page - 1) * pageSize, page * pageSize)
-              .map((transaction) => (
+            transactions.map((transaction) => (
               <TableRow key={transaction.id}>
                 <TableCell>
                   <div className="font-medium">{transaction.transactionId || transaction.id}</div>
