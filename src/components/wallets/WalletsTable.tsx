@@ -14,14 +14,27 @@ import {
 } from "@/components/ui/table";
 import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
 import { translate } from "@/lib/translations";
+import TransactionsPagination from "@/components/transactions/TransactionsPagination";
 
 interface WalletsTableProps {
   wallets: (Wallet & { userId?: string })[];
   onSelectWallet?: (walletId: string) => void;
   showUser?: boolean;
+  paginationProps?: {
+    page: number;
+    pageSize: number;
+    totalPages: number;
+    totalItems: number;
+    setPage: (page: number) => void;
+  };
 }
 
-export const WalletsTable: React.FC<WalletsTableProps> = ({ wallets, onSelectWallet, showUser = false }) => {
+export const WalletsTable: React.FC<WalletsTableProps> = ({ 
+  wallets, 
+  onSelectWallet, 
+  showUser = false, 
+  paginationProps 
+}) => {
   const { settings } = useBackofficeSettings();
   const t = (key: string) => translate(key, settings.language);
   
@@ -62,65 +75,80 @@ export const WalletsTable: React.FC<WalletsTableProps> = ({ wallets, onSelectWal
     return formatted;
   };
 
+  // Get the wallets for the current page if pagination is enabled
+  const displayedWallets = wallets;
+
   return (
-    <div className="rounded-md border">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>ID</TableHead>
-            {showUser && <TableHead>{t("users")}</TableHead>}
-            <TableHead>{t("status")}</TableHead>
-            <TableHead>{t("currency")}</TableHead>
-            <TableHead className="text-right">{t("balance")}</TableHead>
-            <TableHead className="text-right">{t("available-balance")}</TableHead>
-            <TableHead className="text-right">{t("actions")}</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {wallets.length === 0 ? (
+    <div className="space-y-4">
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
             <TableRow>
-              <TableCell colSpan={showUser ? 7 : 6} className="h-24 text-center">
-                {t("no-wallets-found")}
-              </TableCell>
+              <TableHead>ID</TableHead>
+              {showUser && <TableHead>{t("users")}</TableHead>}
+              <TableHead>{t("status")}</TableHead>
+              <TableHead>{t("currency")}</TableHead>
+              <TableHead className="text-right">{t("balance")}</TableHead>
+              <TableHead className="text-right">{t("available-balance")}</TableHead>
+              <TableHead className="text-right">{t("actions")}</TableHead>
             </TableRow>
-          ) : (
-            wallets.map((wallet) => (
-              <TableRow key={`${wallet.id}-${wallet.userId || ''}`}>
-                <TableCell className="font-medium">{wallet.id}</TableCell>
-                {showUser && <TableCell>{wallet.userId || '-'}</TableCell>}
-                <TableCell>{getStatusBadge(wallet.status)}</TableCell>
-                <TableCell>{wallet.currency || "-"}</TableCell>
-                <TableCell className="text-right">
-                  {formatCurrency(wallet.balance, wallet.currency)}
-                </TableCell>
-                <TableCell className="text-right">
-                  {formatCurrency(wallet.availableBalance, wallet.currency)}
-                </TableCell>
-                <TableCell className="text-right">
-                  <div className="flex justify-end gap-2">
-                    {onSelectWallet && (
-                      <Button 
-                        variant="outline" 
-                        size="icon" 
-                        onClick={() => onSelectWallet(wallet.id.toString())}
-                        title={t("view")}
-                      >
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                    )}
-                    <Button variant="outline" size="icon" title={t("edit")}>
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button variant="ghost" size="icon">
-                      <ExternalLink className="h-4 w-4" />
-                    </Button>
-                  </div>
+          </TableHeader>
+          <TableBody>
+            {displayedWallets.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={showUser ? 7 : 6} className="h-24 text-center">
+                  {t("no-wallets-found")}
                 </TableCell>
               </TableRow>
-            ))
-          )}
-        </TableBody>
-      </Table>
+            ) : (
+              displayedWallets.map((wallet) => (
+                <TableRow key={`${wallet.id}-${wallet.userId || ''}`}>
+                  <TableCell className="font-medium">{wallet.id}</TableCell>
+                  {showUser && <TableCell>{wallet.userId || '-'}</TableCell>}
+                  <TableCell>{getStatusBadge(wallet.status)}</TableCell>
+                  <TableCell>{wallet.currency || "-"}</TableCell>
+                  <TableCell className="text-right">
+                    {formatCurrency(wallet.balance, wallet.currency)}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    {formatCurrency(wallet.availableBalance, wallet.currency)}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex justify-end gap-2">
+                      {onSelectWallet && (
+                        <Button 
+                          variant="outline" 
+                          size="icon" 
+                          onClick={() => onSelectWallet(wallet.id.toString())}
+                          title={t("view")}
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                      )}
+                      <Button variant="outline" size="icon" title={t("edit")}>
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button variant="ghost" size="icon">
+                        <ExternalLink className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </div>
+      
+      {paginationProps && (
+        <TransactionsPagination
+          page={paginationProps.page}
+          totalPages={paginationProps.totalPages}
+          setPage={paginationProps.setPage}
+          totalTransactions={paginationProps.totalItems}
+          pageSize={paginationProps.pageSize}
+        />
+      )}
     </div>
   );
 };

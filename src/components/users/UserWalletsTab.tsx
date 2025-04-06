@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Wallet } from "@/lib/api/types";
 import { WalletsTable } from "@/components/wallets/WalletsTable";
 import { WalletsLoadingSkeleton } from "@/components/wallets/WalletsLoadingSkeleton";
@@ -19,12 +19,14 @@ interface UserWalletsTabProps {
 export const UserWalletsTab: React.FC<UserWalletsTabProps> = ({ userId, wallets, isLoading }) => {
   const [selectedWalletId, setSelectedWalletId] = useState<string | null>(null);
   const [showTransactions, setShowTransactions] = useState<boolean>(false);
+  const [page, setPage] = useState(1);
+  const pageSize = 5; // Smaller pageSize for wallets since there are usually fewer
   const { toast } = useToast();
   const { settings } = useBackofficeSettings();
   const t = (key: string) => translate(key, settings.language);
 
   // Set first wallet as selected when wallets load
-  React.useEffect(() => {
+  useEffect(() => {
     if (wallets.length > 0 && !selectedWalletId) {
       setSelectedWalletId(wallets[0].id.toString());
     }
@@ -38,6 +40,14 @@ export const UserWalletsTab: React.FC<UserWalletsTabProps> = ({ userId, wallets,
   const handleBackToWallets = () => {
     setShowTransactions(false);
   };
+
+  // Calculate pagination values
+  const totalWallets = wallets.length;
+  const totalPages = Math.ceil(totalWallets / pageSize);
+  
+  // Get the wallets for the current page
+  const startIndex = (page - 1) * pageSize;
+  const paginatedWallets = wallets.slice(startIndex, startIndex + pageSize);
 
   if (showTransactions && selectedWalletId) {
     return (
@@ -78,8 +88,15 @@ export const UserWalletsTab: React.FC<UserWalletsTabProps> = ({ userId, wallets,
           <WalletsLoadingSkeleton />
         ) : (
           <WalletsTable 
-            wallets={wallets} 
+            wallets={paginatedWallets} 
             onSelectWallet={handleSelectWallet}
+            paginationProps={{
+              page,
+              pageSize,
+              totalPages,
+              totalItems: totalWallets,
+              setPage,
+            }}
           />
         )}
       </CardContent>

@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { userService } from "@/lib/api/user-service";
 import { Wallet, Transaction } from "@/lib/api/types";
@@ -15,6 +15,7 @@ import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
 import { translate } from "@/lib/translations";
 import ExportCSVButton from "@/components/common/ExportCSVButton";
 import { usePermissions } from "@/hooks/use-permissions";
+import TransactionsPagination from "@/components/transactions/TransactionsPagination";
 
 interface UserTransactionsTabProps {
   userId: string;
@@ -38,14 +39,14 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
   const [showChangeStatusDialog, setShowChangeStatusDialog] = useState(false);
 
   // Get the first wallet ID when wallets are loaded
-  React.useEffect(() => {
+  useEffect(() => {
     if (wallets.length > 0 && !selectedWalletId) {
       setSelectedWalletId(wallets[0].id.toString());
     }
   }, [wallets, selectedWalletId]);
 
   // Fetch transactions for the selected wallet using userService
-  const { data: transactions = [], isLoading } = useQuery({
+  const { data: allTransactions = [], isLoading } = useQuery({
     queryKey: ['user-transactions', userId, selectedWalletId],
     queryFn: () => {
       if (!selectedWalletId) return Promise.resolve([]);
@@ -53,6 +54,14 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
     },
     enabled: !!selectedWalletId,
   });
+
+  // Calculate pagination
+  const totalTransactions = allTransactions.length;
+  const totalPages = Math.ceil(totalTransactions / pageSize);
+  
+  // Get transactions for current page
+  const startIndex = (page - 1) * pageSize;
+  const transactions = allTransactions.slice(startIndex, startIndex + pageSize);
 
   // Handlers for transaction actions
   const handleViewDetails = (transaction: Transaction) => {
@@ -240,7 +249,7 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
               t('user-id'),
               t('wallet-id')
             ]}
-            data={transactions}
+            data={allTransactions}
             mapRow={mapTransactionToCSV}
           >
             {t('export-csv')}
@@ -253,7 +262,10 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
         ) : (
           <Tabs 
             value={selectedWalletId || ""}
-            onValueChange={(value) => setSelectedWalletId(value)}
+            onValueChange={(value) => {
+              setSelectedWalletId(value);
+              setPage(1); // Reset page when changing wallet
+            }}
             className="w-full"
           >
             <TabsList className="mb-4 w-full h-auto flex-wrap">
@@ -270,15 +282,24 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
                   <TransactionsLoadingSkeleton />
                 ) : (
                   transactions && transactions.length > 0 ? (
-                    <TransactionsTable
-                      transactions={transactions}
-                      page={page}
-                      pageSize={pageSize}
-                      handleViewDetails={handleViewDetails}
-                      handleCancelTransaction={handleCancelTransaction}
-                      handleCompensateCustomer={handleCompensateCustomer}
-                      handleChangeStatus={handleChangeStatus}
-                    />
+                    <div className="space-y-4">
+                      <TransactionsTable
+                        transactions={transactions}
+                        page={page}
+                        pageSize={pageSize}
+                        handleViewDetails={handleViewDetails}
+                        handleCancelTransaction={handleCancelTransaction}
+                        handleCompensateCustomer={handleCompensateCustomer}
+                        handleChangeStatus={handleChangeStatus}
+                      />
+                      <TransactionsPagination 
+                        page={page}
+                        totalPages={totalPages}
+                        setPage={setPage}
+                        totalTransactions={totalTransactions}
+                        pageSize={pageSize}
+                      />
+                    </div>
                   ) : (
                     <p className="text-center py-6 text-muted-foreground">{t("no-transactions-found")}</p>
                   )
