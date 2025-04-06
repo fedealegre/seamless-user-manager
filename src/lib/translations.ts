@@ -125,6 +125,8 @@ export const translate = (key: string, language: string = 'en'): string => {
       'page': 'Page',
       'next': 'Next',
       'previous': 'Previous',
+      
+      // Transaction and wallet related translations
       'transactions': 'transactions',
       'wallets': 'wallets',
       'no-wallets-found': 'No wallets found',
@@ -161,6 +163,8 @@ export const translate = (key: string, language: string = 'en'): string => {
       'transaction-status-changed-success': 'Transaction status has been changed successfully',
       'status-change-failed': 'Status Change Failed',
       'only-pending-transactions': 'Only pending transactions can be modified',
+      
+      // Wallet status translations
       'active': 'Active',
       'frozen': 'Frozen',
       'blocked': 'Blocked',
@@ -168,7 +172,16 @@ export const translate = (key: string, language: string = 'en'): string => {
       'unknown': 'Unknown',
       'access-denied': 'Access Denied',
       'balance': 'Balance',
-      'available-balance': 'Available Balance'
+      'available-balance': 'Available Balance',
+      
+      // User detail page translations
+      'user-detail': 'User Detail',
+      'view-manage-user-info': 'View and manage user information',
+      'personal-info': 'Personal Info',
+      'user-not-found': 'User Not Found',
+      'requested-user-not-found': 'The requested user could not be found',
+      'back-to-user-management': 'Back to User Management',
+      'back': 'Back'
     },
     es: {
       // Common
@@ -294,6 +307,8 @@ export const translate = (key: string, language: string = 'en'): string => {
       'page': 'Página',
       'next': 'Siguiente',
       'previous': 'Anterior',
+      
+      // Transaction and wallet related translations
       'transactions': 'transacciones',
       'wallets': 'billeteras',
       'no-wallets-found': 'No se encontraron billeteras',
@@ -330,6 +345,8 @@ export const translate = (key: string, language: string = 'en'): string => {
       'transaction-status-changed-success': 'El estado de la transacción ha sido cambiado exitosamente',
       'status-change-failed': 'Error al Cambiar Estado',
       'only-pending-transactions': 'Solo las transacciones pendientes pueden ser modificadas',
+      
+      // Wallet status translations
       'active': 'Activa',
       'frozen': 'Congelada',
       'blocked': 'Bloqueada',
@@ -337,7 +354,16 @@ export const translate = (key: string, language: string = 'en'): string => {
       'unknown': 'Desconocido',
       'access-denied': 'Acceso Denegado',
       'balance': 'Balance',
-      'available-balance': 'Balance Disponible'
+      'available-balance': 'Balance Disponible',
+      
+      // User detail page translations
+      'user-detail': 'Detalle de Usuario',
+      'view-manage-user-info': 'Ver y gestionar información del usuario',
+      'personal-info': 'Información Personal',
+      'user-not-found': 'Usuario No Encontrado',
+      'requested-user-not-found': 'El usuario solicitado no pudo ser encontrado',
+      'back-to-user-management': 'Volver a Gestión de Usuarios',
+      'back': 'Volver'
     }
   };
 
