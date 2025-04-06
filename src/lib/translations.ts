@@ -1,4 +1,3 @@
-
 export const translate = (key: string, language: string = 'en'): string => {
   const translations: Record<string, Record<string, string>> = {
     en: {
@@ -334,6 +333,8 @@ export const translate = (key: string, language: string = 'en'): string => {
       'export-csv': 'Exportar a CSV',
       'wallet': 'Billetera',
       'no-transactions-found': 'No se encontraron transacciones',
+      
+      // Transaction status and operations
       'cancel-transaction': 'Cancelar Transacción',
       'transaction-cancellation-not-implemented': 'Cancelación de transacción no implementada para la transacción',
       'missing-transaction-wallet-info': 'Falta información de transacción o billetera',
