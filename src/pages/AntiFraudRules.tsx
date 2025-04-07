@@ -200,7 +200,7 @@ const AntiFraudRules = () => {
           ? values.limit 
           : undefined,
         amountLimit: needsAmountLimit(values.ruleType as AntiFraudRuleType) 
-          ? (values.amountLimit || { value: 0, currency: 'EUR' }) 
+          ? values.amountLimit 
           : undefined,
         securityFactor: needsSecurityFactor(values.ruleType as AntiFraudRuleType) 
           ? values.securityFactor 
@@ -249,7 +249,7 @@ const AntiFraudRules = () => {
           ? values.limit 
           : undefined,
         amountLimit: needsAmountLimit(values.ruleType as AntiFraudRuleType) 
-          ? (values.amountLimit || { value: 0, currency: 'EUR' }) 
+          ? values.amountLimit 
           : undefined,
         securityFactor: needsSecurityFactor(values.ruleType as AntiFraudRuleType) 
           ? values.securityFactor 
@@ -447,7 +447,7 @@ const AntiFraudRules = () => {
                 {t("add-new-rule")}
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[600px]">
+            <DialogContent className="w-full max-w-[95vw] sm:max-w-[80vw] md:max-w-[700px] h-auto max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>{t("add-new-anti-fraud-rule")}</DialogTitle>
                 <DialogDescription>
@@ -457,116 +457,120 @@ const AntiFraudRules = () => {
               
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(handleAddRule)} className="space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="ruleType"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{t("rule-type")}</FormLabel>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder={t("select-rule-type")} />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="max_transactions_daily">{t("max-transactions-daily")}</SelectItem>
-                            <SelectItem value="max_amount_daily">{t("max-amount-daily")}</SelectItem>
-                            <SelectItem value="max_amount_daily_cash_out">{t("max-amount-daily-cash-out")}</SelectItem>
-                            <SelectItem value="max_amount_one_factor_cash_out">{t("max-amount-one-factor-cash-out")}</SelectItem>
-                            <SelectItem value="max_amount_daily_cash_in">{t("max-amount-daily-cash-in")}</SelectItem>
-                            <SelectItem value="max_amount_one_factor_cash_in">{t("max-amount-one-factor-cash-in")}</SelectItem>
-                            <SelectItem value="max_amount_daily_send_money">{t("max-amount-daily-send-money")}</SelectItem>
-                            <SelectItem value="max_amount_one_factor_send_money">{t("max-amount-one-factor-send-money")}</SelectItem>
-                            <SelectItem value="custom">{t("custom")}</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  
-                  {needsApplicationTime(ruleType) && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <FormField
                       control={form.control}
-                      name="applicationTime"
+                      name="ruleType"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>{t("application-period")}</FormLabel>
+                          <FormLabel>{t("rule-type")}</FormLabel>
                           <Select
                             onValueChange={field.onChange}
                             defaultValue={field.value}
                           >
                             <FormControl>
                               <SelectTrigger>
-                                <SelectValue placeholder={t("select-application-period")} />
+                                <SelectValue placeholder={t("select-rule-type")} />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              <SelectItem value="daily">{t("daily")}</SelectItem>
-                              <SelectItem value="monthly">{t("monthly")}</SelectItem>
-                              <SelectItem value="yearly">{t("yearly")}</SelectItem>
+                              <SelectItem value="max_transactions_daily">{t("max-transactions-daily")}</SelectItem>
+                              <SelectItem value="max_amount_daily">{t("max-amount-daily")}</SelectItem>
+                              <SelectItem value="max_amount_daily_cash_out">{t("max-amount-daily-cash-out")}</SelectItem>
+                              <SelectItem value="max_amount_one_factor_cash_out">{t("max-amount-one-factor-cash-out")}</SelectItem>
+                              <SelectItem value="max_amount_daily_cash_in">{t("max-amount-daily-cash-in")}</SelectItem>
+                              <SelectItem value="max_amount_one_factor_cash_in">{t("max-amount-one-factor-cash-in")}</SelectItem>
+                              <SelectItem value="max_amount_daily_send_money">{t("max-amount-daily-send-money")}</SelectItem>
+                              <SelectItem value="max_amount_one_factor_send_money">{t("max-amount-one-factor-send-money")}</SelectItem>
+                              <SelectItem value="custom">{t("custom")}</SelectItem>
                             </SelectContent>
                           </Select>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
-                  )}
+                    
+                    {needsApplicationTime(ruleType) && (
+                      <FormField
+                        control={form.control}
+                        name="applicationTime"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>{t("application-period")}</FormLabel>
+                            <Select
+                              onValueChange={field.onChange}
+                              defaultValue={field.value}
+                            >
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder={t("select-application-period")} />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="daily">{t("daily")}</SelectItem>
+                                <SelectItem value="monthly">{t("monthly")}</SelectItem>
+                                <SelectItem value="yearly">{t("yearly")}</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    )}
+                  </div>
                   
-                  {needsSecurityFactor(ruleType) && (
-                    <FormField
-                      control={form.control}
-                      name="securityFactor"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>{t("security-factor")}</FormLabel>
-                          <Select
-                            onValueChange={field.onChange}
-                            defaultValue={field.value || "any"}
-                          >
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {needsSecurityFactor(ruleType) && (
+                      <FormField
+                        control={form.control}
+                        name="securityFactor"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>{t("security-factor")}</FormLabel>
+                            <Select
+                              onValueChange={field.onChange}
+                              defaultValue={field.value || "any"}
+                            >
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder={t("select-security-factor")} />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="one_factor">{t("one-factor")}</SelectItem>
+                                <SelectItem value="two_factor">{t("two-factor")}</SelectItem>
+                                <SelectItem value="any">{t("any-factor")}</SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    )}
+                    
+                    {needsSimpleLimit(ruleType) && (
+                      <FormField
+                        control={form.control}
+                        name="limit"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>{t("limit-amount")}</FormLabel>
                             <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder={t("select-security-factor")} />
-                              </SelectTrigger>
+                              <Input
+                                type="number"
+                                {...field}
+                                onChange={e => field.onChange(Number(e.target.value))}
+                              />
                             </FormControl>
-                            <SelectContent>
-                              <SelectItem value="one_factor">{t("one-factor")}</SelectItem>
-                              <SelectItem value="two_factor">{t("two-factor")}</SelectItem>
-                              <SelectItem value="any">{t("any-factor")}</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  )}
-                  
-                  {needsSimpleLimit(ruleType) && (
-                    <FormField
-                      control={form.control}
-                      name="limit"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>{t("limit-amount")}</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="number"
-                              {...field}
-                              onChange={e => field.onChange(Number(e.target.value))}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  )}
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    )}
+                  </div>
                   
                   {needsAmountLimit(ruleType) && (
-                    <>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <FormField
                         control={form.control}
                         name="amountLimit.value"
@@ -601,7 +605,7 @@ const AntiFraudRules = () => {
                           </FormItem>
                         )}
                       />
-                    </>
+                    </div>
                   )}
                   
                   {ruleType === 'custom' && (
@@ -672,7 +676,7 @@ const AntiFraudRules = () => {
                     )}
                   />
                   
-                  <DialogFooter>
+                  <DialogFooter className="mt-6 flex flex-col sm:flex-row gap-2">
                     <Button variant="outline" type="button" onClick={() => {
                       form.reset();
                       setIsAddDialogOpen(false);
@@ -785,7 +789,7 @@ const AntiFraudRules = () => {
       </Card>
       
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="sm:max-w-[600px]">
+        <DialogContent className="w-full max-w-[95vw] sm:max-w-[80vw] md:max-w-[700px] h-auto max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{t("edit-anti-fraud-rule")}</DialogTitle>
             <DialogDescription>
@@ -795,117 +799,121 @@ const AntiFraudRules = () => {
           
           <Form {...editForm}>
             <form onSubmit={editForm.handleSubmit(handleEditRule)} className="space-y-4">
-              <FormField
-                control={editForm.control}
-                name="ruleType"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>{t("rule-type")}</FormLabel>
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder={t("select-rule-type")} />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <SelectItem value="max_transactions_daily">{t("max-transactions-daily")}</SelectItem>
-                        <SelectItem value="max_amount_daily">{t("max-amount-daily")}</SelectItem>
-                        <SelectItem value="max_amount_daily_cash_out">{t("max-amount-daily-cash-out")}</SelectItem>
-                        <SelectItem value="max_amount_one_factor_cash_out">{t("max-amount-one-factor-cash-out")}</SelectItem>
-                        <SelectItem value="max_amount_daily_cash_in">{t("max-amount-daily-cash-in")}</SelectItem>
-                        <SelectItem value="max_amount_one_factor_cash_in">{t("max-amount-one-factor-cash-in")}</SelectItem>
-                        <SelectItem value="max_amount_daily_send_money">{t("max-amount-daily-send-money")}</SelectItem>
-                        <SelectItem value="max_amount_one_factor_send_money">{t("max-amount-one-factor-send-money")}</SelectItem>
-                        <SelectItem value="custom">{t("custom")}</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              
-              {needsApplicationTime(editRuleType) && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormField
                   control={editForm.control}
-                  name="applicationTime"
+                  name="ruleType"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t("application-period")}</FormLabel>
+                      <FormLabel>{t("rule-type")}</FormLabel>
                       <Select
                         onValueChange={field.onChange}
                         defaultValue={field.value}
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder={t("select-application-period")} />
+                            <SelectValue placeholder={t("select-rule-type")} />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="daily">{t("daily")}</SelectItem>
-                          <SelectItem value="monthly">{t("monthly")}</SelectItem>
-                          <SelectItem value="yearly">{t("yearly")}</SelectItem>
+                          <SelectItem value="max_transactions_daily">{t("max-transactions-daily")}</SelectItem>
+                          <SelectItem value="max_amount_daily">{t("max-amount-daily")}</SelectItem>
+                          <SelectItem value="max_amount_daily_cash_out">{t("max-amount-daily-cash-out")}</SelectItem>
+                          <SelectItem value="max_amount_one_factor_cash_out">{t("max-amount-one-factor-cash-out")}</SelectItem>
+                          <SelectItem value="max_amount_daily_cash_in">{t("max-amount-daily-cash-in")}</SelectItem>
+                          <SelectItem value="max_amount_one_factor_cash_in">{t("max-amount-one-factor-cash-in")}</SelectItem>
+                          <SelectItem value="max_amount_daily_send_money">{t("max-amount-daily-send-money")}</SelectItem>
+                          <SelectItem value="max_amount_one_factor_send_money">{t("max-amount-one-factor-send-money")}</SelectItem>
+                          <SelectItem value="custom">{t("custom")}</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-              )}
+                
+                {needsApplicationTime(editRuleType) && (
+                  <FormField
+                    control={editForm.control}
+                    name="applicationTime"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t("application-period")}</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder={t("select-application-period")} />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="daily">{t("daily")}</SelectItem>
+                            <SelectItem value="monthly">{t("monthly")}</SelectItem>
+                            <SelectItem value="yearly">{t("yearly")}</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
+              </div>
               
-              {needsSecurityFactor(editRuleType) && (
-                <FormField
-                  control={editForm.control}
-                  name="securityFactor"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t("security-factor")}</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        defaultValue={field.value || "any"}
-                      >
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {needsSecurityFactor(editRuleType) && (
+                  <FormField
+                    control={editForm.control}
+                    name="securityFactor"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t("security-factor")}</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value || "any"}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder={t("select-security-factor")} />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="one_factor">{t("one-factor")}</SelectItem>
+                            <SelectItem value="two_factor">{t("two-factor")}</SelectItem>
+                            <SelectItem value="any">{t("any-factor")}</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
+                
+                {needsSimpleLimit(editRuleType) && (
+                  <FormField
+                    control={editForm.control}
+                    name="limit"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>{t("limit-amount")}</FormLabel>
                         <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder={t("select-security-factor")} />
-                          </SelectTrigger>
+                          <Input
+                            type="number"
+                            {...field}
+                            onChange={e => field.onChange(Number(e.target.value))}
+                            value={field.value || 0}
+                          />
                         </FormControl>
-                        <SelectContent>
-                          <SelectItem value="one_factor">{t("one-factor")}</SelectItem>
-                          <SelectItem value="two_factor">{t("two-factor")}</SelectItem>
-                          <SelectItem value="any">{t("any-factor")}</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              )}
-              
-              {needsSimpleLimit(editRuleType) && (
-                <FormField
-                  control={editForm.control}
-                  name="limit"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t("limit-amount")}</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="number"
-                          {...field}
-                          onChange={e => field.onChange(Number(e.target.value))}
-                          value={field.value || 0}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              )}
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
+              </div>
               
               {needsAmountLimit(editRuleType) && (
-                <>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <FormField
                     control={editForm.control}
                     name="amountLimit.value"
@@ -941,7 +949,7 @@ const AntiFraudRules = () => {
                       </FormItem>
                     )}
                   />
-                </>
+                </div>
               )}
               
               <FormField
@@ -983,7 +991,7 @@ const AntiFraudRules = () => {
                 )}
               />
               
-              <DialogFooter>
+              <DialogFooter className="mt-6 flex flex-col sm:flex-row gap-2">
                 <Button variant="outline" type="button" onClick={() => {
                   editForm.reset();
                   setIsEditDialogOpen(false);

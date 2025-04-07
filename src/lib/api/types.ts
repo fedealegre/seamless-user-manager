@@ -1,3 +1,4 @@
+
 // API types based on the OpenAPI specifications
 
 export interface Transaction {
