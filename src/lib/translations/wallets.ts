@@ -10,7 +10,8 @@ export const walletTranslations = {
     'wallet-transactions': 'Wallet Transactions',
     'transactions-for-wallet': 'Transactions for wallet',
     'back-to-wallets': 'Back to Wallets',
-    'view-wallet-transactions': 'View wallet transactions'
+    'view-wallet-transactions': 'View wallet transactions',
+    'total-users': 'Total users'
   },
   es: {
     'wallets': 'Billeteras',
@@ -22,6 +23,7 @@ export const walletTranslations = {
     'wallet-transactions': 'Transacciones de Billetera',
     'transactions-for-wallet': 'Transacciones para billetera',
     'back-to-wallets': 'Volver a Billeteras',
-    'view-wallet-transactions': 'Ver transacciones de billetera'
+    'view-wallet-transactions': 'Ver transacciones de billetera',
+    'total-users': 'Total de usuarios'
   }
 };
