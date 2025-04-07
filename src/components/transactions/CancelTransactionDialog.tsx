@@ -13,6 +13,8 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { AlertCircle, XCircle } from "lucide-react";
+import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
+import { translate } from "@/lib/translations";
 
 interface CancelTransactionDialogProps {
   transaction: Transaction;
@@ -29,10 +31,12 @@ const CancelTransactionDialog: React.FC<CancelTransactionDialogProps> = ({
 }) => {
   const [reason, setReason] = useState("");
   const [error, setError] = useState("");
+  const { settings } = useBackofficeSettings();
+  const t = (key: string) => translate(key, settings.language);
 
   const handleSubmit = () => {
     if (!reason.trim()) {
-      setError("Please provide a reason for cancellation");
+      setError(t("please-provide-reason"));
       return;
     }
     
@@ -44,7 +48,7 @@ const CancelTransactionDialog: React.FC<CancelTransactionDialogProps> = ({
   const formatCurrency = (amount?: number, currency?: string) => {
     if (amount === undefined) return '-';
     
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat(settings.language === 'en' ? 'en-US' : 'es-ES', {
       style: 'currency',
       currency: currency || 'USD',
     }).format(amount);
@@ -57,9 +61,9 @@ const CancelTransactionDialog: React.FC<CancelTransactionDialogProps> = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Cancel Transaction</DialogTitle>
+          <DialogTitle>{t("cancel-transaction")}</DialogTitle>
           <DialogDescription>
-            Are you sure you want to cancel this transaction? This action cannot be undone.
+            {t("cancel-transaction-confirmation")}
           </DialogDescription>
         </DialogHeader>
         
@@ -69,18 +73,18 @@ const CancelTransactionDialog: React.FC<CancelTransactionDialogProps> = ({
               <XCircle size={16} className="text-amber-600" />
             </div>
             <div>
-              <div className="font-medium">Transaction ID: {transactionIdentifier}</div>
+              <div className="font-medium">{t("transaction-id")}: {transactionIdentifier}</div>
               <div className="text-sm text-muted-foreground">
-                Amount: {formatCurrency(transaction.amount, transaction.currency)}
+                {t("amount")}: {formatCurrency(transaction.amount, transaction.currency)}
               </div>
             </div>
           </div>
           
           <div className="space-y-3">
-            <Label htmlFor="reason">Reason for Cancellation</Label>
+            <Label htmlFor="reason">{t("reason-for-cancellation")}</Label>
             <Textarea
               id="reason"
-              placeholder="Please explain why you're cancelling this transaction..."
+              placeholder={t("explain-cancellation-reason")}
               value={reason}
               onChange={(e) => {
                 setReason(e.target.value);
@@ -96,17 +100,17 @@ const CancelTransactionDialog: React.FC<CancelTransactionDialogProps> = ({
             )}
             
             <div className="text-sm text-muted-foreground mt-2">
-              <p>Note: Only pending transactions can be cancelled.</p>
+              <p>{t("only-pending-can-be-cancelled")}</p>
             </div>
           </div>
         </div>
         
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Cancel
+            {t("cancel")}
           </Button>
           <Button variant="destructive" onClick={handleSubmit}>
-            Confirm Cancellation
+            {t("confirm-cancellation")}
           </Button>
         </DialogFooter>
       </DialogContent>

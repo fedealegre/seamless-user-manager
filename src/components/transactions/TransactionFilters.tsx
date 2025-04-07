@@ -13,6 +13,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
+import { translate } from "@/lib/translations";
 
 interface FiltersType {
   status: string;
@@ -33,6 +35,8 @@ const TransactionFilters: React.FC<TransactionFiltersProps> = ({
   onApply,
   onReset,
 }) => {
+  const { settings } = useBackofficeSettings();
+  const t = (key: string) => translate(key, settings.language);
   const [localFilters, setLocalFilters] = useState<FiltersType>(filters);
 
   const handleChange = (name: keyof FiltersType, value: string) => {
@@ -61,68 +65,68 @@ const TransactionFilters: React.FC<TransactionFiltersProps> = ({
     <Card>
       <CardContent className="p-4">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-medium">Transaction Filters</h3>
+          <h3 className="text-lg font-medium">{t("transaction-filters")}</h3>
           <Button variant="ghost" size="sm" onClick={handleReset}>
             <X size={16} className="mr-2" />
-            Clear All
+            {t("clear-all")}
           </Button>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="status">Status</Label>
+            <Label htmlFor="status">{t("status")}</Label>
             <Select
               value={localFilters.status}
               onValueChange={(value) => handleChange("status", value)}
             >
               <SelectTrigger id="status">
-                <SelectValue placeholder="Select status" />
+                <SelectValue placeholder={t("select-status")} />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectItem value="all">All Statuses</SelectItem>
-                  <SelectItem value="completed">Completed</SelectItem>
-                  <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="cancelled">Cancelled</SelectItem>
-                  <SelectItem value="failed">Failed</SelectItem>
+                  <SelectItem value="all">{t("all-statuses")}</SelectItem>
+                  <SelectItem value="completed">{t("completed")}</SelectItem>
+                  <SelectItem value="pending">{t("pending")}</SelectItem>
+                  <SelectItem value="cancelled">{t("cancelled")}</SelectItem>
+                  <SelectItem value="failed">{t("failed")}</SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="type">Transaction Type</Label>
+            <Label htmlFor="type">{t("transaction-type")}</Label>
             <Select
               value={localFilters.transactionType}
               onValueChange={(value) => handleChange("transactionType", value)}
             >
               <SelectTrigger id="type">
-                <SelectValue placeholder="Select type" />
+                <SelectValue placeholder={t("select-type")} />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectItem value="all">All Types</SelectItem>
-                  <SelectItem value="deposit">Deposit</SelectItem>
-                  <SelectItem value="withdrawal">Withdrawal</SelectItem>
-                  <SelectItem value="transfer">Transfer</SelectItem>
-                  <SelectItem value="compensation">Compensation</SelectItem>
+                  <SelectItem value="all">{t("all-types")}</SelectItem>
+                  <SelectItem value="deposit">{t("deposit")}</SelectItem>
+                  <SelectItem value="withdrawal">{t("withdrawal")}</SelectItem>
+                  <SelectItem value="transfer">{t("transfer")}</SelectItem>
+                  <SelectItem value="compensation">{t("compensation")}</SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="currency">Currency</Label>
+            <Label htmlFor="currency">{t("currency")}</Label>
             <Select
               value={localFilters.currency}
               onValueChange={(value) => handleChange("currency", value)}
             >
               <SelectTrigger id="currency">
-                <SelectValue placeholder="Select currency" />
+                <SelectValue placeholder={t("select-currency")} />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectItem value="all">All Currencies</SelectItem>
+                  <SelectItem value="all">{t("all-currencies")}</SelectItem>
                   <SelectItem value="USD">USD</SelectItem>
                   <SelectItem value="EUR">EUR</SelectItem>
                   <SelectItem value="GBP">GBP</SelectItem>
@@ -132,7 +136,7 @@ const TransactionFilters: React.FC<TransactionFiltersProps> = ({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="startDate">Start Date</Label>
+            <Label htmlFor="startDate">{t("start-date")}</Label>
             <Input
               id="startDate"
               type="date"
@@ -142,7 +146,7 @@ const TransactionFilters: React.FC<TransactionFiltersProps> = ({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="endDate">End Date</Label>
+            <Label htmlFor="endDate">{t("end-date")}</Label>
             <Input
               id="endDate"
               type="date"
@@ -154,7 +158,7 @@ const TransactionFilters: React.FC<TransactionFiltersProps> = ({
 
         <div className="mt-4 flex justify-end">
           <Button onClick={handleApply} className="ml-2">
-            Apply Filters
+            {t("apply-filters")}
           </Button>
         </div>
       </CardContent>

@@ -7,6 +7,8 @@ import { Transaction } from '@/lib/api/types';
 import { format } from 'date-fns';
 import { toast } from '@/components/ui/use-toast';
 import { formatCurrency } from './transaction-utils';
+import { useBackofficeSettings } from '@/contexts/BackofficeSettingsContext';
+import { translate } from '@/lib/translations';
 
 interface ExportTransactionsButtonProps {
   transactions: Transaction[];
@@ -17,11 +19,14 @@ const ExportTransactionsButton: React.FC<ExportTransactionsButtonProps> = ({
   transactions,
   className,
 }) => {
+  const { settings } = useBackofficeSettings();
+  const t = (key: string) => translate(key, settings.language);
+
   const handleExport = () => {
     if (!transactions || transactions.length === 0) {
       toast({
-        title: 'No data to export',
-        description: 'There are no transactions to export.',
+        title: t('no-data-to-export'),
+        description: t('no-transactions-to-export'),
         variant: 'destructive',
       });
       return;
@@ -31,7 +36,15 @@ const ExportTransactionsButton: React.FC<ExportTransactionsButtonProps> = ({
     const filename = `transactions-${format(new Date(), 'yyyy-MM-dd')}`;
 
     // Define CSV headers
-    const headers = ['Transaction ID', 'Reference', 'Date', 'Type', 'Amount', 'Currency', 'Status'];
+    const headers = [
+      t('transaction-id'), 
+      t('reference'), 
+      t('date'), 
+      t('type'), 
+      t('amount'), 
+      t('currency'), 
+      t('status')
+    ];
 
     // Export the transactions
     CSVExportService.export({
@@ -53,8 +66,8 @@ const ExportTransactionsButton: React.FC<ExportTransactionsButtonProps> = ({
 
     // Show success notification
     toast({
-      title: 'Export Successful',
-      description: 'The transactions have been exported to CSV successfully.',
+      title: t('export-successful'),
+      description: t('transactions-exported-successfully'),
     });
   };
 
@@ -65,7 +78,7 @@ const ExportTransactionsButton: React.FC<ExportTransactionsButtonProps> = ({
       className={className}
     >
       <Download size={16} className="mr-2" />
-      Export CSV
+      {t('export-csv')}
     </Button>
   );
 };

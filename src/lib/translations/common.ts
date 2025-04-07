@@ -47,7 +47,27 @@ export const commonTranslations = {
     'actions': 'Actions',
     'compensate': 'Compensate',
     'customer': 'Customer',
-    'change': 'Change'
+    'change': 'Change',
+    // User Management
+    'user-management': 'User Management',
+    'manage-monitor-customer-accounts': 'Manage and monitor customer accounts',
+    'search-users': 'Search Users',
+    'search-history': 'Search History',
+    'users': 'Users',
+    'users-found': 'users found',
+    'no-users-found': 'No users found',
+    'recent-searches': 'Recent Searches',
+    'clear-all': 'Clear All',
+    'your-recent-user-searches': 'Your recent user searches',
+    'no-recent-searches': 'No recent searches',
+    'search-again': 'Search Again',
+    'id': 'ID',
+    'name': 'Name',
+    'email': 'Email',
+    'phone': 'Phone',
+    'status': 'Status',
+    'see-wallets': 'See Wallets',
+    'see-transactions': 'See Transactions'
   },
   es: {
     'dashboard': 'Panel de Control',
@@ -96,6 +116,26 @@ export const commonTranslations = {
     'actions': 'Acciones',
     'compensate': 'Compensar',
     'customer': 'Cliente',
-    'change': 'Cambiar'
+    'change': 'Cambiar',
+    // User Management
+    'user-management': 'Gestión de Usuarios',
+    'manage-monitor-customer-accounts': 'Gestionar y monitorear cuentas de clientes',
+    'search-users': 'Buscar Usuarios',
+    'search-history': 'Historial de Búsqueda',
+    'users': 'Usuarios',
+    'users-found': 'usuarios encontrados',
+    'no-users-found': 'No se encontraron usuarios',
+    'recent-searches': 'Búsquedas Recientes',
+    'clear-all': 'Limpiar Todo',
+    'your-recent-user-searches': 'Tus búsquedas recientes de usuarios',
+    'no-recent-searches': 'No hay búsquedas recientes',
+    'search-again': 'Buscar de Nuevo',
+    'id': 'ID',
+    'name': 'Nombre',
+    'email': 'Correo Electrónico',
+    'phone': 'Teléfono',
+    'status': 'Estado',
+    'see-wallets': 'Ver Billeteras',
+    'see-transactions': 'Ver Transacciones'
   }
 };

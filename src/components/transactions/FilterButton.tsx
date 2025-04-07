@@ -3,6 +3,8 @@ import React from "react";
 import { Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
+import { translate } from "@/lib/translations";
 
 interface FilterButtonProps {
   showFilters: boolean;
@@ -15,6 +17,9 @@ const FilterButton: React.FC<FilterButtonProps> = ({
   setShowFilters,
   activeFiltersCount,
 }) => {
+  const { settings } = useBackofficeSettings();
+  const t = (key: string) => translate(key, settings.language);
+  
   return (
     <Button 
       variant="outline" 
@@ -22,7 +27,7 @@ const FilterButton: React.FC<FilterButtonProps> = ({
       className="flex items-center gap-2"
     >
       <Filter size={16} />
-      Filters
+      {t("filters")}
       {activeFiltersCount > 0 && (
         <Badge className="ml-1 bg-primary/20 text-primary text-xs">
           {activeFiltersCount}

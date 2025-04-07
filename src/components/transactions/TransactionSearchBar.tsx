@@ -1,13 +1,15 @@
 
 import React from "react";
-import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Search } from "lucide-react";
+import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
+import { translate } from "@/lib/translations";
 
 interface TransactionSearchBarProps {
   searchTerm: string;
-  setSearchTerm: (term: string) => void;
-  handleSearch: (e: React.FormEvent) => void;
+  setSearchTerm: (searchTerm: string) => void;
+  handleSearch: () => void;
 }
 
 const TransactionSearchBar: React.FC<TransactionSearchBarProps> = ({
@@ -15,20 +17,32 @@ const TransactionSearchBar: React.FC<TransactionSearchBarProps> = ({
   setSearchTerm,
   handleSearch,
 }) => {
+  const { settings } = useBackofficeSettings();
+  const t = (key: string) => translate(key, settings.language);
+  
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
   return (
-    <form onSubmit={handleSearch} className="flex gap-2">
-      <div className="relative">
-        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-        <Input
-          type="search"
-          placeholder="Search by ID or Reference..."
-          className="pl-8 w-full md:w-[250px]"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-      </div>
-      <Button type="submit">Search</Button>
-    </form>
+    <div className="flex w-full md:w-auto">
+      <Input
+        placeholder={t("search-transactions")}
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        onKeyPress={handleKeyPress}
+        className="rounded-r-none"
+      />
+      <Button 
+        type="button" 
+        onClick={handleSearch}
+        className="rounded-l-none"
+      >
+        <Search size={16} />
+      </Button>
+    </div>
   );
 };
 
