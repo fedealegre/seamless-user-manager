@@ -11,7 +11,16 @@ export const walletTranslations = {
     'transactions-for-wallet': 'Transactions for wallet',
     'back-to-wallets': 'Back to Wallets',
     'view-wallet-transactions': 'View wallet transactions',
-    'total-users': 'Total users'
+    'total-users': 'Total users',
+    'across-all-users': "Across all users',
+    'active-wallets': 'Active wallets',
+    'total-balance': 'Total balance',
+    'usd-equivalent': 'USD equivalent',
+    'users-with-wallets': 'Users with wallets',
+    'total-users-with-wallets': 'Total users with wallets',
+    'all-wallets': 'All wallets',
+    'manage-wallets-for-all-users': 'Manage wallets for all users',
+    'search-wallets': 'Search wallets'
   },
   es: {
     'wallets': 'Billeteras',
@@ -24,6 +33,14 @@ export const walletTranslations = {
     'transactions-for-wallet': 'Transacciones para billetera',
     'back-to-wallets': 'Volver a Billeteras',
     'view-wallet-transactions': 'Ver transacciones de billetera',
-    'total-users': 'Total de usuarios'
+    'total-users': 'Total de usuarios',
+    'active-wallets': 'Billeteras activas',
+    'total-balance': 'Balance total',
+    'usd-equivalent': 'Equivalente USD',
+    'users-with-wallets': 'Usuarios con billeteras',
+    'total-users-with-wallets': 'Total de usuarios con billeteras,
+    'all-wallets': 'Todas las wallets',
+    'manage-wallets-for-all-users': 'Gestionar las billeteras para todos los usuarios',
+    'search-wallets': 'Buscar billeteras'
   }
 };
