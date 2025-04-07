@@ -1,6 +1,7 @@
+
 export const transactionTranslations = {
   en: {
-    'transactions': 'transactions',
+    'transactions': 'Transactions',
     'no-transactions-found': 'No transactions found',
     'transaction-id': 'Transaction ID',
     'reference': 'Reference',
@@ -54,7 +55,6 @@ export const transactionTranslations = {
     'transaction-details': 'Transaction Details',
     'complete-information-for-transaction': 'Complete information for transaction',
     'transaction-information': 'Transaction Information',
-    'transaction-details': 'Transaction Details',
     'user-wallet-information': 'User & Wallet Information',
     'date-information': 'Date Information',
     'transaction-date': 'Transaction Date',
@@ -113,7 +113,7 @@ export const transactionTranslations = {
     'search-transactions': 'Search transactions...'
   },
   es: {
-    'transactions': 'transacciones',
+    'transactions': 'Transacciones',
     'no-transactions-found': 'No se encontraron transacciones',
     'transaction-id': 'ID de Transacción',
     'reference': 'Referencia',
@@ -167,7 +167,6 @@ export const transactionTranslations = {
     'transaction-details': 'Detalles de Transacción',
     'complete-information-for-transaction': 'Información completa para la transacción',
     'transaction-information': 'Información de Transacción',
-    'transaction-details': 'Detalles de Transacción',
     'user-wallet-information': 'Información de Usuario y Billetera',
     'date-information': 'Información de Fecha',
     'transaction-date': 'Fecha de Transacción',
