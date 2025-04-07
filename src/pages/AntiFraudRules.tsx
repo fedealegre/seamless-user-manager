@@ -193,6 +193,7 @@ const AntiFraudRules = () => {
     try {
       const newRule: AntiFraudRule = {
         ...values,
+        ruleType: values.ruleType as AntiFraudRuleType,
         applicationTime: needsApplicationTime(values.ruleType as AntiFraudRuleType) 
           ? values.applicationTime 
           : undefined,
@@ -242,6 +243,7 @@ const AntiFraudRules = () => {
     try {
       const updatedRule: AntiFraudRule = {
         ...values,
+        ruleType: values.ruleType as AntiFraudRuleType,
         applicationTime: needsApplicationTime(values.ruleType as AntiFraudRuleType) 
           ? values.applicationTime 
           : undefined,
