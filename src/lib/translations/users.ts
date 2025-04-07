@@ -6,7 +6,8 @@ export const userTranslations = {
     'personal-info': 'Personal Info',
     'user-not-found': 'User Not Found',
     'requested-user-not-found': 'The requested user could not be found',
-    'back-to-user-management': 'Back to User Management'
+    'back-to-user-management': 'Back to User Management',
+    'search-users-button': 'Search users'
   },
   es: {
     'user-detail': 'Detalle de Usuario',
@@ -14,6 +15,7 @@ export const userTranslations = {
     'personal-info': 'Información Personal',
     'user-not-found': 'Usuario No Encontrado',
     'requested-user-not-found': 'El usuario solicitado no pudo ser encontrado',
-    'back-to-user-management': 'Volver a Gestión de Usuarios'
+    'back-to-user-management': 'Volver a Gestión de Usuarios',
+    'search-users-button': 'Buscar usuarios'
   }
 };
