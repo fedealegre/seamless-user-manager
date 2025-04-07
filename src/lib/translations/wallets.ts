@@ -1,7 +1,7 @@
 
 export const walletTranslations = {
   en: {
-    'wallets': 'wallets',
+    'wallets': 'Wallets',
     'no-wallets-found': 'No wallets found',
     'loading': 'Loading...',
     'found': 'found',
@@ -13,7 +13,7 @@ export const walletTranslations = {
     'view-wallet-transactions': 'View wallet transactions'
   },
   es: {
-    'wallets': 'billeteras',
+    'wallets': 'Billeteras',
     'no-wallets-found': 'No se encontraron billeteras',
     'loading': 'Cargando...',
     'found': 'encontradas',
