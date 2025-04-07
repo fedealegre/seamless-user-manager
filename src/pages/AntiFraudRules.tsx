@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { 
   Table, 
@@ -42,7 +41,6 @@ const ruleTypeToTransactionTypes: Record<AntiFraudRuleType, string[]> = {
   custom: []
 };
 
-// Example rules based on the JSON
 const exampleRules: AntiFraudRule[] = [
   {
     id: "1",
@@ -101,7 +99,6 @@ const exampleRules: AntiFraudRule[] = [
   }
 ];
 
-// Define the form schema for the rule form
 const ruleFormSchema = z.object({
   ruleType: z.string(),
   applicationTime: z.enum(['daily', 'monthly', 'yearly']).optional(),
@@ -133,13 +130,16 @@ const AntiFraudRules = () => {
   const [selectedTransactionTypes, setSelectedTransactionTypes] = useState<string[]>([]);
   const [newTransactionType, setNewTransactionType] = useState("");
   
-  // Initialize the form
   const form = useForm<RuleFormValues>({
     resolver: zodResolver(ruleFormSchema),
     defaultValues: {
       ruleType: 'custom',
       applicationTime: 'daily',
       limit: 0,
+      amountLimit: {
+        value: 0,
+        currency: 'EUR'
+      },
       enabled: true,
       transactionTypes: []
     }
@@ -151,12 +151,15 @@ const AntiFraudRules = () => {
       ruleType: 'custom',
       applicationTime: 'daily',
       limit: 0,
+      amountLimit: {
+        value: 0,
+        currency: 'EUR'
+      },
       enabled: true,
       transactionTypes: []
     }
   });
   
-  // Watch the ruleType field to update the form fields accordingly
   const ruleType = form.watch('ruleType') as AntiFraudRuleType;
   const editRuleType = editForm.watch('ruleType') as AntiFraudRuleType;
   
@@ -169,10 +172,8 @@ const AntiFraudRules = () => {
       setLoading(true);
       
       if (useExampleData) {
-        // Use example data
         setRules(exampleRules);
       } else {
-        // Fetch from API
         const rulesData = await apiService.listAntiFraudRules();
         setRules(rulesData);
       }
@@ -182,7 +183,6 @@ const AntiFraudRules = () => {
       console.error("Error fetching anti-fraud rules:", err);
       setError("Failed to load anti-fraud rules. Please try again later.");
       
-      // Fallback to example data
       setRules(exampleRules);
     } finally {
       setLoading(false);
@@ -193,7 +193,6 @@ const AntiFraudRules = () => {
     try {
       const newRule: AntiFraudRule = {
         ...values,
-        // Only include relevant fields based on rule type
         applicationTime: needsApplicationTime(values.ruleType as AntiFraudRuleType) 
           ? values.applicationTime 
           : undefined,
@@ -201,7 +200,7 @@ const AntiFraudRules = () => {
           ? values.limit 
           : undefined,
         amountLimit: needsAmountLimit(values.ruleType as AntiFraudRuleType) 
-          ? values.amountLimit 
+          ? (values.amountLimit || { value: 0, currency: 'EUR' }) 
           : undefined,
         securityFactor: needsSecurityFactor(values.ruleType as AntiFraudRuleType) 
           ? values.securityFactor 
@@ -212,12 +211,10 @@ const AntiFraudRules = () => {
       };
       
       if (useExampleData) {
-        // Add to example data
         const newId = (Math.max(...rules.map(r => Number(r.id || "0"))) + 1).toString();
         const ruleWithId = { ...newRule, id: newId };
         setRules([...rules, ruleWithId]);
       } else {
-        // Add to API
         await apiService.addAntiFraudRule(newRule);
         await fetchRules();
       }
@@ -245,7 +242,6 @@ const AntiFraudRules = () => {
     try {
       const updatedRule: AntiFraudRule = {
         ...values,
-        // Only include relevant fields based on rule type
         applicationTime: needsApplicationTime(values.ruleType as AntiFraudRuleType) 
           ? values.applicationTime 
           : undefined,
@@ -253,7 +249,7 @@ const AntiFraudRules = () => {
           ? values.limit 
           : undefined,
         amountLimit: needsAmountLimit(values.ruleType as AntiFraudRuleType) 
-          ? values.amountLimit 
+          ? (values.amountLimit || { value: 0, currency: 'EUR' }) 
           : undefined,
         securityFactor: needsSecurityFactor(values.ruleType as AntiFraudRuleType) 
           ? values.securityFactor 
@@ -264,12 +260,10 @@ const AntiFraudRules = () => {
       };
       
       if (useExampleData) {
-        // Update example data
         setRules(rules.map(rule => 
           rule.id === currentRule.id ? { ...updatedRule, id: rule.id } : rule
         ));
       } else {
-        // Update via API
         await apiService.modifyAntiFraudRule(currentRule.id, updatedRule);
         await fetchRules();
       }
@@ -297,10 +291,8 @@ const AntiFraudRules = () => {
     
     try {
       if (useExampleData) {
-        // Remove from example data
         setRules(rules.filter(rule => rule.id !== ruleId));
       } else {
-        // Delete via API
         await apiService.deleteAntiFraudRule(ruleId);
         await fetchRules();
       }
@@ -322,12 +314,11 @@ const AntiFraudRules = () => {
   const openEditDialog = (rule: AntiFraudRule) => {
     setCurrentRule(rule);
     
-    // Reset form with rule values
     editForm.reset({
       ruleType: rule.ruleType || 'custom',
       applicationTime: rule.applicationTime,
       limit: rule.limit,
-      amountLimit: rule.amountLimit,
+      amountLimit: rule.amountLimit || { value: 0, currency: 'EUR' },
       securityFactor: rule.securityFactor || 'any',
       transactionTypes: rule.transactionTypes || [],
       description: rule.description,
@@ -354,7 +345,6 @@ const AntiFraudRules = () => {
     form.setValue('transactionTypes', updatedTypes);
   };
   
-  // Helper functions to determine which fields to show based on rule type
   const needsApplicationTime = (type: AntiFraudRuleType) => {
     return [
       'max_transactions_daily', 
@@ -837,7 +827,6 @@ const AntiFraudRules = () => {
                 )}
               />
               
-              {/* Add all the same form fields as the add dialog, but with edit form */}
               {needsApplicationTime(editRuleType) && (
                 <FormField
                   control={editForm.control}
