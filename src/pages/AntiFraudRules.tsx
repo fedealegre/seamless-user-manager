@@ -200,7 +200,7 @@ const AntiFraudRules = () => {
           ? values.limit 
           : undefined,
         amountLimit: needsAmountLimit(values.ruleType as AntiFraudRuleType) 
-          ? values.amountLimit 
+          ? (values.amountLimit as AmountWithCurrency)
           : undefined,
         securityFactor: needsSecurityFactor(values.ruleType as AntiFraudRuleType) 
           ? values.securityFactor 
@@ -249,7 +249,7 @@ const AntiFraudRules = () => {
           ? values.limit 
           : undefined,
         amountLimit: needsAmountLimit(values.ruleType as AntiFraudRuleType) 
-          ? values.amountLimit 
+          ? (values.amountLimit as AmountWithCurrency)
           : undefined,
         securityFactor: needsSecurityFactor(values.ruleType as AntiFraudRuleType) 
           ? values.securityFactor 
@@ -314,11 +314,19 @@ const AntiFraudRules = () => {
   const openEditDialog = (rule: AntiFraudRule) => {
     setCurrentRule(rule);
     
+    const amountLimit = rule.amountLimit ? {
+      value: rule.amountLimit.value,
+      currency: rule.amountLimit.currency
+    } : {
+      value: 0,
+      currency: 'EUR'
+    };
+    
     editForm.reset({
       ruleType: rule.ruleType || 'custom',
       applicationTime: rule.applicationTime,
       limit: rule.limit,
-      amountLimit: rule.amountLimit || { value: 0, currency: 'EUR' },
+      amountLimit: amountLimit,
       securityFactor: rule.securityFactor || 'any',
       transactionTypes: rule.transactionTypes || [],
       description: rule.description,
