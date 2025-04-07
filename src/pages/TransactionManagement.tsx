@@ -112,8 +112,8 @@ const TransactionManagement = () => {
               <CardTitle>{t("transactions")}</CardTitle>
               <CardDescription>
                 {isLoading ? t("loading") : 
-                  transactions && transactions.length > 0 
-                    ? `${transactions.length} ${t("transactions-found")}` 
+                  totalTransactions > 0 
+                    ? `${totalTransactions} ${t("transactions-found")}` 
                     : t("no-transactions-found")}
               </CardDescription>
             </div>
@@ -154,7 +154,7 @@ const TransactionManagement = () => {
                   handleChangeStatus={handleChangeStatus}
                 />
                 
-                {transactions && transactions.length > 0 && (
+                {totalTransactions > 0 && (
                   <TransactionsPagination
                     page={page}
                     totalPages={totalPages}

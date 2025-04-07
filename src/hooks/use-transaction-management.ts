@@ -41,8 +41,8 @@ export const useTransactionManagement = () => {
   const userId = "827";
   const walletId = "152";
 
-  const { data: transactions, isLoading, refetch } = useQuery({
-    queryKey: ["transactions", userId, walletId, page, pageSize, searchTerm, filters],
+  const { data: allTransactions = [], isLoading, refetch } = useQuery({
+    queryKey: ["transactions", userId, walletId, searchTerm, filters],
     queryFn: async () => {
       try {
         const txns = await userService.getWalletTransactions(userId, walletId);
@@ -89,7 +89,16 @@ export const useTransactionManagement = () => {
     },
   });
 
-  const handleSearch = () => {
+  const totalTransactions = allTransactions.length || 0;
+  const totalPages = Math.ceil(totalTransactions / pageSize);
+
+  const startIndex = (page - 1) * pageSize;
+  const transactions = allTransactions.slice(startIndex, startIndex + pageSize);
+
+  const handleSearch = (e?: React.FormEvent) => {
+    if (e) {
+      e.preventDefault();
+    }
     setPage(1);
     refetch();
   };
@@ -307,8 +316,6 @@ export const useTransactionManagement = () => {
     }
   };
 
-  const totalTransactions = transactions?.length || 0;
-  const totalPages = Math.ceil(totalTransactions / pageSize);
   const activeFiltersCount = Object.values(filters).filter(v => v !== "").length;
 
   return {
