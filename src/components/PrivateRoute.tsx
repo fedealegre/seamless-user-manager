@@ -7,9 +7,10 @@ import BackofficeLayout from "./BackofficeLayout";
 interface PrivateRouteProps {
   allowedRoles?: string[];
   children?: React.ReactNode;
+  noLayout?: boolean; // Added this prop to control layout rendering
 }
 
-const PrivateRoute: React.FC<PrivateRouteProps> = ({ allowedRoles, children }) => {
+const PrivateRoute: React.FC<PrivateRouteProps> = ({ allowedRoles, children, noLayout = false }) => {
   const { isAuthenticated, user, isLoading } = useAuth();
 
   // Show loading state while authentication status is being determined
@@ -31,30 +32,32 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ allowedRoles, children }) =
     const hasRequiredRole = user?.roles.some(role => allowedRoles.includes(role));
     
     if (!hasRequiredRole) {
+      // For access denied, only show the message without layout if parent is already showing layout
       return (
-        <BackofficeLayout>
-          <div className="flex flex-col items-center justify-center min-h-[calc(100vh-10rem)]">
-            <div className="text-4xl font-bold text-destructive mb-2">Access Denied</div>
-            <p className="text-lg text-muted-foreground mb-6">
-              You don't have permission to access this page.
-            </p>
-            <p className="text-sm text-muted-foreground">
-              Required roles: {allowedRoles.join(", ")}
-            </p>
-          </div>
-        </BackofficeLayout>
+        <div className="flex flex-col items-center justify-center min-h-[calc(100vh-10rem)]">
+          <div className="text-4xl font-bold text-destructive mb-2">Access Denied</div>
+          <p className="text-lg text-muted-foreground mb-6">
+            You don't have permission to access this page.
+          </p>
+          <p className="text-sm text-muted-foreground">
+            Required roles: {allowedRoles.join(", ")}
+          </p>
+        </div>
       );
     }
   }
 
   // If children are provided, render them directly; otherwise, render the Outlet
-  if (children) {
-    return <>{children}</>;
+  const content = children ? <>{children}</> : <Outlet />;
+
+  // Only wrap with BackofficeLayout if noLayout is false
+  if (noLayout) {
+    return content;
   }
 
   return (
     <BackofficeLayout>
-      <Outlet />
+      {content}
     </BackofficeLayout>
   );
 };
