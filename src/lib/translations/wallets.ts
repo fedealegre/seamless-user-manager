@@ -40,7 +40,7 @@ export const walletTranslations = {
     'usd-equivalent': 'Equivalente USD',
     'users-with-wallets': 'Usuarios con billeteras',
     'total-users-with-wallets': 'Total de usuarios con billeteras',
-    'all-wallets': 'Todas las wallets',
+    'all-wallets': 'Todas las billeteras',
     'manage-wallets-for-all-users': 'Gestionar las billeteras para todos los usuarios',
     'search-wallets': 'Buscar billeteras'
   }
