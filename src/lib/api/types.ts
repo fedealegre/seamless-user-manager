@@ -134,11 +134,32 @@ export interface AuditLog {
     entity?: string;
 }
 
+export interface AmountWithCurrency {
+    value: number;
+    currency: string;
+}
+
+export type AntiFraudRuleType = 
+    | 'max_transactions_daily'
+    | 'max_amount_daily'
+    | 'max_amount_daily_cash_out'
+    | 'max_amount_one_factor_cash_out'
+    | 'max_amount_daily_cash_in'
+    | 'max_amount_one_factor_cash_in'
+    | 'max_amount_daily_send_money'
+    | 'max_amount_one_factor_send_money'
+    | 'custom';
+
 export interface AntiFraudRule {
     id?: string;
-    applicationTime: 'daily' | 'monthly' | 'yearly';
-    transactionTypes: string[];
-    limit: number;
+    ruleType?: AntiFraudRuleType;
+    applicationTime?: 'daily' | 'monthly' | 'yearly';
+    transactionTypes?: string[];
+    limit?: number;
+    amountLimit?: AmountWithCurrency;
+    securityFactor?: 'one_factor' | 'two_factor' | 'any';
+    enabled?: boolean;
+    description?: string;
 }
 
 export interface LoginRequest {
