@@ -6,9 +6,10 @@ import BackofficeLayout from "./BackofficeLayout";
 
 interface PrivateRouteProps {
   allowedRoles?: string[];
+  children?: React.ReactNode;
 }
 
-const PrivateRoute: React.FC<PrivateRouteProps> = ({ allowedRoles }) => {
+const PrivateRoute: React.FC<PrivateRouteProps> = ({ allowedRoles, children }) => {
   const { isAuthenticated, user, isLoading } = useAuth();
 
   // Show loading state while authentication status is being determined
@@ -44,6 +45,11 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ allowedRoles }) => {
         </BackofficeLayout>
       );
     }
+  }
+
+  // If children are provided, render them directly; otherwise, render the Outlet
+  if (children) {
+    return <>{children}</>;
   }
 
   return (

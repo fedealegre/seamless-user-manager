@@ -40,9 +40,9 @@ const sidebarSections: SidebarSection[] = [
     translationKey: "management",
     items: [
       { title: "Dashboard", translationKey: "dashboard", icon: BarChart3, path: "/dashboard", roles: ["analista", "operador", "compensador", "configurador"] },
-      { title: "User Management", translationKey: "users", icon: Users, path: "/users", roles: ["operador", "compensador", "configurador"] },
-      { title: "Wallets", translationKey: "wallets", icon: Wallet, path: "/wallets", roles: ["operador", "compensador", "configurador"] },
-      { title: "Transactions", translationKey: "transactions", icon: FileText, path: "/transactions", roles: ["operador", "compensador", "configurador"] }
+      { title: "User Management", translationKey: "users", icon: Users, path: "/users", roles: ["operador", "compensador"] },
+      { title: "Wallets", translationKey: "wallets", icon: Wallet, path: "/wallets", roles: ["operador", "compensador"] },
+      { title: "Transactions", translationKey: "transactions", icon: FileText, path: "/transactions", roles: ["operador", "compensador"] }
     ]
   },
   {
@@ -74,6 +74,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ sidebarOpen }) => {
   const { settings } = useBackofficeSettings();
   const location = useLocation();
 
+  // Function to check if user has the required role
   const hasRequiredRoles = (item: SidebarItem) => {
     if (!item.roles || item.roles.length === 0) return true;
     return user?.roles.some(role => item.roles?.includes(role));
@@ -82,10 +83,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ sidebarOpen }) => {
   return (
     <div className="flex-1 py-4 overflow-y-auto">
       {sidebarSections.map((section, index) => {
-        const visibleItems = section.items.filter(hasRequiredRoles);
-        
-        if (visibleItems.length === 0) return null;
-        
+        // Show all sidebar sections to all users
         return (
           <div key={index} className="mb-6">
             {sidebarOpen && (
@@ -96,7 +94,7 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ sidebarOpen }) => {
               </div>
             )}
             <ul>
-              {visibleItems.map((item, itemIndex) => (
+              {section.items.map((item, itemIndex) => (
                 <li key={itemIndex}>
                   <Link 
                     to={item.path} 
@@ -104,7 +102,9 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ sidebarOpen }) => {
                       "flex items-center h-10 px-4 text-sm rounded-md transition-colors duration-200",
                       location.pathname === item.path 
                         ? "bg-primary/10 text-primary font-medium"
-                        : "hover:bg-accent hover:text-accent-foreground"
+                        : "hover:bg-accent hover:text-accent-foreground",
+                      // Add visual indication if the user doesn't have access
+                      !hasRequiredRoles(item) && "opacity-70 cursor-not-allowed"
                     )}
                   >
                     <item.icon size={18} />

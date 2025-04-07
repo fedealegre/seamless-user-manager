@@ -51,27 +51,74 @@ const App = () => (
                   {/* Redirect from root to dashboard */}
                   <Route path="/" element={<Navigate to="/dashboard" replace />} />
                   
-                  {/* Routes for Analista, Operador, Compensador, Configurador */}
-                  <Route element={<PrivateRoute allowedRoles={["analista", "operador", "compensador", "configurador"]} />}>
-                    <Route path="/dashboard" element={<Dashboard />} />
-                  </Route>
-                  
-                  {/* Routes for Operador, Compensador, Configurador */}
-                  <Route element={<PrivateRoute allowedRoles={["operador", "compensador", "configurador"]} />}>
-                    <Route path="/users" element={<UserManagement />} />
-                    <Route path="/users/:userId" element={<UserDetailPage />} />
-                    <Route path="/wallets" element={<WalletManagement />} />
-                    <Route path="/transactions" element={<TransactionManagement />} />
-                  </Route>
-                  
-                  {/* Routes for Configurador only */}
-                  <Route element={<PrivateRoute allowedRoles={["configurador"]} />}>
-                    <Route path="/anti-fraud" element={<AntiFraudRules />} />
-                    <Route path="/audit-logs" element={<AuditLogs />} />
-                    <Route path="/backoffice-operators" element={<BackofficeOperators />} />
-                    <Route path="/company-settings" element={<CompanySettings />} />
-                    <Route path="/user-field-settings" element={<UserFieldSettings />} />
-                    <Route path="/backoffice-settings" element={<BackofficeSettings />} />
+                  {/* Private Routes - All users will see these in navigation but access is controlled by PrivateRoute */}
+                  <Route element={<PrivateRoute />}>
+                    {/* Dashboard - Available to all authenticated users */}
+                    <Route path="/dashboard" element={
+                      <PrivateRoute allowedRoles={["analista", "operador", "compensador", "configurador"]}>
+                        <Dashboard />
+                      </PrivateRoute>
+                    } />
+                    
+                    {/* User Management Routes - Only available to operador, compensador */}
+                    <Route path="/users" element={
+                      <PrivateRoute allowedRoles={["operador", "compensador"]}>
+                        <UserManagement />
+                      </PrivateRoute>
+                    } />
+                    <Route path="/users/:userId" element={
+                      <PrivateRoute allowedRoles={["operador", "compensador"]}>
+                        <UserDetailPage />
+                      </PrivateRoute>
+                    } />
+                    
+                    {/* Wallet Management - Only available to operador, compensador */}
+                    <Route path="/wallets" element={
+                      <PrivateRoute allowedRoles={["operador", "compensador"]}>
+                        <WalletManagement />
+                      </PrivateRoute>
+                    } />
+                    
+                    {/* Transaction Management - Only available to operador, compensador */}
+                    <Route path="/transactions" element={
+                      <PrivateRoute allowedRoles={["operador", "compensador"]}>
+                        <TransactionManagement />
+                      </PrivateRoute>
+                    } />
+                    
+                    {/* Security Routes - Only available to configurador */}
+                    <Route path="/anti-fraud" element={
+                      <PrivateRoute allowedRoles={["configurador"]}>
+                        <AntiFraudRules />
+                      </PrivateRoute>
+                    } />
+                    <Route path="/audit-logs" element={
+                      <PrivateRoute allowedRoles={["configurador"]}>
+                        <AuditLogs />
+                      </PrivateRoute>
+                    } />
+                    <Route path="/backoffice-operators" element={
+                      <PrivateRoute allowedRoles={["configurador"]}>
+                        <BackofficeOperators />
+                      </PrivateRoute>
+                    } />
+                    
+                    {/* Settings Routes - Only available to configurador */}
+                    <Route path="/company-settings" element={
+                      <PrivateRoute allowedRoles={["configurador"]}>
+                        <CompanySettings />
+                      </PrivateRoute>
+                    } />
+                    <Route path="/user-field-settings" element={
+                      <PrivateRoute allowedRoles={["configurador"]}>
+                        <UserFieldSettings />
+                      </PrivateRoute>
+                    } />
+                    <Route path="/backoffice-settings" element={
+                      <PrivateRoute allowedRoles={["configurador"]}>
+                        <BackofficeSettings />
+                      </PrivateRoute>
+                    } />
                   </Route>
                   
                   {/* Catch-all Route */}
