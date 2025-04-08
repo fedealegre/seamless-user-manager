@@ -71,7 +71,7 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
           <TableRow>
             <TableHead>{t("status")}</TableHead>
             <TableHead>{t("date")}</TableHead>
-            <TableHead>{t("movement-Type")}</TableHead>
+            <TableHead>{t("movement-type")}</TableHead>
             <TableHead>{t("transaction-type")}</TableHead>
             <TableHead>{t("amount")}</TableHead>
             <TableHead>{t("transaction-id")}</TableHead>
