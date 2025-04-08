@@ -115,7 +115,7 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
   // Check if the edit button should be visible
   // There should be at least one editable field
   const hasEditableFields = isLoaded && [
-    "name", "surname", "username", "email", "phoneNumber", 
+    "name", "surname", "username", "email", "cellPhone", 
     "birthDate", "nationality", "gender", "language", "region",
     "additionalInfo"
   ].some(field => isFieldEditable(field));
@@ -170,10 +170,10 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
                   <p>{formatDisplayValue(user.email)}</p>
                 </div>
               )}
-              {shouldRenderField("phoneNumber") && (
+              {shouldRenderField("cellPhone") && (
                 <div>
-                  <h3 className="text-sm font-medium text-muted-foreground">Phone Number</h3>
-                  <p>{formatDisplayValue(user.phoneNumber || user.cellPhone)}</p>
+                  <h3 className="text-sm font-medium text-muted-foreground">Cell Phone</h3>
+                  <p>{formatDisplayValue(user.cellPhone)}</p>
                 </div>
               )}
             </div>
