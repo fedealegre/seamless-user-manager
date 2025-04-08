@@ -14,7 +14,7 @@ export const defaultFieldSettings: FieldSetting[] = [
   { fieldName: "surname", displayName: "Last Name", isVisible: true, isEditable: true },
   { fieldName: "username", displayName: "Username", isVisible: true, isEditable: true },
   { fieldName: "email", displayName: "Email", isVisible: true, isEditable: true },
-  { fieldName: "phoneNumber", displayName: "Phone Number", isVisible: true, isEditable: true },
+  { fieldName: "cellPhone", displayName: "Cell Phone", isVisible: true, isEditable: true },
   { fieldName: "gender", displayName: "Gender", isVisible: true, isEditable: true },
   { fieldName: "birthDate", displayName: "Birth Date", isVisible: true, isEditable: true },
   { fieldName: "nationality", displayName: "Nationality", isVisible: true, isEditable: true },
