@@ -2,7 +2,12 @@
 import React from "react";
 import { Transaction } from "@/lib/api/types";
 import { MoreVertical, Eye, XCircle, CircleDollarSign, RefreshCw } from "lucide-react";
-import { getTranslatedStatusBadge, getTranslatedTypeBadge, formatCurrency } from "./transaction-utils";
+import { 
+  getTranslatedStatusBadge, 
+  getTranslatedTypeBadge, 
+  getTranslatedTransactionTypeBadge, 
+  formatCurrency 
+} from "./transaction-utils";
 import { 
   Table, 
   TableBody, 
@@ -100,7 +105,7 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
                   {getTranslatedTypeBadge(transaction.movementType || "unknown", settings.language)}
                 </TableCell>
                 <TableCell>
-                  {getTranslatedTypeBadge(transaction.type || "unknown", settings.language)}
+                  {getTranslatedTransactionTypeBadge(transaction.transactionType || transaction.type || "unknown", settings.language)}
                 </TableCell>
                 <TableCell>
                   <div className={`font-medium ${(transaction.movementType === 'deposit' || transaction.movementType === 'INCOME') ? 'text-green-600' : transaction.movementType === 'OUTCOME' ? 'text-red-600' : ''}`}>
