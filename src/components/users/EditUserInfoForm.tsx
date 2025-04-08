@@ -50,8 +50,8 @@ const createUserFormSchema = (isFieldEditable: (fieldName: string) => boolean) =
     ).optional().nullable();
   }
   
-  if (isFieldEditable("phoneNumber")) {
-    schemaObj.phoneNumber = z.string().optional().nullable();
+  if (isFieldEditable("cellPhone")) {
+    schemaObj.cellPhone = z.string().optional().nullable();
   }
   
   if (isFieldEditable("birthDate")) {
@@ -123,7 +123,7 @@ export const EditUserInfoForm: React.FC<EditUserInfoFormProps> = ({
     if (isFieldEditable("surname")) defaultValues.surname = user.surname;
     if (isFieldEditable("username")) defaultValues.username = user.username;
     if (isFieldEditable("email")) defaultValues.email = user.email || "";
-    if (isFieldEditable("phoneNumber")) defaultValues.phoneNumber = user.phoneNumber || "";
+    if (isFieldEditable("cellPhone")) defaultValues.cellPhone = user.cellPhone || "";
     if (isFieldEditable("birthDate")) defaultValues.birthDate = birthDateValue;
     if (isFieldEditable("nationality")) defaultValues.nationality = user.nationality || "";
     if (isFieldEditable("gender")) defaultValues.gender = (user.gender as "M" | "F" | "Other") || "unspecified";
@@ -272,13 +272,13 @@ export const EditUserInfoForm: React.FC<EditUserInfoFormProps> = ({
             />
           )}
           
-          {isFieldEditable("phoneNumber") && (
+          {isFieldEditable("cellPhone") && (
             <FormField
               control={form.control}
-              name="phoneNumber"
+              name="cellPhone"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Phone Number</FormLabel>
+                  <FormLabel>Cell Phone</FormLabel>
                   <FormControl>
                     <Input {...field} value={field.value || ""} />
                   </FormControl>
