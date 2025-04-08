@@ -64,7 +64,7 @@ const TransactionManagement = () => {
     return [
       transaction.transactionId || transaction.id.toString(),
       transaction.reference || '',
-      transaction.date ? formatDateTime(new Date(transaction.date)) : '',
+      transaction.date? formatDateTime(new Date(transaction.date)) : '',
       t(transaction.movementType?.toLowerCase() || 'unknown'),
       t(transaction.transactionType?.toLowerCase() || 'unknown'),
       transaction.amount?.toString() || '',
