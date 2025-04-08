@@ -126,7 +126,7 @@ const TransactionManagement = () => {
                   t('transaction-id'), 
                   t('reference'), 
                   t('date'),
-                  t('movement-type',
+                  t('movement-type'),
                   t('transaction-type'), 
                   t('amount'), 
                   t('currency'), 
