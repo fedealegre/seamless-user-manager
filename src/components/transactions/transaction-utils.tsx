@@ -40,6 +40,20 @@ export const getTranslatedTypeBadge = (type?: string, language: string = "en") =
       return <Badge className="bg-indigo-100 text-indigo-800 hover:bg-indigo-100">{translatedType}</Badge>;
     case 'compensation':
       return <Badge className="bg-teal-100 text-teal-800 hover:bg-teal-100">{translatedType}</Badge>;
+    case 'CASH_IN':
+      return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">{translatedType}</Badge>;
+    case 'TK_PAY_REQ':
+      return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">{translatedType}</Badge>;
+    case 'TRANSFER_CASH_IN':
+      return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">{translatedType}</Badge>;
+    case 'CASH_OUT':
+      return <Badge className="bg-purple-100 text-purple-800 hover:bg-purple-100">{translatedType}</Badge>;
+    case 'TK_PAY_REQ_CASH_OUT':
+      return <Badge className="bg-purple-100 text-purple-800 hover:bg-purple-100">{translatedType}</Badge>;
+    case 'TRANSFER_CASH_OUT':
+      return <Badge className="bg-purple-100 text-purple-800 hover:bg-purple-100">{translatedType}</Badge>;
+    case 'COMPENSATE':
+      return <Badge className="bg-teal-100 text-teal-800 hover:bg-teal-100">{translatedType}</Badge>;
     default:
       return <Badge>{type || t("unknown")}</Badge>;
   }
@@ -71,6 +85,20 @@ export const getTypeBadge = (type?: string) => {
       return <Badge className="bg-indigo-100 text-indigo-800 hover:bg-indigo-100">Transfer</Badge>;
     case 'compensation':
       return <Badge className="bg-teal-100 text-teal-800 hover:bg-teal-100">Compensation</Badge>;
+    case 'CASH_IN':
+      return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">{translatedType}</Badge>;
+    case 'TK_PAY_REQ':
+      return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">{translatedType}</Badge>;
+    case 'TRANSFER_CASH_IN':
+      return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">{translatedType}</Badge>;
+    case 'CASH_OUT':
+      return <Badge className="bg-purple-100 text-purple-800 hover:bg-purple-100">{translatedType}</Badge>;
+    case 'TK_PAY_REQ_CASH_OUT':
+      return <Badge className="bg-purple-100 text-purple-800 hover:bg-purple-100">{translatedType}</Badge>;
+    case 'TRANSFER_CASH_OUT':
+      return <Badge className="bg-purple-100 text-purple-800 hover:bg-purple-100">{translatedType}</Badge>;
+    case 'COMPENSATE':
+      return <Badge className="bg-teal-100 text-teal-800 hover:bg-teal-100">{translatedType}</Badge>;
     default:
       return <Badge>{type || 'Unknown'}</Badge>;
   }
