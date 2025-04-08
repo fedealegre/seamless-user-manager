@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Check, Save, Upload, Building, Wallet, Bell } from "lucide-react";
+import { Check, Save, Upload, Building, Wallet, Bell, Settings } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCompanySettings } from "@/contexts/CompanySettingsContext";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,6 +14,7 @@ import { useToast } from "@/hooks/use-toast";
 import { CompanyInfoForm } from "@/components/company-settings/CompanyInfoForm";
 import { NotificationSettingsForm } from "@/components/company-settings/NotificationSettingsForm";
 import { FinancialSettingsForm } from "@/components/company-settings/FinancialSettingsForm";
+import AppRulesForm from "@/components/company-settings/AppRulesForm";
 
 const CompanySettings = () => {
   const { user } = useAuth();
@@ -114,6 +115,10 @@ const CompanySettings = () => {
             <Wallet size={16} />
             <span>Financial</span>
           </TabsTrigger>
+          <TabsTrigger value="rules" className="flex items-center gap-2">
+            <Settings size={16} />
+            <span>App Rules</span>
+          </TabsTrigger>
         </TabsList>
         
         <TabsContent value="company-info">
@@ -178,6 +183,10 @@ const CompanySettings = () => {
               />
             </CardContent>
           </Card>
+        </TabsContent>
+        
+        <TabsContent value="rules">
+          <AppRulesForm />
         </TabsContent>
       </Tabs>
     </div>
