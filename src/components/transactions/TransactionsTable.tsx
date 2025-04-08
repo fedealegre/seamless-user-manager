@@ -64,11 +64,12 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>{t("transaction-id")}</TableHead>
+            <TableHead>{t("status")}</TableHead>
             <TableHead>{t("date")}</TableHead>
             <TableHead>{t("type")}</TableHead>
+            <TableHead>{t("transaction-type")}</TableHead>
             <TableHead>{t("amount")}</TableHead>
-            <TableHead>{t("status")}</TableHead>
+            <TableHead>{t("transaction-id")}</TableHead>
             <TableHead className="text-right">{t("actions")}</TableHead>
           </TableRow>
         </TableHeader>
@@ -77,12 +78,7 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
             transactions.map((transaction) => (
               <TableRow key={transaction.id}>
                 <TableCell>
-                  <div className="font-medium">{transaction.transactionId || transaction.id}</div>
-                  {transaction.reference && (
-                    <div className="text-xs text-muted-foreground">
-                      {t("reference")}: {transaction.reference}
-                    </div>
-                  )}
+                  {getTranslatedStatusBadge(transaction.status, settings.language)}
                 </TableCell>
                 <TableCell>
                   {transaction.date ? (
@@ -101,7 +97,10 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
                   ) : '-'}
                 </TableCell>
                 <TableCell>
-                  {getTranslatedTypeBadge(transaction.movementType || transaction.type, settings.language)}
+                  {getTranslatedTypeBadge(transaction.movementType || "unknown", settings.language)}
+                </TableCell>
+                <TableCell>
+                  {getTranslatedTypeBadge(transaction.type || "unknown", settings.language)}
                 </TableCell>
                 <TableCell>
                   <div className={`font-medium ${(transaction.movementType === 'deposit' || transaction.movementType === 'INCOME') ? 'text-green-600' : transaction.movementType === 'OUTCOME' ? 'text-red-600' : ''}`}>
@@ -109,7 +108,12 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
                   </div>
                 </TableCell>
                 <TableCell>
-                  {getTranslatedStatusBadge(transaction.status, settings.language)}
+                  <div className="font-medium">{transaction.transactionId || transaction.id}</div>
+                  {transaction.reference && (
+                    <div className="text-xs text-muted-foreground">
+                      {t("reference")}: {transaction.reference}
+                    </div>
+                  )}
                 </TableCell>
                 <TableCell className="text-right">
                   <DropdownMenu>
@@ -157,7 +161,7 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={6} className="h-24 text-center">
+              <TableCell colSpan={7} className="h-24 text-center">
                 {t("no-transactions-found")}
               </TableCell>
             </TableRow>
