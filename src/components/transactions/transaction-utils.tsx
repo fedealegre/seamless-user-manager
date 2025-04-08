@@ -40,7 +40,7 @@ export const getTranslatedTypeBadge = (type?: string, language: string = "en") =
       return <Badge className="bg-indigo-100 text-indigo-800 hover:bg-indigo-100">{translatedType}</Badge>;
     case 'compensation':
       return <Badge className="bg-teal-100 text-teal-800 hover:bg-teal-100">{translatedType}</Badge>;
-    case 'CASH_IN':
+    case 'cash_in':
       return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">{translatedType}</Badge>;
     case 'TK_PAY_REQ':
       return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">{translatedType}</Badge>;
