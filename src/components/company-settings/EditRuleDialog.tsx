@@ -78,6 +78,7 @@ const EditRuleDialog: React.FC<EditRuleDialogProps> = ({
                       <Textarea
                         placeholder="Enter rule value"
                         className="min-h-[100px]"
+                        {rule.name}
                         {...field}
                       />
                     ) : (
