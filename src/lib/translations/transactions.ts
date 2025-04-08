@@ -194,7 +194,7 @@ export const transactionTranslations = {
     'original-transaction-id': 'ID de Transacción Original',
     'origin-transaction-id': 'ID de Transacción de Origen',
     'destination-transaction-id': 'ID de Transacción de Destino',
-    'movement-type': 'Tipo de Movimiento,
+    'movement-type': 'Tipo de Movimiento',
     'transaction-type': 'Tipo de Transacción',
     'origin-wallet': 'Billetera de Origen',
     'destination-wallet': 'Billetera de Destino',
