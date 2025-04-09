@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { userService } from "@/lib/api/user-service";
@@ -38,17 +39,17 @@ export const useTransactionManagement = () => {
   const { settings } = useBackofficeSettings();
   const t = (key: string) => translate(key, settings.language);
 
-  const userId = "827";
-  const walletId = "152";
-
+  // Replace hardcoded userId and walletId with getAllTransactions
   const { data: allTransactions = [], isLoading, refetch } = useQuery({
-    queryKey: ["transactions", userId, walletId, searchTerm, filters],
+    queryKey: ["transactions", searchTerm, filters],
     queryFn: async () => {
       try {
-        const txns = await userService.getWalletTransactions(userId, walletId);
+        // Use the new method to get all transactions
+        const txns = await userService.getAllTransactions();
         
         let filteredTxns = [...txns];
         
+        // Apply filters
         if (filters.status) {
           filteredTxns = filteredTxns.filter(t => 
             t.status?.toLowerCase() === filters.status.toLowerCase()
@@ -68,6 +69,24 @@ export const useTransactionManagement = () => {
           );
         }
         
+        // Apply date filters if provided
+        if (filters.startDate) {
+          const startDate = new Date(filters.startDate);
+          filteredTxns = filteredTxns.filter(t => 
+            t.date ? new Date(t.date) >= startDate : true
+          );
+        }
+        
+        if (filters.endDate) {
+          const endDate = new Date(filters.endDate);
+          // Set to end of day
+          endDate.setHours(23, 59, 59, 999);
+          filteredTxns = filteredTxns.filter(t => 
+            t.date ? new Date(t.date) <= endDate : true
+          );
+        }
+        
+        // Apply search term filter
         if (searchTerm) {
           filteredTxns = filteredTxns.filter(t => 
             (t.transactionId?.toString().includes(searchTerm)) || 

@@ -1,4 +1,3 @@
-
 import { User, Wallet, Transaction, CompensationRequest, ResetPasswordRequest, ResetPasswordResponse } from "../types";
 import { UserService, ChangeTransactionStatusRequest } from "./user-service-interface";
 import { mockUsers, mockWallets, mockTransactions } from "../mock/mock-users-data";
@@ -243,5 +242,30 @@ export class MockUserService implements UserService {
     mockTransactions[parseInt(walletId)][transactionIndex] = transaction;
     
     return transaction;
+  }
+
+  async getAllTransactions(): Promise<Transaction[]> {
+    console.log("Using mock data for getAllTransactions");
+    
+    // Collect all transactions from all wallets
+    const allTransactions: Transaction[] = [];
+    
+    // Iterate through all wallets and collect their transactions
+    Object.entries(mockTransactions).forEach(([walletId, transactions]) => {
+      // Add wallet ID to each transaction if not already present
+      const transactionsWithWalletId = transactions.map(transaction => ({
+        ...transaction,
+        walletId: transaction.walletId || walletId.toString()
+      }));
+      
+      allTransactions.push(...transactionsWithWalletId);
+    });
+    
+    // Sort transactions by date (newest first)
+    return allTransactions.sort((a, b) => {
+      const dateA = a.date ? new Date(a.date).getTime() : 0;
+      const dateB = b.date ? new Date(b.date).getTime() : 0;
+      return dateB - dateA;
+    });
   }
 }
