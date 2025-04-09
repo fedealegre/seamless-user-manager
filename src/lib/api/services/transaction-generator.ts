@@ -13,7 +13,7 @@ export const generateRandomTransaction = (): Transaction => {
   const randomWallet = userWallets[Math.floor(Math.random() * userWallets.length)];
   
   // Generate transaction types and statuses
-  const movementTypes = ["income", "outcome"]
+  const movementTypes = ["income", "outcome"];
   const transactionTypes = ["cash_in", "transfer_cash_in", "cash_out", "tk_pay_req", "compensate"];
   const transactionStatuses = ["completed", "pending", "failed", "cancelled"];
 
