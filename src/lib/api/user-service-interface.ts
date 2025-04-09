@@ -1,5 +1,5 @@
 
-import { User, Wallet, Transaction, CompensationRequest, ResetPasswordRequest, ResetPasswordResponse } from "../types";
+import { User, Wallet, Transaction, CompensationRequest, ResetPasswordRequest, ResetPasswordResponse } from "./types";
 
 export interface ChangeTransactionStatusRequest {
   newStatus: 'cancelled' | 'rejected' | 'confirmed' | 'approved';

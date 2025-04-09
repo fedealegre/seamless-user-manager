@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { userService } from "@/lib/api/user-service";
@@ -39,17 +38,14 @@ export const useTransactionManagement = () => {
   const { settings } = useBackofficeSettings();
   const t = (key: string) => translate(key, settings.language);
 
-  // Replace hardcoded userId and walletId with getAllTransactions
   const { data: allTransactions = [], isLoading, refetch } = useQuery({
     queryKey: ["transactions", searchTerm, filters],
     queryFn: async () => {
       try {
-        // Use the new method to get all transactions
         const txns = await userService.getAllTransactions();
         
         let filteredTxns = [...txns];
         
-        // Apply filters
         if (filters.status) {
           filteredTxns = filteredTxns.filter(t => 
             t.status?.toLowerCase() === filters.status.toLowerCase()
@@ -69,7 +65,6 @@ export const useTransactionManagement = () => {
           );
         }
         
-        // Apply date filters if provided
         if (filters.startDate) {
           const startDate = new Date(filters.startDate);
           filteredTxns = filteredTxns.filter(t => 
@@ -79,14 +74,12 @@ export const useTransactionManagement = () => {
         
         if (filters.endDate) {
           const endDate = new Date(filters.endDate);
-          // Set to end of day
           endDate.setHours(23, 59, 59, 999);
           filteredTxns = filteredTxns.filter(t => 
             t.date ? new Date(t.date) <= endDate : true
           );
         }
         
-        // Apply search term filter
         if (searchTerm) {
           filteredTxns = filteredTxns.filter(t => 
             (t.transactionId?.toString().includes(searchTerm)) || 
@@ -230,9 +223,10 @@ export const useTransactionManagement = () => {
     
     try {
       const transactionIdentifier = selectedTransaction.transactionId || selectedTransaction.id.toString();
+      const currentWalletId = selectedTransaction.walletId;
       
       await userService.changeTransactionStatus(
-        walletId,
+        currentWalletId,
         transactionIdentifier,
         {
           newStatus: newStatus as 'cancelled' | 'rejected' | 'confirmed' | 'approved',
