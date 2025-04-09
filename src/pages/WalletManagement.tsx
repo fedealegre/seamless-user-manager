@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Plus, Search, RefreshCw, Wallet, Users } from "lucide-react";
+import { Plus, Search, Wallet, Users } from "lucide-react";
 import { userService } from "@/lib/api/user-service";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -20,9 +20,7 @@ const WalletManagement: React.FC = () => {
   
   const { 
     data: walletsWithUsers = [], 
-    isLoading, 
-    refetch,
-    isRefetching
+    isLoading
   } = useQuery({
     queryKey: ["all-wallets"],
     queryFn: async () => {
@@ -59,10 +57,6 @@ const WalletManagement: React.FC = () => {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-  };
-
-  const handleRefresh = () => {
-    refetch();
   };
 
   return (
@@ -162,10 +156,6 @@ const WalletManagement: React.FC = () => {
                 />
               </div>
             </form>
-            <Button variant="outline" onClick={handleRefresh} disabled={isRefetching}>
-              <RefreshCw className={`h-4 w-4 mr-2 ${isRefetching ? 'animate-spin' : ''}`} />
-              {t("refresh")}
-            </Button>
           </div>
 
           {isLoading ? (

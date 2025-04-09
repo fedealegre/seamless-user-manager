@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Edit, ExternalLink, Eye } from "lucide-react";
+import { Eye } from "lucide-react";
 import { Wallet } from "@/lib/api/types";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -15,6 +15,7 @@ import {
 import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
 import { translate } from "@/lib/translations";
 import TransactionsPagination from "@/components/transactions/TransactionsPagination";
+import { useNavigate } from "react-router-dom";
 
 interface WalletsTableProps {
   wallets: (Wallet & { userId?: string })[];
@@ -37,6 +38,14 @@ export const WalletsTable: React.FC<WalletsTableProps> = ({
 }) => {
   const { settings } = useBackofficeSettings();
   const t = (key: string) => translate(key, settings.language);
+  const navigate = useNavigate();
+  
+  // Helper function to navigate to user's wallet transactions
+  const handleViewUserWallet = (userId: string, walletId: string) => {
+    if (userId) {
+      navigate(`/users/${userId}?tab=transactions`);
+    }
+  };
   
   // Helper function for wallet status badge
   const getStatusBadge = (status?: string) => {
@@ -125,12 +134,16 @@ export const WalletsTable: React.FC<WalletsTableProps> = ({
                           <Eye className="h-4 w-4" />
                         </Button>
                       )}
-                      <Button variant="outline" size="icon" title={t("edit")}>
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="icon">
-                        <ExternalLink className="h-4 w-4" />
-                      </Button>
+                      {wallet.userId && (
+                        <Button 
+                          variant="outline" 
+                          size="icon" 
+                          onClick={() => handleViewUserWallet(wallet.userId!, wallet.id.toString())}
+                          title={t("view-user-wallet")}
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                      )}
                     </div>
                   </TableCell>
                 </TableRow>

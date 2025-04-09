@@ -20,7 +20,8 @@ export const walletTranslations = {
     'total-users-with-wallets': 'Total users with wallets',
     'all-wallets': 'All wallets',
     'manage-wallets-for-all-users': 'Manage wallets for all users',
-    'search-wallets': 'Search wallets'
+    'search-wallets': 'Search wallets',
+    'view-user-wallet': 'View user wallet transactions'
   },
   es: {
     'wallets': 'Billeteras',
@@ -42,6 +43,7 @@ export const walletTranslations = {
     'total-users-with-wallets': 'Total de usuarios con billeteras',
     'all-wallets': 'Todas las billeteras',
     'manage-wallets-for-all-users': 'Gestionar las billeteras para todos los usuarios',
-    'search-wallets': 'Buscar billeteras'
+    'search-wallets': 'Buscar billeteras',
+    'view-user-wallet': 'Ver transacciones de billetera del usuario'
   }
 };
