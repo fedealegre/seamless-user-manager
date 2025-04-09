@@ -1,11 +1,16 @@
-
 import { User, Wallet, Transaction, CompensationRequest, ResetPasswordRequest, ResetPasswordResponse } from "../types";
 import { UserService, ChangeTransactionStatusRequest } from "./user-service-interface";
 import { mockUsers, mockWallets, mockTransactions } from "../mock/mock-users-data";
 import { generateRandomTransaction } from "./transaction-generator";
+import { TransactionGenerator } from './transaction-generator';
 
-// The actual service implementation that uses mock data
 export class MockUserService implements UserService {
+  private transactionGenerator: TransactionGenerator;
+  
+  constructor() {
+    this.transactionGenerator = new TransactionGenerator();
+  }
+
   async searchUsers(params: any): Promise<User[]> {
     console.log("Using mock data for searchUsers", params);
     
@@ -243,5 +248,31 @@ export class MockUserService implements UserService {
     mockTransactions[parseInt(walletId)][transactionIndex] = transaction;
     
     return transaction;
+  }
+
+  async getAllTransactions(): Promise<Transaction[]> {
+    // Generate transactions for multiple users
+    const userIds = ["827", "456", "789", "101", "202"];
+    const walletIds = ["152", "153", "154", "155", "156"];
+    
+    let allTransactions: Transaction[] = [];
+    
+    // Generate transactions for each user
+    for (let i = 0; i < userIds.length; i++) {
+      const transactions = this.transactionGenerator.generateTransactions(20, {
+        userId: userIds[i],
+        walletId: walletIds[i]
+      });
+      allTransactions = [...allTransactions, ...transactions];
+    }
+    
+    // Sort by date (newest first)
+    allTransactions.sort((a, b) => {
+      const dateA = a.date ? new Date(a.date).getTime() : 0;
+      const dateB = b.date ? new Date(b.date).getTime() : 0;
+      return dateB - dateA;
+    });
+    
+    return allTransactions;
   }
 }

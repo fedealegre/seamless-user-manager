@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { userService } from "@/lib/api/user-service";
@@ -38,14 +39,12 @@ export const useTransactionManagement = () => {
   const { settings } = useBackofficeSettings();
   const t = (key: string) => translate(key, settings.language);
 
-  const userId = "827";
-  const walletId = "152";
-
   const { data: allTransactions = [], isLoading, refetch } = useQuery({
-    queryKey: ["transactions", userId, walletId, searchTerm, filters],
+    queryKey: ["all-transactions", searchTerm, filters],
     queryFn: async () => {
       try {
-        const txns = await userService.getWalletTransactions(userId, walletId);
+        // Fetch all transactions from the service instead of a specific user's wallet
+        const txns = await userService.getAllTransactions();
         
         let filteredTxns = [...txns];
         
@@ -75,6 +74,13 @@ export const useTransactionManagement = () => {
             (t.reference?.includes(searchTerm))
           );
         }
+        
+        // Sort transactions by date (newest first)
+        filteredTxns.sort((a, b) => {
+          const dateA = a.date ? new Date(a.date).getTime() : 0;
+          const dateB = b.date ? new Date(b.date).getTime() : 0;
+          return dateB - dateA;
+        });
         
         return filteredTxns;
       } catch (error) {
