@@ -38,11 +38,14 @@ export const useTransactionManagement = () => {
   const { settings } = useBackofficeSettings();
   const t = (key: string) => translate(key, settings.language);
 
+  const userId = "827";
+  const walletId = "152";
+
   const { data: allTransactions = [], isLoading, refetch } = useQuery({
-    queryKey: ["all-transactions", searchTerm, filters],
+    queryKey: ["transactions", userId, walletId, searchTerm, filters],
     queryFn: async () => {
       try {
-        const txns = await userService.getAllTransactions();
+        const txns = await userService.getWalletTransactions(userId, walletId);
         
         let filteredTxns = [...txns];
         
@@ -72,12 +75,6 @@ export const useTransactionManagement = () => {
             (t.reference?.includes(searchTerm))
           );
         }
-        
-        filteredTxns.sort((a, b) => {
-          const dateA = a.date ? new Date(a.date).getTime() : 0;
-          const dateB = b.date ? new Date(b.date).getTime() : 0;
-          return dateB - dateA;
-        });
         
         return filteredTxns;
       } catch (error) {
@@ -214,7 +211,6 @@ export const useTransactionManagement = () => {
     
     try {
       const transactionIdentifier = selectedTransaction.transactionId || selectedTransaction.id.toString();
-      const walletId = selectedTransaction.walletId;
       
       await userService.changeTransactionStatus(
         walletId,

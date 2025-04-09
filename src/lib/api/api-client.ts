@@ -1,3 +1,4 @@
+
 import axios, { AxiosInstance } from "axios";
 import { OAuth2Client } from "./oauth-client";
 import { 
@@ -184,11 +185,6 @@ export class ApiClient {
   }
 
   // Transactions API
-  async getAllTransactions(): Promise<Transaction[]> {
-    const response = await this.get<Transaction[]>('/transactions');
-    return response;
-  }
-
   async listTransactions(walletId: string, params?: TransactionListParams): Promise<Transaction[]> {
     const response = await this.get<Transaction[]>(`/wallets/${walletId}/transactions`, params);
     return response;
