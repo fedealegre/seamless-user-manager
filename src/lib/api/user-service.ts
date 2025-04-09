@@ -1,3 +1,4 @@
+
 import { User, Wallet, Transaction, CompensationRequest, TransactionListParams } from './types';
 import { WaasabiApiClient } from './waasabi-api-client';
 import { MockUserService } from './services/mock-user-service';
@@ -29,14 +30,24 @@ class UserService {
     return this.mockService.getUserWallets(userId);
   }
 
+  async getAllWallets(): Promise<{ wallet: Wallet; userId: string }[]> {
+    console.info('Using mock data for getAllWallets');
+    return this.mockService.getAllWallets();
+  }
+
   async getWalletTransactions(userId: string, walletId: string, params?: TransactionListParams): Promise<Transaction[]> {
-     console.info(`Fetching transactions for user ${userId}, wallet ${walletId} with params:`, params);
-    return this.mockService.getWalletTransactions(userId, walletId, params);
+    console.info(`Fetching transactions for user ${userId}, wallet ${walletId} with params:`, params);
+    return this.mockService.getWalletTransactions(userId, walletId);
   }
 
   async getUserData(userId: string): Promise<User> {
     console.info('Using mock data for getUserData', userId);
     return this.mockService.getUserData(userId);
+  }
+
+  async updateUser(userId: string, userData: Partial<User>): Promise<User> {
+    console.info('Using mock data for updateUser', userData);
+    return this.mockService.updateUser(userId, userData);
   }
 
   async deleteUser(userId: string): Promise<void> {
@@ -52,6 +63,11 @@ class UserService {
   async unblockUser(userId: string): Promise<void> {
     console.info('Using mock data for unblockUser', userId);
     return this.mockService.unblockUser(userId);
+  }
+
+  async resetPassword(request: any): Promise<any> {
+    console.info('Using mock data for resetPassword', request);
+    return this.mockService.resetPassword(request);
   }
 
   async compensateCustomer(
@@ -73,6 +89,11 @@ class UserService {
   async removeSecurityFactor(userId: string, factorId: string): Promise<void> {
     console.info(`Removing security factor ${factorId} for user ${userId}`);
     return this.mockService.removeSecurityFactor(userId, factorId);
+  }
+
+  async generateRandomTransaction(): Promise<Transaction> {
+    console.info('Generating random transaction');
+    return this.mockService.generateRandomTransaction();
   }
 }
 

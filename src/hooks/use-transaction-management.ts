@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { userService } from "@/lib/api/user-service";
@@ -43,7 +42,6 @@ export const useTransactionManagement = () => {
     queryKey: ["all-transactions", searchTerm, filters],
     queryFn: async () => {
       try {
-        // Fetch all transactions from the service instead of a specific user's wallet
         const txns = await userService.getAllTransactions();
         
         let filteredTxns = [...txns];
@@ -75,7 +73,6 @@ export const useTransactionManagement = () => {
           );
         }
         
-        // Sort transactions by date (newest first)
         filteredTxns.sort((a, b) => {
           const dateA = a.date ? new Date(a.date).getTime() : 0;
           const dateB = b.date ? new Date(b.date).getTime() : 0;
@@ -217,6 +214,7 @@ export const useTransactionManagement = () => {
     
     try {
       const transactionIdentifier = selectedTransaction.transactionId || selectedTransaction.id.toString();
+      const walletId = selectedTransaction.walletId;
       
       await userService.changeTransactionStatus(
         walletId,

@@ -1,8 +1,7 @@
-import { User, Wallet, Transaction, CompensationRequest, ResetPasswordRequest, ResetPasswordResponse } from "../types";
-import { UserService, ChangeTransactionStatusRequest } from "./user-service-interface";
+import { User, Wallet, Transaction, CompensationRequest } from "../types";
+import { UserService, ChangeTransactionStatusRequest, ResetPasswordRequest, ResetPasswordResponse } from "./user-service-interface";
 import { mockUsers, mockWallets, mockTransactions } from "../mock/mock-users-data";
-import { generateRandomTransaction } from "./transaction-generator";
-import { TransactionGenerator } from './transaction-generator';
+import { generateRandomTransaction, TransactionGenerator } from "./transaction-generator";
 
 export class MockUserService implements UserService {
   private transactionGenerator: TransactionGenerator;
@@ -274,5 +273,21 @@ export class MockUserService implements UserService {
     });
     
     return allTransactions;
+  }
+
+  async removeSecurityFactor(userId: string, factorId: string): Promise<void> {
+    console.log(`Removing security factor ${factorId} for user ${userId}`);
+    // Mock implementation - in a real app, this would remove the security factor from the user
+    const user = mockUsers.find(u => u.id.toString() === userId);
+    if (!user) {
+      throw new Error(`User with ID ${userId} not found`);
+    }
+    
+    // If the user has a securityFactors array, we could remove the factor
+    if (user.additionalInfo && user.additionalInfo.securityFactors) {
+      const factors = JSON.parse(user.additionalInfo.securityFactors);
+      const updatedFactors = factors.filter((f: any) => f.id !== factorId);
+      user.additionalInfo.securityFactors = JSON.stringify(updatedFactors);
+    }
   }
 }
