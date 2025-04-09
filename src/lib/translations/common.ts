@@ -75,7 +75,13 @@ export const commonTranslations = {
     'phone': 'Phone',
     'status': 'Status',
     'see-wallets': 'See Wallets',
-    'see-transactions': 'See Transactions'
+    'see-transactions': 'See Transactions',
+    'first-name': 'First name',
+    'enter-first-name': 'Enter first name',
+    'last-name': 'Last name',
+    'enter-last-name': 'Enter last name',
+    'enter-email': 'Enter email',
+    'create-backoffice-user-with-roles': 'Create backoffice user with roles'
   },
   es: {
     'dashboard': 'Panel de Control',
@@ -152,6 +158,12 @@ export const commonTranslations = {
     'phone': 'Teléfono',
     'status': 'Estado',
     'see-wallets': 'Ver Billeteras',
-    'see-transactions': 'Ver Transacciones'
+    'see-transactions': 'Ver Transacciones',
+    'first-name': 'Nombre',
+    'enter-first-name': 'Ingresar nombre',
+    'last-name': 'Apellido',
+    'enter-last-name': 'Ingresar apellido',
+    'enter-email': 'Ingresar email',
+    'create-backoffice-user-with-roles': 'Crear usuario backoffice con roles'
   }
 };
