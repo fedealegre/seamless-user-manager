@@ -13,9 +13,11 @@ export const generateRandomTransaction = (): Transaction => {
   const randomWallet = userWallets[Math.floor(Math.random() * userWallets.length)];
   
   // Generate transaction types and statuses
-  const transactionTypes = ["deposit", "withdrawal", "transfer", "payment", "refund"];
-  const transactionStatuses = ["completed", "pending", "failed", "processing"];
-  
+  const movementTypes = ["income", "outcome"]
+  const transactionTypes = ["cash_in", "transfer_cash_in", "cash_out", "tk_pay_req", "compensate"];
+  const transactionStatuses = ["completed", "pending", "failed", "cancelled"];
+
+  const randomMovementType = movementTypes[Math.floor(Math.random() * movementTypes.length)];
   const randomType = transactionTypes[Math.floor(Math.random() * transactionTypes.length)];
   const randomStatus = transactionStatuses[Math.floor(Math.random() * transactionStatuses.length)];
   
@@ -30,7 +32,7 @@ export const generateRandomTransaction = (): Transaction => {
     walletId: randomWallet.id.toString(),
     date: new Date().toISOString(),
     status: randomStatus,
-    type: randomType, // Using type field as required by components
+    movementType: randomMovementType, // Using movementType field as required by components
     transactionType: randomType, // Also setting transactionType for compatibility
     amount: randomAmount,
     currency: randomWallet.currency || "USD",
