@@ -71,17 +71,19 @@ const WalletManagement: React.FC = () => {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
+         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              {t("total-users")}
+              {t("users-with-wallets")}
             </CardTitle>
-            <Wallet className="h-4 w-4 text-muted-foreground" />
+            <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{allWallets.length}</div>
+            <div className="text-2xl font-bold">
+              {new Set(walletsWithUsers.map(item => item.userId)).size}
+            </div>
             <p className="text-xs text-muted-foreground">
-              {t("across-all-users")}
+              {t("total-users-with-wallets")}
             </p>
           </CardContent>
         </Card>
@@ -120,16 +122,16 @@ const WalletManagement: React.FC = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              {t("users-with-wallets")}
+              {t("total-available-balance")}
             </CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
+            <Wallet className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {new Set(walletsWithUsers.map(item => item.userId)).size}
+              ${allWallets.reduce((sum, wallet) => sum + (wallet.availableBalance || 0), 0).toLocaleString()}
             </div>
             <p className="text-xs text-muted-foreground">
-              {t("total-users-with-wallets")}
+              {t("usd-equivalent")}
             </p>
           </CardContent>
         </Card>
