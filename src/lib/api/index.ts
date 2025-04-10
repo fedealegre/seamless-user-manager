@@ -4,7 +4,7 @@ export * from "./types";
 
 // Mock data for development
 import { mockUsers } from "./mock/mock-users-data";
-import { BackofficeUser, AntiFraudRule, AuditLog } from "./types";
+import { BackofficeUser, AntiFraudRule, AuditLog, LoginRequest, LoginResponse } from "./types";
 
 // Mock backoffice users
 const mockBackofficeUsers: BackofficeUser[] = [
@@ -142,6 +142,70 @@ export const apiService = {
       id: `${mockBackofficeUsers.length + 1}`,
       last_login: new Date().toISOString()
     });
+  },
+  
+  // Add the missing methods for backoffice users
+  deleteBackofficeUser: async (userId: string): Promise<void> => {
+    console.log("Mock: Deleting backoffice user", userId);
+    const index = mockBackofficeUsers.findIndex(user => user.id === userId);
+    if (index >= 0) {
+      mockBackofficeUsers.splice(index, 1);
+    } else {
+      throw new Error("User not found");
+    }
+  },
+  
+  blockBackofficeUser: async (userId: string): Promise<void> => {
+    console.log("Mock: Blocking backoffice user", userId);
+    const user = mockBackofficeUsers.find(u => u.id === userId);
+    if (user) {
+      user.state = "blocked";
+    } else {
+      throw new Error("User not found");
+    }
+  },
+  
+  unblockBackofficeUser: async (userId: string): Promise<void> => {
+    console.log("Mock: Unblocking backoffice user", userId);
+    const user = mockBackofficeUsers.find(u => u.id === userId);
+    if (user) {
+      user.state = "active";
+    } else {
+      throw new Error("User not found");
+    }
+  },
+  
+  modifyUserRoles: async (userId: string, roles: string[]): Promise<void> => {
+    console.log("Mock: Modifying user roles", userId, roles);
+    const user = mockBackofficeUsers.find(u => u.id === userId);
+    if (user) {
+      user.roles = [...roles];
+    } else {
+      throw new Error("User not found");
+    }
+  },
+  
+  // Add mock login functionality
+  login: async (loginRequest: LoginRequest): Promise<LoginResponse> => {
+    console.log("Mock: Login attempt", loginRequest);
+    
+    // Simulate a successful login
+    const mockUser: BackofficeUser = {
+      id: "mock-user-1",
+      name: "Mock",
+      surname: "User",
+      email: loginRequest.userName,
+      roles: ["operador"],
+      state: "active",
+      last_login: new Date().toISOString()
+    };
+    
+    return {
+      accessToken: "mock-access-token",
+      refreshToken: "mock-refresh-token",
+      expiresIn: 3600,
+      user: mockUser
+    };
   },
   
   // Anti-fraud rules
