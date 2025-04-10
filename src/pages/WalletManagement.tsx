@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Plus, Search, Wallet, Users } from "lucide-react";
@@ -39,7 +38,6 @@ const WalletManagement: React.FC = () => {
     }
   });
 
-  // Get all wallet objects for calculations
   const allWallets = walletsWithUsers.map(item => item.wallet);
 
   const filteredWallets = walletsWithUsers.filter(item => {
@@ -49,7 +47,6 @@ const WalletManagement: React.FC = () => {
       (wallet.currency && wallet.currency.toLowerCase().includes(searchTerm.toLowerCase())) ||
       (wallet.status && wallet.status.toLowerCase().includes(searchTerm.toLowerCase()));
     
-    // Also search by user ID
     const userMatch = item.userId.includes(searchTerm);
     
     return walletMatch || userMatch;
@@ -58,6 +55,10 @@ const WalletManagement: React.FC = () => {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
   };
+
+  // Calculate unique currencies
+  const uniqueCurrencies = [...new Set(allWallets.map(wallet => wallet.currency || 'N/A'))];
+  const primaryCurrency = uniqueCurrencies.length > 0 ? uniqueCurrencies[0] : 'USD';
 
   return (
     <div className="flex flex-col gap-6">
@@ -71,7 +72,7 @@ const WalletManagement: React.FC = () => {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-         <Card>
+        <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               {t("users-with-wallets")}
@@ -112,11 +113,8 @@ const WalletManagement: React.FC = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              ${allWallets.reduce((sum, wallet) => sum + (wallet.balance || 0), 0).toLocaleString()}
+              {primaryCurrency} {allWallets.reduce((sum, wallet) => sum + (wallet.balance || 0), 0).toLocaleString()}
             </div>
-            <p className="text-xs text-muted-foreground">
-              {t("usd-equivalent")}
-            </p>
           </CardContent>
         </Card>
         <Card>
@@ -128,11 +126,8 @@ const WalletManagement: React.FC = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              ${allWallets.reduce((sum, wallet) => sum + (wallet.availableBalance || 0), 0).toLocaleString()}
+              {primaryCurrency} {allWallets.reduce((sum, wallet) => sum + (wallet.availableBalance || 0), 0).toLocaleString()}
             </div>
-            <p className="text-xs text-muted-foreground">
-              {t("usd-equivalent")}
-            </p>
           </CardContent>
         </Card>
       </div>
