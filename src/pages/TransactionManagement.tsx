@@ -33,6 +33,7 @@ const TransactionManagement = () => {
     selectedTransaction,
     filters,
     transactions,
+    allTransactions,
     isLoading,
     totalPages,
     totalTransactions,
@@ -119,7 +120,7 @@ const TransactionManagement = () => {
               </CardDescription>
             </div>
             
-            {transactions && transactions.length > 0 && (
+            {allTransactions && allTransactions.length > 0 && (
               <ExportCSVButton
                 filename={`transactions-${new Date().toISOString().slice(0, 10)}`}
                 headers={[
@@ -134,7 +135,7 @@ const TransactionManagement = () => {
                   t('user-id'),
                   t('wallet-id')
                 ]}
-                data={transactions}
+                data={allTransactions}
                 mapRow={mapTransactionToCSV}
               >
                 {t('export-csv')}

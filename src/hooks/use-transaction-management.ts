@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { userService } from "@/lib/api/user-service";
@@ -343,6 +344,7 @@ export const useTransactionManagement = () => {
     selectedTransaction,
     filters,
     transactions,
+    allTransactions,  // Now exposing all transactions to be used for export
     isLoading,
     totalPages,
     totalTransactions,
