@@ -17,6 +17,7 @@ export interface UserService {
   getUserWallets(userId: string): Promise<Wallet[]>;
   getAllWallets(): Promise<{ wallet: Wallet; userId: string }[]>;
   getWalletTransactions(userId: string, walletId: string): Promise<Transaction[]>;
+  getAllTransactions(): Promise<Transaction[]>;
   compensateCustomer(
     companyId: number,
     userId: string,
