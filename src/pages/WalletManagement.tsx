@@ -129,8 +129,11 @@ const WalletManagement: React.FC = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {primaryCurrency} {allWallets.reduce((sum, wallet) => sum + (wallet.availableBalance || 0), 0).toLocaleString()}
+              {allWallets.reduce((sum, wallet) => sum + (wallet.availableBalance || 0), 0).toLocaleString()}
             </div>
+            <p className="text-xs text-muted-foreground">
+              {primaryCurrency}
+            </p>
           </CardContent>
         </Card>
       </div>
