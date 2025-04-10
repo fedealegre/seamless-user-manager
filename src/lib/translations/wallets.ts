@@ -21,7 +21,9 @@ export const walletTranslations = {
     'all-wallets': 'All wallets',
     'manage-wallets-for-all-users': 'Manage wallets for all users',
     'search-wallets': 'Search wallets',
-    'view-user-wallet': 'View user wallet transactions'
+    'view-user-wallet': 'View user wallet transactions',
+    'total-available-balance': 'Total available balance',
+    'currently-active': 'Currently active'
   },
   es: {
     'wallets': 'Billeteras',
@@ -44,6 +46,8 @@ export const walletTranslations = {
     'all-wallets': 'Todas las billeteras',
     'manage-wallets-for-all-users': 'Gestionar las billeteras para todos los usuarios',
     'search-wallets': 'Buscar billeteras',
-    'view-user-wallet': 'Ver transacciones de billetera del usuario'
+    'view-user-wallet': 'Ver transacciones de billetera del usuario',
+    'total-available-balance': 'Balance disponible total',
+    'currently-active': 'Activas actualmente'
   }
 };
