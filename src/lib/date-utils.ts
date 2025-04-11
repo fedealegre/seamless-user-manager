@@ -17,74 +17,22 @@ export const formatDateInTimezone = (
     : date;
   
   try {
-    // Force DD/MM/YYYY format regardless of locale
     const defaultOptions: Intl.DateTimeFormatOptions = {
-      day: "2-digit",
-      month: "2-digit",
       year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
       timeZone: timezone,
       ...options
     };
     
-    const formatter = new Intl.DateTimeFormat(locale, defaultOptions);
-    const parts = formatter.formatToParts(dateObj);
-    
-    // Custom formatting to ensure DD/MM/YYYY regardless of locale
-    if (parts.length > 0) {
-      let day = "";
-      let month = "";
-      let year = "";
-      
-      for (const part of parts) {
-        if (part.type === "day") day = part.value;
-        if (part.type === "month") month = part.value;
-        if (part.type === "year") year = part.value;
-      }
-      
-      // If we have all parts, format as DD/MM/YYYY
-      if (day && month && year) {
-        const timeString = formatTimeString(dateObj, defaultOptions, formatter);
-        return `${day}/${month}/${year}${timeString}`;
-      }
-    }
-    
-    // Fallback to regular formatting
-    return formatter.format(dateObj);
+    return new Intl.DateTimeFormat(locale, defaultOptions).format(dateObj);
   } catch (error) {
     console.error("Error formatting date:", error);
     return String(date);
   }
-};
-
-// Helper function to extract time string if time options are present
-const formatTimeString = (
-  date: Date,
-  options: Intl.DateTimeFormatOptions,
-  formatter: Intl.DateTimeFormat
-): string => {
-  if (options.hour || options.minute || options.second) {
-    const parts = formatter.formatToParts(date);
-    let hour = "";
-    let minute = "";
-    let second = "";
-    
-    for (const part of parts) {
-      if (part.type === "hour") hour = part.value;
-      if (part.type === "minute") minute = part.value;
-      if (part.type === "second") second = part.value;
-    }
-    
-    let timeString = "";
-    
-    if (hour && minute) {
-      timeString = ` ${hour}:${minute}`;
-      if (second) timeString += `:${second}`;
-    }
-    
-    return timeString;
-  }
-  
-  return "";
 };
 
 // Format a date for input field (DD/MM/YYYY)
@@ -95,6 +43,7 @@ export const formatDateForInput = (
   if (!date) return "";
   
   try {
+    // Format using the timezone but in DD/MM/YYYY format
     const formatter = new Intl.DateTimeFormat("es-ES", {
       year: "numeric",
       month: "2-digit",
@@ -102,7 +51,7 @@ export const formatDateForInput = (
       timeZone: timezone
     });
     
-    return formatter.format(date);
+    return formatter.format(date).split("/").join("/");
   } catch (error) {
     console.error("Error formatting date for input:", error);
     return "";
@@ -208,28 +157,22 @@ export const formatDateTime = (
   date: Date | string | number,
   timezone: string = 'UTC',
   locale: string = 'en-US',
-  options: Intl.DateTimeFormatOptions = {}
+  options: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  }
 ): string => {
-  if (!date) return "";
-  
-  const dateObj = typeof date === "string" || typeof date === "number" 
-    ? new Date(date) 
-    : date;
+  const dateObj = new Date(date);
   
   try {
-    const defaultOptions: Intl.DateTimeFormatOptions = {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false,
-      timeZone: timezone,
-      ...options
-    };
-    
-    // Use formatDateInTimezone to ensure DD/MM/YYYY format
-    return formatDateInTimezone(dateObj, timezone, locale, defaultOptions);
+    return new Intl.DateTimeFormat(locale, {
+      ...options,
+      timeZone: timezone
+    }).format(dateObj);
   } catch (error) {
     console.error('Error formatting date:', error);
     // Fallback to default format in case of error
