@@ -1,5 +1,5 @@
 
-import { User, Wallet, Transaction, CompensationRequest, ResetPasswordRequest, ResetPasswordResponse } from "../types";
+import { User, Wallet, Transaction, CompensationRequest, ResetPasswordRequest, ResetPasswordResponse, WalletUserAssociation } from "../types";
 
 export interface ChangeTransactionStatusRequest {
   newStatus: 'cancelled' | 'rejected' | 'confirmed' | 'approved';
@@ -31,4 +31,10 @@ export interface UserService {
     transactionId: string,
     request: ChangeTransactionStatusRequest
   ): Promise<Transaction>;
+  
+  // New methods for wallet-user associations
+  getWalletUsers(walletId: string): Promise<User[]>;
+  addUserToWallet(walletId: string, userId: string, isOwner?: boolean): Promise<WalletUserAssociation>;
+  removeUserFromWallet(walletId: string, userId: string): Promise<void>;
+  getWalletUserAssociations(): Promise<WalletUserAssociation[]>;
 }

@@ -1,6 +1,6 @@
 
-import React from "react";
-import { Eye } from "lucide-react";
+import React, { useState } from "react";
+import { Eye, Users, UserPlus, Link } from "lucide-react";
 import { Wallet } from "@/lib/api/types";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -16,11 +16,19 @@ import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
 import { translate } from "@/lib/translations";
 import TransactionsPagination from "@/components/transactions/TransactionsPagination";
 import { useNavigate } from "react-router-dom";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface WalletsTableProps {
-  wallets: (Wallet & { userId?: string })[];
+  wallets: (Wallet & { userIds?: string[], userId?: string })[];
   onSelectWallet?: (walletId: string) => void;
   showUser?: boolean;
+  onAddUserToWallet?: (walletId: string) => void;
+  onViewWalletUsers?: (walletId: string) => void;
   paginationProps?: {
     page: number;
     pageSize: number;
@@ -33,7 +41,9 @@ interface WalletsTableProps {
 export const WalletsTable: React.FC<WalletsTableProps> = ({ 
   wallets, 
   onSelectWallet, 
-  showUser = false, 
+  showUser = false,
+  onAddUserToWallet,
+  onViewWalletUsers,
   paginationProps 
 }) => {
   const { settings } = useBackofficeSettings();
@@ -84,8 +94,41 @@ export const WalletsTable: React.FC<WalletsTableProps> = ({
     return formatted;
   };
 
-  // Get the wallets for the current page if pagination is enabled
+  // Get the wallets for the current page
   const displayedWallets = wallets;
+
+  // Function to display users count
+  const renderUsersCount = (wallet: Wallet & { userIds?: string[], userId?: string }) => {
+    const count = wallet.userIds?.length || (wallet.userId ? 1 : 0);
+    
+    return (
+      <div className="flex items-center gap-1">
+        <span>{count}</span>
+        {count > 0 && onViewWalletUsers && (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onViewWalletUsers(wallet.id.toString());
+                  }}
+                >
+                  <Users className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{t("view-users")}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        )}
+      </div>
+    );
+  };
 
   return (
     <div className="space-y-4">
@@ -111,9 +154,9 @@ export const WalletsTable: React.FC<WalletsTableProps> = ({
               </TableRow>
             ) : (
               displayedWallets.map((wallet) => (
-                <TableRow key={`${wallet.id}-${wallet.userId || ''}`}>
+                <TableRow key={`${wallet.id}`}>
                   <TableCell className="font-medium">{wallet.id}</TableCell>
-                  {showUser && <TableCell>{wallet.userId || '-'}</TableCell>}
+                  {showUser && <TableCell>{renderUsersCount(wallet)}</TableCell>}
                   <TableCell>{getStatusBadge(wallet.status)}</TableCell>
                   <TableCell>{wallet.currency || "-"}</TableCell>
                   <TableCell className="text-right">
@@ -125,24 +168,60 @@ export const WalletsTable: React.FC<WalletsTableProps> = ({
                   <TableCell className="text-right">
                     <div className="flex justify-end gap-2">
                       {onSelectWallet && (
-                        <Button 
-                          variant="outline" 
-                          size="icon" 
-                          onClick={() => onSelectWallet(wallet.id.toString())}
-                          title={t("view")}
-                        >
-                          <Eye className="h-4 w-4" />
-                        </Button>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button 
+                                variant="outline" 
+                                size="icon" 
+                                onClick={() => onSelectWallet(wallet.id.toString())}
+                              >
+                                <Eye className="h-4 w-4" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>{t("view-transactions")}</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
                       )}
+                      
                       {wallet.userId && (
-                        <Button 
-                          variant="outline" 
-                          size="icon" 
-                          onClick={() => handleViewUserWallet(wallet.userId!, wallet.id.toString())}
-                          title={t("view-user-wallet")}
-                        >
-                          <Eye className="h-4 w-4" />
-                        </Button>
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button 
+                                variant="outline" 
+                                size="icon" 
+                                onClick={() => handleViewUserWallet(wallet.userId!, wallet.id.toString())}
+                              >
+                                <Link className="h-4 w-4" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>{t("view-user-wallet")}</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      )}
+                      
+                      {onAddUserToWallet && (
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                variant="outline"
+                                size="icon"
+                                onClick={() => onAddUserToWallet(wallet.id.toString())}
+                              >
+                                <UserPlus className="h-4 w-4" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>{t("add-user-to-wallet")}</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
                       )}
                     </div>
                   </TableCell>

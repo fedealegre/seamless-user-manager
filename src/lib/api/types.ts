@@ -38,6 +38,13 @@ export interface Wallet {
     accumulators?: Array<{ [key: string]: any }>;
 }
 
+export interface WalletUserAssociation {
+    walletId: number;
+    userId: string;
+    associationDate: string;
+    isOwner: boolean;
+}
+
 export interface User {
     id: number;
     companyId?: number; // Made optional to match mock data

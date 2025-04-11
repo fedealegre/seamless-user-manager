@@ -1,5 +1,6 @@
+
 import React, { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Plus, Search, Wallet, Users } from "lucide-react";
 import { userService } from "@/lib/api/user-service";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,12 +11,20 @@ import { WalletsLoadingSkeleton } from "@/components/wallets/WalletsLoadingSkele
 import { useToast } from "@/hooks/use-toast";
 import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
 import { translate } from "@/lib/translations";
+import { WalletUsersDialog } from "@/components/wallets/WalletUsersDialog";
+import { AddUserToWalletDialog } from "@/components/wallets/AddUserToWalletDialog";
 
 const WalletManagement: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const { toast } = useToast();
   const { settings } = useBackofficeSettings();
   const t = (key: string) => translate(key, settings.language);
+  const queryClient = useQueryClient();
+  
+  // Dialog states
+  const [selectedWalletId, setSelectedWalletId] = useState<string | null>(null);
+  const [showWalletUsers, setShowWalletUsers] = useState(false);
+  const [showAddUserDialog, setShowAddUserDialog] = useState(false);
   
   const { 
     data: walletsWithUsers = [], 
@@ -25,7 +34,27 @@ const WalletManagement: React.FC = () => {
     queryFn: async () => {
       try {
         const allWallets = await userService.getAllWallets();
-        return allWallets;
+        
+        // Get wallet-user associations to determine multiple users
+        const associations = await userService.getWalletUserAssociations();
+        
+        // Group by wallet ID to count users per wallet
+        const walletsWithMultipleUsers = allWallets.map(item => {
+          const walletId = item.wallet.id.toString();
+          const userIds = associations
+            .filter(assoc => assoc.walletId.toString() === walletId)
+            .map(assoc => assoc.userId);
+          
+          return {
+            ...item,
+            wallet: { 
+              ...item.wallet,
+              userIds: userIds.length > 0 ? userIds : [item.userId]
+            }
+          };
+        });
+        
+        return walletsWithMultipleUsers;
       } catch (error) {
         console.error("Failed to fetch wallets:", error);
         toast({
@@ -47,7 +76,9 @@ const WalletManagement: React.FC = () => {
       (wallet.currency && wallet.currency.toLowerCase().includes(searchTerm.toLowerCase())) ||
       (wallet.status && wallet.status.toLowerCase().includes(searchTerm.toLowerCase()));
     
-    const userMatch = item.userId.includes(searchTerm);
+    // Check if any of the user IDs match
+    const userMatch = item.userId.includes(searchTerm) || 
+      (wallet.userIds?.some(userId => userId.includes(searchTerm)) ?? false);
     
     return walletMatch || userMatch;
   });
@@ -56,9 +87,42 @@ const WalletManagement: React.FC = () => {
     e.preventDefault();
   };
 
+  const handleViewWalletUsers = (walletId: string) => {
+    setSelectedWalletId(walletId);
+    setShowWalletUsers(true);
+  };
+
+  const handleAddUserToWallet = (walletId: string) => {
+    setSelectedWalletId(walletId);
+    setShowAddUserDialog(true);
+  };
+
+  const handleUserAdded = () => {
+    // Refresh the wallet data after adding a user
+    queryClient.invalidateQueries({
+      queryKey: ["all-wallets"]
+    });
+    
+    if (selectedWalletId) {
+      queryClient.invalidateQueries({
+        queryKey: ["wallet-users", selectedWalletId]
+      });
+    }
+  };
+
   // Calculate unique currencies
   const uniqueCurrencies = [...new Set(allWallets.map(wallet => wallet.currency || 'N/A'))];
   const primaryCurrency = uniqueCurrencies.length > 0 ? uniqueCurrencies[0] : 'USD';
+
+  // Calculate total unique users
+  const uniqueUsers = new Set();
+  walletsWithUsers.forEach(item => {
+    if (item.wallet.userIds && item.wallet.userIds.length > 0) {
+      item.wallet.userIds.forEach(userId => uniqueUsers.add(userId));
+    } else if (item.userId) {
+      uniqueUsers.add(item.userId);
+    }
+  });
 
   return (
     <div className="flex flex-col gap-6">
@@ -81,7 +145,7 @@ const WalletManagement: React.FC = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {new Set(walletsWithUsers.map(item => item.userId)).size}
+              {uniqueUsers.size}
             </div>
             <p className="text-xs text-muted-foreground">
               {t("total-users-with-wallets")}
@@ -164,14 +228,37 @@ const WalletManagement: React.FC = () => {
           {isLoading ? (
             <WalletsLoadingSkeleton showUser={true} />
           ) : (
-            <WalletsTable wallets={filteredWallets.map(item => ({
-              ...item.wallet,
-              userId: item.userId
-            }))} 
-            showUser={true} />
+            <WalletsTable 
+              wallets={filteredWallets.map(item => ({
+                ...item.wallet,
+                userId: item.userId
+              }))} 
+              showUser={true}
+              onAddUserToWallet={handleAddUserToWallet}
+              onViewWalletUsers={handleViewWalletUsers}
+            />
           )}
         </CardContent>
       </Card>
+
+      {/* Dialog for viewing wallet users */}
+      {selectedWalletId && (
+        <WalletUsersDialog
+          walletId={selectedWalletId}
+          open={showWalletUsers}
+          onOpenChange={setShowWalletUsers}
+        />
+      )}
+
+      {/* Dialog for adding users to wallet */}
+      {selectedWalletId && (
+        <AddUserToWalletDialog
+          walletId={selectedWalletId}
+          open={showAddUserDialog}
+          onOpenChange={setShowAddUserDialog}
+          onUserAdded={handleUserAdded}
+        />
+      )}
     </div>
   );
 };
