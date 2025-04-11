@@ -1,3 +1,4 @@
+
 /**
  * Utility functions for date formatting with timezone support
  */
@@ -18,10 +19,11 @@ export const formatDateInTimezone = (
   try {
     const defaultOptions: Intl.DateTimeFormatOptions = {
       year: "numeric",
-      month: "short",
-      day: "numeric",
+      month: "2-digit",
+      day: "2-digit",
       hour: "2-digit",
       minute: "2-digit",
+      hour12: false,
       timeZone: timezone,
       ...options
     };
@@ -33,7 +35,7 @@ export const formatDateInTimezone = (
   }
 };
 
-// Format a date for input field (YYYY-MM-DD)
+// Format a date for input field (DD/MM/YYYY)
 export const formatDateForInput = (
   date: Date | undefined, 
   timezone: string = "UTC"
@@ -41,28 +43,40 @@ export const formatDateForInput = (
   if (!date) return "";
   
   try {
-    // Format using the timezone but in a format suitable for inputs
-    const formatter = new Intl.DateTimeFormat("en-CA", {
+    // Format using the timezone but in DD/MM/YYYY format
+    const formatter = new Intl.DateTimeFormat("es-ES", {
       year: "numeric",
       month: "2-digit",
       day: "2-digit",
       timeZone: timezone
     });
     
-    const parts = formatter.formatToParts(date);
-    const year = parts.find(part => part.type === 'year')?.value;
-    const month = parts.find(part => part.type === 'month')?.value;
-    const day = parts.find(part => part.type === 'day')?.value;
-    
-    if (year && month && day) {
-      return `${year}-${month}-${day}`;
-    }
-    
-    // Fallback
-    return formatter.format(date).split("/").join("-");
+    return formatter.format(date).split("/").join("/");
   } catch (error) {
     console.error("Error formatting date for input:", error);
     return "";
+  }
+};
+
+// Parse date from DD/MM/YYYY format to Date object
+export const parseDateFromInput = (
+  dateString: string,
+  timezone: string = "UTC"
+): Date | undefined => {
+  if (!dateString) return undefined;
+  
+  try {
+    // Parse DD/MM/YYYY format
+    const [day, month, year] = dateString.split("/").map(Number);
+    
+    if (isNaN(day) || isNaN(month) || isNaN(year)) return undefined;
+    
+    // Create date in the specified timezone
+    const date = new Date(Date.UTC(year, month - 1, day));
+    return date;
+  } catch (error) {
+    console.error("Error parsing date from input:", error);
+    return undefined;
   }
 };
 
@@ -138,17 +152,18 @@ export const formatTimeDifference = (
   }
 };
 
-// Format date in timezone according to locale
+// Format date in timezone according to locale with custom options
 export const formatDateTime = (
   date: Date | string | number,
   timezone: string = 'UTC',
   locale: string = 'en-US',
   options: Intl.DateTimeFormatOptions = {
     year: 'numeric',
-    month: 'short',
-    day: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
     hour: '2-digit',
-    minute: '2-digit'
+    minute: '2-digit',
+    hour12: false
   }
 ): string => {
   const dateObj = new Date(date);

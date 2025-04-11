@@ -1,6 +1,5 @@
 
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { 
   Card, 
   CardContent, 
@@ -34,8 +33,7 @@ import { toast } from "@/hooks/use-toast";
 import { translate } from "@/lib/translations";
 
 const BackofficeSettings = () => {
-  const { settings, updateSettings } = useBackofficeSettings();
-  const navigate = useNavigate();
+  const { settings, updateSettings, getTimezoneFromOffset } = useBackofficeSettings();
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   // Get the translate function based on current language
@@ -47,7 +45,7 @@ const BackofficeSettings = () => {
   const form = useForm<SettingsType>({
     defaultValues: {
       language: settings.language,
-      timezone: settings.timezone
+      utcOffset: settings.utcOffset
     }
   });
   
@@ -80,59 +78,11 @@ const BackofficeSettings = () => {
     }
   };
   
-  // Comprehensive list of timezones
-  const timezones = [
-    "UTC",
-    // Americas
-    "America/New_York", // Eastern Time
-    "America/Chicago", // Central Time
-    "America/Denver", // Mountain Time
-    "America/Los_Angeles", // Pacific Time
-    "America/Anchorage", // Alaska
-    "America/Adak", // Hawaii-Aleutian
-    "Pacific/Honolulu", // Hawaii
-    "America/Toronto",
-    "America/Vancouver",
-    "America/Mexico_City",
-    "America/Bogota",
-    "America/Lima",
-    "America/Santiago",
-    "America/Buenos_Aires",
-    "America/Sao_Paulo",
-    "America/Caracas",
-    // Europe
-    "Europe/London",
-    "Europe/Paris",
-    "Europe/Berlin",
-    "Europe/Madrid",
-    "Europe/Rome",
-    "Europe/Amsterdam",
-    "Europe/Brussels",
-    "Europe/Vienna",
-    "Europe/Moscow",
-    "Europe/Athens",
-    "Europe/Istanbul",
-    // Asia
-    "Asia/Jerusalem",
-    "Asia/Dubai",
-    "Asia/Kolkata",
-    "Asia/Bangkok",
-    "Asia/Singapore",
-    "Asia/Hong_Kong",
-    "Asia/Shanghai",
-    "Asia/Tokyo",
-    "Asia/Seoul",
-    // Oceania
-    "Australia/Sydney",
-    "Australia/Melbourne",
-    "Australia/Perth",
-    "Australia/Brisbane",
-    "Pacific/Auckland",
-    // Africa
-    "Africa/Cairo",
-    "Africa/Johannesburg",
-    "Africa/Nairobi",
-    "Africa/Lagos"
+  // UTC offset options, sorted
+  const utcOffsets = [
+    "UTC-12", "UTC-11", "UTC-10", "UTC-9", "UTC-8", "UTC-7", "UTC-6", "UTC-5", "UTC-4", "UTC-3", "UTC-2", "UTC-1",
+    "UTC+0",
+    "UTC+1", "UTC+2", "UTC+3", "UTC+4", "UTC+5", "UTC+6", "UTC+7", "UTC+8", "UTC+9", "UTC+10", "UTC+11", "UTC+12", "UTC+13", "UTC+14"
   ];
 
   return (
@@ -183,7 +133,7 @@ const BackofficeSettings = () => {
                 
                 <FormField
                   control={form.control}
-                  name="timezone"
+                  name="utcOffset"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>{getTranslation("timezone")}</FormLabel>
@@ -197,9 +147,9 @@ const BackofficeSettings = () => {
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent className="max-h-80">
-                          {timezones.map((tz) => (
-                            <SelectItem key={tz} value={tz}>
-                              {tz}
+                          {utcOffsets.map((utcOffset) => (
+                            <SelectItem key={utcOffset} value={utcOffset}>
+                              {utcOffset}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -245,12 +195,13 @@ const BackofficeSettings = () => {
                   settings.language === "en" ? "en-US" : "es-ES", 
                   {
                     year: "numeric",
-                    month: "long",
-                    day: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
                     hour: "2-digit",
                     minute: "2-digit",
                     second: "2-digit",
-                    timeZone: form.watch("timezone") || settings.timezone,
+                    hour12: false,
+                    timeZone: getTimezoneFromOffset(form.watch("utcOffset") || settings.utcOffset),
                     timeZoneName: "short"
                   }
                 ).format(new Date())}

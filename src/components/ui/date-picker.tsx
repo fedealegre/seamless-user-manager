@@ -1,7 +1,6 @@
 
 import * as React from "react"
-import { format } from "date-fns"
-import { Calendar as CalendarIcon } from "lucide-react"
+import { CalendarIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -11,6 +10,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext"
 
 interface DatePickerProps {
   date: Date | undefined
@@ -20,6 +20,8 @@ interface DatePickerProps {
 }
 
 export function DatePicker({ date, onSelect, className, id }: DatePickerProps) {
+  const { formatDate } = useBackofficeSettings();
+  
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -33,7 +35,7 @@ export function DatePicker({ date, onSelect, className, id }: DatePickerProps) {
           )}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
-          {date ? format(date, "PPP") : <span>Pick a date</span>}
+          {date ? formatDate(date) : <span>Seleccionar fecha</span>}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
@@ -43,6 +45,10 @@ export function DatePicker({ date, onSelect, className, id }: DatePickerProps) {
           onSelect={onSelect}
           initialFocus
           className="p-3 pointer-events-auto"
+          locale="es-ES"
+          formatters={{
+            formatDay: (date) => date.getDate().toString(),
+          }}
         />
       </PopoverContent>
     </Popover>

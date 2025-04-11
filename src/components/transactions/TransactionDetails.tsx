@@ -35,7 +35,7 @@ const TransactionDetails: React.FC<TransactionDetailsProps> = ({
   open,
   onOpenChange,
 }) => {
-  const { settings } = useBackofficeSettings();
+  const { settings, formatDate, formatDateTime } = useBackofficeSettings();
   const t = (key: string) => translate(key, settings.language);
   
   const formatCurrency = (amount?: number, currency?: string) => {
@@ -170,7 +170,7 @@ const TransactionDetails: React.FC<TransactionDetailsProps> = ({
                 <>
                   <div className="text-sm font-medium">{t("transaction-date")}</div>
                   <div className="text-sm">
-                    {new Date(transaction.date).toLocaleString()}
+                    {formatDateTime(new Date(transaction.date))}
                   </div>
                 </>
               )}
@@ -179,7 +179,7 @@ const TransactionDetails: React.FC<TransactionDetailsProps> = ({
                 <>
                   <div className="text-sm font-medium">{t("initiated-date")}</div>
                   <div className="text-sm">
-                    {new Date(transaction.initDate).toLocaleString()}
+                    {formatDateTime(new Date(transaction.initDate))}
                   </div>
                 </>
               )}
@@ -188,7 +188,7 @@ const TransactionDetails: React.FC<TransactionDetailsProps> = ({
                 <>
                   <div className="text-sm font-medium">{t("end-date")}</div>
                   <div className="text-sm">
-                    {new Date(transaction.endDate).toLocaleString()}
+                    {formatDateTime(new Date(transaction.endDate))}
                   </div>
                 </>
               )}
