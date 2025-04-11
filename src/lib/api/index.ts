@@ -229,37 +229,23 @@ export const apiService = {
     console.log("Mock: Login attempt", loginRequest);
     
     // First try to authenticate using the mock users with predefined username/password
-    const mockUserMatch = BACKOFFICE_USERS.find(
-      u => u.username === loginRequest.userName && u.password === loginRequest.password
+    const mockUserMatch = mockBackofficeUsers.find(
+      u => u.email === loginRequest.userName && u.password === loginRequest.password
     );
     
     if (mockUserMatch) {
-      return {
-        accessToken: "mock-token-" + Date.now(),
-        refreshToken: "mock-refresh-token-" + Date.now(),
-        expiresIn: 86400, // 24 hours
-        user: mockUserMatch.user
-      };
-    }
-    
-    // If no match with predefined users, try to authenticate with stored backoffice users
-    const user = mockBackofficeUsers.find(
-      u => u.email === loginRequest.userName && u.password === loginRequest.password && u.state === "active"
-    );
-    
-    if (user) {
       // Update last login time
-      const userIndex = mockBackofficeUsers.findIndex(u => u.id === user.id);
+      const userIndex = mockBackofficeUsers.findIndex(u => u.id === mockUserMatch.id);
       if (userIndex >= 0) {
         mockBackofficeUsers[userIndex].last_login = new Date().toISOString();
       }
       
       // Return user without password
-      const { password, ...userWithoutPassword } = user;
+      const { password, ...userWithoutPassword } = mockUserMatch;
       
       return {
-        accessToken: "api-token-" + Date.now(),
-        refreshToken: "api-refresh-token-" + Date.now(),
+        accessToken: "mock-token-" + Date.now(),
+        refreshToken: "mock-refresh-token-" + Date.now(),
         expiresIn: 86400, // 24 hours
         user: userWithoutPassword
       };

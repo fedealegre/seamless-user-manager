@@ -14,70 +14,6 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Backoffice user credentials for direct login
-const BACKOFFICE_USERS = [
-  {
-    username: "fede.alegre",
-    password: "backoffice",
-    user: {
-      id: "admin-1",
-      name: "Federico",
-      surname: "Alegre",
-      roles: ["configurador", "compensador", "operador", "analista"],
-      state: "active" as const,
-      last_login: new Date().toISOString()
-    }
-  },
-  {
-    username: "operador",
-    password: "operador",
-    user: {
-      id: "operator-1",
-      name: "Operator",
-      surname: "User",
-      roles: ["operador"],
-      state: "active" as const,
-      last_login: new Date().toISOString()
-    }
-  },
-  {
-    username: "compensador",
-    password: "compensador",
-    user: {
-      id: "compensator-1",
-      name: "Compensator",
-      surname: "User",
-      roles: ["compensador"],
-      state: "active" as const,
-      last_login: new Date().toISOString()
-    }
-  },
-  {
-    username: "analista",
-    password: "analista",
-    user: {
-      id: "analyst-1",
-      name: "Analyst",
-      surname: "User",
-      roles: ["analista"],
-      state: "active" as const,
-      last_login: new Date().toISOString()
-    }
-  },
-  {
-    username: "configurador",
-    password: "configurador",
-    user: {
-      id: "configurator-1",
-      name: "Configurator",
-      surname: "User",
-      roles: ["configurador"],
-      state: "active" as const,
-      last_login: new Date().toISOString()
-    }
-  }
-];
-
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<BackofficeUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -105,7 +41,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       setIsLoading(true);
       
-      // Call the API login method which will check both predefined users and backoffice users
+      // Call the API login method which will check the backoffice users
       const response = await api.login(credentials);
       
       // Store user and token
