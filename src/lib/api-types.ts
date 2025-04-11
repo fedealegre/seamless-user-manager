@@ -76,6 +76,8 @@ export interface BackofficeUser {
     id?: string;
     name: string;
     surname: string;
+    email?: string;
+    password?: string; // Added for creation/update
     roles: string[];
     state: 'active' | 'blocked';
     last_login?: string;

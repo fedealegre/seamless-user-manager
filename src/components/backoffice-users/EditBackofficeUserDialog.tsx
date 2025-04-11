@@ -14,10 +14,12 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormDescription,
 } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
-import { useQuery } from "@tanstack/react-query";
-import { queryClient } from "@/lib/api/query-client";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { apiService as api } from "@/lib/api";
+import { Switch } from "@/components/ui/switch";
 
 interface EditBackofficeUserDialogProps {
   user: BackofficeUser;
@@ -29,6 +31,15 @@ const formSchema = z.object({
   name: z.string().min(2, { message: "First name must be at least 2 characters." }),
   surname: z.string().min(2, { message: "Last name must be at least 2 characters." }),
   email: z.string().email({ message: "Please enter a valid email address" }),
+  changePassword: z.boolean().default(false),
+  password: z.string().optional(),
+  confirmPassword: z.string().optional(),
+}).refine(data => !data.changePassword || (data.password && data.password.length >= 6), {
+  message: "Password must be at least 6 characters",
+  path: ["password"]
+}).refine(data => !data.changePassword || data.password === data.confirmPassword, {
+  message: "Passwords do not match",
+  path: ["confirmPassword"]
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -39,6 +50,7 @@ const EditBackofficeUserDialog: React.FC<EditBackofficeUserDialogProps> = ({
   onClose,
 }) => {
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -46,35 +58,44 @@ const EditBackofficeUserDialog: React.FC<EditBackofficeUserDialogProps> = ({
       name: user.name,
       surname: user.surname,
       email: user.email || "",
+      changePassword: false,
+      password: "",
+      confirmPassword: "",
     },
   });
 
+  const watchChangePassword = form.watch("changePassword");
+
   const onSubmit = async (data: FormValues) => {
     try {
+      // Prepare the user update data
+      const updatedUser: BackofficeUser = {
+        ...user,
+        name: data.name,
+        surname: data.surname,
+        email: data.email,
+      };
+
+      // Include password only if the user opted to change it
+      if (data.changePassword && data.password) {
+        updatedUser.password = data.password;
+      }
+
       // In a real app, this would be an API call
-      console.log("Updating backoffice user:", { ...user, ...data });
+      console.log("Updating backoffice user:", updatedUser);
       
-      // Update the local cache directly for the demo
-      const updatedUser = { ...user, ...data };
+      // Call the API to update the user
+      await api.updateBackofficeUser(user.id || "", updatedUser);
       
-      // Simulate API response and update local cache
-      setTimeout(() => {
-        // Update the user in the cached data
-        const cachedUsers = queryClient.getQueryData<BackofficeUser[]>(["backofficeUsers"]);
-        if (cachedUsers) {
-          const updatedUsers = cachedUsers.map(u => (
-            u.id === user.id ? updatedUser : u
-          ));
-          queryClient.setQueryData(["backofficeUsers"], updatedUsers);
-        }
-        
-        toast({
-          title: "User updated",
-          description: "The operator information has been updated successfully.",
-        });
-        
-        onClose();
-      }, 500);
+      // Update the user in the cached data
+      queryClient.invalidateQueries({ queryKey: ["backofficeUsers"] });
+      
+      toast({
+        title: "User updated",
+        description: "The operator information has been updated successfully.",
+      });
+      
+      onClose();
     } catch (error) {
       console.error("Error updating user:", error);
       toast({
@@ -135,12 +156,65 @@ const EditBackofficeUserDialog: React.FC<EditBackofficeUserDialogProps> = ({
                     <Input {...field} type="email" />
                   </FormControl>
                   <FormMessage />
-                  <p className="text-xs text-muted-foreground">
+                  <FormDescription>
                     This email will be used for login credentials
-                  </p>
+                  </FormDescription>
                 </FormItem>
               )}
             />
+
+            <FormField
+              control={form.control}
+              name="changePassword"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                  <div className="space-y-0.5">
+                    <FormLabel>Change Password</FormLabel>
+                    <FormDescription>
+                      Enable to update this user's password
+                    </FormDescription>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+
+            {watchChangePassword && (
+              <>
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>New Password</FormLabel>
+                      <FormControl>
+                        <Input {...field} type="password" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="confirmPassword"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Confirm New Password</FormLabel>
+                      <FormControl>
+                        <Input {...field} type="password" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </>
+            )}
 
             <DialogFooter className="pt-4">
               <Button type="button" variant="outline" onClick={onClose}>

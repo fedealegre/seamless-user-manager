@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { api } from "@/lib/api";
 import { BackofficeUser, LoginRequest } from "@/lib/api/types";
@@ -104,31 +105,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       setIsLoading(true);
       
-      // Check if credentials match one of our backoffice users
-      const matchedUser = BACKOFFICE_USERS.find(
-        u => u.username === credentials.userName && u.password === credentials.password
-      );
-      
-      if (matchedUser) {
-        // Store user and mock token
-        setUser(matchedUser.user);
-        localStorage.setItem("user", JSON.stringify(matchedUser.user));
-        localStorage.setItem("token", "mock-token-" + Date.now());
-        localStorage.setItem("refreshToken", "mock-refresh-token-" + Date.now());
-        
-        // Store token expiration (24 hours)
-        const expiresAt = Date.now() + (24 * 60 * 60 * 1000);
-        localStorage.setItem("expiresAt", expiresAt.toString());
-        
-        toast({
-          title: "Login successful",
-          description: `Welcome back, ${matchedUser.user.name}!`,
-        });
-        
-        return;
-      }
-      
-      // If not a backoffice user, proceed with regular API login
+      // Call the API login method which will check both predefined users and backoffice users
       const response = await api.login(credentials);
       
       // Store user and token
@@ -153,8 +130,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       if (error instanceof Error) {
         // Extract specific error message if available
-        if (error.message.includes("Unauthorized")) {
-          errorMessage = "Invalid username or password";
+        if (error.message.includes("Invalid email or password")) {
+          errorMessage = "Invalid email or password";
         } else if (error.message.includes("Network Error")) {
           errorMessage = "Network error. Please check your connection";
         } else {
