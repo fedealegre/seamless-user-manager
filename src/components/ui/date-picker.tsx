@@ -1,8 +1,7 @@
 
 import * as React from "react"
 import { CalendarIcon } from "lucide-react"
-import { type Locale } from "react-day-picker"
-
+// Remove the problematic import
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
@@ -22,10 +21,11 @@ interface DatePickerProps {
 
 export function DatePicker({ date, onSelect, className, id }: DatePickerProps) {
   const { formatDate } = useBackofficeSettings();
-  // Create a locale object or use null
-  const getLocale = (): Locale | undefined => {
+  
+  // Use a type assertion instead of importing Locale
+  const getLocale = () => {
     try {
-      return require('date-fns/locale/es');
+      return require('date-fns/locale/es') as any;
     } catch (e) {
       console.error("Could not load ES locale:", e);
       return undefined;
