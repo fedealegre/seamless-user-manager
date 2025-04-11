@@ -1,7 +1,10 @@
-import { User, Wallet, Transaction, CompensationRequest, ResetPasswordRequest, ResetPasswordResponse } from "../types";
+import { User, Wallet, Transaction, CompensationRequest, ResetPasswordRequest, ResetPasswordResponse, WalletUserAssociation } from "../types";
 import { UserService, ChangeTransactionStatusRequest } from "./user-service-interface";
 import { mockUsers, mockWallets, mockTransactions } from "../mock/mock-users-data";
 import { generateRandomTransaction } from "./transaction-generator";
+
+// Mock wallet-user associations data
+const mockWalletUserAssociations: WalletUserAssociation[] = [];
 
 // The actual service implementation that uses mock data
 export class MockUserService implements UserService {
@@ -267,5 +270,106 @@ export class MockUserService implements UserService {
       const dateB = b.date ? new Date(b.date).getTime() : 0;
       return dateB - dateA;
     });
+  }
+
+  async getWalletUsers(walletId: string): Promise<User[]> {
+    console.log("Using mock data for getWalletUsers", walletId);
+    
+    // Get all associations for this wallet
+    const associations = mockWalletUserAssociations.filter(
+      assoc => assoc.walletId.toString() === walletId
+    );
+    
+    // Get the user IDs from the associations
+    const userIds = associations.map(assoc => assoc.userId);
+    
+    // Return the users
+    return mockUsers.filter(user => userIds.includes(user.id.toString()));
+  }
+
+  async addUserToWallet(walletId: string, userId: string, isOwner: boolean = false): Promise<WalletUserAssociation> {
+    console.log("Using mock data for addUserToWallet", walletId, userId, isOwner);
+    
+    // Check if the association already exists
+    const existingAssociation = mockWalletUserAssociations.find(
+      assoc => assoc.walletId.toString() === walletId && assoc.userId === userId
+    );
+    
+    if (existingAssociation) {
+      // Update the existing association if the owner status changed
+      if (existingAssociation.isOwner !== isOwner) {
+        existingAssociation.isOwner = isOwner;
+      }
+      return existingAssociation;
+    }
+    
+    // Create a new association
+    const newAssociation: WalletUserAssociation = {
+      walletId: parseInt(walletId),
+      userId,
+      associationDate: new Date().toISOString(),
+      isOwner
+    };
+    
+    // Add to the mock data
+    mockWalletUserAssociations.push(newAssociation);
+    
+    // Add role information to the user's additionalInfo for display purposes
+    const user = mockUsers.find(u => u.id.toString() === userId);
+    if (user) {
+      if (!user.additionalInfo) {
+        user.additionalInfo = {};
+      }
+      user.additionalInfo.walletRole = isOwner ? "owner" : "authorized";
+    }
+    
+    return newAssociation;
+  }
+
+  async removeUserFromWallet(walletId: string, userId: string): Promise<void> {
+    console.log("Using mock data for removeUserFromWallet", walletId, userId);
+    
+    // Find the index of the association
+    const index = mockWalletUserAssociations.findIndex(
+      assoc => assoc.walletId.toString() === walletId && assoc.userId === userId
+    );
+    
+    // Check if the association exists
+    if (index !== -1) {
+      // Check if the user is the owner - cannot remove the owner
+      if (mockWalletUserAssociations[index].isOwner) {
+        throw new Error("Cannot remove wallet owner");
+      }
+      
+      // Remove the association
+      mockWalletUserAssociations.splice(index, 1);
+      
+      // Clean up user's additionalInfo
+      const user = mockUsers.find(u => u.id.toString() === userId);
+      if (user && user.additionalInfo && user.additionalInfo.walletRole) {
+        delete user.additionalInfo.walletRole;
+      }
+    }
+  }
+
+  async getWalletUserAssociations(): Promise<WalletUserAssociation[]> {
+    console.log("Using mock data for getWalletUserAssociations");
+    
+    // Initialize with default owner associations for all wallets
+    if (mockWalletUserAssociations.length === 0) {
+      // For each wallet, find its original owner and create an association
+      Object.entries(mockWallets).forEach(([userId, wallets]) => {
+        wallets.forEach(wallet => {
+          mockWalletUserAssociations.push({
+            walletId: wallet.id,
+            userId,
+            associationDate: new Date().toISOString(),
+            isOwner: true
+          });
+        });
+      });
+    }
+    
+    return [...mockWalletUserAssociations];
   }
 }

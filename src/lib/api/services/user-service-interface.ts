@@ -32,7 +32,7 @@ export interface UserService {
     request: ChangeTransactionStatusRequest
   ): Promise<Transaction>;
   
-  // New methods for wallet-user associations
+  // Methods for wallet-user associations
   getWalletUsers(walletId: string): Promise<User[]>;
   addUserToWallet(walletId: string, userId: string, isOwner?: boolean): Promise<WalletUserAssociation>;
   removeUserFromWallet(walletId: string, userId: string): Promise<void>;
