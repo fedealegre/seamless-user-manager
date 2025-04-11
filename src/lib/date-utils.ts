@@ -134,7 +134,8 @@ export const formatTimeDifference = (
   // Format based on the difference
   if (diffDays > 30) {
     // If more than a month, just show the date
-    return formatDateInTimezone(dateObj, timezone, locale);
+    // return formatDateInTimezone(dateObj, timezone, locale);
+   '';
   } else if (diffDays > 0) {
     return locale.startsWith("es") 
       ? `hace ${diffDays} ${diffDays === 1 ? 'día' : 'días'}`
