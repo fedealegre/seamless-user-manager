@@ -39,13 +39,8 @@ interface AddBackofficeUserDialogProps {
 const formSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters" }),
   surname: z.string().min(2, { message: "Surname must be at least 2 characters" }),
-  email: z.string().email({ message: "Please enter a valid email address" }),
-  password: z.string().min(6, { message: "Password must be at least 6 characters" }),
-  confirmPassword: z.string().min(6, { message: "Please confirm your password" }),
+  email: z.string().min(2, { message: "Email must be at least 2 characters" }),
   roles: z.array(z.string()).min(1, { message: "At least one role must be selected" }),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords do not match",
-  path: ["confirmPassword"],
 });
 
 const roleOptions = [
@@ -70,8 +65,6 @@ const AddBackofficeUserDialog: React.FC<AddBackofficeUserDialogProps> = ({
       name: "",
       surname: "",
       email: "",
-      password: "",
-      confirmPassword: "",
       roles: [],
     },
   });
@@ -106,7 +99,6 @@ const AddBackofficeUserDialog: React.FC<AddBackofficeUserDialogProps> = ({
       name: values.name,
       surname: values.surname,
       email: values.email,
-      password: values.password, // Include password
       roles: values.roles,
       state: "active",
     };
@@ -174,35 +166,7 @@ const AddBackofficeUserDialog: React.FC<AddBackofficeUserDialogProps> = ({
                 <FormItem>
                   <FormLabel>{t("email")}</FormLabel>
                   <FormControl>
-                    <Input type="email" placeholder={t("enter-email")} {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("password")}</FormLabel>
-                  <FormControl>
-                    <Input type="password" placeholder={t("enter-password")} {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="confirmPassword"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>{t("confirm-password")}</FormLabel>
-                  <FormControl>
-                    <Input type="password" placeholder={t("confirm-your-password")} {...field} />
+                    <Input placeholder={t("enter-email")} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

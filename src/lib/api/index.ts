@@ -1,3 +1,4 @@
+
 // Export the types
 export * from "./types";
 
@@ -5,14 +6,13 @@ export * from "./types";
 import { mockUsers } from "./mock/mock-users-data";
 import { BackofficeUser, AntiFraudRule, AuditLog, LoginRequest, LoginResponse } from "./types";
 
-// Mock backoffice users with passwords
+// Mock backoffice users
 const mockBackofficeUsers: BackofficeUser[] = [
   {
     id: "1",
     name: "Admin",
     surname: "User",
     email: "admin@example.com",
-    password: "admin123", // Added password
     roles: ["configurador"],
     state: "active",
     last_login: "2023-09-01T10:00:00Z"
@@ -22,7 +22,6 @@ const mockBackofficeUsers: BackofficeUser[] = [
     name: "Support",
     surname: "User",
     email: "support@example.com",
-    password: "support123", // Added password
     roles: ["operador"],
     state: "active",
     last_login: "2023-09-02T11:00:00Z"
@@ -32,7 +31,6 @@ const mockBackofficeUsers: BackofficeUser[] = [
     name: "Operations",
     surname: "Manager",
     email: "operations@example.com",
-    password: "operations123", // Added password
     roles: ["operador", "analista"],
     state: "active",
     last_login: "2023-09-03T09:30:00Z"
@@ -42,7 +40,6 @@ const mockBackofficeUsers: BackofficeUser[] = [
     name: "Finance",
     surname: "Analyst",
     email: "finance@example.com",
-    password: "finance123", // Added password
     roles: ["compensador"],
     state: "blocked",
     last_login: "2023-08-25T14:20:00Z"
@@ -135,52 +132,16 @@ export const apiService = {
   // Backoffice users
   listBackofficeUsers: async (): Promise<BackofficeUser[]> => {
     console.log("Mock: Fetching backoffice users");
-    // Return users without passwords for security
-    return mockBackofficeUsers.map(user => {
-      const { password, ...userWithoutPassword } = user;
-      return userWithoutPassword;
-    });
+    return [...mockBackofficeUsers];
   },
   
   createBackofficeUser: async (user: BackofficeUser): Promise<void> => {
     console.log("Mock: Creating backoffice user", user);
-    // Validate email isn't already in use
-    if (mockBackofficeUsers.some(u => u.email === user.email)) {
-      throw new Error("Email is already in use");
-    }
-    
     mockBackofficeUsers.push({
       ...user,
       id: `${mockBackofficeUsers.length + 1}`,
       last_login: new Date().toISOString()
     });
-  },
-  
-  // Update backoffice user
-  updateBackofficeUser: async (userId: string, updatedUser: BackofficeUser): Promise<void> => {
-    console.log("Mock: Updating backoffice user", userId, updatedUser);
-    const index = mockBackofficeUsers.findIndex(user => user.id === userId);
-    
-    if (index >= 0) {
-      // Check if email is being changed and not already in use by another user
-      if (updatedUser.email !== mockBackofficeUsers[index].email &&
-          mockBackofficeUsers.some(u => u.id !== userId && u.email === updatedUser.email)) {
-        throw new Error("Email is already in use by another user");
-      }
-      
-      // Keep the existing password if not explicitly updated
-      if (!updatedUser.password) {
-        updatedUser.password = mockBackofficeUsers[index].password;
-      }
-      
-      mockBackofficeUsers[index] = {
-        ...mockBackofficeUsers[index],
-        ...updatedUser,
-        id: userId // Ensure ID remains the same
-      };
-    } else {
-      throw new Error("User not found");
-    }
   },
   
   // Add the missing methods for backoffice users
@@ -224,35 +185,27 @@ export const apiService = {
     }
   },
   
-  // Updated login functionality to use email/password
+  // Add mock login functionality
   login: async (loginRequest: LoginRequest): Promise<LoginResponse> => {
     console.log("Mock: Login attempt", loginRequest);
     
-    // First try to authenticate using the mock users with predefined username/password
-    const mockUserMatch = mockBackofficeUsers.find(
-      u => u.email === loginRequest.userName && u.password === loginRequest.password
-    );
+    // Simulate a successful login
+    const mockUser: BackofficeUser = {
+      id: "mock-user-1",
+      name: "Mock",
+      surname: "User",
+      email: loginRequest.userName,
+      roles: ["operador"],
+      state: "active",
+      last_login: new Date().toISOString()
+    };
     
-    if (mockUserMatch) {
-      // Update last login time
-      const userIndex = mockBackofficeUsers.findIndex(u => u.id === mockUserMatch.id);
-      if (userIndex >= 0) {
-        mockBackofficeUsers[userIndex].last_login = new Date().toISOString();
-      }
-      
-      // Return user without password
-      const { password, ...userWithoutPassword } = mockUserMatch;
-      
-      return {
-        accessToken: "mock-token-" + Date.now(),
-        refreshToken: "mock-refresh-token-" + Date.now(),
-        expiresIn: 86400, // 24 hours
-        user: userWithoutPassword
-      };
-    }
-    
-    // If no matching user is found
-    throw new Error("Invalid email or password");
+    return {
+      accessToken: "mock-access-token",
+      refreshToken: "mock-refresh-token",
+      expiresIn: 3600,
+      user: mockUser
+    };
   },
   
   // Anti-fraud rules
