@@ -1,6 +1,7 @@
 
 import * as React from "react"
 import { CalendarIcon } from "lucide-react"
+import { type Locale } from "react-day-picker"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -21,6 +22,15 @@ interface DatePickerProps {
 
 export function DatePicker({ date, onSelect, className, id }: DatePickerProps) {
   const { formatDate } = useBackofficeSettings();
+  // Create a locale object or use null
+  const getLocale = (): Locale | undefined => {
+    try {
+      return require('date-fns/locale/es');
+    } catch (e) {
+      console.error("Could not load ES locale:", e);
+      return undefined;
+    }
+  };
   
   return (
     <Popover>
@@ -45,7 +55,7 @@ export function DatePicker({ date, onSelect, className, id }: DatePickerProps) {
           onSelect={onSelect}
           initialFocus
           className="p-3 pointer-events-auto"
-          locale="es-ES"
+          locale={getLocale()}
           formatters={{
             formatDay: (date) => date.getDate().toString(),
           }}

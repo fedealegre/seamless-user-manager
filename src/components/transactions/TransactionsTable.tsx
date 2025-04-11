@@ -50,7 +50,7 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
   handleCompensateCustomer,
   handleChangeStatus,
 }) => {
-  const { settings, formatDateTime } = useBackofficeSettings();
+  const { settings, formatDateTime, getTimezoneFromOffset } = useBackofficeSettings();
   const t = (key: string) => translate(key, settings.language);
   const locale = settings.language === "en" ? "en-US" : "es-ES";
   const { canChangeTransactionStatus, canCancelTransaction } = usePermissions();
@@ -95,7 +95,7 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
                         {formatTimeDifference(
                           new Date(transaction.date), 
                           locale,
-                          settings.timezone
+                          getTimezoneFromOffset(settings.utcOffset)
                         )}
                       </div>
                     </>
