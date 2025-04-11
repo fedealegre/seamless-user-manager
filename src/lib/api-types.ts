@@ -76,9 +76,11 @@ export interface BackofficeUser {
     id?: string;
     name: string;
     surname: string;
+    email?: string;
     roles: string[];
     state: 'active' | 'blocked';
     last_login?: string;
+    password?: string; // Added for user creation and authentication
 }
 
 export interface AuditLog {

@@ -9,6 +9,7 @@ import { CompanySettingsProvider } from "@/contexts/CompanySettingsContext";
 import { BackofficeSettingsProvider } from "@/contexts/BackofficeSettingsContext";
 import PrivateRoute from "@/components/PrivateRoute";
 import { TransactionGeneratorProvider } from "@/contexts/TransactionGeneratorContext";
+import { useAuth } from "@/contexts/AuthContext";
 
 // Pages
 import Login from "./pages/Login";
@@ -34,6 +35,31 @@ const queryClient = new QueryClient({
   },
 });
 
+// Helper function to determine the default landing page based on user roles
+export const getDefaultLandingPage = (roles: string[]): string => {
+  if (roles.includes("analista")) {
+    return "/dashboard";
+  } else if (roles.includes("operador") || roles.includes("compensador")) {
+    return "/users";
+  } else if (roles.includes("configurador")) {
+    return "/anti-fraud";
+  }
+  // Fallback - should never happen if roles are properly assigned
+  return "/login";
+};
+
+// Root redirect component that uses the helper function
+const RootRedirect = () => {
+  const { user } = useAuth();
+  
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+  
+  const defaultPage = getDefaultLandingPage(user.roles);
+  return <Navigate to={defaultPage} replace />;
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
@@ -48,14 +74,14 @@ const App = () => (
                   {/* Public Routes */}
                   <Route path="/login" element={<Login />} />
                   
-                  {/* Redirect from root to dashboard */}
-                  <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                  {/* Redirect from root to appropriate page based on user role */}
+                  <Route path="/" element={<RootRedirect />} />
                   
                   {/* Private Routes with a shared layout */}
                   <Route element={<PrivateRoute />}>
-                    {/* Dashboard - Available to all authenticated users */}
+                    {/* Dashboard - Only available to analista role */}
                     <Route path="/dashboard" element={
-                      <PrivateRoute allowedRoles={["analista", "operador", "compensador", "configurador"]} noLayout={true}>
+                      <PrivateRoute allowedRoles={["analista"]} noLayout={true}>
                         <Dashboard />
                       </PrivateRoute>
                     } />

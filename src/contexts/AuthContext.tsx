@@ -1,7 +1,8 @@
+
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { api } from "@/lib/api";
-import { BackofficeUser, LoginRequest } from "@/lib/api/types";
-import { useToast } from "@/components/ui/use-toast";
+import { BackofficeUser, LoginRequest } from "@/lib/api-types";
+import { useToast } from "@/hooks/use-toast";
 
 interface AuthContextType {
   user: BackofficeUser | null;
@@ -22,9 +23,11 @@ const BACKOFFICE_USERS = [
       id: "admin-1",
       name: "Federico",
       surname: "Alegre",
+      email: "fede@example.com",
       roles: ["configurador", "compensador", "operador", "analista"],
       state: "active" as const,
-      last_login: new Date().toISOString()
+      last_login: new Date().toISOString(),
+      password: "backoffice" // Added for consistency
     }
   },
   {
@@ -34,9 +37,11 @@ const BACKOFFICE_USERS = [
       id: "operator-1",
       name: "Operator",
       surname: "User",
+      email: "operator@example.com",
       roles: ["operador"],
       state: "active" as const,
-      last_login: new Date().toISOString()
+      last_login: new Date().toISOString(),
+      password: "operador" // Added for consistency
     }
   },
   {
@@ -46,9 +51,11 @@ const BACKOFFICE_USERS = [
       id: "compensator-1",
       name: "Compensator",
       surname: "User",
+      email: "compensator@example.com",
       roles: ["compensador"],
       state: "active" as const,
-      last_login: new Date().toISOString()
+      last_login: new Date().toISOString(),
+      password: "compensador" // Added for consistency
     }
   },
   {
@@ -58,9 +65,11 @@ const BACKOFFICE_USERS = [
       id: "analyst-1",
       name: "Analyst",
       surname: "User",
+      email: "analyst@example.com",
       roles: ["analista"],
       state: "active" as const,
-      last_login: new Date().toISOString()
+      last_login: new Date().toISOString(),
+      password: "analista" // Added for consistency
     }
   },
   {
@@ -70,9 +79,11 @@ const BACKOFFICE_USERS = [
       id: "configurator-1",
       name: "Configurator",
       surname: "User",
+      email: "configurator@example.com",
       roles: ["configurador"],
       state: "active" as const,
-      last_login: new Date().toISOString()
+      last_login: new Date().toISOString(),
+      password: "configurador" // Added for consistency
     }
   }
 ];

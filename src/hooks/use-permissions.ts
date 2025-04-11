@@ -8,6 +8,10 @@ export function usePermissions() {
     return user?.roles.includes(role) || false;
   };
 
+  const canAccessDashboard = (): boolean => {
+    return hasRole("analista");
+  };
+
   const canAccessManagementPages = (): boolean => {
     return hasRole("operador") || hasRole("compensador");
   };
@@ -30,6 +34,7 @@ export function usePermissions() {
 
   return {
     hasRole,
+    canAccessDashboard,
     canAccessManagementPages,
     canAccessSecurityPages,
     canAccessSettingsPages,

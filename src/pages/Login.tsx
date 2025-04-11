@@ -1,16 +1,17 @@
 
-import React from "react";
-import { Navigate } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "@/contexts/AuthContext";
-import { LoginRequest } from "@/lib/api/types";
+import { LoginRequest } from "@/lib/api-types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { getDefaultLandingPage } from "@/App";
 
 const loginSchema = z.object({
   userName: z.string().min(1, "Username is required"),
@@ -21,7 +22,8 @@ const loginSchema = z.object({
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 const Login = () => {
-  const { isAuthenticated, login, isLoading } = useAuth();
+  const { isAuthenticated, login, isLoading, user } = useAuth();
+  const navigate = useNavigate();
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -31,6 +33,14 @@ const Login = () => {
       rememberMe: false,
     },
   });
+
+  // Handle redirects when authentication status or user changes
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      const defaultPage = getDefaultLandingPage(user.roles);
+      navigate(defaultPage, { replace: true });
+    }
+  }, [isAuthenticated, user, navigate]);
 
   const onSubmit = async (values: LoginFormValues) => {
     const { rememberMe, ...credentials } = values;
@@ -46,15 +56,16 @@ const Login = () => {
     
     try {
       await login(loginRequest);
-      // Successful login will update isAuthenticated, causing a redirect
+      // Redirection will be handled by the useEffect hook
     } catch (error) {
       // Error is handled by the auth context
       console.error("Login failed:", error);
     }
   };
 
-  if (isAuthenticated) {
-    return <Navigate to="/dashboard" replace />;
+  // If already authenticated, don't render the login form
+  if (isAuthenticated && user) {
+    return null; // The useEffect hook will handle the redirection
   }
 
   return (
