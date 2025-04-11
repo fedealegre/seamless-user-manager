@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { formatDateInTimezone } from "@/lib/date-utils";
+import { formatDateTime, formatDateInTimezone } from "@/lib/date-utils";
 
 // Define the available languages
 export type Language = "en" | "es";
@@ -105,7 +105,7 @@ export const BackofficeSettingsProvider: React.FC<{ children: React.ReactNode }>
       ...options
     };
     
-    return formatDateInTimezone(date, timezone, locale, defaultOptions);
+    return formatDateTime(date, timezone, locale, defaultOptions);
   };
   
   // Function to format time only - 24-hour format
