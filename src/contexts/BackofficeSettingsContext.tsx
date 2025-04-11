@@ -1,6 +1,6 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { formatDateInTimezone } from "@/lib/date-utils";
+import { formatDateInTimezone, formatDateTime } from "@/lib/date-utils";
 
 // Define the available languages
 export type Language = "en" | "es";
@@ -106,32 +106,36 @@ export const BackofficeSettingsProvider: React.FC<{ children: React.ReactNode }>
       ...options
     };
     
+    // Using formatDateInTimezone to ensure DD/MM/YYYY format regardless of locale
     return formatDateInTimezone(date, timezone, locale, defaultOptions);
   };
   
   // Function to format time only - 24-hour format
   const formatTime = (date: Date | string | number): string => {
-    return formatDate(date, {
-      year: undefined,
-      month: undefined,
-      day: undefined,
+    const locale = settings.language === "en" ? "en-US" : "es-ES";
+    const options: Intl.DateTimeFormatOptions = {
       hour: "2-digit",
       minute: "2-digit",
       second: "2-digit",
       hour12: false
-    });
+    };
+    
+    return formatDateInTimezone(date, timezone, locale, options);
   };
   
   // Function to format full date and time (DD/MM/YYYY HH:MM)
   const formatDateTime = (date: Date | string | number): string => {
-    return formatDate(date, {
+    const locale = settings.language === "en" ? "en-US" : "es-ES";
+    const options: Intl.DateTimeFormatOptions = {
       year: "numeric",
       month: "2-digit",
       day: "2-digit",
       hour: "2-digit",
       minute: "2-digit",
       hour12: false
-    });
+    };
+    
+    return formatDateInTimezone(date, timezone, locale, options);
   };
 
   return (
