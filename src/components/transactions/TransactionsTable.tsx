@@ -1,7 +1,7 @@
 
 import React from "react";
 import { Transaction } from "@/lib/api/types";
-import { MoreVertical, Eye, XCircle, CircleDollarSign, RefreshCw } from "lucide-react";
+import { MoreVertical, Eye, RefreshCw, CircleDollarSign } from "lucide-react";
 import { 
   getTranslatedStatusBadge, 
   getTranslatedTypeBadge, 
@@ -133,23 +133,13 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
                       <DropdownMenuItem onClick={() => handleViewDetails(transaction)}>
                         <Eye size={16} className="mr-2" /> {t("view")} {t("details")}
                       </DropdownMenuItem>
-                      {transaction.status === "pending" && (
-                        <DropdownMenuItem 
-                          onClick={() => canCancelTransaction() 
-                            ? handleCancelTransaction(transaction)
-                            : handleRestrictedAction("cancel-transaction")
-                          }
-                          className="text-amber-600"
-                        >
-                          <XCircle size={16} className="mr-2" /> {t("cancel")} {t("transaction")}
-                        </DropdownMenuItem>
-                      )}
                       {transaction.status === "pending" && handleChangeStatus && (
                         <DropdownMenuItem 
                           onClick={() => canChangeTransactionStatus() 
                             ? handleChangeStatus(transaction)
                             : handleRestrictedAction("change-status")
                           }
+                          className="text-amber-600"
                         >
                           <RefreshCw size={16} className="mr-2" /> {t("change")} {t("status")}
                         </DropdownMenuItem>
