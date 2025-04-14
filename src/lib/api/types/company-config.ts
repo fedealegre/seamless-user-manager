@@ -1,4 +1,3 @@
-
 import { User } from "../types";
 
 export type SearchFieldType = "text" | "number" | "select" | "date";
@@ -29,7 +28,6 @@ export interface CompanySearchConfig {
   };
 }
 
-// Example configuration
 export const defaultSearchConfig: CompanySearchConfig = {
   fields: [
     {
@@ -45,6 +43,20 @@ export const defaultSearchConfig: CompanySearchConfig = {
       label: "Name",
       type: "text",
       placeholder: "Search by name...",
+    },
+    {
+      id: "surname",
+      key: "surname",
+      label: "Last Name",
+      type: "text",
+      placeholder: "Search by last name...",
+    },
+    {
+      id: "email",
+      key: "email",
+      label: "Email",
+      type: "text",
+      placeholder: "Search by email...",
     },
     {
       id: "cellPhone",

@@ -1,9 +1,7 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useUserManagement } from "@/hooks/use-user-management";
-import UserSearchBar from "@/components/users/UserSearchBar";
 import UsersTable from "@/components/users/UsersTable";
 import UsersLoadingSkeleton from "@/components/users/UsersLoadingSkeleton";
 import UserActionDialogs from "@/components/users/UserActionDialogs";
@@ -12,6 +10,7 @@ import { Clock, ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
 import { translate } from "@/lib/translations";
+import CollapsibleUserSearch from "@/components/users/CollapsibleUserSearch";
 
 const UserManagement = () => {
   const { settings } = useBackofficeSettings();
@@ -54,6 +53,9 @@ const UserManagement = () => {
     navigate(`/users/${userId}?tab=transactions`);
   };
 
+  // Calculate active filters count
+  const activeFiltersCount = Object.values(searchParams).filter(Boolean).length;
+
   return (
     <>
       <div className="space-y-6">
@@ -71,9 +73,10 @@ const UserManagement = () => {
           </TabsList>
           
           <TabsContent value="search" className="mt-6">
-            <UserSearchBar 
+            <CollapsibleUserSearch
               searchConfig={searchConfig}
               onSearch={handleSearch}
+              activeFiltersCount={activeFiltersCount}
             />
             
             <Card className="mt-6">
