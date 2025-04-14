@@ -15,7 +15,7 @@ export const generateRandomTransaction = (): Transaction => {
   // Generate transaction types and statuses
   const movementTypes = ["income", "outcome"];
   const transactionTypes = ["cash_in", "transfer_cash_in", "cash_out", "tk_pay_req", "compensate"];
-  const transactionStatuses = ["completed", "pending", "failed", "cancelled"];
+  const transactionStatuses = ["confirmed", "pending", "cancelled"];
 
   const randomMovementType = movementTypes[Math.floor(Math.random() * movementTypes.length)];
   const randomType = transactionTypes[Math.floor(Math.random() * transactionTypes.length)];
