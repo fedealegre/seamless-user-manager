@@ -85,6 +85,7 @@ const TransactionFilters: React.FC<TransactionFiltersProps> = ({
               <SelectContent>
                 <SelectGroup>
                   <SelectItem value="all">{t("all-statuses")}</SelectItem>
+                  <SelectItem value="CONFIRMED">{t("confirmed")}</SelectItem>
                   <SelectItem value="completed">{t("completed")}</SelectItem>
                   <SelectItem value="pending">{t("pending")}</SelectItem>
                   <SelectItem value="cancelled">{t("cancelled")}</SelectItem>
