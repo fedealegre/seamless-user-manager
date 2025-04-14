@@ -14,6 +14,8 @@ export const getTranslatedStatusBadge = (status?: string, language: string = "en
   switch(statusKey) {
     case 'completed':
       return <Badge variant="outline" className="bg-green-100 text-green-800 hover:bg-green-100">{translatedStatus}</Badge>;
+    case 'confirmed':
+      return <Badge variant="outline" className="bg-green-100 text-green-800 hover:bg-green-100">{translatedStatus}</Badge>;
     case 'pending':
       return <Badge variant="outline" className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">{translatedStatus}</Badge>;
     case 'cancelled':
@@ -78,6 +80,8 @@ export const getTranslatedTransactionTypeBadge = (type?: string, language: strin
 export const getStatusBadge = (status?: string) => {
   switch(status?.toLowerCase()) {
     case 'completed':
+      return <Badge variant="outline" className="bg-green-100 text-green-800 hover:bg-green-100">Completed</Badge>;
+    case 'confirmed':
       return <Badge variant="outline" className="bg-green-100 text-green-800 hover:bg-green-100">Completed</Badge>;
     case 'pending':
       return <Badge variant="outline" className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">Pending</Badge>;
