@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "@/contexts/AuthContext";
-import { useCompanySettings } from "@/contexts/CompanySettings";
+import { useCompanySettings } from "@/contexts/CompanySettingsContext";
 import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
 import { LoginRequest } from "@/lib/api-types";
 import { Button } from "@/components/ui/button";
