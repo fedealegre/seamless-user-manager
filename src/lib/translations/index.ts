@@ -8,6 +8,7 @@ import { roleTranslations } from './roles';
 import { antiFraudTranslations } from './anti-fraud';
 import { passwordResetTranslations } from './password-reset';
 import { profileTranslations } from './profile';
+import { loginTranslations } from './login';
 
 // Combine all translation modules
 const translationModules = [
@@ -19,7 +20,8 @@ const translationModules = [
   roleTranslations,
   antiFraudTranslations,
   passwordResetTranslations,
-  profileTranslations
+  profileTranslations,
+  loginTranslations
 ];
 
 // Build the complete translations object

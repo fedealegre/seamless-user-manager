@@ -5,6 +5,8 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "@/contexts/AuthContext";
+import { useCompanySettings } from "@/contexts/CompanySettings";
+import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
 import { LoginRequest } from "@/lib/api-types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,10 +14,11 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { getDefaultLandingPage } from "@/App";
+import { translate } from "@/lib/translations";
 
 const loginSchema = z.object({
-  userName: z.string().min(1, "Username is required"),
-  password: z.string().min(1, "Password is required"),
+  userName: z.string().min(1, "username-required"),
+  password: z.string().min(1, "password-required"),
   rememberMe: z.boolean().optional(),
 });
 
@@ -24,6 +27,10 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 const Login = () => {
   const { isAuthenticated, login, isLoading, user } = useAuth();
   const navigate = useNavigate();
+  const { settings: companySettings } = useCompanySettings();
+  const { settings } = useBackofficeSettings();
+  
+  const t = (key: string) => translate(key, settings.language);
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -45,38 +52,47 @@ const Login = () => {
   const onSubmit = async (values: LoginFormValues) => {
     const { rememberMe, ...credentials } = values;
     
-    // Build complete LoginRequest as defined in the OpenAPI spec
     const loginRequest: LoginRequest = {
-      userName: credentials.userName, // Ensure userName is not optional
-      password: credentials.password, // Ensure password is not optional
-      // Optional device information for enhanced security
+      userName: credentials.userName,
+      password: credentials.password,
       appPlatform: navigator.platform,
       appVersion: navigator.appVersion,
     };
     
     try {
       await login(loginRequest);
-      // Redirection will be handled by the useEffect hook
     } catch (error) {
-      // Error is handled by the auth context
       console.error("Login failed:", error);
     }
   };
 
-  // If already authenticated, don't render the login form
   if (isAuthenticated && user) {
-    return null; // The useEffect hook will handle the redirection
+    return null;
   }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <Card className="w-full max-w-md animate-scale-in glass-card">
         <CardHeader className="space-y-1 text-center">
-          <div className="mx-auto w-12 h-12 bg-primary rounded-xl flex items-center justify-center mb-2">
-            <span className="text-primary-foreground font-bold text-xl">PB</span>
-          </div>
-          <CardTitle className="text-2xl font-bold">Payment Backoffice</CardTitle>
-          <CardDescription>Enter your credentials to access the dashboard</CardDescription>
+          {companySettings.backofficeIcon ? (
+            <div className="mx-auto w-12 h-12 overflow-hidden rounded-xl">
+              <img 
+                src={companySettings.backofficeIcon} 
+                alt={companySettings.backofficeTitle || t('login-title')}
+                className="w-full h-full object-contain"
+              />
+            </div>
+          ) : (
+            <div className="mx-auto w-12 h-12 bg-primary rounded-xl flex items-center justify-center mb-2">
+              <span className="text-primary-foreground font-bold text-xl">
+                {(companySettings.backofficeTitle || t('login-title')).charAt(0)}
+              </span>
+            </div>
+          )}
+          <CardTitle className="text-2xl font-bold">
+            {companySettings.backofficeTitle || t('login-title')}
+          </CardTitle>
+          <CardDescription>{t('login-description')}</CardDescription>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -86,11 +102,11 @@ const Login = () => {
                 name="userName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Username</FormLabel>
+                    <FormLabel>{t('username')}</FormLabel>
                     <FormControl>
                       <Input {...field} autoComplete="username" className="glass-input" />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage>{t(form.formState.errors.userName?.message || '')}</FormMessage>
                   </FormItem>
                 )}
               />
@@ -100,7 +116,7 @@ const Login = () => {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel>{t('password')}</FormLabel>
                     <FormControl>
                       <Input 
                         {...field} 
@@ -109,7 +125,7 @@ const Login = () => {
                         className="glass-input" 
                       />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage>{t(form.formState.errors.password?.message || '')}</FormMessage>
                   </FormItem>
                 )}
               />
@@ -126,13 +142,13 @@ const Login = () => {
                           onCheckedChange={field.onChange} 
                         />
                       </FormControl>
-                      <FormLabel className="text-sm cursor-pointer">Remember me</FormLabel>
+                      <FormLabel className="text-sm cursor-pointer">{t('remember-me')}</FormLabel>
                     </FormItem>
                   )}
                 />
                 
                 <Button variant="link" className="text-sm p-0 h-auto" type="button">
-                  Forgot password?
+                  {t('forgot-password')}
                 </Button>
               </div>
               
@@ -141,13 +157,13 @@ const Login = () => {
                 className="w-full" 
                 disabled={isLoading}
               >
-                {isLoading ? "Signing in..." : "Sign in"}
+                {isLoading ? t('signing-in') : t('sign-in')}
               </Button>
             </form>
           </Form>
         </CardContent>
         <CardFooter className="text-center text-sm text-muted-foreground">
-          Contact your administrator if you're having trouble logging in.
+          {t('admin-contact')}
         </CardFooter>
       </Card>
     </div>
