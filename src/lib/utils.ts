@@ -47,17 +47,17 @@ export function parseDate(dateString: string | undefined): Date | undefined {
       
       if (isNaN(year) || isNaN(month) || isNaN(day)) return undefined;
       
-      const date = new Date(Date.UTC(year, month - 1, day));
-      return date;
+      // Create the date directly using the numeric components
+      // Note: No UTC - this avoids timezone shifts
+      return new Date(year, month - 1, day);
     } else {
       // Handle simple YYYY-MM-DD format
       const [year, month, day] = dateString.split('-').map(Number);
       
       if (isNaN(year) || isNaN(month) || isNaN(day)) return undefined;
       
-      // Use UTC to avoid timezone shifts
-      const date = new Date(Date.UTC(year, month - 1, day));
-      return date;
+      // Create the date without timezone adjustment
+      return new Date(year, month - 1, day);
     }
   } catch (error) {
     console.error("Error parsing date:", error);
@@ -69,10 +69,10 @@ export function parseDate(dateString: string | undefined): Date | undefined {
 export function formatDateForInput(date: Date | undefined): string {
   if (!date) return '';
   
-  // Using UTC values to prevent timezone issues
-  const year = date.getUTCFullYear();
-  const month = String(date.getUTCMonth() + 1).padStart(2, '0');
-  const day = String(date.getUTCDate()).padStart(2, '0');
+  // Using date values directly without timezone adjustments
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
   
   return `${year}-${month}-${day}`;
 }

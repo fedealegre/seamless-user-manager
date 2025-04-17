@@ -1,4 +1,3 @@
-
 /**
  * Utility functions for date formatting with timezone support
  */
@@ -135,7 +134,6 @@ export const formatTimeDifference = (
   if (diffDays > 30) {
     // If more than a month, just show the date
     // return formatDateInTimezone(dateObj, timezone, locale);
-   '';
   } else if (diffDays > 0) {
     return locale.startsWith("es") 
       ? `hace ${diffDays} ${diffDays === 1 ? 'día' : 'días'}`
@@ -178,5 +176,26 @@ export const formatDateTime = (
     console.error('Error formatting date:', error);
     // Fallback to default format in case of error
     return dateObj.toLocaleString(locale);
+  }
+};
+
+// Format birth date properly without timezone adjustment
+export const formatBirthDate = (dateString?: string): string => {
+  if (!dateString) return "Empty";
+  
+  try {
+    // Create a date directly from the YYYY-MM-DD string parts to avoid timezone shifts
+    const [year, month, day] = dateString.split('-').map(Number);
+    if (isNaN(year) || isNaN(month) || isNaN(day)) return "Invalid date";
+    
+    // Format the date with the correct day
+    return new Intl.DateTimeFormat('es-ES', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    }).format(new Date(year, month - 1, day));
+  } catch (error) {
+    console.error("Error formatting birth date:", error);
+    return "Invalid date";
   }
 };

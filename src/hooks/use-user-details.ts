@@ -13,7 +13,10 @@ export function useUserDetails(userId: string | undefined) {
     queryKey: ['user', userId],
     queryFn: () => {
       if (!userId) throw new Error('User ID is required');
-      return userService.getUserData(userId);
+      return userService.getUserData(userId).then(userData => {
+        // Process any date fields here if needed
+        return userData;
+      });
     },
     enabled: !!userId,
   });

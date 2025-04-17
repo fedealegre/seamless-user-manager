@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { User } from "@/lib/api/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,6 +8,7 @@ import { ResetPasswordDialog } from "./ResetPasswordDialog";
 import { userService } from "@/lib/api/user-service";
 import { useQueryClient } from "@tanstack/react-query";
 import { formatFieldName, parseDate } from "@/lib/utils";
+import { formatBirthDate } from "@/lib/date-utils";
 import { useUserFieldSettings } from "@/hooks/use-user-field-settings";
 import { Key } from "lucide-react";
 import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
@@ -29,6 +29,13 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
   // Helper function to format dates
   const formatDate = (dateString?: string): string => {
     if (!dateString) return "Empty";
+    
+    // Use the specialized birth date formatter
+    if (dateString.includes('-')) {
+      return formatBirthDate(dateString);
+    }
+    
+    // For other dates, use the regular parser
     const date = parseDate(dateString);
     if (!date) return "Invalid date";
     return date.toLocaleDateString();
