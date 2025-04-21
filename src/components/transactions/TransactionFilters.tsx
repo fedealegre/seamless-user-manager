@@ -1,7 +1,6 @@
 
 import React, { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { X } from "lucide-react";
@@ -15,6 +14,8 @@ import {
 } from "@/components/ui/select";
 import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
 import { translate } from "@/lib/translations";
+import { DatePicker } from "@/components/ui/date-picker";
+import { formatDateForInput } from "@/lib/utils";
 
 interface FiltersType {
   status: string;
@@ -38,11 +39,37 @@ const TransactionFilters: React.FC<TransactionFiltersProps> = ({
   const { settings } = useBackofficeSettings();
   const t = (key: string) => translate(key, settings.language);
   const [localFilters, setLocalFilters] = useState<FiltersType>(filters);
+  
+  // State for date objects to be used with the DatePicker component
+  const [startDateObj, setStartDateObj] = useState<Date | undefined>(
+    filters.startDate ? new Date(filters.startDate) : undefined
+  );
+  const [endDateObj, setEndDateObj] = useState<Date | undefined>(
+    filters.endDate ? new Date(filters.endDate) : undefined
+  );
 
   const handleChange = (name: keyof FiltersType, value: string) => {
     setLocalFilters((prev) => ({
       ...prev,
       [name]: value,
+    }));
+  };
+  
+  // Handler for start date changes
+  const handleStartDateChange = (date: Date | undefined) => {
+    setStartDateObj(date);
+    setLocalFilters(prev => ({
+      ...prev,
+      startDate: date ? formatDateForInput(date) : ''
+    }));
+  };
+  
+  // Handler for end date changes
+  const handleEndDateChange = (date: Date | undefined) => {
+    setEndDateObj(date);
+    setLocalFilters(prev => ({
+      ...prev,
+      endDate: date ? formatDateForInput(date) : ''
     }));
   };
 
@@ -51,6 +78,8 @@ const TransactionFilters: React.FC<TransactionFiltersProps> = ({
   };
 
   const handleReset = () => {
+    setStartDateObj(undefined);
+    setEndDateObj(undefined);
     setLocalFilters({
       status: "",
       transactionType: "",
@@ -145,21 +174,19 @@ const TransactionFilters: React.FC<TransactionFiltersProps> = ({
 
           <div className="space-y-2">
             <Label htmlFor="startDate">{t("start-date")}</Label>
-            <Input
+            <DatePicker 
               id="startDate"
-              type="date"
-              value={localFilters.startDate}
-              onChange={(e) => handleChange("startDate", e.target.value)}
+              date={startDateObj}
+              onSelect={handleStartDateChange}
             />
           </div>
 
           <div className="space-y-2">
             <Label htmlFor="endDate">{t("end-date")}</Label>
-            <Input
+            <DatePicker 
               id="endDate"
-              type="date"
-              value={localFilters.endDate}
-              onChange={(e) => handleChange("endDate", e.target.value)}
+              date={endDateObj}
+              onSelect={handleEndDateChange}
             />
           </div>
         </div>

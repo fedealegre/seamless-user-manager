@@ -1,7 +1,6 @@
 
 import * as React from "react"
 import { CalendarIcon } from "lucide-react"
-// Remove the problematic import
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
@@ -11,6 +10,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext"
+import { es } from 'date-fns/locale'
 
 interface DatePickerProps {
   date: Date | undefined
@@ -20,16 +20,11 @@ interface DatePickerProps {
 }
 
 export function DatePicker({ date, onSelect, className, id }: DatePickerProps) {
-  const { formatDate } = useBackofficeSettings();
+  const { formatDate, settings } = useBackofficeSettings();
   
-  // Use a type assertion instead of importing Locale
+  // Use dynamic import instead of require
   const getLocale = () => {
-    try {
-      return require('date-fns/locale/es') as any;
-    } catch (e) {
-      console.error("Could not load ES locale:", e);
-      return undefined;
-    }
+    return settings.language.startsWith('es') ? es : undefined;
   };
   
   return (
@@ -45,7 +40,7 @@ export function DatePicker({ date, onSelect, className, id }: DatePickerProps) {
           )}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
-          {date ? formatDate(date) : <span>Seleccionar fecha</span>}
+          {date ? formatDate(date) : <span>{settings.language.startsWith('es') ? 'Seleccionar fecha' : 'Select date'}</span>}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">

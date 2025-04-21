@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { userService } from "@/lib/api/user-service";
@@ -47,20 +46,20 @@ export const useTransactionManagement = () => {
         
         let filteredTxns = [...txns];
         
-        if (filters.status) {
+        if (filters.status && filters.status !== 'all') {
           filteredTxns = filteredTxns.filter(t => 
             t.status?.toLowerCase() === filters.status.toLowerCase()
           );
         }
         
-        if (filters.transactionType) {
+        if (filters.transactionType && filters.transactionType !== 'all') {
           filteredTxns = filteredTxns.filter(t => 
             t.transactionType?.toLowerCase() === filters.transactionType.toLowerCase() ||
             t.type?.toLowerCase() === filters.transactionType.toLowerCase()
           );
         }
         
-        if (filters.currency) {
+        if (filters.currency && filters.currency !== 'all') {
           filteredTxns = filteredTxns.filter(t => 
             t.currency?.toLowerCase() === filters.currency.toLowerCase()
           );
@@ -68,17 +67,24 @@ export const useTransactionManagement = () => {
         
         if (filters.startDate) {
           const startDate = new Date(filters.startDate);
-          filteredTxns = filteredTxns.filter(t => 
-            t.date ? new Date(t.date) >= startDate : true
-          );
+          startDate.setHours(0, 0, 0, 0);
+          
+          filteredTxns = filteredTxns.filter(t => {
+            if (!t.date) return false;
+            const txDate = new Date(t.date);
+            return txDate >= startDate;
+          });
         }
         
         if (filters.endDate) {
           const endDate = new Date(filters.endDate);
           endDate.setHours(23, 59, 59, 999);
-          filteredTxns = filteredTxns.filter(t => 
-            t.date ? new Date(t.date) <= endDate : true
-          );
+          
+          filteredTxns = filteredTxns.filter(t => {
+            if (!t.date) return false;
+            const txDate = new Date(t.date);
+            return txDate <= endDate;
+          });
         }
         
         if (searchTerm) {
@@ -344,7 +350,7 @@ export const useTransactionManagement = () => {
     selectedTransaction,
     filters,
     transactions,
-    allTransactions,  // Now exposing all transactions to be used for export
+    allTransactions,
     isLoading,
     totalPages,
     totalTransactions,
