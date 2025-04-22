@@ -21,6 +21,7 @@ const UserManagement = () => {
   const {
     users,
     isLoading,
+    isSubmitting,
     searchParams,
     handleSearch,
     selectedUser,
@@ -43,7 +44,6 @@ const UserManagement = () => {
   const navigate = useNavigate();
   const [showFilters, setShowFilters] = useState(false);
 
-  // Calculate active filters count
   const activeFiltersCount = Object.values(searchParams).filter(Boolean).length;
 
   const handleViewUserDetails = (userId: number) => {
@@ -129,7 +129,6 @@ const UserManagement = () => {
         </Card>
       </div>
 
-      {/* User Action Dialogs */}
       <UserActionDialogs
         selectedUser={selectedUser}
         showDeleteDialog={showDeleteDialog}
@@ -141,9 +140,9 @@ const UserManagement = () => {
         handleDeleteUser={handleDeleteUser}
         handleBlockUser={handleBlockUser}
         handleUnblockUser={handleUnblockUser}
+        isSubmitting={isSubmitting}
       />
 
-      {/* Search History Dialog */}
       <UserSearchHistoryDialog
         open={showHistoryDialog}
         onClose={() => setShowHistoryDialog(false)}

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { User } from "@/lib/api/types";
 import { useToast } from "@/hooks/use-toast";
 import { userService } from "@/lib/api/user-service";
@@ -12,7 +12,6 @@ interface SearchHistoryItem {
   timestamp: number;
 }
 
-// Key for storing search params in localStorage
 const SEARCH_PARAMS_STORAGE_KEY = 'userSearchParams';
 const SEARCH_HISTORY_STORAGE_KEY = 'userSearchHistory';
 
@@ -24,19 +23,18 @@ export function useUserManagement() {
   const [showUnblockDialog, setShowUnblockDialog] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [searchHistory, setSearchHistory] = useState<SearchHistoryItem[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   const { toast } = useToast();
   const { settings } = useBackofficeSettings();
   const t = (key: string) => translate(key, settings.language);
+  const queryClient = useQueryClient();
 
-  // Load search history and params from localStorage on component mount
   useEffect(() => {
-    // Load search history
     const savedHistory = localStorage.getItem(SEARCH_HISTORY_STORAGE_KEY);
     if (savedHistory) {
       try {
         const parsedHistory = JSON.parse(savedHistory);
-        // Make sure each item has a valid params object
         const validHistory = parsedHistory.map((item: any) => ({
           ...item,
           params: item.params || {}
@@ -48,7 +46,6 @@ export function useUserManagement() {
       }
     }
 
-    // Load last search params
     const savedParams = localStorage.getItem(SEARCH_PARAMS_STORAGE_KEY);
     if (savedParams) {
       try {
@@ -63,15 +60,13 @@ export function useUserManagement() {
     }
   }, []);
 
-  // Query for users - enabled by default if we have searchParams
   const { data: users, isLoading, refetch } = useQuery({
     queryKey: ["users", searchParams],
     queryFn: () => userService.searchUsers(searchParams),
-    enabled: Object.keys(searchParams).length > 0, // Run immediately if we have search params
+    enabled: Object.keys(searchParams).length > 0,
   });
 
   const saveSearchToHistory = (params: Record<string, string>) => {
-    // Don't save empty searches
     if (Object.keys(params).length === 0) return;
     
     const newItem: SearchHistoryItem = {
@@ -79,7 +74,6 @@ export function useUserManagement() {
       timestamp: Date.now()
     };
     
-    // Add to the front, limit to 10 items, avoid duplicates
     const isDuplicate = searchHistory.some(item => 
       JSON.stringify(item.params) === JSON.stringify(newItem.params)
     );
@@ -97,7 +91,6 @@ export function useUserManagement() {
   };
 
   const handleSearch = (params: Record<string, string>) => {
-    // Check if we have at least one non-empty search parameter
     if (Object.keys(params).length === 0) {
       toast({
         title: "Error",
@@ -107,14 +100,11 @@ export function useUserManagement() {
       return;
     }
     
-    // Save search params to state and localStorage for persistence
     setSearchParams(params);
     localStorage.setItem(SEARCH_PARAMS_STORAGE_KEY, JSON.stringify(params));
     
-    // Add to search history
     saveSearchToHistory(params);
     
-    // Manually trigger the query
     refetch();
   };
 
@@ -122,12 +112,13 @@ export function useUserManagement() {
     if (!selectedUser) return;
     
     try {
+      setIsSubmitting(true);
       await userService.deleteUser(selectedUser.id.toString());
+      await queryClient.invalidateQueries({ queryKey: ["users"] });
       toast({
         title: "User Deleted",
         description: `User ${selectedUser.name} ${selectedUser.surname} has been deleted successfully.`,
       });
-      refetch();
     } catch (error) {
       console.error("Failed to delete user:", error);
       toast({
@@ -136,6 +127,7 @@ export function useUserManagement() {
         variant: "destructive",
       });
     } finally {
+      setIsSubmitting(false);
       setShowDeleteDialog(false);
       setSelectedUser(null);
     }
@@ -145,12 +137,13 @@ export function useUserManagement() {
     if (!selectedUser) return;
     
     try {
+      setIsSubmitting(true);
       await userService.blockUser(selectedUser.id.toString(), reason);
+      await queryClient.invalidateQueries({ queryKey: ["users"] });
       toast({
         title: t("success"),
         description: t("user-blocked-success"),
       });
-      refetch();
     } catch (error) {
       console.error("Failed to block user:", error);
       toast({
@@ -159,6 +152,7 @@ export function useUserManagement() {
         variant: "destructive",
       });
     } finally {
+      setIsSubmitting(false);
       setShowBlockDialog(false);
       setSelectedUser(null);
     }
@@ -168,12 +162,13 @@ export function useUserManagement() {
     if (!selectedUser) return;
     
     try {
+      setIsSubmitting(true);
       await userService.unblockUser(selectedUser.id.toString());
+      await queryClient.invalidateQueries({ queryKey: ["users"] });
       toast({
         title: "User Unblocked",
         description: `User ${selectedUser.name} ${selectedUser.surname} has been unblocked.`,
       });
-      refetch();
     } catch (error) {
       console.error("Failed to unblock user:", error);
       toast({
@@ -182,6 +177,7 @@ export function useUserManagement() {
         variant: "destructive",
       });
     } finally {
+      setIsSubmitting(false);
       setShowUnblockDialog(false);
       setSelectedUser(null);
     }
@@ -190,17 +186,16 @@ export function useUserManagement() {
   const executeSearch = (params: Record<string, string>) => {
     if (!params || Object.keys(params).length === 0) return;
     
-    // Save to state and localStorage
     setSearchParams(params);
     localStorage.setItem(SEARCH_PARAMS_STORAGE_KEY, JSON.stringify(params));
     
-    // Trigger search
     refetch();
   };
 
   return {
     users,
     isLoading,
+    isSubmitting,
     searchParams,
     setSearchParams,
     handleSearch,

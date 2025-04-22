@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { User } from "@/lib/api/types";
 import { AlertTriangle, Lock, LockOpen } from "lucide-react";
@@ -27,6 +26,7 @@ interface UserActionDialogsProps {
   handleDeleteUser: () => Promise<void>;
   handleBlockUser: (reason: string) => Promise<void>;
   handleUnblockUser: () => Promise<void>;
+  isSubmitting: boolean;
 }
 
 const UserActionDialogs: React.FC<UserActionDialogsProps> = ({
@@ -40,11 +40,11 @@ const UserActionDialogs: React.FC<UserActionDialogsProps> = ({
   handleDeleteUser,
   handleBlockUser,
   handleUnblockUser,
+  isSubmitting
 }) => {
   const { settings } = useBackofficeSettings();
   const t = (key: string) => translate(key, settings.language);
   const [blockReason, setBlockReason] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
 
   const handleBlockSubmit = async () => {
@@ -53,11 +53,8 @@ const UserActionDialogs: React.FC<UserActionDialogsProps> = ({
       return;
     }
     setError("");
-    setIsSubmitting(true);
     await handleBlockUser(blockReason.trim());
-    setIsSubmitting(false);
     setBlockReason("");
-    setShowBlockDialog(false);
   };
 
   return (
@@ -85,11 +82,15 @@ const UserActionDialogs: React.FC<UserActionDialogsProps> = ({
             </div>
           )}
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowDeleteDialog(false)}>
+            <Button variant="outline" onClick={() => setShowDeleteDialog(false)} disabled={isSubmitting}>
               Cancel
             </Button>
-            <Button variant="destructive" onClick={handleDeleteUser}>
-              Delete
+            <Button 
+              variant="destructive" 
+              onClick={handleDeleteUser}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Deleting..." : "Delete"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -140,10 +141,18 @@ const UserActionDialogs: React.FC<UserActionDialogsProps> = ({
             </div>
           )}
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowBlockDialog(false)} disabled={isSubmitting}>
+            <Button 
+              variant="outline" 
+              onClick={() => setShowBlockDialog(false)} 
+              disabled={isSubmitting}
+            >
               {t('cancel')}
             </Button>
-            <Button variant="default" onClick={handleBlockSubmit} disabled={isSubmitting}>
+            <Button 
+              variant="default" 
+              onClick={handleBlockSubmit} 
+              disabled={isSubmitting}
+            >
               {isSubmitting ? t('blocking') : t('confirm')}
             </Button>
           </DialogFooter>
@@ -173,11 +182,19 @@ const UserActionDialogs: React.FC<UserActionDialogsProps> = ({
             </div>
           )}
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowUnblockDialog(false)}>
+            <Button 
+              variant="outline" 
+              onClick={() => setShowUnblockDialog(false)}
+              disabled={isSubmitting}
+            >
               Cancel
             </Button>
-            <Button variant="default" onClick={handleUnblockUser}>
-              Unblock User
+            <Button 
+              variant="default" 
+              onClick={handleUnblockUser}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Unblocking..." : "Unblock User"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -187,4 +204,3 @@ const UserActionDialogs: React.FC<UserActionDialogsProps> = ({
 };
 
 export default UserActionDialogs;
-
