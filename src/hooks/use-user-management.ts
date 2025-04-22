@@ -139,7 +139,16 @@ export function useUserManagement() {
     try {
       setIsSubmitting(true);
       await userService.blockUser(selectedUser.id.toString(), reason);
-      await queryClient.invalidateQueries({ queryKey: ["users"] });
+
+      queryClient.setQueryData(["users", searchParams], (oldUsers: User[] | undefined) => {
+        if (!oldUsers) return oldUsers;
+        return oldUsers.map(user => 
+          user.id === selectedUser.id
+            ? { ...user, blocked: true, blockReason: reason, status: "BLOCKED" }
+            : user
+        );
+      });
+
       toast({
         title: t("success"),
         description: t("user-blocked-success"),
@@ -155,6 +164,9 @@ export function useUserManagement() {
       setIsSubmitting(false);
       setShowBlockDialog(false);
       setSelectedUser(null);
+      setTimeout(() => {
+        queryClient.invalidateQueries({ queryKey: ["users"] });
+      }, 350);
     }
   };
 
@@ -164,7 +176,16 @@ export function useUserManagement() {
     try {
       setIsSubmitting(true);
       await userService.unblockUser(selectedUser.id.toString());
-      await queryClient.invalidateQueries({ queryKey: ["users"] });
+
+      queryClient.setQueryData(["users", searchParams], (oldUsers: User[] | undefined) => {
+        if (!oldUsers) return oldUsers;
+        return oldUsers.map(user => 
+          user.id === selectedUser.id
+            ? { ...user, blocked: false, blockReason: undefined, status: "ACTIVE" }
+            : user
+        );
+      });
+
       toast({
         title: "User Unblocked",
         description: `User ${selectedUser.name} ${selectedUser.surname} has been unblocked.`,
@@ -180,6 +201,9 @@ export function useUserManagement() {
       setIsSubmitting(false);
       setShowUnblockDialog(false);
       setSelectedUser(null);
+      setTimeout(() => {
+        queryClient.invalidateQueries({ queryKey: ["users"] });
+      }, 350);
     }
   };
 
