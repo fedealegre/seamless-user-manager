@@ -11,7 +11,7 @@ export interface UserService {
   getUserData(userId: string): Promise<User>;
   updateUser(userId: string, userData: Partial<User>): Promise<User>;
   deleteUser(userId: string): Promise<void>;
-  blockUser(userId: string): Promise<void>;
+  blockUser(userId: string, reason: string): Promise<void>; // Updated to accept a reason parameter
   unblockUser(userId: string): Promise<void>;
   resetPassword(request: ResetPasswordRequest): Promise<ResetPasswordResponse>;
   getUserWallets(userId: string): Promise<Wallet[]>;

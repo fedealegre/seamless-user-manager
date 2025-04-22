@@ -47,17 +47,17 @@ export interface WalletUserAssociation {
 
 export interface User {
     id: number;
-    companyId?: number; // Made optional to match mock data
+    companyId?: number; 
     publicId?: string;
     defaultWalletId?: number;
-    username?: string; // Made optional to match mock data
-    name?: string; // Made optional to match mock data
-    surname?: string; // Made optional to match mock data
+    username?: string; 
+    name?: string; 
+    surname?: string; 
     email?: string;
     phoneNumber?: string;
     phoneCompany?: string;
     cellPhone?: string;
-    gender?: 'M' | 'F' | 'Other'; // Updated to match the expected enum values
+    gender?: 'M' | 'F' | 'Other'; 
     governmentIdentification2?: string;
     governmentIdentificationType2?: string;
     governmentIdentification?: string;
@@ -71,6 +71,7 @@ export interface User {
     additionalInfo?: Record<string, string>;
     deleted?: boolean;
     blocked?: boolean;
+    blockReason?: string; // Added the blockReason field
     status?: string;
     creationDate?: string;
     modificationDate?: string;

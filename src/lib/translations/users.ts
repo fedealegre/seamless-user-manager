@@ -21,7 +21,12 @@ export const userTranslations = {
     'block-reason-required': 'Block reason is required',
     'blocking': 'Blocking...',
     'cancel': 'Cancel',
-    'confirm': 'Confirm'
+    'confirm': 'Confirm',
+    'actions': 'Actions',
+    'success': 'Success',
+    'error': 'Error',
+    'user-blocked-success': 'User has been blocked successfully',
+    'failed-block-user': 'Failed to block user. Please try again'
   },
   es: {
     'user-detail': 'Detalle de Usuario',
@@ -44,7 +49,11 @@ export const userTranslations = {
     'block-reason-required': 'El motivo de bloqueo es requerido',
     'blocking': 'Bloqueando...',
     'cancel': 'Cancelar',
-    'confirm': 'Confirmar'
+    'confirm': 'Confirmar',
+    'actions': 'Acciones',
+    'success': 'Éxito',
+    'error': 'Error',
+    'user-blocked-success': 'El usuario ha sido bloqueado exitosamente',
+    'failed-block-user': 'Error al bloquear el usuario. Por favor intente nuevamente'
   }
 };
-
