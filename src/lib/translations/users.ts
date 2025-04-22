@@ -7,7 +7,21 @@ export const userTranslations = {
     'user-not-found': 'User Not Found',
     'requested-user-not-found': 'The requested user could not be found',
     'back-to-user-management': 'Back to User Management',
-    'search-users-button': 'Search users'
+    'search-users-button': 'Search users',
+    'block-user': 'Block User',
+    'unblock-user': 'Unblock User',
+    'delete-user': 'Delete User',
+    'view-details': 'View Details',
+    'view-wallets': 'View Wallets',
+    'view-transactions': 'View Transactions',
+    'block-reason': 'Block Reason',
+    'enter-block-reason': 'Enter the reason for blocking this user',
+    'block-user-title': 'Block User',
+    'block-user-description': 'Are you sure you want to block this user? They will not be able to access their account.',
+    'block-reason-required': 'Block reason is required',
+    'blocking': 'Blocking...',
+    'cancel': 'Cancel',
+    'confirm': 'Confirm'
   },
   es: {
     'user-detail': 'Detalle de Usuario',
@@ -16,6 +30,21 @@ export const userTranslations = {
     'user-not-found': 'Usuario No Encontrado',
     'requested-user-not-found': 'El usuario solicitado no pudo ser encontrado',
     'back-to-user-management': 'Volver a Gestión de Usuarios',
-    'search-users-button': 'Buscar usuarios'
+    'search-users-button': 'Buscar usuarios',
+    'block-user': 'Bloquear Usuario',
+    'unblock-user': 'Desbloquear Usuario',
+    'delete-user': 'Eliminar Usuario',
+    'view-details': 'Ver Detalles',
+    'view-wallets': 'Ver Billeteras',
+    'view-transactions': 'Ver Transacciones',
+    'block-reason': 'Motivo de Bloqueo',
+    'enter-block-reason': 'Ingrese el motivo del bloqueo del usuario',
+    'block-user-title': 'Bloquear Usuario',
+    'block-user-description': '¿Está seguro que desea bloquear este usuario? No podrá acceder a su cuenta.',
+    'block-reason-required': 'El motivo de bloqueo es requerido',
+    'blocking': 'Bloqueando...',
+    'cancel': 'Cancelar',
+    'confirm': 'Confirmar'
   }
 };
+

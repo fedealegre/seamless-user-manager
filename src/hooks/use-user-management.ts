@@ -1,10 +1,11 @@
-
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { User } from "@/lib/api/types";
 import { useToast } from "@/hooks/use-toast";
 import { userService } from "@/lib/api/user-service";
 import { useCompanySearchConfig } from "@/hooks/use-company-search-config";
+import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
+import { translate } from "@/lib/translations";
 
 interface SearchHistoryItem {
   params: Record<string, string>;
@@ -25,6 +26,8 @@ export function useUserManagement() {
   const [searchHistory, setSearchHistory] = useState<SearchHistoryItem[]>([]);
   
   const { toast } = useToast();
+  const { settings } = useBackofficeSettings();
+  const t = (key: string) => translate(key, settings.language);
 
   // Load search history and params from localStorage on component mount
   useEffect(() => {
@@ -138,21 +141,21 @@ export function useUserManagement() {
     }
   };
 
-  const handleBlockUser = async () => {
+  const handleBlockUser = async (reason: string) => {
     if (!selectedUser) return;
     
     try {
-      await userService.blockUser(selectedUser.id.toString());
+      await userService.blockUser(selectedUser.id.toString(), reason);
       toast({
-        title: "User Blocked",
-        description: `User ${selectedUser.name} ${selectedUser.surname} has been blocked.`,
+        title: t("success"),
+        description: t("user-blocked-success"),
       });
       refetch();
     } catch (error) {
       console.error("Failed to block user:", error);
       toast({
-        title: "Error",
-        description: "Failed to block user. Please try again.",
+        title: t("error"),
+        description: t("failed-block-user"),
         variant: "destructive",
       });
     } finally {

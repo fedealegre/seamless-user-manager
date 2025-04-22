@@ -1,7 +1,14 @@
 
 import React from "react";
 import { User } from "@/lib/api/types";
-import { MoreVertical, Eye, Lock, LockOpen, X, UserIcon, Wallet, CreditCard } from "lucide-react";
+import { 
+  Eye, 
+  Lock, 
+  LockOpen, 
+  X, 
+  Wallet, 
+  CreditCard
+} from "lucide-react";
 import { 
   Table, 
   TableBody, 
@@ -21,6 +28,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
+import { translate } from "@/lib/translations";
 
 interface UsersTableProps {
   users: User[];
@@ -43,10 +52,8 @@ const UsersTable: React.FC<UsersTableProps> = ({
   onViewWallets,
   onViewTransactions
 }) => {
-  // Helper function to determine if a user is blocked
-  const isUserBlocked = (user: User) => {
-    return user.status === "BLOCKED" || user.blocked === true;
-  };
+  const { settings } = useBackofficeSettings();
+  const t = (key: string) => translate(key, settings.language);
 
   return (
     <div className="rounded-md border overflow-hidden">
@@ -77,51 +84,56 @@ const UsersTable: React.FC<UsersTableProps> = ({
                     </Avatar>
                     <div>
                       <div className="font-medium">{user.name} {user.surname}</div>
-                      {user.username && <div className="text-xs text-muted-foreground">@{user.username}</div>}
+                      {user.blocked && user.blockReason && (
+                        <div className="text-xs text-muted-foreground">
+                          {t('block-reason')}: {user.blockReason}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </TableCell>
                 <TableCell>
-                  {user.cellPhone || 
-                   (user.phoneNumber && <span className="text-sm">{user.phoneNumber}</span>) || 
-                   <span className="text-muted-foreground text-sm">Not provided</span>}
+                  {user.cellPhone || <span className="text-muted-foreground text-sm">Not provided</span>}
                 </TableCell>
                 <TableCell>
                   <Badge 
-                    variant={!isUserBlocked(user) ? "outline" : "destructive"}
-                    className={!isUserBlocked(user) ? "bg-green-100 text-green-800 hover:bg-green-100" : ""}
+                    variant={!user.blocked ? "outline" : "destructive"}
+                    className={!user.blocked ? "bg-green-100 text-green-800 hover:bg-green-100" : ""}
                   >
-                    {user.status || (user.blocked ? "BLOCKED" : "ACTIVE")}
+                    {user.blocked ? "BLOCKED" : "ACTIVE"}
                   </Badge>
                 </TableCell>
                 <TableCell className="text-right">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" size="icon">
-                        <MoreVertical size={16} />
+                        <span className="sr-only">Open menu</span>
+                        <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+                        </svg>
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                      <DropdownMenuLabel>{t('actions')}</DropdownMenuLabel>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem onClick={() => onViewDetails(user.id)}>
-                        <Eye size={16} className="mr-2" /> View Details
+                        <Eye size={16} className="mr-2" /> {t('view-details')}
                       </DropdownMenuItem>
                       
                       {onViewWallets && (
                         <DropdownMenuItem onClick={() => onViewWallets(user.id)}>
-                          <Wallet size={16} className="mr-2" /> View Wallets
+                          <Wallet size={16} className="mr-2" /> {t('view-wallets')}
                         </DropdownMenuItem>
                       )}
                       
                       {onViewTransactions && (
                         <DropdownMenuItem onClick={() => onViewTransactions(user.id)}>
-                          <CreditCard size={16} className="mr-2" /> View Transactions
+                          <CreditCard size={16} className="mr-2" /> {t('view-transactions')}
                         </DropdownMenuItem>
                       )}
                       
                       <DropdownMenuSeparator />
-                      {!isUserBlocked(user) ? (
+                      {!user.blocked ? (
                         <DropdownMenuItem 
                           onClick={() => {
                             setSelectedUser(user);
@@ -129,7 +141,7 @@ const UsersTable: React.FC<UsersTableProps> = ({
                           }}
                           className="text-amber-600"
                         >
-                          <Lock size={16} className="mr-2" /> Block User
+                          <Lock size={16} className="mr-2" /> {t('block-user')}
                         </DropdownMenuItem>
                       ) : (
                         <DropdownMenuItem 
@@ -139,7 +151,7 @@ const UsersTable: React.FC<UsersTableProps> = ({
                           }}
                           className="text-green-600"
                         >
-                          <LockOpen size={16} className="mr-2" /> Unblock User
+                          <LockOpen size={16} className="mr-2" /> {t('unblock-user')}
                         </DropdownMenuItem>
                       )}
                       <DropdownMenuItem 
@@ -149,7 +161,7 @@ const UsersTable: React.FC<UsersTableProps> = ({
                         }}
                         className="text-destructive"
                       >
-                        <X size={16} className="mr-2" /> Delete User
+                        <X size={16} className="mr-2" /> {t('delete-user')}
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -170,3 +182,4 @@ const UsersTable: React.FC<UsersTableProps> = ({
 };
 
 export default UsersTable;
+
