@@ -3,9 +3,9 @@ import { User } from "@/lib/api/types";
 import { 
   Eye, 
   Lock, 
-  LockOpen, 
-  Wallet, 
-  CreditCard
+  LockOpen,
+  Wallet,
+  CreditCard 
 } from "lucide-react";
 import { 
   Table, 
@@ -35,8 +35,8 @@ interface UsersTableProps {
   setShowBlockDialog: (show: boolean) => void;
   setShowUnblockDialog: (show: boolean) => void;
   onViewDetails: (userId: number) => void;
-  onViewWallets?: (userId: number) => void;
-  onViewTransactions?: (userId: number) => void;
+  onViewWallets: (userId: number) => void;
+  onViewTransactions: (userId: number) => void;
 }
 
 const UsersTable: React.FC<UsersTableProps> = ({
@@ -114,6 +114,14 @@ const UsersTable: React.FC<UsersTableProps> = ({
                       <DropdownMenuSeparator />
                       <DropdownMenuItem onClick={() => onViewDetails(user.id)}>
                         <Eye size={16} className="mr-2" /> {t('view-details')}
+                      </DropdownMenuItem>
+
+                      <DropdownMenuItem onClick={() => onViewWallets(user.id)}>
+                        <Wallet size={16} className="mr-2" /> {t('view-wallets')}
+                      </DropdownMenuItem>
+
+                      <DropdownMenuItem onClick={() => onViewTransactions(user.id)}>
+                        <CreditCard size={16} className="mr-2" /> {t('view-transactions')}
                       </DropdownMenuItem>
                       
                       {!user.blocked ? (
