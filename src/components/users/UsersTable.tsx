@@ -1,11 +1,9 @@
-
 import React from "react";
 import { User } from "@/lib/api/types";
 import { 
   Eye, 
   Lock, 
   LockOpen, 
-  X, 
   Wallet, 
   CreditCard
 } from "lucide-react";
@@ -34,7 +32,6 @@ import { translate } from "@/lib/translations";
 interface UsersTableProps {
   users: User[];
   setSelectedUser: (user: User) => void;
-  setShowDeleteDialog: (show: boolean) => void;
   setShowBlockDialog: (show: boolean) => void;
   setShowUnblockDialog: (show: boolean) => void;
   onViewDetails: (userId: number) => void;
@@ -45,7 +42,6 @@ interface UsersTableProps {
 const UsersTable: React.FC<UsersTableProps> = ({
   users,
   setSelectedUser,
-  setShowDeleteDialog,
   setShowBlockDialog,
   setShowUnblockDialog,
   onViewDetails,
@@ -120,19 +116,6 @@ const UsersTable: React.FC<UsersTableProps> = ({
                         <Eye size={16} className="mr-2" /> {t('view-details')}
                       </DropdownMenuItem>
                       
-                      {onViewWallets && (
-                        <DropdownMenuItem onClick={() => onViewWallets(user.id)}>
-                          <Wallet size={16} className="mr-2" /> {t('view-wallets')}
-                        </DropdownMenuItem>
-                      )}
-                      
-                      {onViewTransactions && (
-                        <DropdownMenuItem onClick={() => onViewTransactions(user.id)}>
-                          <CreditCard size={16} className="mr-2" /> {t('view-transactions')}
-                        </DropdownMenuItem>
-                      )}
-                      
-                      <DropdownMenuSeparator />
                       {!user.blocked ? (
                         <DropdownMenuItem 
                           onClick={() => {
@@ -154,15 +137,6 @@ const UsersTable: React.FC<UsersTableProps> = ({
                           <LockOpen size={16} className="mr-2" /> {t('unblock-user')}
                         </DropdownMenuItem>
                       )}
-                      <DropdownMenuItem 
-                        onClick={() => {
-                          setSelectedUser(user);
-                          setShowDeleteDialog(true);
-                        }}
-                        className="text-destructive"
-                      >
-                        <X size={16} className="mr-2" /> {t('delete-user')}
-                      </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>
@@ -182,4 +156,3 @@ const UsersTable: React.FC<UsersTableProps> = ({
 };
 
 export default UsersTable;
-

@@ -18,7 +18,6 @@ const SEARCH_HISTORY_STORAGE_KEY = 'userSearchHistory';
 export function useUserManagement() {
   const { searchConfig } = useCompanySearchConfig();
   const [searchParams, setSearchParams] = useState<Record<string, string>>({});
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showBlockDialog, setShowBlockDialog] = useState(false);
   const [showUnblockDialog, setShowUnblockDialog] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
@@ -106,31 +105,6 @@ export function useUserManagement() {
     saveSearchToHistory(params);
     
     refetch();
-  };
-
-  const handleDeleteUser = async () => {
-    if (!selectedUser) return;
-    
-    try {
-      setIsSubmitting(true);
-      await userService.deleteUser(selectedUser.id.toString());
-      await queryClient.invalidateQueries({ queryKey: ["users"] });
-      toast({
-        title: "User Deleted",
-        description: `User ${selectedUser.name} ${selectedUser.surname} has been deleted successfully.`,
-      });
-    } catch (error) {
-      console.error("Failed to delete user:", error);
-      toast({
-        title: "Error",
-        description: "Failed to delete user. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSubmitting(false);
-      setShowDeleteDialog(false);
-      setSelectedUser(null);
-    }
   };
 
   const handleBlockUser = async (reason: string) => {
@@ -225,13 +199,10 @@ export function useUserManagement() {
     handleSearch,
     selectedUser,
     setSelectedUser,
-    showDeleteDialog,
-    setShowDeleteDialog,
     showBlockDialog,
     setShowBlockDialog,
     showUnblockDialog, 
     setShowUnblockDialog,
-    handleDeleteUser,
     handleBlockUser,
     handleUnblockUser,
     searchHistory,

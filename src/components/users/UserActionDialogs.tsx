@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { User } from "@/lib/api/types";
-import { AlertTriangle, Lock, LockOpen } from "lucide-react";
+import { Lock, LockOpen } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -17,13 +17,10 @@ import { translate } from "@/lib/translations";
 
 interface UserActionDialogsProps {
   selectedUser: User | null;
-  showDeleteDialog: boolean;
-  setShowDeleteDialog: (show: boolean) => void;
   showBlockDialog: boolean;
   setShowBlockDialog: (show: boolean) => void;
   showUnblockDialog: boolean;
   setShowUnblockDialog: (show: boolean) => void;
-  handleDeleteUser: () => Promise<void>;
   handleBlockUser: (reason: string) => Promise<void>;
   handleUnblockUser: () => Promise<void>;
   isSubmitting: boolean;
@@ -31,13 +28,10 @@ interface UserActionDialogsProps {
 
 const UserActionDialogs: React.FC<UserActionDialogsProps> = ({
   selectedUser,
-  showDeleteDialog,
-  setShowDeleteDialog,
   showBlockDialog,
   setShowBlockDialog,
   showUnblockDialog,
   setShowUnblockDialog,
-  handleDeleteUser,
   handleBlockUser,
   handleUnblockUser,
   isSubmitting
@@ -59,43 +53,6 @@ const UserActionDialogs: React.FC<UserActionDialogsProps> = ({
 
   return (
     <>
-      {/* Delete User Dialog */}
-      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Delete User</DialogTitle>
-            <DialogDescription>
-              Are you sure you want to delete this user? This action cannot be undone.
-            </DialogDescription>
-          </DialogHeader>
-          {selectedUser && (
-            <div className="py-4">
-              <div className="flex items-center gap-3 p-3 rounded-md bg-muted/50">
-                <div className="h-10 w-10 rounded-full bg-destructive/10 flex items-center justify-center">
-                  <AlertTriangle size={16} className="text-destructive" />
-                </div>
-                <div>
-                  <div className="font-medium">{selectedUser.name} {selectedUser.surname}</div>
-                  <div className="text-sm text-muted-foreground">ID: {selectedUser.id}</div>
-                </div>
-              </div>
-            </div>
-          )}
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowDeleteDialog(false)} disabled={isSubmitting}>
-              Cancel
-            </Button>
-            <Button 
-              variant="destructive" 
-              onClick={handleDeleteUser}
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? "Deleting..." : "Delete"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-      
       {/* Block User Dialog */}
       <Dialog 
         open={showBlockDialog} 
