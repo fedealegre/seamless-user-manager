@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,6 +18,7 @@ const UserManagement = () => {
   const { settings } = useBackofficeSettings();
   const t = (key: string) => translate(key, settings.language);
   const [showHistoryDialog, setShowHistoryDialog] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
 
   const navigate = useNavigate();
   const {
@@ -38,6 +40,10 @@ const UserManagement = () => {
     executeSearch,
     searchConfig
   } = useUserManagement();
+
+  // Calculate the number of active filters
+  const activeFiltersCount = searchParams ? 
+    Object.keys(searchParams).filter(key => searchParams[key] !== "").length : 0;
 
   const handleViewUserDetails = (userId: number) => {
     navigate(`/users/${userId}`);
