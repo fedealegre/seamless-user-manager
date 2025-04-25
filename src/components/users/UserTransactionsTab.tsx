@@ -2,30 +2,13 @@ import React, { useState, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { userService } from "@/lib/api/user-service";
 import { Wallet, Transaction } from "@/lib/api/types";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import TransactionsTable from "@/components/transactions/TransactionsTable";
-import TransactionsLoadingSkeleton from "@/components/transactions/TransactionsLoadingSkeleton";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import TransactionDetails from "@/components/transactions/TransactionDetails";
-import CompensateCustomerDialog from "@/components/transactions/CompensateCustomerDialog";
-import ChangeTransactionStatusDialog from "@/components/transactions/ChangeTransactionStatusDialog";
 import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
 import { translate } from "@/lib/translations";
-import ExportCSVButton from "@/components/common/ExportCSVButton";
 import { usePermissions } from "@/hooks/use-permissions";
-import TransactionsPagination from "@/components/transactions/TransactionsPagination";
-import TransactionFilters from "@/components/transactions/TransactionFilters";
-import FilterButton from "@/components/transactions/FilterButton";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
+import UserTransactionsHeader from "./UserTransactionsHeader";
+import UserTransactionsTabs from "./UserTransactionsTabs";
 
 interface UserTransactionsTabProps {
   userId: string;
@@ -43,14 +26,12 @@ type FiltersType = {
 export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId, wallets }) => {
   const [selectedWalletId, setSelectedWalletId] = useState<string | null>(null);
   const [page, setPage] = useState(1);
-  // CAMBIO: pageSize por defecto ahora es 50, y es configurable
   const [pageSize, setPageSize] = useState(50);
   const [showFilters, setShowFilters] = useState(false);
   const { toast } = useToast();
   const { settings, formatDateTime } = useBackofficeSettings();
   const t = (key: string) => translate(key, settings.language);
   const queryClient = useQueryClient();
-  const { canCancelTransaction, canChangeTransactionStatus } = usePermissions();
 
   const [filters, setFilters] = useState<FiltersType>({
     status: "",
@@ -103,7 +84,6 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
     return true;
   });
 
-  // Nuevo cálculo de paginado acorde a pageSize
   const totalTransactions = filteredTransactions.length;
   const totalPages = Math.ceil(totalTransactions / pageSize);
   const startIndex = (page - 1) * pageSize;
@@ -129,6 +109,8 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
     setShowTransactionDetails(true);
   };
 
+  const { canCancelTransaction, canChangeTransactionStatus } = usePermissions();
+
   const handleCancelTransaction = (transaction: Transaction) => {
     if (!canCancelTransaction()) {
       toast({
@@ -138,7 +120,6 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
       });
       return;
     }
-    
     toast({
       title: t("cancel-transaction"),
       description: `${t("transaction-cancellation-not-implemented")} ${transaction.transactionId || transaction.id}`,
@@ -159,7 +140,6 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
       });
       return;
     }
-    
     setSelectedTransaction(transaction);
     setShowChangeStatusDialog(true);
   };
@@ -173,39 +153,26 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
       });
       return;
     }
-
     try {
       const companyId = 1;
       const userIdNum = selectedTransaction.customerId;
       const walletIdNum = parseInt(selectedTransaction.walletId);
       const originWalletId = 999;
-      
-      await userService.compensateCustomer(
-        companyId,
-        userIdNum,
-        walletIdNum,
-        originWalletId,
-        {
-          amount,
-          reason,
-          transaction_code: `COMP-${Date.now()}`,
-          admin_user: "Current Admin",
-          transaction_type: "COMPENSATE",
-          compensation_type: compensationType
-        }
-      );
-      
+      await userService.compensateCustomer(companyId, userIdNum, walletIdNum, originWalletId, {
+        amount,
+        reason,
+        transaction_code: `COMP-${Date.now()}`,
+        admin_user: "Current Admin",
+        transaction_type: "COMPENSATE",
+        compensation_type: compensationType,
+      });
       toast({
         title: t("compensation-processed"),
         description: t("compensation-transaction-created"),
       });
-      
-      if (selectedWalletId) {
-        queryClient.invalidateQueries({
-          queryKey: ['user-transactions', userId, selectedWalletId]
-        });
-      }
-      
+      queryClient.invalidateQueries({
+        queryKey: ['user-transactions', userId, selectedWalletId],
+      });
       setShowCompensateDialog(false);
       setSelectedTransaction(null);
     } catch (error: any) {
@@ -226,30 +193,23 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
       });
       return;
     }
-
     try {
       const transactionIdentifier = selectedTransaction.transactionId || selectedTransaction.id.toString();
-      
       await userService.changeTransactionStatus(
         selectedWalletId,
         transactionIdentifier,
         {
           newStatus: newStatus as 'cancelled' | 'rejected' | 'confirmed' | 'approved',
-          reason
+          reason,
         }
       );
-      
       toast({
         title: t("status-updated"),
         description: t("transaction-status-changed-success"),
       });
-      
-      if (selectedWalletId) {
-        queryClient.invalidateQueries({
-          queryKey: ['user-transactions', userId, selectedWalletId]
-        });
-      }
-      
+      queryClient.invalidateQueries({
+        queryKey: ['user-transactions', userId, selectedWalletId],
+      });
       setShowChangeStatusDialog(false);
       setSelectedTransaction(null);
     } catch (error: any) {
@@ -267,7 +227,6 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
 
   const mapTransactionToCSV = (transaction: Transaction) => {
     const wallet = findWallet(transaction.walletId);
-    
     return [
       transaction.transactionId || transaction.id.toString(),
       transaction.reference || '',
@@ -286,7 +245,6 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
     return Object.entries(filters).filter(([k, v]) => !!v && v !== "all").length;
   };
 
-  // Nuevo handler para cambiar la cantidad de resultados por página
   const handlePageSizeChange = (value: string) => {
     setPageSize(Number(value));
     setPage(1);
@@ -294,151 +252,65 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
 
   return (
     <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <div>
-          <CardTitle>{t("user-transactions")}</CardTitle>
-          <CardDescription>
-            {t("view-wallet-transactions")}
-          </CardDescription>
-        </div>
-        {transactions && transactions.length > 0 && (
-          <div className="flex items-center gap-2">
-            <FilterButton
-              showFilters={showFilters}
-              setShowFilters={setShowFilters}
-              activeFiltersCount={getActiveFiltersCount()}
-            />
-            <ExportCSVButton
-              filename={`user-${userId}-transactions-${new Date().toISOString().slice(0, 10)}`}
-              headers={[
-                t('transaction-id'),
-                t('reference'),
-                t('date'),
-                t('movement-type'),
-                t('transaction-type'),
-                t('amount'),
-                t('currency'),
-                t('status'),
-                t('user-id'),
-                t('wallet-id')
-              ]}
-              data={allTransactions}
-              mapRow={mapTransactionToCSV}
-            >
-              {t('export-csv')}
-            </ExportCSVButton>
-          </div>
-        )}
+      <CardHeader>
+        <UserTransactionsHeader
+          t={t}
+          transactions={transactions}
+          showFilters={showFilters}
+          setShowFilters={setShowFilters}
+          activeFiltersCount={getActiveFiltersCount()}
+          userId={userId}
+          allTransactions={allTransactions}
+          mapTransactionToCSV={mapTransactionToCSV}
+        />
       </CardHeader>
       <CardContent>
-        {wallets.length === 0 ? (
-          <p className="text-center py-6 text-muted-foreground">{t("no-wallets-found")}</p>
-        ) : (
-          <Tabs
-            value={selectedWalletId || ""}
-            onValueChange={(value) => {
-              setSelectedWalletId(value);
-              setPage(1);
-            }}
-            className="w-full"
-          >
-            <TabsList className="mb-4 w-full h-auto flex-wrap">
-              {wallets.map((wallet) => (
-                <TabsTrigger key={wallet.id} value={wallet.id.toString()}>
-                  {wallet.currency} {t("wallet")} ({wallet.id})
-                </TabsTrigger>
-              ))}
-            </TabsList>
-            {wallets.map((wallet) => (
-              <TabsContent key={wallet.id} value={wallet.id.toString()}>
-                <div className="mb-6">
-                  {showFilters && (
-                    <TransactionFilters
-                      filters={filters}
-                      onApply={handleApplyFilters}
-                      onReset={handleResetFilters}
-                    />
-                  )}
-                </div>
-                {isLoading ? (
-                  <TransactionsLoadingSkeleton />
-                ) : (
-                  transactions && transactions.length > 0 ? (
-                    <>
-                      {/* Dropdown para seleccionar cantidad por página */}
-                      <div className="flex items-center justify-end mb-2">
-                        <Label htmlFor="page-size-select" className="mr-2">{t("transactions-per-page")}</Label>
-                        <Select
-                          value={pageSize.toString()}
-                          onValueChange={handlePageSizeChange}
-                        >
-                          <SelectTrigger id="page-size-select" className="w-[80px]">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectGroup>
-                              <SelectItem value="10">10</SelectItem>
-                              <SelectItem value="25">25</SelectItem>
-                              <SelectItem value="50">50</SelectItem>
-                              <SelectItem value="100">100</SelectItem>
-                            </SelectGroup>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="space-y-4">
-                        <TransactionsTable
-                          transactions={transactions}
-                          page={page}
-                          pageSize={pageSize}
-                          handleViewDetails={handleViewDetails}
-                          handleCancelTransaction={handleCancelTransaction}
-                          handleCompensateCustomer={handleCompensateCustomer}
-                          handleChangeStatus={handleChangeStatus}
-                        />
-                        <TransactionsPagination 
-                          page={page}
-                          totalPages={totalPages}
-                          setPage={setPage}
-                          totalTransactions={totalTransactions}
-                          pageSize={pageSize}
-                        />
-                      </div>
-                    </>
-                  ) : (
-                    <p className="text-center py-6 text-muted-foreground">{t("no-transactions-found")}</p>
-                  )
-                )}
-              </TabsContent>
-            ))}
-          </Tabs>
-        )}
+        <UserTransactionsTabs
+          wallets={wallets}
+          selectedWalletId={selectedWalletId}
+          setSelectedWalletId={setSelectedWalletId}
+          page={page}
+          setPage={setPage}
+          showFilters={showFilters}
+          filters={filters}
+          onApplyFilters={handleApplyFilters}
+          onResetFilters={handleResetFilters}
+          isLoading={isLoading}
+          transactions={transactions}
+          pageSize={pageSize}
+          totalPages={totalPages}
+          totalTransactions={totalTransactions}
+          handlePageSizeChange={handlePageSizeChange}
+          t={t}
+          handleViewDetails={handleViewDetails}
+          handleCancelTransaction={handleCancelTransaction}
+          handleCompensateCustomer={handleCompensateCustomer}
+          handleChangeStatus={handleChangeStatus}
+        />
       </CardContent>
-
       {selectedTransaction && (
-        <TransactionDetails
-          transaction={selectedTransaction}
-          open={showTransactionDetails}
-          onOpenChange={setShowTransactionDetails}
-        />
-      )}
-
-      {selectedTransaction && (
-        <CompensateCustomerDialog
-          transaction={selectedTransaction}
-          open={showCompensateDialog}
-          onOpenChange={setShowCompensateDialog}
-          onSubmit={handleCompensateSubmit}
-        />
-      )}
-
-      {selectedTransaction && (
-        <ChangeTransactionStatusDialog
-          transaction={selectedTransaction}
-          open={showChangeStatusDialog}
-          onOpenChange={setShowChangeStatusDialog}
-          onSubmit={handleSubmitStatusChange}
-        />
+        <>
+          <TransactionDetails
+            transaction={selectedTransaction}
+            open={showTransactionDetails}
+            onOpenChange={setShowTransactionDetails}
+          />
+          <CompensateCustomerDialog
+            transaction={selectedTransaction}
+            open={showCompensateDialog}
+            onOpenChange={setShowCompensateDialog}
+            onSubmit={handleCompensateSubmit}
+          />
+          <ChangeTransactionStatusDialog
+            transaction={selectedTransaction}
+            open={showChangeStatusDialog}
+            onOpenChange={setShowChangeStatusDialog}
+            onSubmit={handleSubmitStatusChange}
+          />
+        </>
       )}
     </Card>
   );
 };
+
+export default UserTransactionsTab;
