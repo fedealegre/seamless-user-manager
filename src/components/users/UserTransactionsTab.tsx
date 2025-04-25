@@ -17,6 +17,15 @@ import { usePermissions } from "@/hooks/use-permissions";
 import TransactionsPagination from "@/components/transactions/TransactionsPagination";
 import TransactionFilters from "@/components/transactions/TransactionFilters";
 import FilterButton from "@/components/transactions/FilterButton";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 
 interface UserTransactionsTabProps {
   userId: string;
@@ -34,7 +43,8 @@ type FiltersType = {
 export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId, wallets }) => {
   const [selectedWalletId, setSelectedWalletId] = useState<string | null>(null);
   const [page, setPage] = useState(1);
-  const pageSize = 10;
+  // CAMBIO: pageSize por defecto ahora es 50, y es configurable
+  const [pageSize, setPageSize] = useState(50);
   const [showFilters, setShowFilters] = useState(false);
   const { toast } = useToast();
   const { settings, formatDateTime } = useBackofficeSettings();
@@ -93,6 +103,7 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
     return true;
   });
 
+  // Nuevo cálculo de paginado acorde a pageSize
   const totalTransactions = filteredTransactions.length;
   const totalPages = Math.ceil(totalTransactions / pageSize);
   const startIndex = (page - 1) * pageSize;
@@ -275,6 +286,12 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
     return Object.entries(filters).filter(([k, v]) => !!v && v !== "all").length;
   };
 
+  // Nuevo handler para cambiar la cantidad de resultados por página
+  const handlePageSizeChange = (value: string) => {
+    setPageSize(Number(value));
+    setPage(1);
+  };
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
@@ -284,7 +301,6 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
             {t("view-wallet-transactions")}
           </CardDescription>
         </div>
-
         {transactions && transactions.length > 0 && (
           <div className="flex items-center gap-2">
             <FilterButton
@@ -333,7 +349,6 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
                 </TabsTrigger>
               ))}
             </TabsList>
-
             {wallets.map((wallet) => (
               <TabsContent key={wallet.id} value={wallet.id.toString()}>
                 <div className="mb-6">
@@ -349,24 +364,46 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
                   <TransactionsLoadingSkeleton />
                 ) : (
                   transactions && transactions.length > 0 ? (
-                    <div className="space-y-4">
-                      <TransactionsTable
-                        transactions={transactions}
-                        page={page}
-                        pageSize={pageSize}
-                        handleViewDetails={handleViewDetails}
-                        handleCancelTransaction={handleCancelTransaction}
-                        handleCompensateCustomer={handleCompensateCustomer}
-                        handleChangeStatus={handleChangeStatus}
-                      />
-                      <TransactionsPagination 
-                        page={page}
-                        totalPages={totalPages}
-                        setPage={setPage}
-                        totalTransactions={totalTransactions}
-                        pageSize={pageSize}
-                      />
-                    </div>
+                    <>
+                      {/* Dropdown para seleccionar cantidad por página */}
+                      <div className="flex items-center justify-end mb-2">
+                        <Label htmlFor="page-size-select" className="mr-2">{t("transactions-per-page")}</Label>
+                        <Select
+                          value={pageSize.toString()}
+                          onValueChange={handlePageSizeChange}
+                        >
+                          <SelectTrigger id="page-size-select" className="w-[80px]">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectGroup>
+                              <SelectItem value="10">10</SelectItem>
+                              <SelectItem value="25">25</SelectItem>
+                              <SelectItem value="50">50</SelectItem>
+                              <SelectItem value="100">100</SelectItem>
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-4">
+                        <TransactionsTable
+                          transactions={transactions}
+                          page={page}
+                          pageSize={pageSize}
+                          handleViewDetails={handleViewDetails}
+                          handleCancelTransaction={handleCancelTransaction}
+                          handleCompensateCustomer={handleCompensateCustomer}
+                          handleChangeStatus={handleChangeStatus}
+                        />
+                        <TransactionsPagination 
+                          page={page}
+                          totalPages={totalPages}
+                          setPage={setPage}
+                          totalTransactions={totalTransactions}
+                          pageSize={pageSize}
+                        />
+                      </div>
+                    </>
                   ) : (
                     <p className="text-center py-6 text-muted-foreground">{t("no-transactions-found")}</p>
                   )
