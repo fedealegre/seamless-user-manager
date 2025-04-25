@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { userService } from "@/lib/api/user-service";
@@ -16,11 +15,20 @@ import { translate } from "@/lib/translations";
 import ExportCSVButton from "@/components/common/ExportCSVButton";
 import { usePermissions } from "@/hooks/use-permissions";
 import TransactionsPagination from "@/components/transactions/TransactionsPagination";
+import TransactionFilters from "@/components/transactions/TransactionFilters";
 
 interface UserTransactionsTabProps {
   userId: string;
   wallets: Wallet[];
 }
+
+type FiltersType = {
+  status: string;
+  transactionType: string;
+  startDate: string;
+  endDate: string;
+  currency: string;
+};
 
 export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId, wallets }) => {
   const [selectedWalletId, setSelectedWalletId] = useState<string | null>(null);
@@ -31,21 +39,26 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
   const t = (key: string) => translate(key, settings.language);
   const queryClient = useQueryClient();
   const { canCancelTransaction, canChangeTransactionStatus } = usePermissions();
-  
-  // Dialog states
+
+  const [filters, setFilters] = useState<FiltersType>({
+    status: "",
+    transactionType: "",
+    startDate: "",
+    endDate: "",
+    currency: "",
+  });
+
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
   const [showTransactionDetails, setShowTransactionDetails] = useState(false);
   const [showCompensateDialog, setShowCompensateDialog] = useState(false);
   const [showChangeStatusDialog, setShowChangeStatusDialog] = useState(false);
 
-  // Get the first wallet ID when wallets are loaded
   useEffect(() => {
     if (wallets.length > 0 && !selectedWalletId) {
       setSelectedWalletId(wallets[0].id.toString());
     }
   }, [wallets, selectedWalletId]);
 
-  // Fetch transactions for the selected wallet using userService
   const { data: allTransactions = [], isLoading } = useQuery({
     queryKey: ['user-transactions', userId, selectedWalletId],
     queryFn: () => {
@@ -55,15 +68,49 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
     enabled: !!selectedWalletId,
   });
 
-  // Calculate pagination
-  const totalTransactions = allTransactions.length;
-  const totalPages = Math.ceil(totalTransactions / pageSize);
-  
-  // Get transactions for current page
-  const startIndex = (page - 1) * pageSize;
-  const transactions = allTransactions.slice(startIndex, startIndex + pageSize);
+  const filteredTransactions = (allTransactions as Transaction[]).filter(tx => {
+    if (filters.status && filters.status !== "all" && tx.status?.toLowerCase() !== filters.status.toLowerCase())
+      return false;
+    if (filters.transactionType && filters.transactionType !== "all") {
+      const txType = tx.transactionType?.toLowerCase() || tx.type?.toLowerCase() || "";
+      if (txType !== filters.transactionType.toLowerCase()) return false;
+    }
+    if (filters.currency && filters.currency !== "all") {
+      if ((tx.currency?.toLowerCase() || "") !== filters.currency.toLowerCase()) return false;
+    }
+    if (filters.startDate) {
+      const startDate = new Date(filters.startDate);
+      startDate.setHours(0, 0, 0, 0);
+      if (!tx.date || new Date(tx.date) < startDate) return false;
+    }
+    if (filters.endDate) {
+      const endDate = new Date(filters.endDate);
+      endDate.setHours(23, 59, 59, 999);
+      if (!tx.date || new Date(tx.date) > endDate) return false;
+    }
+    return true;
+  });
 
-  // Handlers for transaction actions
+  const totalTransactions = filteredTransactions.length;
+  const totalPages = Math.ceil(totalTransactions / pageSize);
+  const startIndex = (page - 1) * pageSize;
+  const transactions = filteredTransactions.slice(startIndex, startIndex + pageSize);
+
+  const handleApplyFilters = (newFilters: FiltersType) => {
+    setFilters(newFilters);
+    setPage(1);
+  };
+  const handleResetFilters = () => {
+    setFilters({
+      status: "",
+      transactionType: "",
+      startDate: "",
+      endDate: "",
+      currency: "",
+    });
+    setPage(1);
+  };
+
   const handleViewDetails = (transaction: Transaction) => {
     setSelectedTransaction(transaction);
     setShowTransactionDetails(true);
@@ -116,14 +163,14 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
 
     try {
       const companyId = 1;
-      const userId = selectedTransaction.customerId;
-      const walletId = parseInt(selectedTransaction.walletId);
+      const userIdNum = selectedTransaction.customerId;
+      const walletIdNum = parseInt(selectedTransaction.walletId);
       const originWalletId = 999;
       
       await userService.compensateCustomer(
         companyId,
-        userId,
-        walletId,
+        userIdNum,
+        walletIdNum,
         originWalletId,
         {
           amount,
@@ -140,7 +187,6 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
         description: t("compensation-transaction-created"),
       });
       
-      // Refresh transactions - fixed the invalidate query syntax
       if (selectedWalletId) {
         queryClient.invalidateQueries({
           queryKey: ['user-transactions', userId, selectedWalletId]
@@ -185,7 +231,6 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
         description: t("transaction-status-changed-success"),
       });
       
-      // Refresh transactions - fixed the invalidate query syntax
       if (selectedWalletId) {
         queryClient.invalidateQueries({
           queryKey: ['user-transactions', userId, selectedWalletId]
@@ -203,12 +248,10 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
     }
   };
 
-  // Function to find the wallet by ID
   const findWallet = (walletId: string) => {
     return wallets.find(wallet => wallet.id.toString() === walletId);
   };
 
-  // Function to map transaction data for CSV export
   const mapTransactionToCSV = (transaction: Transaction) => {
     const wallet = findWallet(transaction.walletId);
     
@@ -235,18 +278,18 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
             {t("view-wallet-transactions")}
           </CardDescription>
         </div>
-        
+
         {transactions && transactions.length > 0 && (
           <ExportCSVButton
             filename={`user-${userId}-transactions-${new Date().toISOString().slice(0, 10)}`}
             headers={[
-              t('transaction-id'), 
-              t('reference'), 
-              t('date'), 
+              t('transaction-id'),
+              t('reference'),
+              t('date'),
               t('movement-type'),
-              t('transaction-type'), 
-              t('amount'), 
-              t('currency'), 
+              t('transaction-type'),
+              t('amount'),
+              t('currency'),
               t('status'),
               t('user-id'),
               t('wallet-id')
@@ -262,11 +305,11 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
         {wallets.length === 0 ? (
           <p className="text-center py-6 text-muted-foreground">{t("no-wallets-found")}</p>
         ) : (
-          <Tabs 
+          <Tabs
             value={selectedWalletId || ""}
             onValueChange={(value) => {
               setSelectedWalletId(value);
-              setPage(1); // Reset page when changing wallet
+              setPage(1);
             }}
             className="w-full"
           >
@@ -277,9 +320,16 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
                 </TabsTrigger>
               ))}
             </TabsList>
-            
+
             {wallets.map((wallet) => (
               <TabsContent key={wallet.id} value={wallet.id.toString()}>
+                <div className="mb-6">
+                  <TransactionFilters
+                    filters={filters}
+                    onApply={handleApplyFilters}
+                    onReset={handleResetFilters}
+                  />
+                </div>
                 {isLoading ? (
                   <TransactionsLoadingSkeleton />
                 ) : (
@@ -312,7 +362,6 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
         )}
       </CardContent>
 
-      {/* Transaction Details Dialog */}
       {selectedTransaction && (
         <TransactionDetails
           transaction={selectedTransaction}
@@ -321,7 +370,6 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
         />
       )}
 
-      {/* Compensate Customer Dialog */}
       {selectedTransaction && (
         <CompensateCustomerDialog
           transaction={selectedTransaction}
@@ -331,7 +379,6 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
         />
       )}
 
-      {/* Change Transaction Status Dialog */}
       {selectedTransaction && (
         <ChangeTransactionStatusDialog
           transaction={selectedTransaction}
