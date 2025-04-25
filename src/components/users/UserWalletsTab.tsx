@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Wallet } from "@/lib/api/types";
@@ -22,7 +21,7 @@ interface UserWalletsTabProps {
 export const UserWalletsTab: React.FC<UserWalletsTabProps> = ({ userId, wallets, isLoading }) => {
   const [selectedWalletId, setSelectedWalletId] = useState<string | null>(null);
   const [showTransactions, setShowTransactions] = useState<boolean>(false);
-  const [page, setPage] = useState(1);
+  const [page, setPage = useState(1);
   const [showAddUserDialog, setShowAddUserDialog] = useState(false);
   const pageSize = 5; // Smaller pageSize for wallets since there are usually fewer
   const { toast } = useToast();
@@ -119,7 +118,6 @@ export const UserWalletsTab: React.FC<UserWalletsTabProps> = ({ userId, wallets,
             <WalletsTable 
               wallets={paginatedWallets} 
               onSelectWallet={handleSelectWallet}
-              onAddUserToWallet={handleAddUserToWallet}
               paginationProps={{
                 page,
                 pageSize,

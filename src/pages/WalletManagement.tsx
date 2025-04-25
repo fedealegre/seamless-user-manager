@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Plus, Search, Wallet, Users } from "lucide-react";
@@ -12,7 +11,6 @@ import { useToast } from "@/hooks/use-toast";
 import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
 import { translate } from "@/lib/translations";
 import { WalletUsersDialog } from "@/components/wallets/WalletUsersDialog";
-import { AddUserToWalletDialog } from "@/components/wallets/AddUserToWalletDialog";
 
 const WalletManagement: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -24,7 +22,6 @@ const WalletManagement: React.FC = () => {
   // Dialog states
   const [selectedWalletId, setSelectedWalletId] = useState<string | null>(null);
   const [showWalletUsers, setShowWalletUsers] = useState(false);
-  const [showAddUserDialog, setShowAddUserDialog] = useState(false);
   
   const { 
     data: walletsWithUsers = [], 
@@ -90,11 +87,6 @@ const WalletManagement: React.FC = () => {
   const handleViewWalletUsers = (walletId: string) => {
     setSelectedWalletId(walletId);
     setShowWalletUsers(true);
-  };
-
-  const handleAddUserToWallet = (walletId: string) => {
-    setSelectedWalletId(walletId);
-    setShowAddUserDialog(true);
   };
 
   const handleUserAdded = () => {
@@ -234,7 +226,6 @@ const WalletManagement: React.FC = () => {
                 userId: item.userId
               }))} 
               showUser={true}
-              onAddUserToWallet={handleAddUserToWallet}
               onViewWalletUsers={handleViewWalletUsers}
             />
           )}
@@ -247,16 +238,6 @@ const WalletManagement: React.FC = () => {
           walletId={selectedWalletId}
           open={showWalletUsers}
           onOpenChange={setShowWalletUsers}
-        />
-      )}
-
-      {/* Dialog for adding users to wallet */}
-      {selectedWalletId && (
-        <AddUserToWalletDialog
-          walletId={selectedWalletId}
-          open={showAddUserDialog}
-          onOpenChange={setShowAddUserDialog}
-          onUserAdded={handleUserAdded}
         />
       )}
     </div>
