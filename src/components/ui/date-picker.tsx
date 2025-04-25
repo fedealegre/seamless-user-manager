@@ -22,12 +22,12 @@ interface DatePickerProps {
 export function DatePicker({ date, onSelect, className, id }: DatePickerProps) {
   const { formatDate, settings } = useBackofficeSettings();
   
-  // Use dynamic import instead of require
   const getLocale = () => {
     return settings.language.startsWith('es') ? es : undefined;
   };
-  
-  // Usar selected={date} para que el calendario siempre muestre como seleccionado el día/mes al abrir
+
+  // Abrir calendario en la fecha seleccionada si existe, o en la fecha actual si no
+  // Usamos `month={date || undefined}` para asegurar que el mes inicial sea el indicado
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -50,8 +50,9 @@ export function DatePicker({ date, onSelect, className, id }: DatePickerProps) {
           selected={date}
           onSelect={onSelect}
           initialFocus
-          showOutsideDays={true}  // Siempre mostrar los días del mes completo, incluidos los de los meses colindantes
-          className="p-3 pointer-events-auto min-w-[300px] max-w-[320px]" // Fijar mínimo y máximo
+          month={date}
+          showOutsideDays={true}
+          className="p-3 pointer-events-auto min-w-[300px] max-w-[320px]"
           locale={getLocale()}
           formatters={{
             formatDay: (date) => date.getDate().toString(),
