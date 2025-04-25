@@ -27,6 +27,7 @@ export function DatePicker({ date, onSelect, className, id }: DatePickerProps) {
     return settings.language.startsWith('es') ? es : undefined;
   };
   
+  // Usar selected={date} para que el calendario siempre muestre como seleccionado el día/mes al abrir
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -49,7 +50,8 @@ export function DatePicker({ date, onSelect, className, id }: DatePickerProps) {
           selected={date}
           onSelect={onSelect}
           initialFocus
-          className="p-3 pointer-events-auto"
+          showOutsideDays={true}  // Siempre mostrar los días del mes completo, incluidos los de los meses colindantes
+          className="p-3 pointer-events-auto min-w-[300px] max-w-[320px]" // Fijar mínimo y máximo
           locale={getLocale()}
           formatters={{
             formatDay: (date) => date.getDate().toString(),
@@ -59,3 +61,4 @@ export function DatePicker({ date, onSelect, className, id }: DatePickerProps) {
     </Popover>
   )
 }
+

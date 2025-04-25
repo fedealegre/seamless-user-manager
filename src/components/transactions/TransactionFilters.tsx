@@ -60,7 +60,7 @@ const TransactionFilters: React.FC<TransactionFiltersProps> = ({
     setStartDateObj(date);
     setLocalFilters(prev => ({
       ...prev,
-      startDate: date ? formatDateForInput(date) : ''
+      startDate: date ? date.toISOString() : '' // Usar ISO para filtrar correctamente la fecha de la transacción
     }));
   };
   
@@ -69,7 +69,7 @@ const TransactionFilters: React.FC<TransactionFiltersProps> = ({
     setEndDateObj(date);
     setLocalFilters(prev => ({
       ...prev,
-      endDate: date ? formatDateForInput(date) : ''
+      endDate: date ? date.toISOString() : ''
     }));
   };
 
@@ -178,6 +178,7 @@ const TransactionFilters: React.FC<TransactionFiltersProps> = ({
               id="startDate"
               date={startDateObj}
               onSelect={handleStartDateChange}
+              // El DatePicker personalizado ya abre el mes/día seleccionado si se pasa el valor correcto en 'date'
             />
           </div>
 
@@ -202,3 +203,4 @@ const TransactionFilters: React.FC<TransactionFiltersProps> = ({
 };
 
 export default TransactionFilters;
+
