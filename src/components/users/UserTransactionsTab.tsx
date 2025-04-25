@@ -9,6 +9,9 @@ import { translate } from "@/lib/translations";
 import { usePermissions } from "@/hooks/use-permissions";
 import UserTransactionsHeader from "./UserTransactionsHeader";
 import UserTransactionsTabs from "./UserTransactionsTabs";
+import TransactionDetails from "../transactions/TransactionDetails";
+import CompensateCustomerDialog from "../transactions/CompensateCustomerDialog";
+import ChangeTransactionStatusDialog from "../transactions/ChangeTransactionStatusDialog";
 
 interface UserTransactionsTabProps {
   userId: string;
