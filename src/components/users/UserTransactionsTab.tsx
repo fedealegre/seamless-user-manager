@@ -16,6 +16,7 @@ import ExportCSVButton from "@/components/common/ExportCSVButton";
 import { usePermissions } from "@/hooks/use-permissions";
 import TransactionsPagination from "@/components/transactions/TransactionsPagination";
 import TransactionFilters from "@/components/transactions/TransactionFilters";
+import FilterButton from "@/components/transactions/FilterButton";
 
 interface UserTransactionsTabProps {
   userId: string;
@@ -34,6 +35,7 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
   const [selectedWalletId, setSelectedWalletId] = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const pageSize = 10;
+  const [showFilters, setShowFilters] = useState(false);
   const { toast } = useToast();
   const { settings, formatDateTime } = useBackofficeSettings();
   const t = (key: string) => translate(key, settings.language);
@@ -269,6 +271,10 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
     ];
   };
 
+  const getActiveFiltersCount = () => {
+    return Object.entries(filters).filter(([k, v]) => !!v && v !== "all").length;
+  };
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
@@ -280,25 +286,32 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
         </div>
 
         {transactions && transactions.length > 0 && (
-          <ExportCSVButton
-            filename={`user-${userId}-transactions-${new Date().toISOString().slice(0, 10)}`}
-            headers={[
-              t('transaction-id'),
-              t('reference'),
-              t('date'),
-              t('movement-type'),
-              t('transaction-type'),
-              t('amount'),
-              t('currency'),
-              t('status'),
-              t('user-id'),
-              t('wallet-id')
-            ]}
-            data={allTransactions}
-            mapRow={mapTransactionToCSV}
-          >
-            {t('export-csv')}
-          </ExportCSVButton>
+          <div className="flex items-center gap-2">
+            <FilterButton
+              showFilters={showFilters}
+              setShowFilters={setShowFilters}
+              activeFiltersCount={getActiveFiltersCount()}
+            />
+            <ExportCSVButton
+              filename={`user-${userId}-transactions-${new Date().toISOString().slice(0, 10)}`}
+              headers={[
+                t('transaction-id'),
+                t('reference'),
+                t('date'),
+                t('movement-type'),
+                t('transaction-type'),
+                t('amount'),
+                t('currency'),
+                t('status'),
+                t('user-id'),
+                t('wallet-id')
+              ]}
+              data={allTransactions}
+              mapRow={mapTransactionToCSV}
+            >
+              {t('export-csv')}
+            </ExportCSVButton>
+          </div>
         )}
       </CardHeader>
       <CardContent>
@@ -324,11 +337,13 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
             {wallets.map((wallet) => (
               <TabsContent key={wallet.id} value={wallet.id.toString()}>
                 <div className="mb-6">
-                  <TransactionFilters
-                    filters={filters}
-                    onApply={handleApplyFilters}
-                    onReset={handleResetFilters}
-                  />
+                  {showFilters && (
+                    <TransactionFilters
+                      filters={filters}
+                      onApply={handleApplyFilters}
+                      onReset={handleResetFilters}
+                    />
+                  )}
                 </div>
                 {isLoading ? (
                   <TransactionsLoadingSkeleton />
