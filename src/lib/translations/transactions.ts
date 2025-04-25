@@ -1,4 +1,3 @@
-
 export const transactionTranslations = {
   en: {
     'transactions': 'Transactions',
@@ -120,7 +119,8 @@ export const transactionTranslations = {
     'please-provide-reason': 'Please provide a reason',
     'create-new-compensation-transaction': 'This will create a new compensation transaction in the system.',
     'process-compensation': 'Process Compensation',
-    'search-transactions': 'Search transactions...'
+    'search-transactions': 'Search transactions...',
+    'transactions-per-page': 'Transactions per page',
   },
   es: {
     'transactions': 'Transacciones',
@@ -242,6 +242,7 @@ export const transactionTranslations = {
     'please-provide-reason': 'Por favor proporcione una razón',
     'create-new-compensation-transaction': 'Esto creará una nueva transacción de compensación en el sistema.',
     'process-compensation': 'Procesar Compensación',
-    'search-transactions': 'Buscar transacciones...'
+    'search-transactions': 'Buscar transacciones...',
+    'transactions-per-page': 'Transacciones por página',
   }
 };
