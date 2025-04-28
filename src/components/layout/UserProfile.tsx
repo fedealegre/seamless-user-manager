@@ -1,7 +1,7 @@
 
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { LogOut, User } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -83,9 +83,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ type, sidebarOpen }) => {
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>{t('my-account')}</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <User size={16} className="mr-2" /> {t('profile')}
-        </DropdownMenuItem>
+        {/* Profile option removed */}
         <DropdownMenuItem onClick={handleLogout}>
           <LogOut size={16} className="mr-2" /> {t('log-out')}
         </DropdownMenuItem>
