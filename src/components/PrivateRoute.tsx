@@ -3,6 +3,8 @@ import React from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import BackofficeLayout from "./BackofficeLayout";
+import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
+import { translate } from "@/lib/translations";
 
 interface PrivateRouteProps {
   allowedRoles?: string[];
@@ -12,6 +14,8 @@ interface PrivateRouteProps {
 
 const PrivateRoute: React.FC<PrivateRouteProps> = ({ allowedRoles, children, noLayout = false }) => {
   const { isAuthenticated, user, isLoading } = useAuth();
+  const { settings } = useBackofficeSettings();
+  const t = (key: string) => translate(key, settings.language);
 
   // Show loading state while authentication status is being determined
   if (isLoading) {
@@ -35,12 +39,12 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ allowedRoles, children, noL
       // For access denied, only show the message without layout if parent is already showing layout
       return (
         <div className="flex flex-col items-center justify-center min-h-[calc(100vh-10rem)]">
-          <div className="text-4xl font-bold text-destructive mb-2">Access Denied</div>
+          <div className="text-4xl font-bold text-destructive mb-2">{t('access-denied')}</div>
           <p className="text-lg text-muted-foreground mb-6">
-            You don't have permission to access this page.
+            {t('no-permission')}
           </p>
           <p className="text-sm text-muted-foreground">
-            Required roles: {allowedRoles.join(", ")}
+            {t('required-roles')}: {allowedRoles.join(", ")}
           </p>
         </div>
       );

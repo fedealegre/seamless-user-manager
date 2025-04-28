@@ -1,4 +1,3 @@
-
 export const commonTranslations = {
   en: {
     'dashboard': 'Dashboard',
@@ -57,7 +56,10 @@ export const commonTranslations = {
     'page': 'Page',
     'previous': 'Previous',
     'next': 'Next',
-    // User Management
+    'settings-saved': 'Settings saved',
+    'error-saving-settings': 'Error saving settings',
+    'no-permission': 'You don\'t have permission to access this page.',
+    'required-roles': 'Required roles',
     'user-management': 'User Management',
     'manage-monitor-customer-accounts': 'Manage and monitor customer accounts',
     'search-users': 'Search Users',
@@ -140,7 +142,10 @@ export const commonTranslations = {
     'page': 'Página',
     'previous': 'Anterior',
     'next': 'Siguiente',
-    // User Management
+    'settings-saved': 'Configuración guardada',
+    'error-saving-settings': 'Error al guardar la configuración',
+    'no-permission': 'No tienes permisos para acceder a esta página.',
+    'required-roles': 'Roles requeridos',
     'user-management': 'Gestión de Usuarios',
     'manage-monitor-customer-accounts': 'Gestionar y monitorear cuentas de clientes',
     'search-users': 'Buscar Usuarios',

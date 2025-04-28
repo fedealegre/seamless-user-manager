@@ -62,4 +62,3 @@ export function DatePicker({ date, onSelect, className, id }: DatePickerProps) {
     </Popover>
   )
 }
-

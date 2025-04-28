@@ -13,7 +13,7 @@ export interface BackofficeSettings {
 
 // Default settings
 const DEFAULT_SETTINGS: BackofficeSettings = {
-  language: "en",
+  language: "es", // Cambiado de "en" a "es" como idioma predeterminado
   utcOffset: "UTC+0"  // Changed from "UTC" to "UTC+0"
 };
 
