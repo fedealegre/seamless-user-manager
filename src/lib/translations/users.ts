@@ -43,6 +43,12 @@ export const userTranslations = {
     'phone-filter': 'Phone',
     'id-filter': 'User ID',
     'status-filter': 'Status',
+    // Search placeholders
+    'search-by-id-placeholder': 'Search by User ID...',
+    'search-by-name-placeholder': 'Search by name...',
+    'search-by-surname-placeholder': 'Search by last name...',
+    'search-by-email-placeholder': 'Search by email...',
+    'search-by-phone-placeholder': 'Search by cell phone number...',
     // User details page
     'basic-information': 'Basic Information',
     'full-name': 'Full Name',
@@ -127,6 +133,12 @@ export const userTranslations = {
     'phone-filter': 'Teléfono',
     'id-filter': 'ID Usuario',
     'status-filter': 'Estado',
+    // Search placeholders
+    'search-by-id-placeholder': 'Buscar por ID Usuario',
+    'search-by-name-placeholder': 'Buscar por nombre',
+    'search-by-surname-placeholder': 'Buscar por apellido',
+    'search-by-email-placeholder': 'Buscar por correo',
+    'search-by-phone-placeholder': 'Buscar por número de teléfono',
     // User details page
     'basic-information': 'Información Básica',
     'full-name': 'Nombre Completo',

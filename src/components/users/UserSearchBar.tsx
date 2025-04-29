@@ -50,6 +50,7 @@ const UserSearchBar: React.FC<UserSearchBarProps> = ({
       'phone': 'phone-filter',
       'id': 'id-filter',
       'status': 'status-filter',
+      'cellPhone': 'phone-filter',
     };
     
     return fieldMappings[fieldId] || fieldId;
@@ -75,7 +76,7 @@ const UserSearchBar: React.FC<UserSearchBarProps> = ({
                           <Input
                             {...formField}
                             type={field.type === "number" ? "number" : "text"}
-                            placeholder={field.placeholder}
+                            placeholder={t(field.placeholder || "")}
                             className="pl-8 w-full"
                           />
                         </div>

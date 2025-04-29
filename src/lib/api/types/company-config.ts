@@ -1,3 +1,4 @@
+
 import { User } from "../types";
 
 export type SearchFieldType = "text" | "number" | "select" | "date";
@@ -35,35 +36,35 @@ export const defaultSearchConfig: CompanySearchConfig = {
       key: "id",
       label: "User ID",
       type: "text",
-      placeholder: "Search by User ID...",
+      placeholder: "search-by-id-placeholder",
     },
     {
       id: "name",
       key: "name",
       label: "Name",
       type: "text",
-      placeholder: "Search by name...",
+      placeholder: "search-by-name-placeholder",
     },
     {
       id: "surname",
       key: "surname",
       label: "Last Name",
       type: "text",
-      placeholder: "Search by last name...",
+      placeholder: "search-by-surname-placeholder",
     },
     {
       id: "email",
       key: "email",
       label: "Email",
       type: "text",
-      placeholder: "Search by email...",
+      placeholder: "search-by-email-placeholder",
     },
     {
       id: "cellPhone",
       key: "cellPhone",
       label: "Cell Phone",
       type: "text",
-      placeholder: "Search by cell phone number...",
+      placeholder: "search-by-phone-placeholder",
     },
   ],
   searchOnLoad: false,
