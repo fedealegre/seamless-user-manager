@@ -122,9 +122,9 @@ const UserActionDialogs: React.FC<UserActionDialogsProps> = ({
       <Dialog open={showUnblockDialog} onOpenChange={setShowUnblockDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Unblock User</DialogTitle>
+            <DialogTitle>{t("unblock-user")}</DialogTitle>
             <DialogDescription>
-              Are you sure you want to unblock this user? They will regain access to their account.
+              {t("unblock-confirmation")} {selectedUser?.name} {selectedUser?.surname}? {t("unblock-warning")}
             </DialogDescription>
           </DialogHeader>
           {selectedUser && (
@@ -146,7 +146,7 @@ const UserActionDialogs: React.FC<UserActionDialogsProps> = ({
               onClick={() => setShowUnblockDialog(false)}
               disabled={isSubmitting}
             >
-              Cancel
+              {t("cancel")}
             </Button>
             <Button 
               variant="default" 
@@ -154,7 +154,7 @@ const UserActionDialogs: React.FC<UserActionDialogsProps> = ({
               disabled={isSubmitting}
               className="text-white bg-green-600 hover:bg-green-700"
             >
-              {isSubmitting ? "Unblocking..." : "Unblock User"}
+              {isSubmitting ? t("unblocking") : t("unblock-user")}
             </Button>
           </DialogFooter>
         </DialogContent>

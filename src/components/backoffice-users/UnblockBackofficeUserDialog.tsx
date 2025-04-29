@@ -4,6 +4,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiService as api } from "@/lib/api";
 import { BackofficeUser } from "@/lib/api/types";
 import { useToast } from "@/components/ui/use-toast";
+import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
+import { translate } from "@/lib/translations";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -28,31 +30,33 @@ const UnblockBackofficeUserDialog: React.FC<UnblockBackofficeUserDialogProps> = 
 }) => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { settings } = useBackofficeSettings();
+  const t = (key: string) => translate(key, settings.language);
 
   const unblockUserMutation = useMutation({
     mutationFn: (userId: string) => api.unblockBackofficeUser(userId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["backofficeUsers"] });
       toast({
-        title: "Success",
-        description: "User unblocked successfully",
+        title: t("success"),
+        description: t("user-unblocked-success"),
       });
       onClose();
     },
     onError: (error) => {
-      let errorMessage = "Failed to unblock user";
+      let errorMessage = t("failed-unblock-user");
       
       if (error instanceof Error) {
         // Extract specific error message
         if (error.message.includes("Not Found")) {
-          errorMessage = "User not found. The user may have been deleted.";
+          errorMessage = t("user-not-found");
         } else {
           errorMessage = error.message;
         }
       }
       
       toast({
-        title: "Error",
+        title: t("error"),
         description: errorMessage,
         variant: "destructive",
       });
@@ -64,8 +68,8 @@ const UnblockBackofficeUserDialog: React.FC<UnblockBackofficeUserDialogProps> = 
       unblockUserMutation.mutate(user.id);
     } else {
       toast({
-        title: "Error",
-        description: "Cannot unblock user without an ID",
+        title: t("error"),
+        description: t("cannot-unblock-without-id"),
         variant: "destructive",
       });
       onClose();
@@ -76,20 +80,22 @@ const UnblockBackofficeUserDialog: React.FC<UnblockBackofficeUserDialogProps> = 
     <AlertDialog open={open} onOpenChange={onClose}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Unblock Backoffice User</AlertDialogTitle>
+          <AlertDialogTitle>{t("unblock-backoffice-user")}</AlertDialogTitle>
           <AlertDialogDescription>
-            Are you sure you want to unblock {user.name} {user.surname}? 
-            They will regain access to the backoffice system.
+            {t("unblock-confirmation")} {user.name} {user.surname}? 
+            {t("unblock-warning")}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={unblockUserMutation.isPending}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel disabled={unblockUserMutation.isPending}>
+            {t("cancel")}
+          </AlertDialogCancel>
           <AlertDialogAction 
             onClick={handleUnblock} 
             disabled={unblockUserMutation.isPending}
             className="bg-green-600 text-white hover:bg-green-700"
           >
-            {unblockUserMutation.isPending ? "Unblocking..." : "Unblock User"}
+            {unblockUserMutation.isPending ? t("unblocking") : t("unblock-user")}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
