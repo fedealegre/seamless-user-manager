@@ -110,7 +110,7 @@ const BackofficeUsersTable: React.FC<BackofficeUsersTableProps> = ({
                       {user.state === "active" ? (
                         <DropdownMenuItem 
                           onClick={() => onUserAction(user, "block")}
-                          className="text-amber-600"
+                          className="text-red-600"
                         >
                           <Lock size={16} className="mr-2" /> Block User
                         </DropdownMenuItem>

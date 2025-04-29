@@ -95,7 +95,7 @@ const BlockBackofficeUserDialog: React.FC<BlockBackofficeUserDialogProps> = ({
           <AlertDialogAction 
             onClick={handleBlock} 
             disabled={blockUserMutation.isPending}
-            className="bg-amber-600 text-white hover:bg-amber-700"
+            className="bg-red-600 text-white hover:bg-red-700"
           >
             {blockUserMutation.isPending ? t("blocking") : t("block-user")}
           </AlertDialogAction>

@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { User } from "@/lib/api/types";
 import { Lock, LockOpen } from "lucide-react";
@@ -109,6 +110,7 @@ const UserActionDialogs: React.FC<UserActionDialogsProps> = ({
               variant="default" 
               onClick={handleBlockSubmit} 
               disabled={isSubmitting}
+              className="text-white bg-red-600 hover:bg-red-700"
             >
               {isSubmitting ? t('blocking') : t('confirm')}
             </Button>
@@ -150,6 +152,7 @@ const UserActionDialogs: React.FC<UserActionDialogsProps> = ({
               variant="default" 
               onClick={handleUnblockUser}
               disabled={isSubmitting}
+              className="text-white bg-green-600 hover:bg-green-700"
             >
               {isSubmitting ? "Unblocking..." : "Unblock User"}
             </Button>

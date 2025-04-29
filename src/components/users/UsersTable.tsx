@@ -122,11 +122,11 @@ const UsersTable: React.FC<UsersTableProps> = ({
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       {user.blocked || user.status === "BLOCKED" ? (
-                        <DropdownMenuItem onClick={() => handleUnblockUser(user)}>
+                        <DropdownMenuItem onClick={() => handleUnblockUser(user)} className="text-green-600">
                           <LockOpen size={16} className="mr-2" /> {t("unblock-user")}
                         </DropdownMenuItem>
                       ) : (
-                        <DropdownMenuItem onClick={() => handleBlockUser(user)}>
+                        <DropdownMenuItem onClick={() => handleBlockUser(user)} className="text-red-600">
                           <Lock size={16} className="mr-2" /> {t("block-user")}
                         </DropdownMenuItem>
                       )}
