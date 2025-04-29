@@ -44,7 +44,7 @@ export const commonTranslations = {
     'back': 'Back',
     'details': 'Details',
     'view': 'View',
-    'actions': 'Actions',
+    'action-options': 'Action Options', // Changed from 'actions' to avoid duplicate
     'compensate': 'Compensate',
     'customer': 'Customer',
     'change': 'Change',
@@ -85,8 +85,7 @@ export const commonTranslations = {
     'enter-last-name': 'Enter last name',
     'enter-email': 'Enter email',
     'create-backoffice-user-with-roles': 'Create backoffice user with roles',
-    'application': 'Application',
-    'actions': 'Actions'
+    'application': 'Application'
   },
   es: {
     'dashboard': 'Panel de Control',
@@ -132,7 +131,7 @@ export const commonTranslations = {
     'back': 'Volver',
     'details': 'Detalles',
     'view': 'Ver',
-    'actions': 'Acciones',
+    'action-options': 'Opciones de Acción', // Changed from 'actions' to avoid duplicate
     'compensate': 'Compensar',
     'customer': 'Cliente',
     'change': 'Cambiar',
@@ -173,7 +172,7 @@ export const commonTranslations = {
     'enter-last-name': 'Ingresar apellido',
     'enter-email': 'Ingresar email',
     'create-backoffice-user-with-roles': 'Crear usuario backoffice con roles',
-    'application': 'Aplicación',
-    'actions': 'Acciones'
+    'application': 'Aplicación'
   }
 };
+

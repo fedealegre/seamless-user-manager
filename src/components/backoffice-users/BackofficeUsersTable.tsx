@@ -104,7 +104,7 @@ const BackofficeUsersTable: React.FC<BackofficeUsersTableProps> = ({
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuLabel>{t("actions")}</DropdownMenuLabel>
+                      <DropdownMenuLabel>{t("action-options")}</DropdownMenuLabel>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem onClick={() => onUserAction(user, "edit")}>
                         <Pencil size={16} className="mr-2" /> {t("edit-user")}
@@ -152,3 +152,4 @@ const BackofficeUsersTable: React.FC<BackofficeUsersTableProps> = ({
 };
 
 export default BackofficeUsersTable;
+

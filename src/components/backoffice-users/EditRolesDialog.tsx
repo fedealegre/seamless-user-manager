@@ -12,6 +12,8 @@ import {
 import { Button } from "@/components/ui/button";
 import RoleSelector from "./RoleSelector";
 import { useRoleEditor } from "./useRoleEditor";
+import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
+import { translate } from "@/lib/translations";
 
 interface EditRolesDialogProps {
   open: boolean;
@@ -24,6 +26,9 @@ const EditRolesDialog: React.FC<EditRolesDialogProps> = ({
   user,
   onClose,
 }) => {
+  const { settings } = useBackofficeSettings();
+  const t = (key: string) => translate(key, settings.language);
+  
   const {
     selectedRoles,
     errorMessage,
@@ -59,9 +64,9 @@ const EditRolesDialog: React.FC<EditRolesDialogProps> = ({
         document.body.style.pointerEvents = '';
       }}>
         <DialogHeader>
-          <DialogTitle>Edit User Roles</DialogTitle>
+          <DialogTitle>{t("edit-roles")}</DialogTitle>
           <DialogDescription>
-            Update roles for {user.name} {user.surname}
+            {t("update-roles-for")} {user.name} {user.surname}
           </DialogDescription>
         </DialogHeader>
 
@@ -78,13 +83,13 @@ const EditRolesDialog: React.FC<EditRolesDialogProps> = ({
             onClick={handleClose}
             disabled={isPending}
           >
-            Cancel
+            {t("cancel")}
           </Button>
           <Button 
             onClick={handleSubmit} 
             disabled={isPending || selectedRoles.length === 0}
           >
-            {isPending ? "Saving..." : "Save Changes"}
+            {isPending ? t("saving") : t("save-changes")}
           </Button>
         </DialogFooter>
       </DialogContent>
@@ -93,3 +98,4 @@ const EditRolesDialog: React.FC<EditRolesDialogProps> = ({
 };
 
 export default EditRolesDialog;
+
