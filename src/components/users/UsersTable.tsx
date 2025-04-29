@@ -1,15 +1,13 @@
 
 import React from "react";
 import { User } from "@/lib/api/types";
-import { formatDate } from "@/lib/utils";
 import { 
   MoreVertical, 
   Eye, 
   Wallet, 
   Receipt, 
   Lock, 
-  LockOpen, 
-  Trash 
+  LockOpen 
 } from "lucide-react";
 import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
 import { translate } from "@/lib/translations";
@@ -74,8 +72,6 @@ const UsersTable: React.FC<UsersTableProps> = ({
             <TableHead>{t("email-column")}</TableHead>
             <TableHead>{t("phone-column")}</TableHead>
             <TableHead>{t("status-column")}</TableHead>
-            <TableHead>{t("registration-column")}</TableHead>
-            <TableHead>{t("last-login-column")}</TableHead>
             <TableHead className="text-right">{t("actions")}</TableHead>
           </TableRow>
         </TableHeader>
@@ -104,12 +100,6 @@ const UsersTable: React.FC<UsersTableProps> = ({
                   ) : (
                     <Badge className="bg-green-100 text-green-800 hover:bg-green-100">{t("active")}</Badge>
                   )}
-                </TableCell>
-                <TableCell>
-                  {user.registrationDate ? formatDate(new Date(user.registrationDate)) : "—"}
-                </TableCell>
-                <TableCell>
-                  {user.lastAccess ? formatDate(new Date(user.lastAccess)) : "—"}
                 </TableCell>
                 <TableCell className="text-right">
                   <DropdownMenu>
@@ -140,9 +130,6 @@ const UsersTable: React.FC<UsersTableProps> = ({
                           <Lock size={16} className="mr-2" /> {t("block-user")}
                         </DropdownMenuItem>
                       )}
-                      <DropdownMenuItem className="text-destructive">
-                        <Trash size={16} className="mr-2" /> {t("delete-user")}
-                      </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>
@@ -150,7 +137,7 @@ const UsersTable: React.FC<UsersTableProps> = ({
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={7} className="h-24 text-center">
+              <TableCell colSpan={5} className="h-24 text-center">
                 {t("no-users-found")}
               </TableCell>
             </TableRow>
