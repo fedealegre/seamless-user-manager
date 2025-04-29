@@ -30,6 +30,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
+import { translate } from "@/lib/translations";
 
 interface BackofficeUsersTableProps {
   users: BackofficeUser[];
@@ -40,17 +42,20 @@ const BackofficeUsersTable: React.FC<BackofficeUsersTableProps> = ({
   users,
   onUserAction,
 }) => {
+  const { settings } = useBackofficeSettings();
+  const t = (key: string) => translate(key, settings.language);
+
   return (
     <div className="rounded-md border overflow-hidden">
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>User</TableHead>
-            <TableHead>Email</TableHead>
-            <TableHead>Roles</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Last Login</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
+            <TableHead>{t("user-column")}</TableHead>
+            <TableHead>{t("email-column")}</TableHead>
+            <TableHead>{t("roles-column")}</TableHead>
+            <TableHead>{t("status-column")}</TableHead>
+            <TableHead>{t("last-login-column")}</TableHead>
+            <TableHead className="text-right">{t("actions-column")}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -75,7 +80,7 @@ const BackofficeUsersTable: React.FC<BackofficeUsersTableProps> = ({
                   <div className="flex flex-wrap gap-1">
                     {user.roles && user.roles.map((role) => (
                       <Badge key={role} variant="outline" className="capitalize">
-                        {role}
+                        {t(role.toLowerCase())}
                       </Badge>
                     ))}
                   </div>
@@ -85,11 +90,11 @@ const BackofficeUsersTable: React.FC<BackofficeUsersTableProps> = ({
                     variant={user.state === "active" ? "outline" : "destructive"}
                     className={user.state === "active" ? "bg-green-100 text-green-800 hover:bg-green-100" : ""}
                   >
-                    {user.state}
+                    {t(user.state)}
                   </Badge>
                 </TableCell>
                 <TableCell>
-                  {user.last_login ? formatDate(new Date(user.last_login)) : "Never"}
+                  {user.last_login ? formatDate(new Date(user.last_login)) : t("never")}
                 </TableCell>
                 <TableCell className="text-right">
                   <DropdownMenu>
@@ -99,34 +104,34 @@ const BackofficeUsersTable: React.FC<BackofficeUsersTableProps> = ({
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                      <DropdownMenuLabel>{t("actions")}</DropdownMenuLabel>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem onClick={() => onUserAction(user, "edit")}>
-                        <Pencil size={16} className="mr-2" /> Edit User
+                        <Pencil size={16} className="mr-2" /> {t("edit-user")}
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => onUserAction(user, "editRoles")}>
-                        <Shield size={16} className="mr-2" /> Edit Roles
+                        <Shield size={16} className="mr-2" /> {t("edit-roles")}
                       </DropdownMenuItem>
                       {user.state === "active" ? (
                         <DropdownMenuItem 
                           onClick={() => onUserAction(user, "block")}
                           className="text-red-600"
                         >
-                          <Lock size={16} className="mr-2" /> Block User
+                          <Lock size={16} className="mr-2" /> {t("block-user")}
                         </DropdownMenuItem>
                       ) : (
                         <DropdownMenuItem 
                           onClick={() => onUserAction(user, "unblock")}
                           className="text-green-600"
                         >
-                          <LockOpen size={16} className="mr-2" /> Unblock User
+                          <LockOpen size={16} className="mr-2" /> {t("unblock-user")}
                         </DropdownMenuItem>
                       )}
                       <DropdownMenuItem 
                         onClick={() => onUserAction(user, "delete")}
                         className="text-destructive"
                       >
-                        <X size={16} className="mr-2" /> Delete User
+                        <X size={16} className="mr-2" /> {t("delete-user")}
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -136,7 +141,7 @@ const BackofficeUsersTable: React.FC<BackofficeUsersTableProps> = ({
           ) : (
             <TableRow>
               <TableCell colSpan={6} className="h-24 text-center">
-                No backoffice users found. Try a different search or add a new user.
+                {t("no-users-found")}
               </TableCell>
             </TableRow>
           )}

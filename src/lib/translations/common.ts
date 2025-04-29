@@ -1,3 +1,4 @@
+
 export const commonTranslations = {
   en: {
     'dashboard': 'Dashboard',
@@ -83,7 +84,9 @@ export const commonTranslations = {
     'last-name': 'Last name',
     'enter-last-name': 'Enter last name',
     'enter-email': 'Enter email',
-    'create-backoffice-user-with-roles': 'Create backoffice user with roles'
+    'create-backoffice-user-with-roles': 'Create backoffice user with roles',
+    'application': 'Application',
+    'actions': 'Actions'
   },
   es: {
     'dashboard': 'Panel de Control',
@@ -169,6 +172,8 @@ export const commonTranslations = {
     'last-name': 'Apellido',
     'enter-last-name': 'Ingresar apellido',
     'enter-email': 'Ingresar email',
-    'create-backoffice-user-with-roles': 'Crear usuario backoffice con roles'
+    'create-backoffice-user-with-roles': 'Crear usuario backoffice con roles',
+    'application': 'Aplicación',
+    'actions': 'Acciones'
   }
 };

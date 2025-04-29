@@ -10,7 +10,21 @@ export const roleTranslations = {
     'error-loading-operators': 'Error Loading Operators',
     'failed-load-backoffice-operators': 'Failed to load backoffice operators. Please try again.',
     'retry': 'Retry',
-    'search-by-name-id-email-role': 'Search by name, ID, email, or role...'
+    'search-by-name-id-email-role': 'Search by name, ID, email, or role...',
+    'user-column': 'User',
+    'email-column': 'Email',
+    'roles-column': 'Roles',
+    'status-column': 'Status',
+    'last-login-column': 'Last Login',
+    'actions-column': 'Actions',
+    'edit-user': 'Edit User',
+    'edit-roles': 'Edit Roles',
+    'block-user': 'Block User',
+    'unblock-user': 'Unblock User',
+    'delete-user': 'Delete User',
+    'active': 'Active',
+    'blocked': 'Blocked',
+    'never': 'Never'
   },
   es: {
     'configurador': 'Configurador',
@@ -22,6 +36,20 @@ export const roleTranslations = {
     'error-loading-operators': 'Error al Cargar Operadores',
     'failed-load-backoffice-operators': 'Error al cargar operadores de backoffice. Intente nuevamente.',
     'retry': 'Reintentar',
-    'search-by-name-id-email-role': 'Buscar por nombre, ID, email o rol...'
+    'search-by-name-id-email-role': 'Buscar por nombre, ID, email o rol...',
+    'user-column': 'Usuario',
+    'email-column': 'Correo Electrónico',
+    'roles-column': 'Roles',
+    'status-column': 'Estado',
+    'last-login-column': 'Último Acceso',
+    'actions-column': 'Acciones',
+    'edit-user': 'Editar Usuario',
+    'edit-roles': 'Editar Roles',
+    'block-user': 'Bloquear Usuario',
+    'unblock-user': 'Desbloquear Usuario',
+    'delete-user': 'Eliminar Usuario',
+    'active': 'Activo',
+    'blocked': 'Bloqueado',
+    'never': 'Nunca'
   }
 };
