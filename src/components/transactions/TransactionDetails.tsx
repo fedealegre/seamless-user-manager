@@ -23,6 +23,7 @@ import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
 import { translate } from "@/lib/translations";
+import { getTranslatedStatusBadge } from "./transaction-utils";
 
 interface TransactionDetailsProps {
   transaction: Transaction;
@@ -61,20 +62,7 @@ const TransactionDetails: React.FC<TransactionDetailsProps> = ({
           {/* Transaction Status */}
           <div className="flex justify-between items-center p-3 bg-muted/50 rounded-md">
             <div className="font-medium">{t("status")}</div>
-            <Badge 
-              variant={
-                transaction.status?.toLowerCase() === 'completed' ? 'outline' : 
-                transaction.status?.toLowerCase() === 'pending' ? 'secondary' : 
-                'destructive'
-              }
-              className={
-                transaction.status?.toLowerCase() === 'completed' ? 'bg-green-100 text-green-800 hover:bg-green-100' : 
-                transaction.status?.toLowerCase() === 'pending' ? 'bg-yellow-100 text-yellow-800 hover:bg-yellow-100' : 
-                ''
-              }
-            >
-              {t(transaction.status?.toLowerCase() || 'unknown')}
-            </Badge>
+            {getTranslatedStatusBadge(transaction.status, settings.language)}
           </div>
           
           {/* Transaction ID Info */}
