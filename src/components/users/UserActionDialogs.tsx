@@ -124,7 +124,7 @@ const UserActionDialogs: React.FC<UserActionDialogsProps> = ({
           <DialogHeader>
             <DialogTitle>{t("unblock-user")}</DialogTitle>
             <DialogDescription>
-              {t("unblock-confirmation")} {selectedUser?.name} {selectedUser?.surname}? {t("unblock-warning")}
+              {t("unblock-confirmation")} {selectedUser?.name} {selectedUser?.surname} {t("unblock-warning")}
             </DialogDescription>
           </DialogHeader>
           {selectedUser && (
