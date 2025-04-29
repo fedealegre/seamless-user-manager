@@ -1,12 +1,18 @@
+
 import React from "react";
 import { User } from "@/lib/api/types";
+import { formatDate } from "@/lib/utils";
 import { 
+  MoreVertical, 
   Eye, 
+  Wallet, 
+  Receipt, 
   Lock, 
-  LockOpen,
-  Wallet,
-  CreditCard 
+  LockOpen, 
+  Trash 
 } from "lucide-react";
+import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
+import { translate } from "@/lib/translations";
 import { 
   Table, 
   TableBody, 
@@ -26,8 +32,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
-import { translate } from "@/lib/translations";
 
 interface UsersTableProps {
   users: User[];
@@ -46,105 +50,99 @@ const UsersTable: React.FC<UsersTableProps> = ({
   setShowUnblockDialog,
   onViewDetails,
   onViewWallets,
-  onViewTransactions
+  onViewTransactions,
 }) => {
   const { settings } = useBackofficeSettings();
   const t = (key: string) => translate(key, settings.language);
+
+  const handleBlockUser = (user: User) => {
+    setSelectedUser(user);
+    setShowBlockDialog(true);
+  };
+
+  const handleUnblockUser = (user: User) => {
+    setSelectedUser(user);
+    setShowUnblockDialog(true);
+  };
 
   return (
     <div className="rounded-md border overflow-hidden">
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>User ID</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Cell Phone</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
+            <TableHead>{t("user-column")}</TableHead>
+            <TableHead>{t("email-column")}</TableHead>
+            <TableHead>{t("phone-column")}</TableHead>
+            <TableHead>{t("status-column")}</TableHead>
+            <TableHead>{t("registration-column")}</TableHead>
+            <TableHead>{t("last-login-column")}</TableHead>
+            <TableHead className="text-right">{t("actions")}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {users && users.length > 0 ? (
             users.map((user) => (
               <TableRow key={user.id}>
-                <TableCell className="font-medium">
-                  {user.id}
-                  {user.publicId && <div className="text-xs text-muted-foreground truncate max-w-[180px]">{user.publicId}</div>}
-                </TableCell>
                 <TableCell>
                   <div className="flex items-center gap-3">
                     <Avatar className="h-8 w-8">
                       <AvatarFallback className="bg-primary/10 text-primary">
-                        {user.name.charAt(0)}{user.surname?.charAt(0) || ''}
+                        {user.name.charAt(0)}{user.surname.charAt(0)}
                       </AvatarFallback>
                     </Avatar>
                     <div>
                       <div className="font-medium">{user.name} {user.surname}</div>
-                      {user.blocked && user.blockReason && (
-                        <div className="text-xs text-muted-foreground">
-                          {t('block-reason')}: {user.blockReason}
-                        </div>
-                      )}
+                      <div className="text-xs text-muted-foreground">{user.username}</div>
                     </div>
                   </div>
                 </TableCell>
+                <TableCell>{user.email || "—"}</TableCell>
+                <TableCell>{user.cellPhone || "—"}</TableCell>
                 <TableCell>
-                  {user.cellPhone || <span className="text-muted-foreground text-sm">Not provided</span>}
+                  {user.blocked || user.status === "BLOCKED" ? (
+                    <Badge variant="destructive">{t("blocked")}</Badge>
+                  ) : (
+                    <Badge className="bg-green-100 text-green-800 hover:bg-green-100">{t("active")}</Badge>
+                  )}
                 </TableCell>
                 <TableCell>
-                  <Badge 
-                    variant={!user.blocked ? "outline" : "destructive"}
-                    className={!user.blocked ? "bg-green-100 text-green-800 hover:bg-green-100" : ""}
-                  >
-                    {user.blocked ? "BLOCKED" : "ACTIVE"}
-                  </Badge>
+                  {user.registrationDate ? formatDate(new Date(user.registrationDate)) : "—"}
+                </TableCell>
+                <TableCell>
+                  {user.lastAccess ? formatDate(new Date(user.lastAccess)) : "—"}
                 </TableCell>
                 <TableCell className="text-right">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" size="icon">
-                        <span className="sr-only">Open menu</span>
-                        <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
-                        </svg>
+                        <MoreVertical size={16} />
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuLabel>{t('actions')}</DropdownMenuLabel>
+                      <DropdownMenuLabel>{t("actions")}</DropdownMenuLabel>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem onClick={() => onViewDetails(user.id)}>
-                        <Eye size={16} className="mr-2" /> {t('view-details')}
+                        <Eye size={16} className="mr-2" /> {t("view-details")}
                       </DropdownMenuItem>
-
                       <DropdownMenuItem onClick={() => onViewWallets(user.id)}>
-                        <Wallet size={16} className="mr-2" /> {t('view-wallets')}
+                        <Wallet size={16} className="mr-2" /> {t("view-wallets")}
                       </DropdownMenuItem>
-
                       <DropdownMenuItem onClick={() => onViewTransactions(user.id)}>
-                        <CreditCard size={16} className="mr-2" /> {t('view-transactions')}
+                        <Receipt size={16} className="mr-2" /> {t("view-transactions")}
                       </DropdownMenuItem>
-                      
-                      {!user.blocked ? (
-                        <DropdownMenuItem 
-                          onClick={() => {
-                            setSelectedUser(user);
-                            setShowBlockDialog(true);
-                          }}
-                          className="text-amber-600"
-                        >
-                          <Lock size={16} className="mr-2" /> {t('block-user')}
+                      <DropdownMenuSeparator />
+                      {user.blocked || user.status === "BLOCKED" ? (
+                        <DropdownMenuItem onClick={() => handleUnblockUser(user)}>
+                          <LockOpen size={16} className="mr-2" /> {t("unblock-user")}
                         </DropdownMenuItem>
                       ) : (
-                        <DropdownMenuItem 
-                          onClick={() => {
-                            setSelectedUser(user);
-                            setShowUnblockDialog(true);
-                          }}
-                          className="text-green-600"
-                        >
-                          <LockOpen size={16} className="mr-2" /> {t('unblock-user')}
+                        <DropdownMenuItem onClick={() => handleBlockUser(user)}>
+                          <Lock size={16} className="mr-2" /> {t("block-user")}
                         </DropdownMenuItem>
                       )}
+                      <DropdownMenuItem className="text-destructive">
+                        <Trash size={16} className="mr-2" /> {t("delete-user")}
+                      </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>
@@ -152,8 +150,8 @@ const UsersTable: React.FC<UsersTableProps> = ({
             ))
           ) : (
             <TableRow>
-              <TableCell colSpan={5} className="h-24 text-center">
-                No users found. Try a different search.
+              <TableCell colSpan={7} className="h-24 text-center">
+                {t("no-users-found")}
               </TableCell>
             </TableRow>
           )}

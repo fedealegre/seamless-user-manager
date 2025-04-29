@@ -41,6 +41,20 @@ const UserSearchBar: React.FC<UserSearchBarProps> = ({
     onSearch(filteredParams);
   };
 
+  // Helper function to get field translation key
+  const getFieldTranslationKey = (fieldId: string) => {
+    const fieldMappings: Record<string, string> = {
+      'name': 'name-filter',
+      'surname': 'surname-filter',
+      'email': 'email-filter',
+      'phone': 'phone-filter',
+      'id': 'id-filter',
+      'status': 'status-filter',
+    };
+    
+    return fieldMappings[fieldId] || fieldId;
+  };
+
   return (
     <Card>
       <CardContent className="p-4">
@@ -54,7 +68,7 @@ const UserSearchBar: React.FC<UserSearchBarProps> = ({
                   name={field.id}
                   render={({ field: formField }) => (
                     <FormItem>
-                      <FormLabel>{field.label}</FormLabel>
+                      <FormLabel>{t(getFieldTranslationKey(field.id))}</FormLabel>
                       <FormControl>
                         <div className="relative">
                           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />

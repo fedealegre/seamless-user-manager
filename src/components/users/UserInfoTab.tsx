@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { User } from "@/lib/api/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -60,17 +61,17 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
 
   const renderStatus = () => {
     if (user.blocked || user.status === "BLOCKED") {
-      return <Badge variant="destructive">Blocked</Badge>;
+      return <Badge variant="destructive">{t("blocked")}</Badge>;
     } else if (user.deleted) {
-      return <Badge variant="destructive">Deleted</Badge>;
+      return <Badge variant="destructive">{t("deleted")}</Badge>;
     } else {
-      return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Active</Badge>;
+      return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">{t("active")}</Badge>;
     }
   };
 
   const renderAdditionalInfo = () => {
     if (!user.additionalInfo || Object.keys(user.additionalInfo).length === 0) {
-      return <p className="text-muted-foreground">No additional information available</p>;
+      return <p className="text-muted-foreground">{t("no-additional-info")}</p>;
     }
 
     return (
@@ -148,38 +149,38 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
       
       <Card>
         <CardHeader>
-          <CardTitle>Basic Information</CardTitle>
+          <CardTitle>{t("basic-information")}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-4">
               {shouldRenderField("name") && shouldRenderField("surname") && (
                 <div>
-                  <h3 className="text-sm font-medium text-muted-foreground">Full Name</h3>
+                  <h3 className="text-sm font-medium text-muted-foreground">{t("full-name")}</h3>
                   <p>{formatDisplayValue(user.name)} {formatDisplayValue(user.surname)}</p>
                 </div>
               )}
               {shouldRenderField("username") && (
                 <div>
-                  <h3 className="text-sm font-medium text-muted-foreground">Username</h3>
+                  <h3 className="text-sm font-medium text-muted-foreground">{t("username")}</h3>
                   <p>{formatDisplayValue(user.username)}</p>
                 </div>
               )}
               {shouldRenderField("status") && (
                 <div>
-                  <h3 className="text-sm font-medium text-muted-foreground">Status</h3>
+                  <h3 className="text-sm font-medium text-muted-foreground">{t("status")}</h3>
                   <div>{renderStatus()}</div>
                 </div>
               )}
               {shouldRenderField("email") && (
                 <div>
-                  <h3 className="text-sm font-medium text-muted-foreground">Email</h3>
+                  <h3 className="text-sm font-medium text-muted-foreground">{t("email")}</h3>
                   <p>{formatDisplayValue(user.email)}</p>
                 </div>
               )}
               {shouldRenderField("cellPhone") && (
                 <div>
-                  <h3 className="text-sm font-medium text-muted-foreground">Cell Phone</h3>
+                  <h3 className="text-sm font-medium text-muted-foreground">{t("cell-phone")}</h3>
                   <p>{formatDisplayValue(user.cellPhone)}</p>
                 </div>
               )}
@@ -187,31 +188,31 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
             <div className="space-y-4">
               {shouldRenderField("birthDate") && (
                 <div>
-                  <h3 className="text-sm font-medium text-muted-foreground">Birth Date</h3>
+                  <h3 className="text-sm font-medium text-muted-foreground">{t("birth-date")}</h3>
                   <p>{formatDate(user.birthDate)}</p>
                 </div>
               )}
               {shouldRenderField("nationality") && (
                 <div>
-                  <h3 className="text-sm font-medium text-muted-foreground">Nationality</h3>
+                  <h3 className="text-sm font-medium text-muted-foreground">{t("nationality")}</h3>
                   <p>{formatDisplayValue(user.nationality)}</p>
                 </div>
               )}
               {shouldRenderField("gender") && (
                 <div>
-                  <h3 className="text-sm font-medium text-muted-foreground">Gender</h3>
-                  <p>{user.gender === 'M' ? 'Male' : user.gender === 'F' ? 'Female' : formatDisplayValue(user.gender)}</p>
+                  <h3 className="text-sm font-medium text-muted-foreground">{t("gender")}</h3>
+                  <p>{user.gender === 'M' ? t('male') : user.gender === 'F' ? t('female') : formatDisplayValue(user.gender)}</p>
                 </div>
               )}
               {shouldRenderField("language") && (
                 <div>
-                  <h3 className="text-sm font-medium text-muted-foreground">Language</h3>
+                  <h3 className="text-sm font-medium text-muted-foreground">{t("language")}</h3>
                   <p>{formatDisplayValue(user.language)}</p>
                 </div>
               )}
               {shouldRenderField("region") && (
                 <div>
-                  <h3 className="text-sm font-medium text-muted-foreground">Region</h3>
+                  <h3 className="text-sm font-medium text-muted-foreground">{t("region")}</h3>
                   <p>{formatDisplayValue(user.region)}</p>
                 </div>
               )}
@@ -222,21 +223,21 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
 
       <Card>
         <CardHeader>
-          <CardTitle>Identification</CardTitle>
+          <CardTitle>{t("identification")}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-4">
               <div>
-                <h3 className="text-sm font-medium text-muted-foreground">User ID</h3>
+                <h3 className="text-sm font-medium text-muted-foreground">{t("user-id")}</h3>
                 <p>{formatDisplayValue(user.id)}</p>
               </div>
               <div>
-                <h3 className="text-sm font-medium text-muted-foreground">Public ID</h3>
+                <h3 className="text-sm font-medium text-muted-foreground">{t("public-id")}</h3>
                 <p>{formatDisplayValue(user.publicId)}</p>
               </div>
               <div>
-                <h3 className="text-sm font-medium text-muted-foreground">Default Wallet</h3>
+                <h3 className="text-sm font-medium text-muted-foreground">{t("default-wallet")}</h3>
                 <p>{formatDisplayValue(user.defaultWalletId)}</p>
               </div>
             </div>
@@ -265,7 +266,7 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
       {shouldRenderField("additionalInfo") && (
         <Card>
           <CardHeader>
-            <CardTitle>Additional Information</CardTitle>
+            <CardTitle>{t("additional-information")}</CardTitle>
           </CardHeader>
           <CardContent>
             {renderAdditionalInfo()}

@@ -3,6 +3,8 @@ import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import UserSearchBar from "./UserSearchBar";
 import { CompanySearchConfig } from "@/lib/api/types/company-config";
+import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
+import { translate } from "@/lib/translations";
 
 interface CollapsibleUserSearchProps {
   searchConfig: CompanySearchConfig;
@@ -15,6 +17,9 @@ const CollapsibleUserSearch: React.FC<CollapsibleUserSearchProps> = ({
   onSearch,
   activeFiltersCount,
 }) => {
+  const { settings } = useBackofficeSettings();
+  const t = (key: string) => translate(key, settings.language);
+  
   return (
     <div className="mb-6">
       <UserSearchBar

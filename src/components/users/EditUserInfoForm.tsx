@@ -25,6 +25,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
+import { translate } from "@/lib/translations";
 
 // Dynamic schema builder based on field settings
 const createUserFormSchema = (isFieldEditable: (fieldName: string) => boolean) => {
@@ -100,6 +102,8 @@ export const EditUserInfoForm: React.FC<EditUserInfoFormProps> = ({
 }) => {
   const { toast } = useToast();
   const { isFieldEditable, isLoaded } = useUserFieldSettings();
+  const { settings } = useBackofficeSettings();
+  const t = (key: string) => translate(key, settings.language);
   const [additionalFields, setAdditionalFields] = useState<AdditionalInfoField[]>(
     user.additionalInfo 
       ? Object.entries(user.additionalInfo).map(([key, value]) => ({ 
@@ -188,20 +192,20 @@ export const EditUserInfoForm: React.FC<EditUserInfoFormProps> = ({
 
       await onUpdate(userData);
       toast({
-        title: "User updated",
-        description: "User information has been updated successfully.",
+        title: t("user-updated"),
+        description: t("user-info-updated-success"),
       });
     } catch (error) {
       toast({
         variant: "destructive",
-        title: "Error",
-        description: "Failed to update user information.",
+        title: t("error"),
+        description: t("failed-update-user"),
       });
     }
   };
 
   if (!isLoaded) {
-    return <div>Loading form settings...</div>;
+    return <div>{t("loading-form-settings")}</div>;
   }
 
   return (
@@ -214,7 +218,7 @@ export const EditUserInfoForm: React.FC<EditUserInfoFormProps> = ({
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>First Name</FormLabel>
+                  <FormLabel>{t("first-name")}</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -230,7 +234,7 @@ export const EditUserInfoForm: React.FC<EditUserInfoFormProps> = ({
               name="surname"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Last Name</FormLabel>
+                  <FormLabel>{t("last-name")}</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -246,7 +250,7 @@ export const EditUserInfoForm: React.FC<EditUserInfoFormProps> = ({
               name="username"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Username</FormLabel>
+                  <FormLabel>{t("username")}</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -262,7 +266,7 @@ export const EditUserInfoForm: React.FC<EditUserInfoFormProps> = ({
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>{t("email")}</FormLabel>
                   <FormControl>
                     <Input {...field} type="email" value={field.value || ""} />
                   </FormControl>
@@ -278,7 +282,7 @@ export const EditUserInfoForm: React.FC<EditUserInfoFormProps> = ({
               name="cellPhone"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Cell Phone</FormLabel>
+                  <FormLabel>{t("cell-phone")}</FormLabel>
                   <FormControl>
                     <Input {...field} value={field.value || ""} />
                   </FormControl>
@@ -294,7 +298,7 @@ export const EditUserInfoForm: React.FC<EditUserInfoFormProps> = ({
               name="birthDate"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Birth Date</FormLabel>
+                  <FormLabel>{t("birth-date")}</FormLabel>
                   <FormControl>
                     <Input 
                       type="date" 
@@ -314,7 +318,7 @@ export const EditUserInfoForm: React.FC<EditUserInfoFormProps> = ({
               name="nationality"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Nationality</FormLabel>
+                  <FormLabel>{t("nationality")}</FormLabel>
                   <FormControl>
                     <Input {...field} value={field.value || ""} />
                   </FormControl>
@@ -330,21 +334,21 @@ export const EditUserInfoForm: React.FC<EditUserInfoFormProps> = ({
               name="gender"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Gender</FormLabel>
+                  <FormLabel>{t("gender")}</FormLabel>
                   <Select
                     value={field.value || "unspecified"}
                     onValueChange={(value) => field.onChange(value)}
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Select gender" />
+                        <SelectValue placeholder={t("select-gender")} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="unspecified">Select gender</SelectItem>
-                      <SelectItem value="M">Male</SelectItem>
-                      <SelectItem value="F">Female</SelectItem>
-                      <SelectItem value="Other">Other</SelectItem>
+                      <SelectItem value="unspecified">{t("select-gender")}</SelectItem>
+                      <SelectItem value="M">{t("male")}</SelectItem>
+                      <SelectItem value="F">{t("female")}</SelectItem>
+                      <SelectItem value="Other">{t("other")}</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -359,7 +363,7 @@ export const EditUserInfoForm: React.FC<EditUserInfoFormProps> = ({
               name="language"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Language</FormLabel>
+                  <FormLabel>{t("language")}</FormLabel>
                   <FormControl>
                     <Input {...field} value={field.value || ""} />
                   </FormControl>
@@ -375,7 +379,7 @@ export const EditUserInfoForm: React.FC<EditUserInfoFormProps> = ({
               name="region"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Region</FormLabel>
+                  <FormLabel>{t("region")}</FormLabel>
                   <FormControl>
                     <Input {...field} value={field.value || ""} />
                   </FormControl>
@@ -390,39 +394,39 @@ export const EditUserInfoForm: React.FC<EditUserInfoFormProps> = ({
         {isFieldEditable("additionalInfo") && (
           <div className="mt-8">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-medium">Additional Information</h3>
+              <h3 className="text-lg font-medium">{t("additional-information")}</h3>
               <Button 
                 type="button" 
                 variant="outline" 
                 size="sm" 
                 onClick={handleAddAdditionalField}
               >
-                <PlusCircle className="h-4 w-4 mr-2" /> Add Field
+                <PlusCircle className="h-4 w-4 mr-2" /> {t("add-field")}
               </Button>
             </div>
             
             {additionalFields.length === 0 ? (
-              <p className="text-muted-foreground">No additional fields</p>
+              <p className="text-muted-foreground">{t("no-additional-fields")}</p>
             ) : (
               <div className="space-y-4">
                 {additionalFields.map((field, index) => (
                   <div key={index} className="flex gap-3 items-start">
                     <div className="flex-1">
-                      <FormLabel htmlFor={`field-key-${index}`}>Field Name</FormLabel>
+                      <FormLabel htmlFor={`field-key-${index}`}>{t("field-name")}</FormLabel>
                       <Input
                         id={`field-key-${index}`}
                         value={field.key}
                         onChange={(e) => handleAdditionalFieldChange(index, 'key', e.target.value)}
-                        placeholder="Field name"
+                        placeholder={t("field-name")}
                       />
                     </div>
                     <div className="flex-1">
-                      <FormLabel htmlFor={`field-value-${index}`}>Value</FormLabel>
+                      <FormLabel htmlFor={`field-value-${index}`}>{t("value")}</FormLabel>
                       <Input
                         id={`field-value-${index}`}
                         value={field.value}
                         onChange={(e) => handleAdditionalFieldChange(index, 'value', e.target.value)}
-                        placeholder="Field value"
+                        placeholder={t("value")}
                       />
                     </div>
                     <Button
@@ -443,9 +447,9 @@ export const EditUserInfoForm: React.FC<EditUserInfoFormProps> = ({
         
         <div className="flex justify-end space-x-2">
           <Button variant="outline" type="button" onClick={onCancel}>
-            Cancel
+            {t("cancel")}
           </Button>
-          <Button type="submit">Save Changes</Button>
+          <Button type="submit">{t("save-changes")}</Button>
         </div>
       </form>
     </Form>
