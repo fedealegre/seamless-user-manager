@@ -58,19 +58,39 @@ const TransactionFilters: React.FC<TransactionFiltersProps> = ({
   // Handler for start date changes
   const handleStartDateChange = (date: Date | undefined) => {
     setStartDateObj(date);
-    setLocalFilters(prev => ({
-      ...prev,
-      startDate: date ? date.toISOString() : '' // Usar ISO para filtrar correctamente la fecha de la transacción
-    }));
+    if (date) {
+      // Set time to start of day (00:00:00) for filtering from the beginning of the day
+      const startOfDay = new Date(date);
+      startOfDay.setHours(0, 0, 0, 0);
+      setLocalFilters(prev => ({
+        ...prev,
+        startDate: startOfDay.toISOString()
+      }));
+    } else {
+      setLocalFilters(prev => ({
+        ...prev,
+        startDate: ''
+      }));
+    }
   };
   
   // Handler for end date changes
   const handleEndDateChange = (date: Date | undefined) => {
     setEndDateObj(date);
-    setLocalFilters(prev => ({
-      ...prev,
-      endDate: date ? date.toISOString() : ''
-    }));
+    if (date) {
+      // Set time to end of day (23:59:59.999) for filtering until the end of the day
+      const endOfDay = new Date(date);
+      endOfDay.setHours(23, 59, 59, 999);
+      setLocalFilters(prev => ({
+        ...prev,
+        endDate: endOfDay.toISOString()
+      }));
+    } else {
+      setLocalFilters(prev => ({
+        ...prev,
+        endDate: ''
+      }));
+    }
   };
 
   const handleApply = () => {
@@ -178,7 +198,7 @@ const TransactionFilters: React.FC<TransactionFiltersProps> = ({
               id="startDate"
               date={startDateObj}
               onSelect={handleStartDateChange}
-              // El DatePicker personalizado ya abre el mes/día seleccionado si se pasa el valor correcto en 'date'
+              displayTime={false}
             />
           </div>
 
@@ -188,6 +208,7 @@ const TransactionFilters: React.FC<TransactionFiltersProps> = ({
               id="endDate"
               date={endDateObj}
               onSelect={handleEndDateChange}
+              displayTime={false}
             />
           </div>
         </div>
@@ -203,4 +224,3 @@ const TransactionFilters: React.FC<TransactionFiltersProps> = ({
 };
 
 export default TransactionFilters;
-

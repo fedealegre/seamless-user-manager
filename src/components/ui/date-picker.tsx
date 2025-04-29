@@ -17,17 +17,32 @@ interface DatePickerProps {
   onSelect: (date: Date | undefined) => void
   className?: string
   id?: string
+  displayTime?: boolean
 }
 
-export function DatePicker({ date, onSelect, className, id }: DatePickerProps) {
+export function DatePicker({ date, onSelect, className, id, displayTime = false }: DatePickerProps) {
   const { formatDate, settings } = useBackofficeSettings();
   
   const getLocale = () => {
     return settings.language.startsWith('es') ? es : undefined;
   };
 
-  // Abrir calendario en la fecha seleccionada si existe, o en la fecha actual si no
-  // Usamos `month={date || undefined}` para asegurar que el mes inicial sea el indicado
+  // Format date showing only the date part (without time)
+  const formatDisplayDate = (date: Date) => {
+    if (!date) return '';
+    
+    if (displayTime) {
+      return formatDate(date);
+    } else {
+      // Use Intl.DateTimeFormat to format just the date part
+      const dateFormatter = new Intl.DateTimeFormat(
+        settings.language.startsWith('es') ? 'es-ES' : 'en-US', 
+        { year: 'numeric', month: '2-digit', day: '2-digit' }
+      );
+      return dateFormatter.format(date);
+    }
+  };
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -41,7 +56,7 @@ export function DatePicker({ date, onSelect, className, id }: DatePickerProps) {
           )}
         >
           <CalendarIcon className="mr-2 h-4 w-4" />
-          {date ? formatDate(date) : <span>{settings.language.startsWith('es') ? 'Seleccionar fecha' : 'Select date'}</span>}
+          {date ? formatDisplayDate(date) : <span>{settings.language.startsWith('es') ? 'Seleccionar fecha' : 'Select date'}</span>}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">
