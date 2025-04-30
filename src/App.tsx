@@ -5,7 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
-import { CompanySettingsProvider } from "@/contexts/CompanySettingsContext";
+import { CompanySettingsProvider } from "@/contexts/CompanySettingsProvider";
 import { BackofficeSettingsProvider } from "@/contexts/BackofficeSettingsContext";
 import PrivateRoute from "@/components/PrivateRoute";
 import { TransactionGeneratorProvider } from "@/contexts/TransactionGeneratorContext";
