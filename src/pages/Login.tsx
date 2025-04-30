@@ -10,7 +10,6 @@ import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
 import { LoginRequest } from "@/lib/api-types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { getDefaultLandingPage } from "@/App";
@@ -19,7 +18,6 @@ import { translate } from "@/lib/translations";
 const loginSchema = z.object({
   userName: z.string().min(1, "username-required"),
   password: z.string().min(1, "password-required"),
-  rememberMe: z.boolean().optional(),
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
@@ -37,7 +35,6 @@ const Login = () => {
     defaultValues: {
       userName: "",
       password: "",
-      rememberMe: false,
     },
   });
 
@@ -50,11 +47,9 @@ const Login = () => {
   }, [isAuthenticated, user, navigate]);
 
   const onSubmit = async (values: LoginFormValues) => {
-    const { rememberMe, ...credentials } = values;
-    
     const loginRequest: LoginRequest = {
-      userName: credentials.userName,
-      password: credentials.password,
+      userName: values.userName,
+      password: values.password,
       appPlatform: navigator.platform,
       appVersion: navigator.appVersion,
     };
@@ -130,31 +125,9 @@ const Login = () => {
                 )}
               />
               
-              <div className="flex items-center justify-between">
-                <FormField
-                  control={form.control}
-                  name="rememberMe"
-                  render={({ field }) => (
-                    <FormItem className="flex items-center space-x-2 space-y-0">
-                      <FormControl>
-                        <Checkbox 
-                          checked={field.value} 
-                          onCheckedChange={field.onChange} 
-                        />
-                      </FormControl>
-                      <FormLabel className="text-sm cursor-pointer">{t('remember-me')}</FormLabel>
-                    </FormItem>
-                  )}
-                />
-                
-                <Button variant="link" className="text-sm p-0 h-auto" type="button">
-                  {t('forgot-password')}
-                </Button>
-              </div>
-              
               <Button 
                 type="submit" 
-                className="w-full" 
+                className="w-full mt-4" 
                 disabled={isLoading}
               >
                 {isLoading ? t('signing-in') : t('sign-in')}
