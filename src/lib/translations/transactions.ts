@@ -1,4 +1,3 @@
-
 export const transactionTranslations = {
   en: {
     'transactions': 'Transactions',
@@ -65,6 +64,17 @@ export const transactionTranslations = {
     'cancel': 'Cancel',
     'error': 'Error',
     'access-denied': 'Access Denied',
+    'change-transaction-status': 'Change Transaction Status',
+    'change-status-description': 'Select a new status for this transaction',
+    'new-status': 'New Status',
+    'select-new-status': 'Select new status',
+    'reason-for-status-change': 'Reason for Status Change',
+    'status-change-reason-placeholder': 'Provide a detailed reason for changing the transaction status...',
+    'update-status': 'Update Status',
+    'status-updated': 'Status Updated',
+    'transaction-status-changed-success': 'Transaction status has been changed successfully',
+    'status-change-failed': 'Status Change Failed',
+    'only-pending-transactions': 'Only pending transactions can have their status changed'
   },
   es: {
     'transactions': 'Transacciones',
@@ -131,5 +141,16 @@ export const transactionTranslations = {
     'cancel': 'Cancelar',
     'error': 'Error',
     'access-denied': 'Acceso Denegado',
+    'change-transaction-status': 'Cambiar Estado de la Transacción',
+    'change-status-description': 'Seleccione un nuevo estado para esta transacción',
+    'new-status': 'Nuevo Estado',
+    'select-new-status': 'Seleccionar nuevo estado',
+    'reason-for-status-change': 'Razón del Cambio de Estado',
+    'status-change-reason-placeholder': 'Proporcione un motivo detallado para cambiar el estado de la transacción...',
+    'update-status': 'Actualizar Estado',
+    'status-updated': 'Estado Actualizado',
+    'transaction-status-changed-success': 'El estado de la transacción ha sido cambiado con éxito',
+    'status-change-failed': 'Cambio de Estado Fallido',
+    'only-pending-transactions': 'Solo se puede cambiar el estado de las transacciones pendientes'
   }
 };
