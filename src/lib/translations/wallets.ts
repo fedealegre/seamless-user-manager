@@ -1,4 +1,3 @@
-
 export const walletTranslations = {
   en: {
     'wallets': 'Wallets',
@@ -45,7 +44,8 @@ export const walletTranslations = {
     'wallet-owner': 'Wallet Owner',
     'authorized-user': 'Authorized User',
     'view-users': 'View users',
-    'add-user': 'Add User'
+    'add-user': 'Add User',
+    'compensate-customer': 'Compensate Customer',
   },
   es: {
     'wallets': 'Billeteras',
@@ -92,6 +92,7 @@ export const walletTranslations = {
     'wallet-owner': 'Propietario de Billetera',
     'authorized-user': 'Usuario Autorizado',
     'view-users': 'Ver usuarios',
-    'add-user': 'Agregar Usuario'
+    'add-user': 'Agregar Usuario',
+    'compensate-customer': 'Compensar Cliente',
   }
 };

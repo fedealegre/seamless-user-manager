@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Wallet } from "@/lib/api/types";
+import { Wallet, Transaction } from "@/lib/api/types";
 import { WalletsTable } from "@/components/wallets/WalletsTable";
 import { WalletsLoadingSkeleton } from "@/components/wallets/WalletsLoadingSkeleton";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,7 +11,8 @@ import { useToast } from "@/hooks/use-toast";
 import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
 import { translate } from "@/lib/translations";
 import { userService } from "@/lib/api/user-service";
-// Removed: import { AddUserToWalletDialog } from "@/components/wallets/AddUserToWalletDialog";
+import { usePermissions } from "@/hooks/use-permissions";
+import CompensateCustomerDialog from "../transactions/CompensateCustomerDialog";
 
 interface UserWalletsTabProps {
   userId: string;
@@ -22,13 +23,15 @@ interface UserWalletsTabProps {
 export const UserWalletsTab: React.FC<UserWalletsTabProps> = ({ userId, wallets, isLoading }) => {
   const [selectedWalletId, setSelectedWalletId] = useState<string | null>(null);
   const [showTransactions, setShowTransactions] = useState<boolean>(false);
-  const [page, setPage] = useState(1); // <-- fixed destructuring
-  // Removed: const [showAddUserDialog, setShowAddUserDialog] = useState(false);
+  const [page, setPage] = useState(1);
+  const [showCompensateDialog, setShowCompensateDialog] = useState<boolean>(false);
+  const [compensateWallet, setCompensateWallet] = useState<Wallet | null>(null);
   const pageSize = 5; // Smaller pageSize for wallets since there are usually fewer
   const { toast } = useToast();
   const { settings } = useBackofficeSettings();
   const t = (key: string) => translate(key, settings.language);
   const queryClient = useQueryClient();
+  const { canChangeTransactionStatus } = usePermissions();
 
   // Set first wallet as selected when wallets load
   useEffect(() => {
@@ -46,7 +49,86 @@ export const UserWalletsTab: React.FC<UserWalletsTabProps> = ({ userId, wallets,
     setShowTransactions(false);
   };
 
-  // Removed functionality for adding user to wallet
+  const handleCompensateCustomer = (walletId: string) => {
+    if (!canChangeTransactionStatus()) {
+      toast({
+        title: t("access-denied"),
+        description: t("only-compensator-can-compensate"),
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const wallet = wallets.find(w => w.id.toString() === walletId);
+    if (wallet) {
+      setCompensateWallet(wallet);
+      setShowCompensateDialog(true);
+    }
+  };
+
+  // Create a dummy transaction for the compensation dialog
+  const createDummyTransaction = (): Transaction | null => {
+    if (!compensateWallet) return null;
+    
+    return {
+      id: 0,
+      transactionId: `COMP-${Date.now()}`,
+      customerId: userId,
+      walletId: compensateWallet.id.toString(),
+      date: new Date().toISOString(),
+      amount: 0,
+      currency: compensateWallet.currency || "USD",
+      status: "pending",
+      movementType: "deposit",
+      transactionType: "compensation"
+    };
+  };
+
+  const handleCompensateSubmit = async (amount: string, reason: string, compensationType: 'credit' | 'adjustment') => {
+    if (!compensateWallet) {
+      toast({
+        title: t("error"),
+        description: t("missing-wallet-info"),
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    try {
+      const companyId = 1;
+      const userIdNum = userId;
+      const walletIdNum = compensateWallet.id;
+      const originWalletId = 999;
+      
+      await userService.compensateCustomer(companyId, userIdNum, walletIdNum, originWalletId, {
+        amount,
+        reason,
+        transaction_code: `COMP-${Date.now()}`,
+        admin_user: "Current Admin",
+        transaction_type: "COMPENSATE",
+        compensation_type: compensationType,
+      });
+      
+      toast({
+        title: t("compensation-processed"),
+        description: t("compensation-transaction-created"),
+      });
+      
+      // Invalidate queries to refresh data
+      queryClient.invalidateQueries({
+        queryKey: ['user-wallets', userId],
+      });
+      
+      setShowCompensateDialog(false);
+      setCompensateWallet(null);
+    } catch (error: any) {
+      toast({
+        title: t("compensation-failed"),
+        description: error.message || t("compensation-error"),
+        variant: "destructive",
+      });
+    }
+  };
 
   // Calculate pagination values
   const totalWallets = wallets.length;
@@ -80,6 +162,9 @@ export const UserWalletsTab: React.FC<UserWalletsTabProps> = ({ userId, wallets,
     );
   }
 
+  // Create dummy transaction object for compensation
+  const dummyTransaction = createDummyTransaction();
+
   return (
     <Card>
       <CardHeader>
@@ -98,6 +183,7 @@ export const UserWalletsTab: React.FC<UserWalletsTabProps> = ({ userId, wallets,
             <WalletsTable 
               wallets={paginatedWallets} 
               onSelectWallet={handleSelectWallet}
+              onCompensateWallet={canChangeTransactionStatus() ? handleCompensateCustomer : undefined}
               paginationProps={{
                 page,
                 pageSize,
@@ -106,7 +192,18 @@ export const UserWalletsTab: React.FC<UserWalletsTabProps> = ({ userId, wallets,
                 setPage,
               }}
             />
-            {/* Removed: AddUserToWalletDialog */}
+            
+            {compensateWallet && dummyTransaction && (
+              <CompensateCustomerDialog
+                transaction={dummyTransaction}
+                open={showCompensateDialog}
+                onOpenChange={(open) => {
+                  setShowCompensateDialog(open);
+                  if (!open) setCompensateWallet(null);
+                }}
+                onSubmit={handleCompensateSubmit}
+              />
+            )}
           </>
         )}
       </CardContent>

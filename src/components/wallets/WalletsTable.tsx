@@ -1,6 +1,6 @@
 
 import React, { useState } from "react";
-import { Eye, Users, UserPlus, Link } from "lucide-react";
+import { Eye, Users, UserPlus, Link, CircleDollarSign } from "lucide-react";
 import { Wallet } from "@/lib/api/types";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -29,6 +29,7 @@ interface WalletsTableProps {
   showUser?: boolean;
   onAddUserToWallet?: (walletId: string) => void;
   onViewWalletUsers?: (walletId: string) => void;
+  onCompensateWallet?: (walletId: string) => void;
   paginationProps?: {
     page: number;
     pageSize: number;
@@ -44,6 +45,7 @@ export const WalletsTable: React.FC<WalletsTableProps> = ({
   showUser = false,
   onAddUserToWallet,
   onViewWalletUsers,
+  onCompensateWallet,
   paginationProps 
 }) => {
   const { settings } = useBackofficeSettings();
@@ -219,6 +221,26 @@ export const WalletsTable: React.FC<WalletsTableProps> = ({
                             </TooltipTrigger>
                             <TooltipContent>
                               <p>{t("add-user-to-wallet")}</p>
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      )}
+                      
+                      {onCompensateWallet && (
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button
+                                variant="outline"
+                                size="icon"
+                                className="bg-amber-500 hover:bg-amber-600 text-white border-amber-500"
+                                onClick={() => onCompensateWallet(wallet.id.toString())}
+                              >
+                                <CircleDollarSign className="h-4 w-4" />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>{t("compensate-customer")}</p>
                             </TooltipContent>
                           </Tooltip>
                         </TooltipProvider>

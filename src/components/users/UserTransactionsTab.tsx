@@ -11,6 +11,8 @@ import CompensateCustomerDialog from "../transactions/CompensateCustomerDialog";
 import ChangeTransactionStatusDialog from "../transactions/ChangeTransactionStatusDialog";
 import { useUserTransactions } from "@/hooks/use-user-transactions";
 import { useTransactionCSVMapper } from "../transactions/TransactionCSVMapper";
+import { useToast } from "@/hooks/use-toast";
+import { usePermissions } from "@/hooks/use-permissions";
 
 interface UserTransactionsTabProps {
   userId: string;
@@ -20,8 +22,11 @@ interface UserTransactionsTabProps {
 export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId, wallets }) => {
   const [selectedWalletId, setSelectedWalletId] = useState<string | null>(null);
   const [showFilters, setShowFilters] = useState(false);
+  const [showCompensateDialogDirect, setShowCompensateDialogDirect] = useState(false);
   const { settings, formatDateTime } = useBackofficeSettings();
   const t = (key: string) => translate(key, settings.language);
+  const { toast } = useToast();
+  const { canChangeTransactionStatus } = usePermissions();
 
   useEffect(() => {
     if (wallets.length > 0 && !selectedWalletId) {
@@ -66,6 +71,74 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
     userId
   });
 
+  const handleDirectCompensation = () => {
+    if (!canChangeTransactionStatus()) {
+      toast({
+        title: t("access-denied"),
+        description: t("only-compensator-can-compensate"),
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (!selectedWalletId) {
+      toast({
+        title: t("error"),
+        description: t("select-wallet-first"),
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    setShowCompensateDialogDirect(true);
+  };
+
+  // Create a dummy transaction object for direct compensation
+  const createDummyTransaction = (): Transaction => {
+    const wallet = wallets.find(w => w.id.toString() === selectedWalletId);
+    return {
+      id: 0,
+      transactionId: `DIRECT-${Date.now()}`,
+      customerId: userId,
+      walletId: selectedWalletId!,
+      date: new Date().toISOString(),
+      amount: 0,
+      currency: wallet?.currency || "USD",
+      status: "pending",
+      movementType: "deposit",
+      transactionType: "compensation"
+    };
+  };
+
+  const handleDirectCompensateSubmit = async (amount: string, reason: string, compensationType: 'credit' | 'adjustment') => {
+    if (!selectedWalletId) {
+      toast({
+        title: t("error"),
+        description: t("missing-wallet-info"),
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    try {
+      // Create a direct compensation using the same API
+      const companyId = 1;
+      const userIdNum = userId;
+      const walletIdNum = parseInt(selectedWalletId);
+      const originWalletId = 999;
+      
+      await handleCompensateSubmit(amount, reason, compensationType);
+      
+      setShowCompensateDialogDirect(false);
+    } catch (error: any) {
+      toast({
+        title: t("compensation-failed"),
+        description: error.message || t("compensation-error"),
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -78,6 +151,7 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
           userId={userId}
           allTransactions={allTransactions}
           mapTransactionToCSV={mapTransactionToCSV}
+          onCompensateCustomer={handleDirectCompensation}
         />
       </CardHeader>
       <CardContent>
@@ -124,6 +198,16 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
             onSubmit={handleSubmitStatusChange}
           />
         </>
+      )}
+      
+      {/* Direct compensation dialog */}
+      {selectedWalletId && (
+        <CompensateCustomerDialog
+          transaction={createDummyTransaction()}
+          open={showCompensateDialogDirect}
+          onOpenChange={setShowCompensateDialogDirect}
+          onSubmit={handleDirectCompensateSubmit}
+        />
       )}
     </Card>
   );
