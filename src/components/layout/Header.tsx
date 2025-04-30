@@ -14,7 +14,7 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
   const { settings } = useCompanySettings();
   
   return (
-    <header className="h-16 border-b border-border flex items-center justify-between px-4 lg:px-6">
+    <header className="h-16 border-b border-border flex items-center justify-between px-4 lg:px-6 bg-background">
       <div className="flex items-center gap-3">
         <Button 
           variant="ghost" 
@@ -36,7 +36,6 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
       </div>
       
       <div className="flex items-center gap-3">
-        {/* Notification bell removed here */}
         <UserProfile type="header" />
       </div>
     </header>

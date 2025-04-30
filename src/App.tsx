@@ -24,6 +24,7 @@ import BackofficeOperators from "./pages/BackofficeOperators";
 import CompanySettings from "./pages/CompanySettings";
 import UserFieldSettings from "./pages/UserFieldSettings";
 import BackofficeSettings from "./pages/BackofficeSettings";
+import MyProfilePage from "./pages/MyProfilePage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient({
@@ -145,6 +146,9 @@ const App = () => (
                         <BackofficeSettings />
                       </PrivateRoute>
                     } />
+                    
+                    {/* My Profile Page - Available to all authenticated users */}
+                    <Route path="/my-profile" element={<MyProfilePage />} />
                   </Route>
                   
                   {/* Catch-all Route */}
