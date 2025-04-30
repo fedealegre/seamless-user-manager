@@ -53,7 +53,7 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
   const { settings, formatDateTime, getTimezoneFromOffset } = useBackofficeSettings();
   const t = (key: string) => translate(key, settings.language);
   const locale = settings.language === "en" ? "en-US" : "es-ES";
-  const { canChangeTransactionStatus, canCancelTransaction } = usePermissions();
+  const { canChangeTransactionStatus } = usePermissions();
   const { toast } = useToast();
   
   const handleRestrictedAction = (actionType: string) => {
@@ -144,11 +144,13 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
                           <RefreshCw size={16} className="mr-2" /> {t("change")} {t("status")}
                         </DropdownMenuItem>
                       )}
-                      <DropdownMenuItem 
-                        onClick={() => handleCompensateCustomer(transaction)}
-                      >
-                        <CircleDollarSign size={16} className="mr-2" /> {t("compensate")} {t("customer")}
-                      </DropdownMenuItem>
+                      {canChangeTransactionStatus() && (
+                        <DropdownMenuItem 
+                          onClick={() => handleCompensateCustomer(transaction)}
+                        >
+                          <CircleDollarSign size={16} className="mr-2" /> {t("compensate")} {t("customer")}
+                        </DropdownMenuItem>
+                      )}
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>
