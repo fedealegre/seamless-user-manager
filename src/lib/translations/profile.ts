@@ -32,7 +32,13 @@ export const profileTranslations = {
     'password-number': 'Password must contain at least one number',
     'password-special': 'Password must contain at least one special character',
     'confirm-password-required': 'Please confirm your new password',
-    'passwords-dont-match': 'Passwords do not match'
+    'passwords-dont-match': 'Passwords do not match',
+    'hide-password': 'Hide password',
+    'show-password': 'Show password',
+    'password-requirements': 'Password Requirements',
+    'my-account': 'My Account',
+    'profile': 'Profile',
+    'log-out': 'Log out'
   },
   es: {
     'my-profile': 'Mi Perfil',
@@ -66,6 +72,12 @@ export const profileTranslations = {
     'password-number': 'La contraseña debe contener al menos un número',
     'password-special': 'La contraseña debe contener al menos un carácter especial',
     'confirm-password-required': 'Por favor confirma tu nueva contraseña',
-    'passwords-dont-match': 'Las contraseñas no coinciden'
+    'passwords-dont-match': 'Las contraseñas no coinciden',
+    'hide-password': 'Ocultar contraseña',
+    'show-password': 'Mostrar contraseña',
+    'password-requirements': 'Requisitos de la Contraseña',
+    'my-account': 'Mi Cuenta',
+    'profile': 'Perfil',
+    'log-out': 'Cerrar Sesión'
   }
 };
