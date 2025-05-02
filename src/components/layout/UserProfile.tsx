@@ -1,7 +1,6 @@
-
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { LogOut, User } from "lucide-react";
+import { LogOut, User, KeyRound } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -15,6 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
 import { translate } from "@/lib/translations";
+import ChangePasswordDialog from "@/components/profile/ChangePasswordDialog";
 
 interface UserProfileProps {
   type: "sidebar" | "header";
@@ -26,6 +26,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ type, sidebarOpen }) => {
   const navigate = useNavigate();
   const { settings } = useBackofficeSettings();
   const t = (key: string) => translate(key, settings.language);
+  const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
   
   const handleLogout = () => {
     logout();
@@ -34,6 +35,10 @@ const UserProfile: React.FC<UserProfileProps> = ({ type, sidebarOpen }) => {
 
   const handleNavigateToProfile = () => {
     navigate("/my-profile");
+  };
+
+  const handleChangePassword = () => {
+    setIsPasswordDialogOpen(true);
   };
 
   if (!user) return null;
@@ -73,28 +78,38 @@ const UserProfile: React.FC<UserProfileProps> = ({ type, sidebarOpen }) => {
   }
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-          <Avatar>
-            <AvatarImage src="" />
-            <AvatarFallback className="bg-primary text-primary-foreground">
-              {user.name.charAt(0)}{user.surname.charAt(0)}
-            </AvatarFallback>
-          </Avatar>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuLabel>{t('my-account')}</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={handleNavigateToProfile}>
-          <User size={16} className="mr-2" /> {t('profile')}
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={handleLogout}>
-          <LogOut size={16} className="mr-2" /> {t('log-out')}
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+            <Avatar>
+              <AvatarImage src="" />
+              <AvatarFallback className="bg-primary text-primary-foreground">
+                {user.name.charAt(0)}{user.surname.charAt(0)}
+              </AvatarFallback>
+            </Avatar>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuLabel>{t('my-account')}</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onClick={handleNavigateToProfile}>
+            <User size={16} className="mr-2" /> {t('profile')}
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={handleChangePassword}>
+            <KeyRound size={16} className="mr-2" /> {t('change-password')}
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={handleLogout}>
+            <LogOut size={16} className="mr-2" /> {t('log-out')}
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      
+      <ChangePasswordDialog 
+        isOpen={isPasswordDialogOpen}
+        onClose={() => setIsPasswordDialogOpen(false)}
+      />
+    </>
   );
 };
 
