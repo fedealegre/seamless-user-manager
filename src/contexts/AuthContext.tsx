@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { api } from "@/lib/api";
 import { BackofficeUser, LoginRequest } from "@/lib/api-types";
@@ -10,6 +9,7 @@ interface AuthContextType {
   isLoading: boolean;
   login: (credentials: LoginRequest) => Promise<void>;
   logout: () => void;
+  updateUserPassword: (currentPassword: string, newPassword: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -197,6 +197,44 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
   };
 
+  const updateUserPassword = async (currentPassword: string, newPassword: string) => {
+    if (!user) {
+      throw new Error("No user is logged in");
+    }
+
+    try {
+      setIsLoading(true);
+      
+      // Check if credentials match the current user's password
+      const matchedUser = BACKOFFICE_USERS.find(
+        u => u.username === user.id && u.password === currentPassword
+      );
+      
+      if (!matchedUser) {
+        throw new Error("Current password is incorrect");
+      }
+      
+      // Update the stored password
+      const userIndex = BACKOFFICE_USERS.findIndex(u => u.username === user.id);
+      if (userIndex >= 0) {
+        BACKOFFICE_USERS[userIndex].password = newPassword;
+        BACKOFFICE_USERS[userIndex].user.password = newPassword;
+        
+        // Update local storage (only if needed)
+        if (JSON.parse(localStorage.getItem("user") || "{}").id === user.id) {
+          localStorage.setItem("user", JSON.stringify(BACKOFFICE_USERS[userIndex].user));
+        }
+      }
+      
+      return;
+    } catch (error) {
+      console.error("Password update failed:", error);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -205,6 +243,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isLoading,
         login,
         logout,
+        updateUserPassword,
       }}
     >
       {children}

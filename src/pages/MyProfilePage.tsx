@@ -1,18 +1,22 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
 import { translate } from "@/lib/translations";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
+import { KeyRound } from "lucide-react";
+import ChangePasswordDialog from "@/components/profile/ChangePasswordDialog";
 
 const MyProfilePage = () => {
   const { user } = useAuth();
   const { settings } = useBackofficeSettings();
   const t = (key: string) => translate(key, settings.language);
+  const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
   
   if (!user) return null;
   
@@ -65,6 +69,17 @@ const MyProfilePage = () => {
                 <p className="text-sm">{user.name} {user.surname}</p>
               </div>
             </div>
+
+            <div className="pt-4">
+              <Button 
+                onClick={() => setIsPasswordDialogOpen(true)}
+                variant="outline"
+                className="w-full"
+              >
+                <KeyRound className="mr-2 h-4 w-4" />
+                {t("change-password")}
+              </Button>
+            </div>
           </CardContent>
         </Card>
         
@@ -103,6 +118,11 @@ const MyProfilePage = () => {
           </CardContent>
         </Card>
       </div>
+
+      <ChangePasswordDialog 
+        isOpen={isPasswordDialogOpen}
+        onClose={() => setIsPasswordDialogOpen(false)}
+      />
     </div>
   );
 };
