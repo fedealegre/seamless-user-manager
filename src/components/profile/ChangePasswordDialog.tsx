@@ -204,9 +204,7 @@ const ChangePasswordDialog: React.FC<ChangePasswordDialogProps> = ({
                       </span>
                     </Button>
                   </div>
-                  <FormMessage>
-                    {t(form.formState.errors.newPassword?.message || "")}
-                  </FormMessage>
+                  {/* FormMessage removed from here as requested */}
                 </FormItem>
               )}
             />
@@ -280,7 +278,9 @@ const ChangePasswordDialog: React.FC<ChangePasswordDialogProps> = ({
                     </Button>
                   </div>
                   <FormMessage>
-                    {t(form.formState.errors.confirmPassword?.message || "")}
+                    {form.formState.errors.confirmPassword?.message
+                      ? t(form.formState.errors.confirmPassword.message)
+                      : ""}
                   </FormMessage>
                 </FormItem>
               )}
