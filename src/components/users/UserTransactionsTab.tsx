@@ -14,6 +14,7 @@ import { useTransactionCSVMapper } from "../transactions/TransactionCSVMapper";
 import { useToast } from "@/hooks/use-toast";
 import { usePermissions } from "@/hooks/use-permissions";
 import { userService } from "@/lib/api/user-service";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface UserTransactionsTabProps {
   userId: string;
@@ -28,6 +29,7 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
   const t = (key: string) => translate(key, settings.language);
   const { toast } = useToast();
   const { canChangeTransactionStatus } = usePermissions();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     if (wallets.length > 0 && !selectedWalletId) {
@@ -147,10 +149,9 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
         description: t("compensation-transaction-created"),
       });
       
-      // Refresh the transactions list
+      // Use the already initialized queryClient to invalidate queries
       if (selectedWalletId) {
-        const queryClient = require('@tanstack/react-query').useQueryClient();
-        queryClient().invalidateQueries({
+        queryClient.invalidateQueries({
           queryKey: ['user-transactions', userId, selectedWalletId],
         });
       }
