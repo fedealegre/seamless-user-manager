@@ -1,7 +1,10 @@
+
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { api } from "@/lib/api";
 import { BackofficeUser, LoginRequest } from "@/lib/api-types";
 import { useToast } from "@/hooks/use-toast";
+import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
+import { translate } from "@/lib/translations";
 
 interface AuthContextType {
   user: BackofficeUser | null;
@@ -92,6 +95,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<BackofficeUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
+  const { settings } = useBackofficeSettings();
+  const t = (key: string) => translate(key, settings.language);
 
   useEffect(() => {
     // Check if user is already logged in
@@ -132,8 +137,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         localStorage.setItem("expiresAt", expiresAt.toString());
         
         toast({
-          title: "Login successful",
-          description: `Welcome back, ${matchedUser.user.name}!`,
+          title: t("login-successful"),
+          description: t("welcome-back") + ", " + matchedUser.user.name + "!",
         });
         
         return;
@@ -155,26 +160,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       localStorage.setItem("expiresAt", expiresAt.toString());
       
       toast({
-        title: "Login successful",
-        description: `Welcome back, ${response.user.name}!`,
+        title: t("login-successful"),
+        description: t("welcome-back") + ", " + response.user.name + "!",
       });
     } catch (error) {
       console.error("Login failed:", error);
-      let errorMessage = "Invalid credentials. Please try again.";
+      let errorMessage = t("invalid-credentials");
       
       if (error instanceof Error) {
         // Extract specific error message if available
         if (error.message.includes("Unauthorized")) {
-          errorMessage = "Invalid username or password";
+          errorMessage = t("invalid-username-password");
         } else if (error.message.includes("Network Error")) {
-          errorMessage = "Network error. Please check your connection";
+          errorMessage = t("network-error");
         } else {
           errorMessage = error.message;
         }
       }
       
       toast({
-        title: "Login failed",
+        title: t("login-failed"),
         description: errorMessage,
         variant: "destructive",
       });
@@ -192,14 +197,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem("expiresAt");
     
     toast({
-      title: "Logged out",
-      description: "You have been successfully logged out.",
+      title: t("logout-successful"),
+      description: t("successfully-logged-out"),
     });
   };
 
   const updateUserPassword = async (currentPassword: string, newPassword: string) => {
     if (!user) {
-      throw new Error("No user is logged in");
+      throw new Error(t("no-user-logged-in"));
     }
 
     try {
@@ -211,7 +216,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       );
       
       if (!matchedUser) {
-        throw new Error("Current password is incorrect");
+        throw new Error(t("current-password-incorrect"));
       }
       
       // Update the stored password

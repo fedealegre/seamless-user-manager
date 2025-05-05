@@ -92,8 +92,8 @@ export function useUserManagement() {
   const handleSearch = (params: Record<string, string>) => {
     if (Object.keys(params).length === 0) {
       toast({
-        title: "Error",
-        description: "Please enter at least one search term",
+        title: t("error"),
+        description: t("enter-search-term"),
         variant: "destructive",
       });
       return;
@@ -161,14 +161,14 @@ export function useUserManagement() {
       });
 
       toast({
-        title: "User Unblocked",
-        description: `User ${selectedUser.name} ${selectedUser.surname} has been unblocked.`,
+        title: t("user-unblocked"),
+        description: t("user-unblocked-success").replace("{name}", `${selectedUser.name} ${selectedUser.surname}`),
       });
     } catch (error) {
       console.error("Failed to unblock user:", error);
       toast({
-        title: "Error",
-        description: "Failed to unblock user. Please try again.",
+        title: t("error"),
+        description: t("failed-unblock-user"),
         variant: "destructive",
       });
     } finally {
