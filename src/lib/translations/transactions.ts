@@ -1,3 +1,4 @@
+
 export const transactionTranslations = {
   en: {
     'transactions': 'Transactions',
@@ -39,6 +40,7 @@ export const transactionTranslations = {
     'only-compensator-can-change-status': 'Only users with the compensator role can change transaction status',
     'select-wallet-first': 'Please select a wallet first',
     'missing-wallet-info': 'Missing wallet information',
+    'missing-transaction-wallet-info': 'Missing transaction or wallet information',
     'compensate-amount': 'Compensate Amount',
     'reason-for-compensation': 'Reason for Compensation',
     'explain-compensation-reason': 'Please explain why this compensation is being given...',
@@ -116,6 +118,7 @@ export const transactionTranslations = {
     'only-compensator-can-change-status': 'Solo los usuarios con el rol de compensador pueden cambiar el estado de las transacciones',
     'select-wallet-first': 'Por favor seleccione una billetera primero',
     'missing-wallet-info': 'Falta información de la billetera',
+    'missing-transaction-wallet-info': 'Falta información de la transacción o billetera',
     'compensate-amount': 'Monto de Compensación',
     'reason-for-compensation': 'Razón de la Compensación',
     'explain-compensation-reason': 'Por favor explique por qué se otorga esta compensación...',

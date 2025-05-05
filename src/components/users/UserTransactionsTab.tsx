@@ -13,6 +13,7 @@ import { useUserTransactions } from "@/hooks/use-user-transactions";
 import { useTransactionCSVMapper } from "../transactions/TransactionCSVMapper";
 import { useToast } from "@/hooks/use-toast";
 import { usePermissions } from "@/hooks/use-permissions";
+import { userService } from "@/lib/api/user-service";
 
 interface UserTransactionsTabProps {
   userId: string;
@@ -114,20 +115,45 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
     if (!selectedWalletId) {
       toast({
         title: t("error"),
-        description: t("missing-wallet-info"),
+        description: t("select-wallet-first"),
         variant: "destructive",
       });
       return;
     }
     
     try {
-      // Create a direct compensation using the same API
+      // Call the compensateCustomer API directly with the necessary parameters
       const companyId = 1;
-      const userIdNum = userId;
       const walletIdNum = parseInt(selectedWalletId);
-      const originWalletId = 999;
+      const originWalletId = 999; // Default origin wallet ID
       
-      await handleCompensateSubmit(amount, reason, compensationType);
+      await userService.compensateCustomer(
+        companyId,
+        userId,
+        walletIdNum,
+        originWalletId,
+        {
+          amount,
+          reason,
+          transaction_code: `COMP-${Date.now()}`,
+          admin_user: "Current Admin",
+          transaction_type: "COMPENSATE",
+          compensation_type: compensationType,
+        }
+      );
+      
+      toast({
+        title: t("compensation-processed"),
+        description: t("compensation-transaction-created"),
+      });
+      
+      // Refresh the transactions list
+      if (selectedWalletId) {
+        const queryClient = require('@tanstack/react-query').useQueryClient();
+        queryClient().invalidateQueries({
+          queryKey: ['user-transactions', userId, selectedWalletId],
+        });
+      }
       
       setShowCompensateDialogDirect(false);
     } catch (error: any) {
