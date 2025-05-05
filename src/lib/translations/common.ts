@@ -1,4 +1,3 @@
-
 export const commonTranslations = {
   en: {
     'dashboard': 'Dashboard',
@@ -85,7 +84,21 @@ export const commonTranslations = {
     'enter-last-name': 'Enter last name',
     'enter-email': 'Enter email',
     'create-backoffice-user-with-roles': 'Create backoffice user with roles',
-    'application': 'Application'
+    'application': 'Application',
+    
+    // Toast notifications
+    'toast-success': 'Success',
+    'toast-error': 'Error',
+    'toast-info': 'Information',
+    'toast-warning': 'Warning',
+    'login-successful': 'Login successful',
+    'logout-successful': 'Logout successful',
+    'operation-successful': 'Operation completed successfully',
+    'operation-failed': 'Operation failed',
+    'changes-saved': 'Changes saved successfully',
+    'password-changed': 'Password changed successfully',
+    'password-change-failed': 'Failed to change password',
+    'session-expired': 'Your session has expired, please log in again',
   },
   es: {
     'dashboard': 'Panel de Control',
@@ -172,7 +185,20 @@ export const commonTranslations = {
     'enter-last-name': 'Ingresar apellido',
     'enter-email': 'Ingresar email',
     'create-backoffice-user-with-roles': 'Crear usuario backoffice con roles',
-    'application': 'Aplicación'
+    'application': 'Aplicación',
+    
+    // Toast notifications
+    'toast-success': 'Éxito',
+    'toast-error': 'Error',
+    'toast-info': 'Información',
+    'toast-warning': 'Advertencia',
+    'login-successful': 'Inicio de sesión exitoso',
+    'logout-successful': 'Cierre de sesión exitoso',
+    'operation-successful': 'Operación completada exitosamente',
+    'operation-failed': 'La operación ha fallado',
+    'changes-saved': 'Cambios guardados exitosamente',
+    'password-changed': 'Contraseña cambiada exitosamente',
+    'password-change-failed': 'Error al cambiar la contraseña',
+    'session-expired': 'Tu sesión ha expirado, por favor inicia sesión nuevamente',
   }
 };
-
