@@ -1,4 +1,3 @@
-
 import { User, Wallet, Transaction, CompensationRequest, ResetPasswordRequest, ResetPasswordResponse, WalletUserAssociation } from "../types";
 
 export interface ChangeTransactionStatusRequest {

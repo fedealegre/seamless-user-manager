@@ -1,4 +1,3 @@
-
 // API types based on the OpenAPI specifications
 
 export interface Transaction {
@@ -104,7 +103,7 @@ export interface CompensationRequest {
     reason: string;
     transaction_code: string;
     admin_user: string;
-    transaction_type: 'COMPENSATE';
+    transaction_type: string; // Modified to accept string values like 'Compensacion'
     compensation_type: 'credit' | 'adjustment';
 }
 
