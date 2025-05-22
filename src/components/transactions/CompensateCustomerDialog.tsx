@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Transaction, Wallet } from "@/lib/api/types";
 import {
   Dialog,
@@ -18,6 +18,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
 import { translate } from "@/lib/translations";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface CompensateCustomerDialogProps {
   transaction: Transaction;
@@ -48,16 +49,22 @@ const CompensateCustomerDialog: React.FC<CompensateCustomerDialogProps> = ({
   const { settings } = useBackofficeSettings();
   const t = (key: string) => translate(key, settings.language);
 
+  // Filter company wallets with the same currency as the customer's wallet
+  const matchingCurrencyWallets = useMemo(() => {
+    const customerCurrency = transaction.currency || "USD";
+    return companyWallets.filter(wallet => wallet.currency === customerCurrency);
+  }, [companyWallets, transaction.currency]);
+  
   // Reset form when dialog opens
   useEffect(() => {
     if (open) {
       setAmount("");
       setReason("");
       setCompensationType("");
-      setOriginWalletId(companyWallets.length === 1 ? companyWallets[0].id.toString() : "");
+      setOriginWalletId(matchingCurrencyWallets.length === 1 ? matchingCurrencyWallets[0].id.toString() : "");
       setErrors({});
     }
-  }, [open, companyWallets]);
+  }, [open, matchingCurrencyWallets]);
 
   const validateAmount = (value: string, type: 'credit' | 'adjustment' | "") => {
     if (!value.trim() || isNaN(Number(value))) {
@@ -131,6 +138,8 @@ const CompensateCustomerDialog: React.FC<CompensateCustomerDialogProps> = ({
     setErrors(prev => ({ ...prev, originWalletId: undefined }));
   };
 
+  const hasMatchingWallets = matchingCurrencyWallets.length > 0;
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
@@ -149,10 +158,19 @@ const CompensateCustomerDialog: React.FC<CompensateCustomerDialogProps> = ({
             <div>
               <div className="font-medium">{t("customer-id")}: {transaction.customerId}</div>
               <div className="text-sm text-muted-foreground">
-                {t("wallet-id")}: {transaction.walletId}
+                {t("wallet-id")}: {transaction.walletId} - {t("currency")}: {transaction.currency || "USD"}
               </div>
             </div>
           </div>
+          
+          {!hasMatchingWallets && (
+            <Alert variant="destructive" className="mb-4">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>
+                {t("no-matching-currency-wallets")}
+              </AlertDescription>
+            </Alert>
+          )}
           
           <div className="space-y-4">
             <div className="space-y-2">
@@ -161,13 +179,14 @@ const CompensateCustomerDialog: React.FC<CompensateCustomerDialogProps> = ({
                 value={compensationType}
                 onValueChange={(value) => handleCompensationTypeChange(value as 'credit' | 'adjustment')}
                 className={`grid grid-cols-2 gap-2 ${errors.compensationType ? "border border-destructive rounded-md p-1" : ""}`}
+                disabled={!hasMatchingWallets}
               >
                 <div className="flex items-center space-x-2 rounded-md border p-2">
-                  <RadioGroupItem value="credit" id="credit" />
+                  <RadioGroupItem value="credit" id="credit" disabled={!hasMatchingWallets} />
                   <Label htmlFor="credit" className="flex-1 cursor-pointer">{t("credit")}</Label>
                 </div>
                 <div className="flex items-center space-x-2 rounded-md border p-2">
-                  <RadioGroupItem value="adjustment" id="adjustment" />
+                  <RadioGroupItem value="adjustment" id="adjustment" disabled={!hasMatchingWallets} />
                   <Label htmlFor="adjustment" className="flex-1 cursor-pointer">{t("adjustment")}</Label>
                 </div>
               </RadioGroup>
@@ -186,26 +205,26 @@ const CompensateCustomerDialog: React.FC<CompensateCustomerDialogProps> = ({
             
             <div className="space-y-2">
               <Label htmlFor="originWallet">{t("company-wallet")}</Label>
-              {companyWallets.length === 1 ? (
+              {hasMatchingWallets && matchingCurrencyWallets.length === 1 ? (
                 <div className="flex items-center gap-3 p-3 rounded-md border">
                   <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center">
                     <ArrowRightLeft size={14} className="text-green-600" />
                   </div>
                   <div>
-                    <div className="font-medium">{companyWallets[0].name || `${companyWallets[0].currency} Wallet`}</div>
+                    <div className="font-medium">{matchingCurrencyWallets[0].name || `${matchingCurrencyWallets[0].currency} Wallet`}</div>
                     <div className="text-sm text-muted-foreground">
-                      ID: {companyWallets[0].id} | {companyWallets[0].currency}
+                      ID: {matchingCurrencyWallets[0].id} | {matchingCurrencyWallets[0].currency}
                     </div>
                   </div>
                 </div>
-              ) : (
+              ) : hasMatchingWallets ? (
                 <>
                   <Select value={originWalletId} onValueChange={handleOriginWalletChange}>
                     <SelectTrigger className={errors.originWalletId ? "border-destructive" : ""}>
                       <SelectValue placeholder={t("select-company-wallet")} />
                     </SelectTrigger>
                     <SelectContent>
-                      {companyWallets.map((wallet) => (
+                      {matchingCurrencyWallets.map((wallet) => (
                         <SelectItem key={wallet.id} value={wallet.id.toString()}>
                           {wallet.name || `${wallet.currency} Wallet`} - ID: {wallet.id}
                         </SelectItem>
@@ -218,6 +237,10 @@ const CompensateCustomerDialog: React.FC<CompensateCustomerDialogProps> = ({
                     </div>
                   )}
                 </>
+              ) : (
+                <div className="text-sm text-muted-foreground italic">
+                  {t("no-matching-currency-wallets-available", "No company wallets with matching currency available.")}
+                </div>
               )}
             </div>
             
@@ -234,6 +257,7 @@ const CompensateCustomerDialog: React.FC<CompensateCustomerDialogProps> = ({
                   className={`pl-12 ${errors.amount ? "border-destructive" : ""}`}
                   value={amount}
                   onChange={handleAmountChange}
+                  disabled={!hasMatchingWallets}
                 />
               </div>
               
@@ -257,6 +281,7 @@ const CompensateCustomerDialog: React.FC<CompensateCustomerDialogProps> = ({
                     setErrors(prev => ({ ...prev, reason: undefined }));
                   }
                 }}
+                disabled={!hasMatchingWallets}
               />
               
               {errors.reason && (
@@ -276,7 +301,7 @@ const CompensateCustomerDialog: React.FC<CompensateCustomerDialogProps> = ({
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             {t("cancel")}
           </Button>
-          <Button onClick={handleSubmit}>
+          <Button onClick={handleSubmit} disabled={!hasMatchingWallets}>
             {t("process-compensation")}
           </Button>
         </DialogFooter>

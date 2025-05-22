@@ -52,6 +52,9 @@ export const walletTranslations = {
     'please-select-company-wallet': 'Please select a company wallet',
     'credit-description': 'Add funds to the customer wallet',
     'adjustment-description': 'Adjust the customer wallet balance (can be positive or negative)',
+    'currency': 'Currency',
+    'no-matching-currency-wallets': 'No company wallets available with the same currency as the customer wallet.',
+    'no-matching-currency-wallets-available': 'No company wallets with matching currency available.',
   },
   es: {
     'wallets': 'Billeteras',
@@ -105,5 +108,8 @@ export const walletTranslations = {
     'please-select-company-wallet': 'Por favor seleccione una billetera de la compañía',
     'credit-description': 'Agregar fondos a la billetera del cliente',
     'adjustment-description': 'Ajustar el saldo de la billetera del cliente (puede ser positivo o negativo)',
+    'currency': 'Moneda',
+    'no-matching-currency-wallets': 'No hay billeteras de compañía disponibles con la misma moneda que la billetera del cliente.',
+    'no-matching-currency-wallets-available': 'No hay billeteras de compañía con moneda coincidente disponibles.',
   }
 };
