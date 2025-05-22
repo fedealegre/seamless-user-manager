@@ -1,3 +1,4 @@
+
 export const walletTranslations = {
   en: {
     'wallets': 'Wallets',
@@ -46,6 +47,11 @@ export const walletTranslations = {
     'view-users': 'View users',
     'add-user': 'Add User',
     'compensate-customer': 'Compensate Customer',
+    'company-wallet': 'Company Wallet',
+    'select-company-wallet': 'Select company wallet',
+    'please-select-company-wallet': 'Please select a company wallet',
+    'credit-description': 'Add funds to the customer wallet',
+    'adjustment-description': 'Adjust the customer wallet balance (can be positive or negative)',
   },
   es: {
     'wallets': 'Billeteras',
@@ -94,5 +100,10 @@ export const walletTranslations = {
     'view-users': 'Ver usuarios',
     'add-user': 'Agregar Usuario',
     'compensate-customer': 'Compensar Cliente',
+    'company-wallet': 'Billetera de la Compañía',
+    'select-company-wallet': 'Seleccionar billetera de la compañía',
+    'please-select-company-wallet': 'Por favor seleccione una billetera de la compañía',
+    'credit-description': 'Agregar fondos a la billetera del cliente',
+    'adjustment-description': 'Ajustar el saldo de la billetera del cliente (puede ser positivo o negativo)',
   }
 };

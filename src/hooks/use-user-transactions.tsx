@@ -133,7 +133,12 @@ export function useUserTransactions(userId: string, selectedWalletId: string | n
     setShowChangeStatusDialog(true);
   };
 
-  const handleCompensateSubmit = async (amount: string, reason: string, compensationType: 'credit' | 'adjustment') => {
+  const handleCompensateSubmit = async (
+    amount: string, 
+    reason: string, 
+    compensationType: 'credit' | 'adjustment',
+    originWalletId: number = 999 // Default value if not provided
+  ) => {
     if (!selectedTransaction || !selectedWalletId) {
       toast({
         title: t("error"),
@@ -146,7 +151,7 @@ export function useUserTransactions(userId: string, selectedWalletId: string | n
       const companyId = 1;
       const userIdNum = selectedTransaction.customerId;
       const walletIdNum = parseInt(selectedTransaction.walletId);
-      const originWalletId = 999;
+      
       await userService.compensateCustomer(companyId, userIdNum, walletIdNum, originWalletId, {
         amount,
         reason,

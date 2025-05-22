@@ -15,6 +15,7 @@ import { useToast } from "@/hooks/use-toast";
 import { usePermissions } from "@/hooks/use-permissions";
 import { userService } from "@/lib/api/user-service";
 import { useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
 interface UserTransactionsTabProps {
   userId: string;
@@ -36,6 +37,20 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
       setSelectedWalletId(wallets[0].id.toString());
     }
   }, [wallets, selectedWalletId]);
+
+  // Fetch company wallets for compensation
+  const { data: companyWallets = [] } = useQuery({
+    queryKey: ['company-wallets'],
+    queryFn: async () => {
+      // In a real implementation, this would fetch the company wallets from an API
+      // For now, we'll return mock data
+      return [
+        { id: 999, currency: "USD", name: "Company Main USD Wallet", balance: 10000 },
+        { id: 998, currency: "EUR", name: "Company Main EUR Wallet", balance: 8000 },
+        { id: 997, currency: "GBP", name: "Company UK Wallet", balance: 5000 }
+      ] as Wallet[];
+    }
+  });
 
   const {
     page,
@@ -113,7 +128,12 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
     };
   };
 
-  const handleDirectCompensateSubmit = async (amount: string, reason: string, compensationType: 'credit' | 'adjustment') => {
+  const handleDirectCompensateSubmit = async (
+    amount: string, 
+    reason: string, 
+    compensationType: 'credit' | 'adjustment',
+    originWalletId: number
+  ) => {
     if (!selectedWalletId) {
       toast({
         title: t("error"),
@@ -127,7 +147,6 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
       // Call the compensateCustomer API directly with the necessary parameters
       const companyId = 1;
       const walletIdNum = parseInt(selectedWalletId);
-      const originWalletId = 999; // Default origin wallet ID
       
       await userService.compensateCustomer(
         companyId,
@@ -217,6 +236,7 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
             open={showCompensateDialog}
             onOpenChange={setShowCompensateDialog}
             onSubmit={handleCompensateSubmit}
+            companyWallets={companyWallets}
           />
           <ChangeTransactionStatusDialog
             transaction={selectedTransaction}
@@ -234,6 +254,7 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
           open={showCompensateDialogDirect}
           onOpenChange={setShowCompensateDialogDirect}
           onSubmit={handleDirectCompensateSubmit}
+          companyWallets={companyWallets}
         />
       )}
     </Card>

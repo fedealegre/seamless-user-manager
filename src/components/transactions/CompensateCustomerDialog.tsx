@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from "react";
-import { Transaction } from "@/lib/api/types";
+import { Transaction, Wallet } from "@/lib/api/types";
 import {
   Dialog,
   DialogContent,
@@ -13,16 +13,18 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import { AlertCircle, CircleDollarSign } from "lucide-react";
+import { AlertCircle, CircleDollarSign, ArrowRightLeft } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
 import { translate } from "@/lib/translations";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface CompensateCustomerDialogProps {
   transaction: Transaction;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSubmit: (amount: string, reason: string, compensationType: 'credit' | 'adjustment') => void;
+  onSubmit: (amount: string, reason: string, compensationType: 'credit' | 'adjustment', originWalletId: number) => void;
+  companyWallets?: Wallet[];
 }
 
 const CompensateCustomerDialog: React.FC<CompensateCustomerDialogProps> = ({
@@ -30,11 +32,19 @@ const CompensateCustomerDialog: React.FC<CompensateCustomerDialogProps> = ({
   open,
   onOpenChange,
   onSubmit,
+  companyWallets = [],
 }) => {
   const [amount, setAmount] = useState("");
   const [reason, setReason] = useState("");
   const [compensationType, setCompensationType] = useState<'credit' | 'adjustment' | "">("");
-  const [errors, setErrors] = useState<{amount?: string; reason?: string; compensationType?: string}>({});
+  const [originWalletId, setOriginWalletId] = useState<string>("");
+  const [errors, setErrors] = useState<{
+    amount?: string; 
+    reason?: string; 
+    compensationType?: string;
+    originWalletId?: string;
+  }>({});
+  
   const { settings } = useBackofficeSettings();
   const t = (key: string) => translate(key, settings.language);
 
@@ -44,9 +54,10 @@ const CompensateCustomerDialog: React.FC<CompensateCustomerDialogProps> = ({
       setAmount("");
       setReason("");
       setCompensationType("");
+      setOriginWalletId(companyWallets.length === 1 ? companyWallets[0].id.toString() : "");
       setErrors({});
     }
-  }, [open]);
+  }, [open, companyWallets]);
 
   const validateAmount = (value: string, type: 'credit' | 'adjustment' | "") => {
     if (!value.trim() || isNaN(Number(value))) {
@@ -63,7 +74,12 @@ const CompensateCustomerDialog: React.FC<CompensateCustomerDialogProps> = ({
   };
 
   const handleSubmit = () => {
-    const newErrors: {amount?: string; reason?: string; compensationType?: string} = {};
+    const newErrors: {
+      amount?: string; 
+      reason?: string; 
+      compensationType?: string;
+      originWalletId?: string;
+    } = {};
     
     // Validate compensation type
     if (!compensationType) {
@@ -81,12 +97,17 @@ const CompensateCustomerDialog: React.FC<CompensateCustomerDialogProps> = ({
       newErrors.reason = t("please-provide-reason");
     }
     
+    // Validate origin wallet
+    if (!originWalletId) {
+      newErrors.originWalletId = t("please-select-company-wallet");
+    }
+    
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
     
-    onSubmit(amount, reason, compensationType as 'credit' | 'adjustment');
+    onSubmit(amount, reason, compensationType as 'credit' | 'adjustment', parseInt(originWalletId));
   };
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -103,6 +124,11 @@ const CompensateCustomerDialog: React.FC<CompensateCustomerDialogProps> = ({
     // Re-validate amount when compensation type changes
     const error = validateAmount(amount, value);
     setErrors(prev => ({ ...prev, amount: error, compensationType: undefined }));
+  };
+
+  const handleOriginWalletChange = (value: string) => {
+    setOriginWalletId(value);
+    setErrors(prev => ({ ...prev, originWalletId: undefined }));
   };
 
   return (
@@ -156,6 +182,43 @@ const CompensateCustomerDialog: React.FC<CompensateCustomerDialogProps> = ({
                 {compensationType === 'credit' && t("credit-description")}
                 {compensationType === 'adjustment' && t("adjustment-description")}
               </div>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="originWallet">{t("company-wallet")}</Label>
+              {companyWallets.length === 1 ? (
+                <div className="flex items-center gap-3 p-3 rounded-md border">
+                  <div className="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center">
+                    <ArrowRightLeft size={14} className="text-green-600" />
+                  </div>
+                  <div>
+                    <div className="font-medium">{companyWallets[0].name || `${companyWallets[0].currency} Wallet`}</div>
+                    <div className="text-sm text-muted-foreground">
+                      ID: {companyWallets[0].id} | {companyWallets[0].currency}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <Select value={originWalletId} onValueChange={handleOriginWalletChange}>
+                    <SelectTrigger className={errors.originWalletId ? "border-destructive" : ""}>
+                      <SelectValue placeholder={t("select-company-wallet")} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {companyWallets.map((wallet) => (
+                        <SelectItem key={wallet.id} value={wallet.id.toString()}>
+                          {wallet.name || `${wallet.currency} Wallet`} - ID: {wallet.id}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  {errors.originWalletId && (
+                    <div className="flex items-center text-sm text-destructive gap-1">
+                      <AlertCircle size={12} /> {errors.originWalletId}
+                    </div>
+                  )}
+                </>
+              )}
             </div>
             
             <div className="space-y-2">
