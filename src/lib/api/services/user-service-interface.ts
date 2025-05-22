@@ -15,6 +15,7 @@ export interface UserService {
   unblockUser(userId: string): Promise<void>;
   resetPassword(request: ResetPasswordRequest): Promise<ResetPasswordResponse>;
   getUserWallets(userId: string): Promise<Wallet[]>;
+  getCompanyWallets(): Promise<Wallet[]>;
   getAllWallets(): Promise<{ wallet: Wallet; userId: string }[]>;
   getWalletTransactions(userId: string, walletId: string): Promise<Transaction[]>;
   getAllTransactions(): Promise<Transaction[]>;

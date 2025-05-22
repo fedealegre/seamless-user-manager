@@ -19,3 +19,14 @@ export const validateAmount = (value: string, type: 'credit' | 'adjustment' | ""
   
   return undefined;
 };
+
+/**
+ * Validates the origin wallet selection
+ */
+export const validateOriginWallet = (value: string): string | undefined => {
+  if (!value) {
+    return "please-select-company-wallet";
+  }
+  
+  return undefined;
+};

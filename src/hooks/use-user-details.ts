@@ -35,13 +35,25 @@ export function useUserDetails(userId: string | undefined) {
     enabled: !!userId,
   });
 
-  const error = userError || walletsError;
+  // Fetch company wallets
+  const {
+    data: companyWallets,
+    isLoading: isLoadingCompanyWallets,
+    error: companyWalletsError
+  } = useQuery({
+    queryKey: ['company-wallets'],
+    queryFn: () => userService.getCompanyWallets(),
+  });
+
+  const error = userError || walletsError || companyWalletsError;
 
   return {
     user,
     wallets: wallets || [],
+    companyWallets: companyWallets || [],
     isLoadingUser,
     isLoadingWallets,
+    isLoadingCompanyWallets,
     error
   };
 }

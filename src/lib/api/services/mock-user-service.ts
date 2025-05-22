@@ -6,6 +6,26 @@ import { generateRandomTransaction } from "./transaction-generator";
 // Mock wallet-user associations data
 const mockWalletUserAssociations: WalletUserAssociation[] = [];
 
+// Mock company wallets data
+const mockCompanyWallets: Wallet[] = [
+  { 
+    id: 999, 
+    currency: "USD", 
+    name: "Company Main USD Wallet", 
+    balance: 10000, 
+    availableBalance: 10000,
+    status: "ACTIVE"
+  },
+  { 
+    id: 998, 
+    currency: "EUR", 
+    name: "Company Main EUR Wallet", 
+    balance: 8000, 
+    availableBalance: 8000,
+    status: "ACTIVE" 
+  }
+];
+
 // The actual service implementation that uses mock data
 export class MockUserService implements UserService {
   async searchUsers(params: any): Promise<User[]> {
@@ -123,6 +143,11 @@ export class MockUserService implements UserService {
     console.log("Using mock data for getUserWallets", userId);
     // Return wallets for the specified user or empty array if none exist
     return mockWallets[parseInt(userId)] || [];
+  }
+
+  async getCompanyWallets(): Promise<Wallet[]> {
+    console.log("Using mock data for getCompanyWallets");
+    return mockCompanyWallets;
   }
 
   async getAllWallets(): Promise<{ wallet: Wallet; userId: string }[]> {

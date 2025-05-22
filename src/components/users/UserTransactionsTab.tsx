@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Wallet, Transaction } from "@/lib/api/types";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -41,15 +40,7 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
   // Fetch company wallets for compensation
   const { data: companyWallets = [] } = useQuery({
     queryKey: ['company-wallets'],
-    queryFn: async () => {
-      // In a real implementation, this would fetch the company wallets from an API
-      // For now, we'll return mock data
-      return [
-        { id: 999, currency: "USD", name: "Company Main USD Wallet", balance: 10000 },
-        { id: 998, currency: "EUR", name: "Company Main EUR Wallet", balance: 8000 },
-        { id: 997, currency: "GBP", name: "Company UK Wallet", balance: 5000 }
-      ] as Wallet[];
-    }
+    queryFn: () => userService.getCompanyWallets()
   });
 
   const {
