@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Wallet, Transaction } from "@/lib/api/types";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -115,7 +116,7 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
       currency: wallet?.currency || "USD",
       status: "pending",
       movementType: "deposit",
-      transactionType: "compensation"
+      transactionType: "Compensacion"
     };
   };
 
@@ -149,7 +150,7 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
           reason,
           transaction_code: `COMP-${Date.now()}`,
           admin_user: "Current Admin",
-          transaction_type: "COMPENSATE",
+          transaction_type: "Compensacion",
           compensation_type: compensationType,
         }
       );

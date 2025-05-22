@@ -86,7 +86,7 @@ export const UserWalletsTab: React.FC<UserWalletsTabProps> = ({ userId, wallets,
       currency: compensateWallet.currency || "USD",
       status: "pending",
       movementType: "deposit",
-      transactionType: "compensation"
+      transactionType: "Compensacion"
     };
   };
 
@@ -115,7 +115,7 @@ export const UserWalletsTab: React.FC<UserWalletsTabProps> = ({ userId, wallets,
         reason,
         transaction_code: `COMP-${Date.now()}`,
         admin_user: "Current Admin",
-        transaction_type: "COMPENSATE",
+        transaction_type: "Compensacion",
         compensation_type: compensationType,
       });
       
@@ -128,6 +128,13 @@ export const UserWalletsTab: React.FC<UserWalletsTabProps> = ({ userId, wallets,
       queryClient.invalidateQueries({
         queryKey: ['user-wallets', userId],
       });
+      
+      // Also invalidate transactions queries to ensure they're updated
+      if (selectedWalletId) {
+        queryClient.invalidateQueries({
+          queryKey: ['user-transactions', userId, selectedWalletId],
+        });
+      }
       
       setShowCompensateDialog(false);
       setCompensateWallet(null);

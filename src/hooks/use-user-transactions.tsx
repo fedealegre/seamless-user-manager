@@ -157,16 +157,23 @@ export function useUserTransactions(userId: string, selectedWalletId: string | n
         reason,
         transaction_code: `COMP-${Date.now()}`,
         admin_user: "Current Admin",
-        transaction_type: "COMPENSATE",
+        transaction_type: "Compensacion",
         compensation_type: compensationType,
       });
       toast({
         title: t("compensation-processed"),
         description: t("compensation-transaction-created"),
       });
+      
+      // Invalidate both transactions and wallets queries to ensure up to date data
       queryClient.invalidateQueries({
         queryKey: ['user-transactions', userId, selectedWalletId],
       });
+      
+      queryClient.invalidateQueries({
+        queryKey: ['user-wallets', userId],
+      });
+      
       setShowCompensateDialog(false);
       setSelectedTransaction(null);
     } catch (error: any) {
@@ -201,9 +208,17 @@ export function useUserTransactions(userId: string, selectedWalletId: string | n
         title: t("status-updated"),
         description: t("transaction-status-changed-success"),
       });
+      
+      // Invalidate queries to ensure data is refreshed
       queryClient.invalidateQueries({
         queryKey: ['user-transactions', userId, selectedWalletId],
       });
+      
+      // Also refresh wallet data in case balance changes
+      queryClient.invalidateQueries({
+        queryKey: ['user-wallets', userId],
+      });
+      
       setShowChangeStatusDialog(false);
       setSelectedTransaction(null);
     } catch (error: any) {
