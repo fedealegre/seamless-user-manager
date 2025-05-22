@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useMemo } from "react";
 import { Transaction, Wallet } from "@/lib/api/types";
 import {
@@ -125,6 +124,7 @@ const CompensateCustomerDialog: React.FC<CompensateCustomerDialogProps> = ({
     setErrors(prev => ({ ...prev, amount: error }));
   };
 
+  // Here's the fixed function - it should only accept one value parameter
   const handleCompensationTypeChange = (value: 'credit' | 'adjustment') => {
     setCompensationType(value);
     
@@ -177,7 +177,7 @@ const CompensateCustomerDialog: React.FC<CompensateCustomerDialogProps> = ({
               <Label>{t("compensation-type")}</Label>
               <RadioGroup
                 value={compensationType}
-                onValueChange={(value) => handleCompensationTypeChange(value as 'credit' | 'adjustment')}
+                onValueChange={handleCompensationTypeChange}
                 className={`grid grid-cols-2 gap-2 ${errors.compensationType ? "border border-destructive rounded-md p-1" : ""}`}
                 disabled={!hasMatchingWallets}
               >
