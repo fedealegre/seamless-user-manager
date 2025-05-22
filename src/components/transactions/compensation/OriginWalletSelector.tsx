@@ -65,7 +65,7 @@ const OriginWalletSelector: React.FC<OriginWalletSelectorProps> = ({
         </>
       ) : (
         <div className="text-sm text-muted-foreground italic">
-          {t("no-matching-currency-wallets-available", "No company wallets with matching currency available.")}
+          {t("no-matching-currency-wallets-available")}
         </div>
       )}
     </div>
