@@ -35,6 +35,7 @@ export const transactionTranslations = {
     'tk_pay_req': 'TK Pay Request',
     'tk_pay_req_cash_out': 'TK Pay Request Cash Out',
     'compensate': 'Compensate',
+    'compensacion': 'Compensacion', // Add this new translation
     'compensate-customer': 'Compensate Customer',
     'only-compensator-can-compensate': 'Only users with the compensator role can create compensations',
     'only-compensator-can-change-status': 'Only users with the compensator role can change transaction status',
@@ -113,6 +114,7 @@ export const transactionTranslations = {
     'tk_pay_req': 'Solicitud de Pago TK',
     'tk_pay_req_cash_out': 'Solicitud de Pago TK Salida',
     'compensate': 'Compensar',
+    'compensacion': 'Compensacion', // Add this new translation
     'compensate-customer': 'Compensar Cliente',
     'only-compensator-can-compensate': 'Solo los usuarios con el rol de compensador pueden crear compensaciones',
     'only-compensator-can-change-status': 'Solo los usuarios con el rol de compensador pueden cambiar el estado de las transacciones',

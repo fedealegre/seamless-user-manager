@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { userService } from "@/lib/api/user-service";
@@ -160,12 +159,12 @@ export function useUserTransactions(userId: string, selectedWalletId: string | n
         transaction_type: "Compensacion",
         compensation_type: compensationType,
       });
+      
       toast({
         title: t("compensation-processed"),
         description: t("compensation-transaction-created"),
       });
       
-      // Invalidate both transactions and wallets queries to ensure up to date data
       queryClient.invalidateQueries({
         queryKey: ['user-transactions', userId, selectedWalletId],
       });
@@ -209,12 +208,10 @@ export function useUserTransactions(userId: string, selectedWalletId: string | n
         description: t("transaction-status-changed-success"),
       });
       
-      // Invalidate queries to ensure data is refreshed
       queryClient.invalidateQueries({
         queryKey: ['user-transactions', userId, selectedWalletId],
       });
       
-      // Also refresh wallet data in case balance changes
       queryClient.invalidateQueries({
         queryKey: ['user-wallets', userId],
       });

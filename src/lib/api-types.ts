@@ -64,7 +64,7 @@ export interface CompensationRequest {
     reason: string;
     transaction_code: string;
     admin_user: string;
-    transaction_type: 'COMPENSATE';
+    transaction_type: string; // Changed from 'COMPENSATE' to string to allow 'Compensacion'
     compensation_type: 'credit' | 'adjustment';
 }
 
