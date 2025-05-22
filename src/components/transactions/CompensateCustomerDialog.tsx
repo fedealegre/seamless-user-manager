@@ -124,12 +124,12 @@ const CompensateCustomerDialog: React.FC<CompensateCustomerDialogProps> = ({
     setErrors(prev => ({ ...prev, amount: error }));
   };
 
-  // Here's the fixed function - it should only accept one value parameter
-  const handleCompensationTypeChange = (value: 'credit' | 'adjustment') => {
-    setCompensationType(value);
+  // Fixed function - it accepts one value parameter
+  const handleCompensationTypeChange = (value: string) => {
+    setCompensationType(value as 'credit' | 'adjustment');
     
     // Re-validate amount when compensation type changes
-    const error = validateAmount(amount, value);
+    const error = validateAmount(amount, value as 'credit' | 'adjustment');
     setErrors(prev => ({ ...prev, amount: error, compensationType: undefined }));
   };
 
