@@ -32,6 +32,12 @@ export const UserWalletsTab: React.FC<UserWalletsTabProps> = ({ userId, wallets,
   const t = (key: string) => translate(key, settings.language);
   const queryClient = useQueryClient();
   const { canChangeTransactionStatus } = usePermissions();
+  
+  // Fetch company wallets
+  const { data: companyWallets = [] } = useQuery({
+    queryKey: ['company-wallets'],
+    queryFn: () => userService.getCompanyWallets()
+  });
 
   // Set first wallet as selected when wallets load
   useEffect(() => {
@@ -84,7 +90,12 @@ export const UserWalletsTab: React.FC<UserWalletsTabProps> = ({ userId, wallets,
     };
   };
 
-  const handleCompensateSubmit = async (amount: string, reason: string, compensationType: 'credit' | 'adjustment') => {
+  const handleCompensateSubmit = async (
+    amount: string, 
+    reason: string, 
+    compensationType: 'credit' | 'adjustment',
+    originWalletId: number
+  ) => {
     if (!compensateWallet) {
       toast({
         title: t("error"),
@@ -98,7 +109,6 @@ export const UserWalletsTab: React.FC<UserWalletsTabProps> = ({ userId, wallets,
       const companyId = 1;
       const userIdNum = userId;
       const walletIdNum = compensateWallet.id;
-      const originWalletId = 999;
       
       await userService.compensateCustomer(companyId, userIdNum, walletIdNum, originWalletId, {
         amount,
@@ -202,6 +212,7 @@ export const UserWalletsTab: React.FC<UserWalletsTabProps> = ({ userId, wallets,
                   if (!open) setCompensateWallet(null);
                 }}
                 onSubmit={handleCompensateSubmit}
+                companyWallets={companyWallets}
               />
             )}
           </>
