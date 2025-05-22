@@ -50,6 +50,10 @@ class UserServiceWrapper implements UserService {
     return this.mockUserService.getUserWallets(userId);
   }
 
+  async getCompanyWallets(): Promise<Wallet[]> {
+    return this.mockUserService.getCompanyWallets();
+  }
+
   async getAllWallets(): Promise<{ wallet: Wallet; userId: string }[]> {
     return this.mockUserService.getAllWallets();
   }

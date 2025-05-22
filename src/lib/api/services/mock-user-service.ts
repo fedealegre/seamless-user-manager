@@ -1,3 +1,4 @@
+
 import { User, Wallet, Transaction, CompensationRequest, ResetPasswordRequest, ResetPasswordResponse, WalletUserAssociation } from "../types";
 import { UserService, ChangeTransactionStatusRequest } from "./user-service-interface";
 import { mockUsers, mockWallets, mockTransactions } from "../mock/mock-users-data";
@@ -10,6 +11,7 @@ const mockWalletUserAssociations: WalletUserAssociation[] = [];
 const mockCompanyWallets: Wallet[] = [
   { 
     id: 999, 
+    companyId: 1,  // Added companyId property
     currency: "USD", 
     name: "Company Main USD Wallet", 
     balance: 10000, 
@@ -18,6 +20,7 @@ const mockCompanyWallets: Wallet[] = [
   },
   { 
     id: 998, 
+    companyId: 1,  // Added companyId property
     currency: "EUR", 
     name: "Company Main EUR Wallet", 
     balance: 8000, 
