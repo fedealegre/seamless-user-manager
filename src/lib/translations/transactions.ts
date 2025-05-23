@@ -113,7 +113,7 @@ export const transactionTranslations = {
     'transfer_cash_out': 'Transferencia Salida',
     'tk_pay_req': 'Solicitud de Pago TK',
     'tk_pay_req_cash_out': 'Solicitud de Pago TK Salida',
-    'compensate': 'Compensar',
+    'compensate': 'Compensación',
     'compensacion': 'Compensacion', // Add this new translation
     'compensate-customer': 'Compensar Cliente',
     'only-compensator-can-compensate': 'Solo los usuarios con el rol de compensador pueden crear compensaciones',
