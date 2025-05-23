@@ -8,7 +8,7 @@ export interface FieldSetting {
   isEditable: boolean;
 }
 
-// Default field settings if none are found in localStorage
+// Field settings based on the provided JSON configuration
 export const defaultFieldSettings: FieldSetting[] = [
   { fieldName: "name", displayName: "First Name", isVisible: true, isEditable: true },
   { fieldName: "surname", displayName: "Last Name", isVisible: true, isEditable: true },
@@ -34,7 +34,7 @@ export function useUserFieldSettings() {
   const [fieldSettings, setFieldSettings] = useState<FieldSetting[]>(defaultFieldSettings);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  // Load settings from localStorage on mount
+  // Load settings from localStorage on mount, but use the new JSON config as fallback
   useEffect(() => {
     const storedSettings = localStorage.getItem(USER_FIELD_SETTINGS_KEY);
     if (storedSettings) {
@@ -43,9 +43,12 @@ export function useUserFieldSettings() {
         setFieldSettings(parsedSettings);
       } catch (error) {
         console.error("Failed to parse user field settings:", error);
-        // If parsing fails, use defaults
+        // If parsing fails, use the new JSON config
         setFieldSettings(defaultFieldSettings);
       }
+    } else {
+      // No stored settings, use the new JSON config
+      setFieldSettings(defaultFieldSettings);
     }
     setIsLoaded(true);
   }, []);
