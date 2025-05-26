@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Wallet, Transaction } from "@/lib/api/types";
@@ -105,6 +106,8 @@ export const UserWalletsTab: React.FC<UserWalletsTabProps> = ({ userId, wallets,
     }
     
     try {
+      console.log('Processing wallet compensation...', { compensateWallet, amount, reason, compensationType });
+      
       const companyId = 1;
       const userIdNum = userId;
       const walletIdNum = compensateWallet.id;
@@ -118,26 +121,32 @@ export const UserWalletsTab: React.FC<UserWalletsTabProps> = ({ userId, wallets,
         compensation_type: compensationType,
       });
       
+      console.log('Wallet compensation successful, invalidating queries...');
+      
       toast({
         title: t("compensation-processed"),
         description: t("compensation-transaction-created"),
       });
       
       // Invalidate queries to refresh data
-      queryClient.invalidateQueries({
-        queryKey: ['user-wallets', userId],
-      });
-      
-      // Also invalidate transactions queries to ensure they're updated
-      if (selectedWalletId) {
+      await Promise.all([
         queryClient.invalidateQueries({
-          queryKey: ['user-transactions', userId, selectedWalletId],
-        });
-      }
+          queryKey: ['user-wallets', userId],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ['user-transactions', userId, compensateWallet.id.toString()],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ['company-wallets'],
+        })
+      ]);
+      
+      console.log('Queries invalidated after wallet compensation');
       
       setShowCompensateDialog(false);
       setCompensateWallet(null);
     } catch (error: any) {
+      console.error('Wallet compensation failed:', error);
       toast({
         title: t("compensation-failed"),
         description: error.message || t("compensation-error"),

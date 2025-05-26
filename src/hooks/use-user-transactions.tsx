@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { userService } from "@/lib/api/user-service";
@@ -41,9 +42,11 @@ export function useUserTransactions(userId: string, selectedWalletId: string | n
     queryKey: ['user-transactions', userId, selectedWalletId],
     queryFn: () => {
       if (!selectedWalletId) return Promise.resolve([]);
+      console.log('Fetching transactions for wallet:', selectedWalletId);
       return userService.getWalletTransactions(userId, selectedWalletId);
     },
     enabled: !!selectedWalletId,
+    staleTime: 0, // Always refetch to ensure fresh data
   });
 
   // Apply filters to transactions
@@ -147,6 +150,8 @@ export function useUserTransactions(userId: string, selectedWalletId: string | n
       return;
     }
     try {
+      console.log('Processing compensation from transaction...', { selectedTransaction, amount, reason, compensationType });
+      
       const companyId = 1;
       const userIdNum = selectedTransaction.customerId;
       const walletIdNum = parseInt(selectedTransaction.walletId);
@@ -160,22 +165,29 @@ export function useUserTransactions(userId: string, selectedWalletId: string | n
         compensation_type: compensationType,
       });
       
+      console.log('Transaction compensation successful, invalidating queries...');
+      
       toast({
         title: t("compensation-processed"),
         description: t("compensation-transaction-created"),
       });
       
-      queryClient.invalidateQueries({
-        queryKey: ['user-transactions', userId, selectedWalletId],
-      });
+      // Invalidate queries to refresh data
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ['user-transactions', userId, selectedWalletId],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ['user-wallets', userId],
+        })
+      ]);
       
-      queryClient.invalidateQueries({
-        queryKey: ['user-wallets', userId],
-      });
+      console.log('Queries invalidated after transaction compensation');
       
       setShowCompensateDialog(false);
       setSelectedTransaction(null);
     } catch (error: any) {
+      console.error('Transaction compensation failed:', error);
       toast({
         title: t("compensation-failed"),
         description: error.message || t("compensation-error"),
@@ -194,6 +206,8 @@ export function useUserTransactions(userId: string, selectedWalletId: string | n
       return;
     }
     try {
+      console.log('Changing transaction status...', { selectedTransaction, newStatus, reason });
+      
       const transactionIdentifier = selectedTransaction.transactionId || selectedTransaction.id.toString();
       await userService.changeTransactionStatus(
         selectedWalletId,
@@ -203,22 +217,30 @@ export function useUserTransactions(userId: string, selectedWalletId: string | n
           reason,
         }
       );
+      
+      console.log('Transaction status changed successfully, invalidating queries...');
+      
       toast({
         title: t("status-updated"),
         description: t("transaction-status-changed-success"),
       });
       
-      queryClient.invalidateQueries({
-        queryKey: ['user-transactions', userId, selectedWalletId],
-      });
+      // Invalidate queries to refresh data
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: ['user-transactions', userId, selectedWalletId],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ['user-wallets', userId],
+        })
+      ]);
       
-      queryClient.invalidateQueries({
-        queryKey: ['user-wallets', userId],
-      });
+      console.log('Queries invalidated after status change');
       
       setShowChangeStatusDialog(false);
       setSelectedTransaction(null);
     } catch (error: any) {
+      console.error('Status change failed:', error);
       toast({
         title: t("status-change-failed"),
         description: error.message || t("only-pending-transactions"),

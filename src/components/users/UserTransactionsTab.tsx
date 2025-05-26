@@ -136,6 +136,8 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
     }
     
     try {
+      console.log('Processing direct compensation...', { userId, selectedWalletId, amount, reason, compensationType });
+      
       // Call the compensateCustomer API directly with the necessary parameters
       const companyId = 1;
       const walletIdNum = parseInt(selectedWalletId);
@@ -155,20 +157,31 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
         }
       );
       
+      console.log('Direct compensation successful, invalidating queries...');
+      
       toast({
         title: t("compensation-processed"),
         description: t("compensation-transaction-created"),
       });
       
-      // Use the already initialized queryClient to invalidate queries
-      if (selectedWalletId) {
+      // Invalidate all relevant queries to ensure fresh data
+      await Promise.all([
         queryClient.invalidateQueries({
           queryKey: ['user-transactions', userId, selectedWalletId],
-        });
-      }
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ['user-wallets', userId],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: ['company-wallets'],
+        })
+      ]);
+      
+      console.log('Queries invalidated successfully');
       
       setShowCompensateDialogDirect(false);
     } catch (error: any) {
+      console.error('Direct compensation failed:', error);
       toast({
         title: t("compensation-failed"),
         description: error.message || t("compensation-error"),
