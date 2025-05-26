@@ -63,16 +63,6 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
       variant: "destructive",
     });
   };
-
-  // Generate unique key for each transaction row
-  const generateUniqueKey = (transaction: Transaction, index: number) => {
-    // Use a combination of id, transactionId, date, and index to ensure uniqueness
-    const baseId = transaction.id || index;
-    const txId = transaction.transactionId || '';
-    const date = transaction.date || '';
-    const amount = transaction.amount || 0;
-    return `tx-${baseId}-${txId}-${date}-${amount}-${index}`;
-  };
   
   return (
     <div className="rounded-md border">
@@ -90,8 +80,8 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
         </TableHeader>
         <TableBody>
           {transactions && transactions.length > 0 ? (
-            transactions.map((transaction, index) => (
-              <TableRow key={generateUniqueKey(transaction, index)}>
+            transactions.map((transaction) => (
+              <TableRow key={transaction.id}>
                 <TableCell>
                   {getTranslatedStatusBadge(transaction.status, settings.language)}
                 </TableCell>
