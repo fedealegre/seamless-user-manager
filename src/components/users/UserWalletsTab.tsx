@@ -106,7 +106,7 @@ export const UserWalletsTab: React.FC<UserWalletsTabProps> = ({ userId, wallets,
     }
     
     try {
-      console.log('Processing wallet compensation...', { compensateWallet, amount, reason, compensationType });
+      console.log('🏦 Processing wallet compensation...', { compensateWallet, amount, reason, compensationType });
       
       const companyId = 1;
       const userIdNum = userId;
@@ -121,14 +121,14 @@ export const UserWalletsTab: React.FC<UserWalletsTabProps> = ({ userId, wallets,
         compensation_type: compensationType,
       });
       
-      console.log('Wallet compensation successful, invalidating queries...');
+      console.log('✅ Wallet compensation successful, refreshing data...');
       
       toast({
         title: t("compensation-processed"),
         description: t("compensation-transaction-created"),
       });
       
-      // Invalidate queries to refresh data
+      // Invalidate queries to refresh data - focusing on transactions
       await Promise.all([
         queryClient.invalidateQueries({
           queryKey: ['user-wallets', userId],
@@ -141,12 +141,12 @@ export const UserWalletsTab: React.FC<UserWalletsTabProps> = ({ userId, wallets,
         })
       ]);
       
-      console.log('Queries invalidated after wallet compensation');
+      console.log('✅ All queries invalidated after wallet compensation');
       
       setShowCompensateDialog(false);
       setCompensateWallet(null);
     } catch (error: any) {
-      console.error('Wallet compensation failed:', error);
+      console.error('❌ Wallet compensation failed:', error);
       toast({
         title: t("compensation-failed"),
         description: error.message || t("compensation-error"),

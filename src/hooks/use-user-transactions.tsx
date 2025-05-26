@@ -37,12 +37,12 @@ export function useUserTransactions(userId: string, selectedWalletId: string | n
   const queryClient = useQueryClient();
   const { canCancelTransaction, canChangeTransactionStatus } = usePermissions();
 
-  // Fetch transactions data
-  const { data: allTransactions = [], isLoading } = useQuery({
+  // Fetch transactions data with fresh data after compensation
+  const { data: allTransactions = [], isLoading, refetch } = useQuery({
     queryKey: ['user-transactions', userId, selectedWalletId],
     queryFn: () => {
       if (!selectedWalletId) return Promise.resolve([]);
-      console.log('Fetching transactions for wallet:', selectedWalletId);
+      console.log('🔄 Fetching transactions for wallet:', selectedWalletId, 'at', new Date().toISOString());
       return userService.getWalletTransactions(userId, selectedWalletId);
     },
     enabled: !!selectedWalletId,
@@ -135,6 +135,29 @@ export function useUserTransactions(userId: string, selectedWalletId: string | n
     setShowChangeStatusDialog(true);
   };
 
+  // Function to refresh transactions after compensation
+  const refreshTransactions = async () => {
+    console.log('🔄 Refreshing transactions after compensation...');
+    
+    // Force refetch of current transactions
+    await refetch();
+    
+    // Invalidate all related queries to ensure fresh data
+    await Promise.all([
+      queryClient.invalidateQueries({
+        queryKey: ['user-transactions', userId, selectedWalletId],
+      }),
+      queryClient.invalidateQueries({
+        queryKey: ['user-wallets', userId],
+      }),
+      queryClient.invalidateQueries({
+        queryKey: ['company-wallets'],
+      })
+    ]);
+    
+    console.log('✅ Transactions refreshed successfully');
+  };
+
   const handleCompensateSubmit = async (
     amount: string, 
     reason: string, 
@@ -150,7 +173,7 @@ export function useUserTransactions(userId: string, selectedWalletId: string | n
       return;
     }
     try {
-      console.log('Processing compensation from transaction...', { selectedTransaction, amount, reason, compensationType });
+      console.log('🏦 Processing compensation from transaction...', { selectedTransaction, amount, reason, compensationType });
       
       const companyId = 1;
       const userIdNum = selectedTransaction.customerId;
@@ -165,29 +188,20 @@ export function useUserTransactions(userId: string, selectedWalletId: string | n
         compensation_type: compensationType,
       });
       
-      console.log('Transaction compensation successful, invalidating queries...');
+      console.log('✅ Transaction compensation successful, refreshing data...');
       
       toast({
         title: t("compensation-processed"),
         description: t("compensation-transaction-created"),
       });
       
-      // Invalidate queries to refresh data
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: ['user-transactions', userId, selectedWalletId],
-        }),
-        queryClient.invalidateQueries({
-          queryKey: ['user-wallets', userId],
-        })
-      ]);
-      
-      console.log('Queries invalidated after transaction compensation');
+      // Refresh transactions table
+      await refreshTransactions();
       
       setShowCompensateDialog(false);
       setSelectedTransaction(null);
     } catch (error: any) {
-      console.error('Transaction compensation failed:', error);
+      console.error('❌ Transaction compensation failed:', error);
       toast({
         title: t("compensation-failed"),
         description: error.message || t("compensation-error"),
@@ -206,7 +220,7 @@ export function useUserTransactions(userId: string, selectedWalletId: string | n
       return;
     }
     try {
-      console.log('Changing transaction status...', { selectedTransaction, newStatus, reason });
+      console.log('🔄 Changing transaction status...', { selectedTransaction, newStatus, reason });
       
       const transactionIdentifier = selectedTransaction.transactionId || selectedTransaction.id.toString();
       await userService.changeTransactionStatus(
@@ -218,29 +232,20 @@ export function useUserTransactions(userId: string, selectedWalletId: string | n
         }
       );
       
-      console.log('Transaction status changed successfully, invalidating queries...');
+      console.log('✅ Transaction status changed successfully, refreshing data...');
       
       toast({
         title: t("status-updated"),
         description: t("transaction-status-changed-success"),
       });
       
-      // Invalidate queries to refresh data
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: ['user-transactions', userId, selectedWalletId],
-        }),
-        queryClient.invalidateQueries({
-          queryKey: ['user-wallets', userId],
-        })
-      ]);
-      
-      console.log('Queries invalidated after status change');
+      // Refresh transactions table
+      await refreshTransactions();
       
       setShowChangeStatusDialog(false);
       setSelectedTransaction(null);
     } catch (error: any) {
-      console.error('Status change failed:', error);
+      console.error('❌ Status change failed:', error);
       toast({
         title: t("status-change-failed"),
         description: error.message || t("only-pending-transactions"),
@@ -285,6 +290,7 @@ export function useUserTransactions(userId: string, selectedWalletId: string | n
     handleSubmitStatusChange,
     handlePageSizeChange,
     getActiveFiltersCount,
+    refreshTransactions, // Export the refresh function
     t
   };
 }
