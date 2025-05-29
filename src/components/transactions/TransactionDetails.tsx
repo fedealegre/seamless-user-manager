@@ -53,6 +53,19 @@ const TransactionDetails: React.FC<TransactionDetailsProps> = ({
   const isCompensation = transaction.transactionType?.toLowerCase() === 'compensacion' || 
                          transaction.transactionType?.toLowerCase() === 'compensation';
 
+  // Determine compensation type and format the reason for display
+  const getCompensationReason = () => {
+    if (!isCompensation || !transaction.reference) {
+      return transaction.reference || t("reason-not-provided");
+    }
+
+    // Determine if it's credit or debit based on amount
+    const amount = transaction.amount || 0;
+    const compensationType = amount >= 0 ? t("credit") : t("debit");
+    
+    return `${compensationType}, ${transaction.reference}`;
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg">
@@ -199,7 +212,7 @@ const TransactionDetails: React.FC<TransactionDetailsProps> = ({
               <div className="p-3 border rounded-md bg-blue-50/50">
                 <div className="text-sm font-medium mb-2">{t("compensation-reason")}</div>
                 <div className="text-sm text-muted-foreground">
-                  {transaction.reference || t("reason-not-provided")}
+                  {getCompensationReason()}
                 </div>
               </div>
             </div>
