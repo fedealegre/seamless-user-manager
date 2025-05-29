@@ -1,4 +1,3 @@
-
 export const transactionTranslations = {
   en: {
     'transactions': 'Transactions',
@@ -60,8 +59,10 @@ export const transactionTranslations = {
     'compensation-type': 'Compensation Type',
     'credit': 'Credit',
     'adjustment': 'Adjustment',
+    'debit': 'Debit',
     'credit-description': 'Add funds to the customer\'s wallet as a compensation',
     'adjustment-description': 'Adjust the customer\'s wallet balance for reconciliation',
+    'debit-description': 'Debit funds from the customer\'s wallet',
     'customer-id': 'Customer ID',
     'compensation-processed': 'Compensation Processed',
     'compensation-transaction-created': 'Compensation transaction has been created successfully',
@@ -154,8 +155,10 @@ export const transactionTranslations = {
     'compensation-type': 'Tipo de Compensación',
     'credit': 'Crédito',
     'adjustment': 'Ajuste',
+    'debit': 'Débito',
     'credit-description': 'Añadir fondos a la billetera del cliente como compensación',
     'adjustment-description': 'Ajustar el saldo de la billetera del cliente para conciliación',
+    'debit-description': 'Debita fondos de la billetera del cliente',
     'customer-id': 'ID del Cliente',
     'compensation-processed': 'Compensación Procesada',
     'compensation-transaction-created': 'La transacción de compensación se ha creado con éxito',

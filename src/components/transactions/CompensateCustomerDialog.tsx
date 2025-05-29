@@ -60,6 +60,18 @@ const CompensateCustomerDialog: React.FC<CompensateCustomerDialogProps> = ({
     if (isNaN(amountValue)) return 'credit';
     return amountValue >= 0 ? 'credit' : 'adjustment';
   }, [amount]);
+
+  // Get compensation type display info
+  const compensationTypeInfo = useMemo(() => {
+    const amountValue = parseFloat(amount);
+    if (isNaN(amountValue)) return { type: t("credit"), description: t("credit-description") };
+    
+    if (amountValue >= 0) {
+      return { type: t("credit"), description: t("credit-description") };
+    } else {
+      return { type: t("debit"), description: t("debit-description") };
+    }
+  }, [amount, t]);
   
   // Reset form when dialog opens
   useEffect(() => {
@@ -173,13 +185,10 @@ const CompensateCustomerDialog: React.FC<CompensateCustomerDialogProps> = ({
             {amount && !isNaN(parseFloat(amount)) && (
               <div className="text-sm text-muted-foreground bg-muted/50 p-2 rounded-md">
                 <div className="font-medium">
-                  {t("compensation-type")}: {compensationType === 'credit' ? t("credit") : t("adjustment")}
+                  {t("compensation-type")}: {compensationTypeInfo.type}
                 </div>
                 <div className="text-xs mt-1">
-                  {compensationType === 'credit' 
-                    ? t("credit-description") 
-                    : t("adjustment-description")
-                  }
+                  {compensationTypeInfo.description}
                 </div>
               </div>
             )}
