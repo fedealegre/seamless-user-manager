@@ -1,10 +1,11 @@
+
 import React from "react";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { CompanySearchConfig } from "@/lib/api/types/company-config";
-import { Form, FormField, FormItem, FormLabel, FormControl } from "@/components/ui/form";
+import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
 import { translate } from "@/lib/translations";
@@ -59,6 +60,14 @@ const UserSearchBar: React.FC<UserSearchBarProps> = ({
     return true;
   };
 
+  // Helper function to show help text for name and surname fields
+  const shouldShowHelpText = (fieldId: string, value: string) => {
+    if (fieldId === 'name' || fieldId === 'surname') {
+      return value && value.trim().length > 0 && value.trim().length < 3;
+    }
+    return false;
+  };
+
   const handleSubmit = (data: Record<string, string>) => {
     // Filter out empty values
     const filteredParams = Object.keys(data).reduce((acc, key) => {
@@ -111,6 +120,11 @@ const UserSearchBar: React.FC<UserSearchBarProps> = ({
                           />
                         </div>
                       </FormControl>
+                      {shouldShowHelpText(field.id, formField.value) && (
+                        <p className="text-sm text-muted-foreground mt-1">
+                          Debe incluir al menos 3 caracteres para realizar la búsqueda
+                        </p>
+                      )}
                     </FormItem>
                   )}
                 />
