@@ -16,12 +16,10 @@ import { translate } from "@/lib/translations";
 
 // Import new component parts
 import CustomerInfo from "./compensation/CustomerInfo";
-import CompensationType from "./compensation/CompensationType";
 import OriginWalletSelector from "./compensation/OriginWalletSelector";
 import AmountInput from "./compensation/AmountInput";
 import ReasonInput from "./compensation/ReasonInput";
 import NoMatchingWalletsAlert from "./compensation/NoMatchingWalletsAlert";
-import { validateAmount } from "./compensation/validation";
 
 interface CompensateCustomerDialogProps {
   transaction: Transaction;
@@ -40,12 +38,10 @@ const CompensateCustomerDialog: React.FC<CompensateCustomerDialogProps> = ({
 }) => {
   const [amount, setAmount] = useState("");
   const [reason, setReason] = useState("");
-  const [compensationType, setCompensationType] = useState<'credit' | 'adjustment' | "">("");
   const [originWalletId, setOriginWalletId] = useState<string>("");
   const [errors, setErrors] = useState<{
     amount?: string; 
     reason?: string; 
-    compensationType?: string;
     originWalletId?: string;
   }>({});
   
@@ -57,33 +53,48 @@ const CompensateCustomerDialog: React.FC<CompensateCustomerDialogProps> = ({
     const customerCurrency = transaction.currency || "USD";
     return companyWallets.filter(wallet => wallet.currency === customerCurrency);
   }, [companyWallets, transaction.currency]);
+
+  // Determine compensation type automatically based on amount sign
+  const compensationType = useMemo(() => {
+    const amountValue = parseFloat(amount);
+    if (isNaN(amountValue)) return 'credit';
+    return amountValue >= 0 ? 'credit' : 'adjustment';
+  }, [amount]);
   
   // Reset form when dialog opens
   useEffect(() => {
     if (open) {
       setAmount("");
       setReason("");
-      setCompensationType("");
       setOriginWalletId(matchingCurrencyWallets.length === 1 ? matchingCurrencyWallets[0].id.toString() : "");
       setErrors({});
     }
   }, [open, matchingCurrencyWallets]);
 
+  const validateAmount = (value: string): string | undefined => {
+    if (!value.trim() || isNaN(Number(value))) {
+      return "please-enter-valid-amount";
+    }
+    
+    const amountValue = Number(value);
+    
+    // Allow both positive and negative values
+    if (amountValue === 0) {
+      return "amount-cannot-be-zero";
+    }
+    
+    return undefined;
+  };
+
   const handleSubmit = () => {
     const newErrors: {
       amount?: string; 
       reason?: string; 
-      compensationType?: string;
       originWalletId?: string;
     } = {};
     
-    // Validate compensation type
-    if (!compensationType) {
-      newErrors.compensationType = "please-select-compensation-type";
-    }
-    
-    // Validate amount based on compensation type
-    const amountError = validateAmount(amount, compensationType as 'credit' | 'adjustment');
+    // Validate amount
+    const amountError = validateAmount(amount);
     if (amountError) {
       newErrors.amount = amountError;
     }
@@ -103,21 +114,13 @@ const CompensateCustomerDialog: React.FC<CompensateCustomerDialogProps> = ({
       return;
     }
     
-    onSubmit(amount, reason, compensationType as 'credit' | 'adjustment', parseInt(originWalletId));
+    onSubmit(amount, reason, compensationType, parseInt(originWalletId));
   };
 
   const handleAmountChange = (newAmount: string) => {
     setAmount(newAmount);
-    const error = validateAmount(newAmount, compensationType as 'credit' | 'adjustment');
+    const error = validateAmount(newAmount);
     setErrors(prev => ({ ...prev, amount: error }));
-  };
-
-  const handleCompensationTypeChange = (value: string) => {
-    setCompensationType(value as 'credit' | 'adjustment');
-    
-    // Re-validate amount when compensation type changes
-    const error = validateAmount(amount, value as 'credit' | 'adjustment');
-    setErrors(prev => ({ ...prev, amount: error, compensationType: undefined }));
   };
 
   const handleOriginWalletChange = (value: string) => {
@@ -150,13 +153,6 @@ const CompensateCustomerDialog: React.FC<CompensateCustomerDialogProps> = ({
           {!hasMatchingWallets && <NoMatchingWalletsAlert />}
           
           <div className="space-y-4">
-            <CompensationType 
-              value={compensationType}
-              onChange={handleCompensationTypeChange}
-              error={errors.compensationType}
-              disabled={!hasMatchingWallets}
-            />
-            
             <OriginWalletSelector 
               wallets={matchingCurrencyWallets}
               value={originWalletId}
@@ -172,6 +168,21 @@ const CompensateCustomerDialog: React.FC<CompensateCustomerDialogProps> = ({
               error={errors.amount}
               disabled={!hasMatchingWallets}
             />
+
+            {/* Show compensation type indicator */}
+            {amount && !isNaN(parseFloat(amount)) && (
+              <div className="text-sm text-muted-foreground bg-muted/50 p-2 rounded-md">
+                <div className="font-medium">
+                  {t("compensation-type")}: {compensationType === 'credit' ? t("credit") : t("adjustment")}
+                </div>
+                <div className="text-xs mt-1">
+                  {compensationType === 'credit' 
+                    ? t("credit-description") 
+                    : t("adjustment-description")
+                  }
+                </div>
+              </div>
+            )}
             
             <ReasonInput 
               value={reason}

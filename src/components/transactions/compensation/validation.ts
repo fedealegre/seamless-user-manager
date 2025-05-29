@@ -4,17 +4,18 @@
  */
 
 /**
- * Validates the compensation amount based on the compensation type
+ * Validates the compensation amount - now allows both positive and negative values
  */
-export const validateAmount = (value: string, type: 'credit' | 'adjustment' | ""): string | undefined => {
+export const validateAmount = (value: string): string | undefined => {
   if (!value.trim() || isNaN(Number(value))) {
     return "please-enter-valid-amount";
   }
   
   const amountValue = Number(value);
   
-  if (type === 'credit' && amountValue <= 0) {
-    return "credit-must-be-positive";
+  // Allow both positive and negative values, but not zero
+  if (amountValue === 0) {
+    return "amount-cannot-be-zero";
   }
   
   return undefined;
