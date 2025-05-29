@@ -37,7 +37,7 @@ export const transactionTranslations = {
     'tk_pay_req': 'TK Pay Request',
     'tk_pay_req_cash_out': 'TK Pay Request Cash Out',
     'compensate': 'Compensate',
-    'compensacion': 'Compensacion', // Add this new translation
+    'compensacion': 'Compensacion',
     'compensate-customer': 'Compensate Customer',
     'only-compensator-can-compensate': 'Only users with the compensator role can create compensations',
     'only-compensator-can-change-status': 'Only users with the compensator role can change transaction status',
@@ -79,7 +79,19 @@ export const transactionTranslations = {
     'status-updated': 'Status Updated',
     'transaction-status-changed-success': 'Transaction status has been changed successfully',
     'status-change-failed': 'Status Change Failed',
-    'only-pending-transactions': 'Only pending transactions can have their status changed'
+    'only-pending-transactions': 'Only pending transactions can have their status changed',
+    // New translations for TransactionDetails
+    'transaction-details-title': 'Transaction Details',
+    'transaction-details-description': 'Complete information for this transaction',
+    'basic-information': 'Basic Information',
+    'financial-information': 'Financial Information',
+    'account-information': 'Account Information',
+    'date-and-time': 'Date and Time',
+    'transaction-created-date': 'Transaction Created',
+    'compensation-reason': 'Compensation Reason',
+    'compensation-details': 'Compensation Details',
+    'unknown': 'Unknown',
+    'reason-not-provided': 'No reason provided for this compensation'
   },
   es: {
     'transactions': 'Transacciones',
@@ -118,7 +130,7 @@ export const transactionTranslations = {
     'tk_pay_req': 'Solicitud de Pago TK',
     'tk_pay_req_cash_out': 'Solicitud de Pago TK Salida',
     'compensate': 'Compensación',
-    'compensacion': 'Compensacion', // Add this new translation
+    'compensacion': 'Compensacion',
     'compensate-customer': 'Compensar Cliente',
     'only-compensator-can-compensate': 'Solo los usuarios con el rol de compensador pueden crear compensaciones',
     'only-compensator-can-change-status': 'Solo los usuarios con el rol de compensador pueden cambiar el estado de las transacciones',
@@ -160,6 +172,18 @@ export const transactionTranslations = {
     'status-updated': 'Estado Actualizado',
     'transaction-status-changed-success': 'El estado de la transacción ha sido cambiado con éxito',
     'status-change-failed': 'Cambio de Estado Fallido',
-    'only-pending-transactions': 'Solo se puede cambiar el estado de las transacciones pendientes'
+    'only-pending-transactions': 'Solo se puede cambiar el estado de las transacciones pendientes',
+    // New translations for TransactionDetails
+    'transaction-details-title': 'Detalles de la Transacción',
+    'transaction-details-description': 'Información completa de esta transacción',
+    'basic-information': 'Información Básica',
+    'financial-information': 'Información Financiera',
+    'account-information': 'Información de Cuenta',
+    'date-and-time': 'Fecha y Hora',
+    'transaction-created-date': 'Fecha de Creación',
+    'compensation-reason': 'Razón de la Compensación',
+    'compensation-details': 'Detalles de la Compensación',
+    'unknown': 'Desconocido',
+    'reason-not-provided': 'No se proporcionó razón para esta compensación'
   }
 };

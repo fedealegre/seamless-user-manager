@@ -17,7 +17,8 @@ import {
   Wallet,
   ArrowRight,
   ArrowLeft,
-  AlertCircle
+  AlertCircle,
+  MessageSquare
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
@@ -48,13 +49,17 @@ const TransactionDetails: React.FC<TransactionDetailsProps> = ({
     }).format(amount);
   };
 
+  // Check if this is a compensation transaction
+  const isCompensation = transaction.transactionType?.toLowerCase() === 'compensacion' || 
+                         transaction.transactionType?.toLowerCase() === 'compensation';
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>{t("transaction-details")}</DialogTitle>
+          <DialogTitle>{t("transaction-details-title")}</DialogTitle>
           <DialogDescription>
-            {t("complete-information-for-transaction")} {transaction.id}
+            {t("transaction-details-description")} {transaction.id}
           </DialogDescription>
         </DialogHeader>
         
@@ -65,11 +70,11 @@ const TransactionDetails: React.FC<TransactionDetailsProps> = ({
             {getTranslatedStatusBadge(transaction.status, settings.language)}
           </div>
           
-          {/* Transaction ID Info */}
+          {/* Basic Information */}
           <div className="space-y-1">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <FileText size={14} />
-              <span>{t("transaction-information")}</span>
+              <span>{t("basic-information")}</span>
             </div>
             
             <div className="grid grid-cols-2 gap-2 p-3 border rounded-md">
@@ -106,11 +111,11 @@ const TransactionDetails: React.FC<TransactionDetailsProps> = ({
             </div>
           </div>
           
-          {/* Transaction Details */}
+          {/* Financial Information */}
           <div className="space-y-1">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Tag size={14} />
-              <span>{t("transaction-details")}</span>
+              <DollarSign size={14} />
+              <span>{t("financial-information")}</span>
             </div>
             
             <div className="grid grid-cols-2 gap-2 p-3 border rounded-md">
@@ -130,11 +135,11 @@ const TransactionDetails: React.FC<TransactionDetailsProps> = ({
             </div>
           </div>
           
-          {/* User & Wallet Info */}
+          {/* Account Information */}
           <div className="space-y-1">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <User size={14} />
-              <span>{t("user-wallet-information")}</span>
+              <span>{t("account-information")}</span>
             </div>
             
             <div className="grid grid-cols-2 gap-2 p-3 border rounded-md">
@@ -146,17 +151,17 @@ const TransactionDetails: React.FC<TransactionDetailsProps> = ({
             </div>
           </div>
           
-          {/* Date Information */}
+          {/* Date and Time Information */}
           <div className="space-y-1">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Calendar size={14} />
-              <span>{t("date-information")}</span>
+              <span>{t("date-and-time")}</span>
             </div>
             
             <div className="grid grid-cols-2 gap-2 p-3 border rounded-md">
               {transaction.date && (
                 <>
-                  <div className="text-sm font-medium">{t("transaction-date")}</div>
+                  <div className="text-sm font-medium">{t("transaction-created-date")}</div>
                   <div className="text-sm">
                     {formatDateTime(new Date(transaction.date))}
                   </div>
@@ -182,6 +187,23 @@ const TransactionDetails: React.FC<TransactionDetailsProps> = ({
               )}
             </div>
           </div>
+          
+          {/* Compensation Details - Only show for compensation transactions */}
+          {isCompensation && (
+            <div className="space-y-1">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <MessageSquare size={14} />
+                <span>{t("compensation-details")}</span>
+              </div>
+              
+              <div className="p-3 border rounded-md bg-blue-50/50">
+                <div className="text-sm font-medium mb-2">{t("compensation-reason")}</div>
+                <div className="text-sm text-muted-foreground">
+                  {transaction.reference || t("reason-not-provided")}
+                </div>
+              </div>
+            </div>
+          )}
           
           {/* Flow Visualization */}
           {(transaction.transactionType === 'TRANSFER_CASH_IN' || transaction.transactionType === 'TRANSFER_CASH_OUT') && (
