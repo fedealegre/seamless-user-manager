@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -28,6 +27,37 @@ const UserSearchBar: React.FC<UserSearchBarProps> = ({
       return acc;
     }, {} as Record<string, string>),
   });
+
+  // Watch all form values to validate button state
+  const watchedValues = form.watch();
+
+  // Validation function to determine if search button should be enabled
+  const isSearchButtonEnabled = () => {
+    const values = watchedValues;
+    
+    // Check if any field has content
+    const hasAnyContent = Object.keys(values).some(key => values[key] && values[key].trim() !== "");
+    
+    if (!hasAnyContent) {
+      return false;
+    }
+
+    // Check specific field requirements
+    for (const [fieldId, value] of Object.entries(values)) {
+      if (value && value.trim() !== "") {
+        // Name and surname require at least 3 characters
+        if ((fieldId === 'name' || fieldId === 'surname') && value.trim().length < 3) {
+          return false;
+        }
+        // Other fields (id, email, phone, cellPhone) require at least 1 character
+        if (['id', 'email', 'phone', 'cellPhone'].includes(fieldId) && value.trim().length < 1) {
+          return false;
+        }
+      }
+    }
+
+    return true;
+  };
 
   const handleSubmit = (data: Record<string, string>) => {
     // Filter out empty values
@@ -88,7 +118,11 @@ const UserSearchBar: React.FC<UserSearchBarProps> = ({
             </div>
             
             <div className="flex justify-end">
-              <Button type="submit" className="w-full md:w-auto">
+              <Button 
+                type="submit" 
+                className="w-full md:w-auto"
+                disabled={!isSearchButtonEnabled()}
+              >
                 <Search className="mr-2 h-4 w-4" />
                 {t("search-users-button")}
               </Button>
