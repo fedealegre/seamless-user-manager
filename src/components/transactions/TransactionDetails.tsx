@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Transaction } from "@/lib/api/types";
 import {
@@ -61,7 +60,7 @@ const TransactionDetails: React.FC<TransactionDetailsProps> = ({
 
     // Determine if it's credit or debit based on amount
     const amount = transaction.amount || 0;
-    const compensationType = amount >= 0 ? t("credit") : t("debit");
+    const compensationType = amount >= 0 ? "Crédito" : "Débito";
     
     return `${compensationType}, ${transaction.reference}`;
   };
