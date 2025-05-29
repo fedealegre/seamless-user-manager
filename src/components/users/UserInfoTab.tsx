@@ -10,7 +10,7 @@ import { userService } from "@/lib/api/user-service";
 import { useQueryClient } from "@tanstack/react-query";
 import { formatFieldName, parseDate } from "@/lib/utils";
 import { formatBirthDate } from "@/lib/date-utils";
-import { useUserFieldSettings } from "@/hooks/use-user-field-settings";
+import { useStaticFieldSettings } from "@/hooks/use-static-field-settings";
 import { Key } from "lucide-react";
 import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
 import { translate } from "@/lib/translations";
@@ -23,7 +23,7 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [showResetPasswordDialog, setShowResetPasswordDialog] = useState(false);
   const queryClient = useQueryClient();
-  const { isFieldVisible, isFieldEditable, isLoaded } = useUserFieldSettings();
+  const { isFieldVisible, isFieldEditable } = useStaticFieldSettings();
   const { settings } = useBackofficeSettings();
   const t = (key: string) => translate(key, settings.language);
 
@@ -117,12 +117,12 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
 
   // Field visibility check helper
   const shouldRenderField = (fieldName: string) => {
-    return isLoaded && isFieldVisible(fieldName);
+    return isFieldVisible(fieldName);
   };
 
   // Check if the edit button should be visible
   // There should be at least one editable field
-  const hasEditableFields = isLoaded && [
+  const hasEditableFields = [
     "name", "surname", "username", "email", "cellPhone", 
     "birthDate", "nationality", "gender", "language", "region",
     "additionalInfo"

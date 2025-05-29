@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,7 +16,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { formatFieldName, formatDateForInput, parseDate } from "@/lib/utils";
 import { X, PlusCircle } from 'lucide-react';
-import { useUserFieldSettings } from "@/hooks/use-user-field-settings";
+import { useStaticFieldSettings } from "@/hooks/use-static-field-settings";
 import {
   Select,
   SelectContent,
@@ -101,7 +100,7 @@ export const EditUserInfoForm: React.FC<EditUserInfoFormProps> = ({
   onCancel,
 }) => {
   const { toast } = useToast();
-  const { isFieldEditable, isLoaded } = useUserFieldSettings();
+  const { isFieldEditable } = useStaticFieldSettings();
   const { settings } = useBackofficeSettings();
   const t = (key: string) => translate(key, settings.language);
   const [additionalFields, setAdditionalFields] = useState<AdditionalInfoField[]>(
@@ -142,13 +141,6 @@ export const EditUserInfoForm: React.FC<EditUserInfoFormProps> = ({
     resolver: zodResolver(userFormSchema),
     defaultValues: createDefaultValues(),
   });
-  
-  // Update form values when field settings change
-  useEffect(() => {
-    if (isLoaded) {
-      form.reset(createDefaultValues());
-    }
-  }, [isLoaded]);
 
   const isAdditionalInfoEditable = isFieldEditable("additionalInfo");
 
@@ -203,10 +195,6 @@ export const EditUserInfoForm: React.FC<EditUserInfoFormProps> = ({
       });
     }
   };
-
-  if (!isLoaded) {
-    return <div>{t("loading-form-settings")}</div>;
-  }
 
   return (
     <Form {...form}>
