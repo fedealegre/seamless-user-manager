@@ -89,12 +89,11 @@ export const commonTranslations = {
     
     // Dashboard
     'total-users': 'Total Users',
-    'active-users': 'Active Users',
-    'total-transactions': 'Total Transactions',
-    'total-amount': 'Total Amount',
+    'active-wallets': 'Active Wallets',
+    'recent-transactions': 'Recent Transactions',
+    'flagged-transactions': 'Flagged Transactions',
     'users-growth': 'Users Growth',
     'transactions-growth': 'Transactions Growth',
-    'recent-transactions': 'Recent Transactions',
     'user-registrations': 'User Registrations',
     'loading': 'Loading...',
     
@@ -171,7 +170,6 @@ export const commonTranslations = {
     'block-warning': ' This user will no longer be able to access the system.',
     'blocking': 'Blocking...',
     'cannot-block-without-id': 'Cannot block user without an ID',
-    'user-not-found': 'User not found.',
   },
   es: {
     'dashboard': 'Panel de Control',
@@ -262,12 +260,11 @@ export const commonTranslations = {
     
     // Dashboard
     'total-users': 'Total de Usuarios',
-    'active-users': 'Usuarios Activos',
-    'total-transactions': 'Total de Transacciones',
-    'total-amount': 'Monto Total',
+    'active-wallets': 'Billeteras Activas',
+    'recent-transactions': 'Transacciones Recientes',
+    'flagged-transactions': 'Transacciones Marcadas',
     'users-growth': 'Crecimiento de Usuarios',
     'transactions-growth': 'Crecimiento de Transacciones',
-    'recent-transactions': 'Transacciones Recientes',
     'user-registrations': 'Registros de Usuarios',
     'loading': 'Cargando...',
     
@@ -344,6 +341,5 @@ export const commonTranslations = {
     'block-warning': ' Este usuario ya no podrá acceder al sistema.',
     'blocking': 'Bloqueando...',
     'cannot-block-without-id': 'No se puede bloquear un usuario sin ID',
-    'user-not-found': 'Usuario no encontrado.',
   }
 };

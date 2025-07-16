@@ -11,9 +11,9 @@ const Dashboard = () => {
   const t = (key: string) => translate(key, settings.language);
   const { 
     totalUsers, 
-    activeUsers, 
-    totalTransactions, 
-    totalAmount,
+    activeWallets, 
+    recentTransactions, 
+    flaggedTransactions,
     isLoading 
   } = useDashboardStatistics();
 
@@ -53,14 +53,14 @@ const Dashboard = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              {t('active-users')}
+              {t('active-wallets')}
             </CardTitle>
             <Activity className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{activeUsers.toLocaleString()}</div>
+            <div className="text-2xl font-bold">{activeWallets.toLocaleString()}</div>
             <p className="text-xs text-muted-foreground">
-              +{Math.round((activeUsers * 0.05))} {t('user-registrations')}
+              +{Math.round((activeWallets * 0.05))} {t('user-registrations')}
             </p>
           </CardContent>
         </Card>
@@ -68,14 +68,14 @@ const Dashboard = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              {t('total-transactions')}
+              {t('recent-transactions')}
             </CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{totalTransactions.toLocaleString()}</div>
+            <div className="text-2xl font-bold">{recentTransactions.toLocaleString()}</div>
             <p className="text-xs text-muted-foreground">
-              +{Math.round((totalTransactions * 0.15))} {t('transactions-growth')}
+              +{Math.round((recentTransactions * 0.15))} {t('transactions-growth')}
             </p>
           </CardContent>
         </Card>
@@ -83,16 +83,16 @@ const Dashboard = () => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              {t('total-amount')}
+              {t('flagged-transactions')}
             </CardTitle>
             <DollarSign className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              ${totalAmount.toLocaleString()}
+              {flaggedTransactions.toLocaleString()}
             </div>
             <p className="text-xs text-muted-foreground">
-              +${Math.round((totalAmount * 0.12)).toLocaleString()} {t('transactions-growth')}
+              +{Math.round((flaggedTransactions * 0.12)).toLocaleString()} {t('transactions-growth')}
             </p>
           </CardContent>
         </Card>
