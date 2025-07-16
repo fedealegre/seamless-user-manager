@@ -116,93 +116,95 @@ export const ReorderBenefitsDialog: React.FC<ReorderBenefitsDialogProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col">
-        <DialogHeader className="flex-shrink-0">
+      <DialogContent className="max-w-5xl w-[90vw] h-[80vh] flex flex-col p-0 overflow-hidden">
+        <DialogHeader className="flex-shrink-0 p-6 pb-4">
           <DialogTitle>{t('reorder-benefits') || 'Reordenar Beneficios'}</DialogTitle>
           <DialogDescription>
             {t('reorder-benefits-description') || 'Arrastra y suelta los beneficios para cambiar su orden. Los cambios se guardarán al hacer clic en "Guardar Cambios".'}
           </DialogDescription>
         </DialogHeader>
 
-        <div className="flex-1 min-h-0">
-          <ScrollArea className="h-full pr-4">
-            <DragDropContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-              <Droppable droppableId="benefits">
-                {(provided, snapshot) => (
-                  <div
-                    {...provided.droppableProps}
-                    ref={provided.innerRef}
-                    className={`space-y-2 min-h-full ${
-                      snapshot.isDraggingOver ? 'bg-blue-50' : ''
-                    }`}
-                  >
-                    {orderedBenefits.map((benefit, index) => (
-                      <Draggable
-                        key={benefit.id}
-                        draggableId={benefit.id}
-                        index={index}
-                        isDragDisabled={isDragDisabled}
-                      >
-                        {(provided, snapshot) => (
-                          <div
-                            ref={provided.innerRef}
-                            {...provided.draggableProps}
-                            className={`flex items-center gap-3 p-4 border rounded-lg bg-white transition-all ${
-                              snapshot.isDragging 
-                                ? 'shadow-lg rotate-2 border-blue-300' 
-                                : 'shadow-sm hover:shadow-md'
-                            } ${snapshot.draggingOver ? 'border-blue-200' : ''}`}
-                            style={{
-                              ...provided.draggableProps.style,
-                              transform: snapshot.isDragging 
-                                ? `${provided.draggableProps.style?.transform} rotate(2deg)` 
-                                : provided.draggableProps.style?.transform,
-                            }}
-                          >
+        <div className="flex-1 overflow-hidden px-6">
+          <ScrollArea className="h-full">
+            <div className="pr-4">
+              <DragDropContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+                <Droppable droppableId="benefits">
+                  {(provided, snapshot) => (
+                    <div
+                      {...provided.droppableProps}
+                      ref={provided.innerRef}
+                      className={`space-y-2 min-h-full pb-4 ${
+                        snapshot.isDraggingOver ? 'bg-blue-50' : ''
+                      }`}
+                    >
+                      {orderedBenefits.map((benefit, index) => (
+                        <Draggable
+                          key={benefit.id}
+                          draggableId={benefit.id}
+                          index={index}
+                          isDragDisabled={isDragDisabled}
+                        >
+                          {(provided, snapshot) => (
                             <div
-                              {...provided.dragHandleProps}
-                              className="flex items-center justify-center w-8 h-8 text-gray-400 hover:text-gray-600 cursor-grab active:cursor-grabbing"
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              className={`flex items-center gap-3 p-4 border rounded-lg bg-white transition-all ${
+                                snapshot.isDragging 
+                                  ? 'shadow-lg rotate-2 border-blue-300 z-50' 
+                                  : 'shadow-sm hover:shadow-md'
+                              } ${snapshot.draggingOver ? 'border-blue-200' : ''}`}
+                              style={{
+                                ...provided.draggableProps.style,
+                                transform: snapshot.isDragging 
+                                  ? `${provided.draggableProps.style?.transform} rotate(2deg)` 
+                                  : provided.draggableProps.style?.transform,
+                              }}
                             >
-                              <GripVertical className="h-5 w-5" />
-                            </div>
-                            
-                            <div className="flex items-center justify-center w-8 h-8 bg-primary text-primary-foreground rounded-full text-sm font-semibold">
-                              {index + 1}
-                            </div>
+                              <div
+                                {...provided.dragHandleProps}
+                                className="flex items-center justify-center w-8 h-8 text-gray-400 hover:text-gray-600 cursor-grab active:cursor-grabbing"
+                              >
+                                <GripVertical className="h-5 w-5" />
+                              </div>
+                              
+                              <div className="flex items-center justify-center w-8 h-8 bg-primary text-primary-foreground rounded-full text-sm font-semibold flex-shrink-0">
+                                {index + 1}
+                              </div>
 
-                            {benefit.imagen && (
-                              <img 
-                                src={benefit.imagen} 
-                                alt={benefit.titulo}
-                                className="w-12 h-12 object-cover rounded-lg flex-shrink-0"
-                              />
-                            )}
+                              {benefit.imagen && (
+                                <img 
+                                  src={benefit.imagen} 
+                                  alt={benefit.titulo}
+                                  className="w-12 h-12 object-cover rounded-lg flex-shrink-0"
+                                />
+                              )}
 
-                            <div className="flex-1 min-w-0">
-                              <div className="font-medium truncate">{benefit.titulo}</div>
-                              <div className="text-sm text-muted-foreground truncate">{benefit.categoria}</div>
-                            </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="font-medium truncate">{benefit.titulo}</div>
+                                <div className="text-sm text-muted-foreground truncate">{benefit.categoria}</div>
+                              </div>
 
-                            <div className="text-sm font-medium flex-shrink-0">
-                              {benefit.valorPorcentaje}%
-                            </div>
+                              <div className="text-sm font-medium flex-shrink-0 mr-4">
+                                {benefit.valorPorcentaje}%
+                              </div>
 
-                            <div className="flex-shrink-0">
-                              {getStatusBadge(benefit.estado)}
+                              <div className="flex-shrink-0">
+                                {getStatusBadge(benefit.estado)}
+                              </div>
                             </div>
-                          </div>
-                        )}
-                      </Draggable>
-                    ))}
-                    {provided.placeholder}
-                  </div>
-                )}
-              </Droppable>
-            </DragDropContext>
+                          )}
+                        </Draggable>
+                      ))}
+                      {provided.placeholder}
+                    </div>
+                  )}
+                </Droppable>
+              </DragDropContext>
+            </div>
           </ScrollArea>
         </div>
 
-        <DialogFooter className="flex-shrink-0 mt-4">
+        <DialogFooter className="flex-shrink-0 p-6 pt-4 border-t">
           <Button
             variant="outline"
             onClick={() => onOpenChange(false)}
