@@ -1,3 +1,4 @@
+
 import { User, Wallet, Transaction, CompensationRequest, ResetPasswordRequest, ResetPasswordResponse, WalletUserAssociation } from "../types";
 import { UserService, ChangeTransactionStatusRequest } from "./user-service-interface";
 
@@ -9,7 +10,7 @@ const mockUsers: User[] = [
     surname: "Doe",
     username: "johndoe",
     email: "john.doe@example.com",
-    phone: "123-456-7890",
+    phoneNumber: "123-456-7890",
     cellPhone: "987-654-3210",
     companyId: 1,
     blocked: false,
@@ -22,7 +23,7 @@ const mockUsers: User[] = [
     surname: "Smith",
     username: "janesmith",
     email: "jane.smith@example.com",
-    phone: "456-789-0123",
+    phoneNumber: "456-789-0123",
     cellPhone: "654-321-0987",
     companyId: 1,
     blocked: true,
@@ -35,7 +36,7 @@ const mockUsers: User[] = [
     surname: "Johnson",
     username: "alicej",
     email: "alice.johnson@example.com",
-    phone: "789-012-3456",
+    phoneNumber: "789-012-3456",
     cellPhone: "321-098-7654",
     companyId: 2,
     blocked: false,
@@ -48,7 +49,7 @@ const mockUsers: User[] = [
     surname: "Williams",
     username: "bobw",
     email: "bob.williams@example.com",
-    phone: "012-345-6789",
+    phoneNumber: "012-345-6789",
     cellPhone: "098-765-4321",
     companyId: 2,
     blocked: false,
@@ -61,7 +62,7 @@ const mockUsers: User[] = [
     surname: "Brown",
     username: "charlieb",
     email: "charlie.brown@example.com",
-    phone: "345-678-9012",
+    phoneNumber: "345-678-9012",
     cellPhone: "765-432-1098",
     companyId: 1,
     blocked: false,
@@ -74,7 +75,7 @@ const mockUsers: User[] = [
     surname: "Jones",
     username: "davidj",
     email: "david.jones@example.com",
-    phone: "678-901-2345",
+    phoneNumber: "678-901-2345",
     cellPhone: "432-109-8765",
     companyId: 2,
     blocked: true,
@@ -87,7 +88,7 @@ const mockUsers: User[] = [
     surname: "Davis",
     username: "eved",
     email: "eve.davis@example.com",
-    phone: "901-234-5678",
+    phoneNumber: "901-234-5678",
     cellPhone: "109-876-5432",
     companyId: 1,
     blocked: false,
@@ -100,7 +101,7 @@ const mockUsers: User[] = [
     surname: "Guarin",
     username: "wilsong",
     email: "wilson.guarin@globant.com",
-    phone: "901-234-5678",
+    phoneNumber: "901-234-5678",
     cellPhone: "109-876-5432",
     companyId: 1,
     blocked: false,
@@ -113,7 +114,7 @@ const mockUsers: User[] = [
     surname: "Diaz",
     username: "laurad",
     email: "laura.diaz@globant.com",
-    phone: "901-234-5678",
+    phoneNumber: "901-234-5678",
     cellPhone: "109-876-5432",
     companyId: 1,
     blocked: false,
@@ -131,18 +132,18 @@ const mockWallets: Wallet[] = [
 ];
 
 const mockWalletUserAssociations: WalletUserAssociation[] = [
-  { walletId: 1, userId: 1, isOwner: true },
-  { walletId: 2, userId: 1, isOwner: false },
-  { walletId: 4, userId: 4, isOwner: true },
-  { walletId: 5, userId: 4, isOwner: false },
+  { walletId: 1, userId: "1", associationDate: "2024-01-01", isOwner: true },
+  { walletId: 2, userId: "1", associationDate: "2024-01-02", isOwner: false },
+  { walletId: 4, userId: "4", associationDate: "2024-01-03", isOwner: true },
+  { walletId: 5, userId: "4", associationDate: "2024-01-04", isOwner: false },
 ];
 
 const mockTransactions: Transaction[] = [
-  { id: 1, walletId: 1, amount: 100, type: "deposit", date: new Date(), description: "Initial deposit", status: "confirmed" },
-  { id: 2, walletId: 1, amount: -50, type: "withdrawal", date: new Date(), description: "Grocery shopping", status: "confirmed" },
-  { id: 3, walletId: 2, amount: 200, type: "deposit", date: new Date(), description: "Bonus payment", status: "pending" },
-  { id: 4, walletId: 4, amount: 50, type: "deposit", date: new Date(), description: "Initial deposit", status: "confirmed" },
-  { id: 5, walletId: 5, amount: -10, type: "withdrawal", date: new Date(), description: "Coffee", status: "confirmed" },
+  { id: 1, customerId: "1", walletId: "1", amount: 100, type: "deposit", date: "2024-01-01", additionalInfo: { description: "Initial deposit" }, status: "confirmed" },
+  { id: 2, customerId: "1", walletId: "1", amount: -50, type: "withdrawal", date: "2024-01-01", additionalInfo: { description: "Grocery shopping" }, status: "confirmed" },
+  { id: 3, customerId: "1", walletId: "2", amount: 200, type: "deposit", date: "2024-01-01", additionalInfo: { description: "Bonus payment" }, status: "pending" },
+  { id: 4, customerId: "4", walletId: "4", amount: 50, type: "deposit", date: "2024-01-01", additionalInfo: { description: "Initial deposit" }, status: "confirmed" },
+  { id: 5, customerId: "4", walletId: "5", amount: -10, type: "withdrawal", date: "2024-01-01", additionalInfo: { description: "Coffee" }, status: "confirmed" },
 ];
 
 export class MockUserService implements UserService {
@@ -182,7 +183,7 @@ export class MockUserService implements UserService {
             }
             break;
           case 'phone':
-            if (!user.phone || !user.phone.includes(trimmedValue)) {
+            if (!user.phoneNumber || !user.phoneNumber.includes(trimmedValue)) {
               return false;
             }
             break;
@@ -254,12 +255,12 @@ export class MockUserService implements UserService {
   }
 
   async resetPassword(request: ResetPasswordRequest): Promise<ResetPasswordResponse> {
-    console.log("Resetting password for user:", request.email);
+    console.log("Resetting password for user:", request.userId);
     return Promise.resolve({ success: true, message: "Password reset successfully." });
   }
 
   async getUserWallets(userId: string): Promise<Wallet[]> {
-    return Promise.resolve(this.wallets.filter(wallet => this.walletUserAssociations.some(association => association.walletId === wallet.id && association.userId === parseInt(userId))));
+    return Promise.resolve(this.wallets.filter(wallet => this.walletUserAssociations.some(association => association.walletId === wallet.id && association.userId === userId)));
   }
 
   async getCompanyWallets(): Promise<Wallet[]> {
@@ -271,7 +272,7 @@ export class MockUserService implements UserService {
   }
 
   async getWalletTransactions(walletId: string, userId: string): Promise<Transaction[]> {
-    return Promise.resolve(this.transactions.filter(t => t.walletId === parseInt(walletId)));
+    return Promise.resolve(this.transactions.filter(t => t.walletId === walletId));
   }
 
   async getAllTransactions(): Promise<Transaction[]> {
@@ -292,11 +293,12 @@ export class MockUserService implements UserService {
   async generateRandomTransaction(): Promise<Transaction> {
     const randomTransaction: Transaction = {
       id: Math.floor(Math.random() * 1000),
-      walletId: 1,
+      customerId: "1",
+      walletId: "1",
       amount: Math.floor(Math.random() * 100) - 50,
       type: "deposit",
-      date: new Date(),
-      description: "Random transaction",
+      date: new Date().toISOString(),
+      additionalInfo: { description: "Random transaction" },
       status: "confirmed",
     };
     return Promise.resolve(randomTransaction);
@@ -307,7 +309,7 @@ export class MockUserService implements UserService {
     transactionId: string,
     request: ChangeTransactionStatusRequest
   ): Promise<Transaction> {
-    const transactionIndex = this.transactions.findIndex((t) => t.id === parseInt(transactionId) && t.walletId === parseInt(walletId));
+    const transactionIndex = this.transactions.findIndex((t) => t.id === parseInt(transactionId) && t.walletId === walletId);
     if (transactionIndex === -1) {
       throw new Error("Transaction not found");
     }
@@ -320,13 +322,14 @@ export class MockUserService implements UserService {
     const userIds = this.walletUserAssociations
       .filter(association => association.walletId === parseInt(walletId))
       .map(association => association.userId);
-    return Promise.resolve(this.users.filter(user => userIds.includes(user.id)));
+    return Promise.resolve(this.users.filter(user => userIds.includes(user.id.toString())));
   }
 
   async addUserToWallet(walletId: string, userId: string, isOwner?: boolean): Promise<WalletUserAssociation> {
     const newAssociation: WalletUserAssociation = {
       walletId: parseInt(walletId),
-      userId: parseInt(userId),
+      userId: userId,
+      associationDate: new Date().toISOString(),
       isOwner: isOwner || false,
     };
     this.walletUserAssociations.push(newAssociation);
@@ -335,7 +338,7 @@ export class MockUserService implements UserService {
 
   async removeUserFromWallet(walletId: string, userId: string): Promise<void> {
     this.walletUserAssociations = this.walletUserAssociations.filter(
-      association => !(association.walletId === parseInt(walletId) && association.userId === parseInt(userId))
+      association => !(association.walletId === parseInt(walletId) && association.userId === userId)
     );
     return Promise.resolve();
   }

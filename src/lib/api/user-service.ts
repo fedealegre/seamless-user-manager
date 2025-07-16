@@ -31,8 +31,8 @@ class UserServiceWrapper implements UserService {
     // Store the block reason in userData before calling the original method
     const user = await this.mockUserService.getUserData(userId);
     await this.mockUserService.updateUser(userId, { blockReason: reason });
-    // Now call the original blockUser method
-    return this.mockUserService.blockUser(userId);
+    // Now call the original blockUser method with reason
+    return this.mockUserService.blockUser(userId, reason);
   }
 
   async unblockUser(userId: string): Promise<void> {
