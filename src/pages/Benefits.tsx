@@ -367,7 +367,7 @@ const Benefits: React.FC = () => {
     setFilters(newFilters);
   };
 
-  // Filter benefits based on filters
+  // Filter benefits based on filters for the table
   const filteredBenefits = mockBenefits.filter((benefit) => {
     if (filters.titulo && !benefit.titulo.toLowerCase().includes(filters.titulo.toLowerCase())) {
       return false;
@@ -431,10 +431,11 @@ const Benefits: React.FC = () => {
         onOpenChange={setBulkUploadDialogOpen}
       />
 
+      {/* Use all benefits (not filtered) for reordering */}
       <ReorderBenefitsDialog
         open={reorderDialogOpen}
         onOpenChange={setReorderDialogOpen}
-        benefits={filteredBenefits}
+        benefits={mockBenefits}
       />
     </div>
   );

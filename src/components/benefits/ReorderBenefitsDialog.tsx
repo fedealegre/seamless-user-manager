@@ -1,7 +1,21 @@
 
-import React, { useState } from "react";
-import { DragDropContext, Droppable, Draggable, DropResult } from "react-beautiful-dnd";
-import { GripVertical, Save, X } from "lucide-react";
+import React, { useState, useMemo } from "react";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { Save, X } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -10,10 +24,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Benefit } from "@/types/benefits";
+import { SortableBenefitItem } from "./SortableBenefitItem";
 import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
 import { translate } from "@/lib/translations";
 import { useToast } from "@/hooks/use-toast";
@@ -36,6 +49,19 @@ export const ReorderBenefitsDialog: React.FC<ReorderBenefitsDialogProps> = ({
   const [orderedBenefits, setOrderedBenefits] = useState<Benefit[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
+  // Configure sensors for better touch and mouse support
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  // Initialize benefits when dialog opens
   React.useEffect(() => {
     if (open && benefits.length > 0) {
       // Sort benefits by order when dialog opens
@@ -44,29 +70,28 @@ export const ReorderBenefitsDialog: React.FC<ReorderBenefitsDialogProps> = ({
     }
   }, [open, benefits]);
 
-  const handleDragEnd = (result: DropResult) => {
-    if (!result.destination) {
+  // Memoize the benefit IDs for SortableContext
+  const benefitIds = useMemo(() => orderedBenefits.map(benefit => benefit.id), [orderedBenefits]);
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (!over || active.id === over.id) {
       return;
     }
 
-    const sourceIndex = result.source.index;
-    const destinationIndex = result.destination.index;
+    setOrderedBenefits((benefits) => {
+      const oldIndex = benefits.findIndex(benefit => benefit.id === active.id);
+      const newIndex = benefits.findIndex(benefit => benefit.id === over.id);
 
-    if (sourceIndex === destinationIndex) {
-      return;
-    }
-
-    const items = Array.from(orderedBenefits);
-    const [reorderedItem] = items.splice(sourceIndex, 1);
-    items.splice(destinationIndex, 0, reorderedItem);
-
-    // Update order numbers based on new positions
-    const updatedItems = items.map((item, index) => ({
-      ...item,
-      orden: index + 1,
-    }));
-
-    setOrderedBenefits(updatedItems);
+      const newOrder = arrayMove(benefits, oldIndex, newIndex);
+      
+      // Update order numbers based on new positions
+      return newOrder.map((benefit, index) => ({
+        ...benefit,
+        orden: index + 1,
+      }));
+    });
   };
 
   const handleSave = async () => {
@@ -93,25 +118,13 @@ export const ReorderBenefitsDialog: React.FC<ReorderBenefitsDialogProps> = ({
     }
   };
 
-  const getStatusBadge = (estado: string) => {
-    const statusConfig = {
-      activo: { label: t('active'), className: "bg-green-100 text-green-800" },
-      inactivo: { label: t('inactive'), className: "bg-gray-100 text-gray-800" },
-      programado: { label: t('scheduled'), className: "bg-blue-100 text-blue-800" },
-      finalizado: { label: t('finished'), className: "bg-red-100 text-red-800" },
-    };
-
-    const config = statusConfig[estado as keyof typeof statusConfig];
-    return (
-      <Badge className={config.className}>
-        {config.label}
-      </Badge>
-    );
+  const handleCancel = () => {
+    onOpenChange(false);
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl w-[95vw] h-[85vh] flex flex-col">
+      <DialogContent className="max-w-4xl w-[95vw] max-h-[85vh] flex flex-col">
         <DialogHeader className="flex-shrink-0">
           <DialogTitle>{t('reorder-benefits') || 'Reordenar Beneficios'}</DialogTitle>
           <DialogDescription>
@@ -119,83 +132,30 @@ export const ReorderBenefitsDialog: React.FC<ReorderBenefitsDialogProps> = ({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="flex-1 overflow-hidden">
-          <ScrollArea className="h-full">
-            <div className="p-1">
-              <DragDropContext onDragEnd={handleDragEnd}>
-                <Droppable droppableId="benefits-list">
-                  {(provided, snapshot) => (
-                    <div
-                      {...provided.droppableProps}
-                      ref={provided.innerRef}
-                      className={`space-y-3 ${
-                        snapshot.isDraggingOver ? 'bg-blue-50 rounded-lg' : ''
-                      }`}
-                    >
-                      {orderedBenefits.map((benefit, index) => (
-                        <Draggable
-                          key={benefit.id}
-                          draggableId={benefit.id}
-                          index={index}
-                        >
-                          {(provided, snapshot) => (
-                            <div
-                              ref={provided.innerRef}
-                              {...provided.draggableProps}
-                              className={`flex items-center gap-3 p-4 border rounded-lg bg-white transition-all ${
-                                snapshot.isDragging 
-                                  ? 'shadow-lg border-blue-300 transform rotate-2' 
-                                  : 'shadow-sm hover:shadow-md'
-                              }`}
-                            >
-                              <div
-                                {...provided.dragHandleProps}
-                                className="flex items-center justify-center w-8 h-8 text-gray-400 hover:text-gray-600 cursor-grab active:cursor-grabbing transition-colors"
-                              >
-                                <GripVertical className="h-5 w-5" />
-                              </div>
-                              
-                              <div className="flex items-center justify-center w-8 h-8 bg-primary text-primary-foreground rounded-full text-sm font-semibold flex-shrink-0">
-                                {benefit.orden}
-                              </div>
-
-                              {benefit.imagen && (
-                                <img 
-                                  src={benefit.imagen} 
-                                  alt={benefit.titulo}
-                                  className="w-12 h-12 object-cover rounded-lg flex-shrink-0"
-                                />
-                              )}
-
-                              <div className="flex-1 min-w-0">
-                                <div className="font-medium truncate">{benefit.titulo}</div>
-                                <div className="text-sm text-muted-foreground truncate">{benefit.categoria}</div>
-                              </div>
-
-                              <div className="text-sm font-medium flex-shrink-0 mr-4">
-                                {benefit.valorPorcentaje}%
-                              </div>
-
-                              <div className="flex-shrink-0">
-                                {getStatusBadge(benefit.estado)}
-                              </div>
-                            </div>
-                          )}
-                        </Draggable>
-                      ))}
-                      {provided.placeholder}
-                    </div>
-                  )}
-                </Droppable>
-              </DragDropContext>
-            </div>
-          </ScrollArea>
+        <div className="flex-1 min-h-0 overflow-auto p-1">
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+          >
+            <SortableContext items={benefitIds} strategy={verticalListSortingStrategy}>
+              <div className="space-y-3">
+                {orderedBenefits.map((benefit, index) => (
+                  <SortableBenefitItem
+                    key={benefit.id}
+                    benefit={benefit}
+                    index={index}
+                  />
+                ))}
+              </div>
+            </SortableContext>
+          </DndContext>
         </div>
 
         <DialogFooter className="flex-shrink-0 border-t pt-4">
           <Button
             variant="outline"
-            onClick={() => onOpenChange(false)}
+            onClick={handleCancel}
             disabled={isLoading}
           >
             <X className="h-4 w-4 mr-2" />
