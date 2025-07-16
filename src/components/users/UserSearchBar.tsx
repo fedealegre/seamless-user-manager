@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -50,8 +49,15 @@ const UserSearchBar: React.FC<UserSearchBarProps> = ({
         if ((fieldId === 'name' || fieldId === 'surname') && value.trim().length < 3) {
           return false;
         }
-        // Other fields (id, email, phone, cellPhone) require at least 1 character
-        if (['id', 'email', 'phone', 'cellPhone'].includes(fieldId) && value.trim().length < 1) {
+        // Email requires exact match validation - must be a complete email format
+        if (fieldId === 'email' && value.trim().length > 0) {
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!emailRegex.test(value.trim())) {
+            return false;
+          }
+        }
+        // Other fields (id, phone, cellPhone) require at least 1 character
+        if (['id', 'phone', 'cellPhone'].includes(fieldId) && value.trim().length < 1) {
           return false;
         }
       }
@@ -64,6 +70,10 @@ const UserSearchBar: React.FC<UserSearchBarProps> = ({
   const shouldShowHelpText = (fieldId: string, value: string) => {
     if (fieldId === 'name' || fieldId === 'surname') {
       return value && value.trim().length > 0 && value.trim().length < 3;
+    }
+    if (fieldId === 'email' && value && value.trim().length > 0) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return !emailRegex.test(value.trim());
     }
     return false;
   };
@@ -95,6 +105,17 @@ const UserSearchBar: React.FC<UserSearchBarProps> = ({
     return fieldMappings[fieldId] || fieldId;
   };
 
+  // Helper function to get help text message
+  const getHelpText = (fieldId: string) => {
+    if (fieldId === 'name' || fieldId === 'surname') {
+      return "Debe incluir al menos 3 caracteres para realizar la búsqueda";
+    }
+    if (fieldId === 'email') {
+      return "Debe ingresar un correo electrónico válido y completo";
+    }
+    return "";
+  };
+
   return (
     <Card>
       <CardContent className="p-4">
@@ -122,7 +143,7 @@ const UserSearchBar: React.FC<UserSearchBarProps> = ({
                       </FormControl>
                       {shouldShowHelpText(field.id, formField.value) && (
                         <p className="text-sm text-muted-foreground mt-1">
-                          Debe incluir al menos 3 caracteres para realizar la búsqueda
+                          {getHelpText(field.id)}
                         </p>
                       )}
                     </FormItem>
