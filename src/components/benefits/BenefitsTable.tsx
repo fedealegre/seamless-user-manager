@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Edit, Trash2, ToggleLeft, ToggleRight } from "lucide-react";
 import {
@@ -15,7 +14,7 @@ import { Card } from "@/components/ui/card";
 import { Benefit, BenefitFilters } from "@/types/benefits";
 import { DeleteBenefitDialog } from "./DeleteBenefitDialog";
 import { EditBenefitDialog } from "./EditBenefitDialog";
-import { formatDate } from "@/lib/date-utils";
+import { formatDateTime } from "@/lib/date-utils";
 
 // Mock data
 const mockBenefits: Benefit[] = [
@@ -141,8 +140,8 @@ export const BenefitsTable: React.FC<BenefitsTableProps> = ({ filters }) => {
                     <TableCell>{benefit.valorPorcentaje}%</TableCell>
                     <TableCell>
                       <div className="text-sm">
-                        <div>{formatDate(benefit.fechaInicio)} -</div>
-                        <div>{formatDate(benefit.fechaFin)}</div>
+                        <div>{formatDateTime(benefit.fechaInicio, 'UTC', 'es-ES', { year: 'numeric', month: '2-digit', day: '2-digit' })} -</div>
+                        <div>{formatDateTime(benefit.fechaFin, 'UTC', 'es-ES', { year: 'numeric', month: '2-digit', day: '2-digit' })}</div>
                       </div>
                     </TableCell>
                     <TableCell>{getStatusBadge(benefit.estado)}</TableCell>
