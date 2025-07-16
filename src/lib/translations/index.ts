@@ -1,66 +1,55 @@
-
 import { commonTranslations } from './common';
-import { paginationTranslations } from './pagination';
-import { transactionTranslations } from './transactions';
-import { walletTranslations } from './wallets';
-import { userTranslations } from './users';
-import { roleTranslations } from './roles';
-import { antiFraudTranslations } from './anti-fraud';
-import { passwordResetTranslations } from './password-reset';
-import { profileTranslations } from './profile';
-import { loginTranslations } from './login';
+import { benefitsTranslations } from './benefits';
+import { dashboardTranslations } from './dashboard';
+import { usersTranslations } from './users';
+import { transactionsTranslations } from './transactions';
+import { walletsTranslations } from './wallets';
+import { antiFraudTranslations } from './antiFraud';
+import { auditLogsTranslations } from './auditLogs';
+import { backofficeOperatorsTranslations } from './backofficeOperators';
+import { companySettingsTranslations } from './companySettings';
+import { userFieldSettingsTranslations } from './userFieldSettings';
+import { backofficeSettingsTranslations } from './backofficeSettings';
+import { myProfileTranslations } from './myProfile';
+import { notFoundTranslations } from './notFound';
 
-// Combine all translation modules
-const translationModules = [
-  commonTranslations,
-  paginationTranslations,
-  transactionTranslations,
-  walletTranslations,
-  userTranslations,
-  roleTranslations,
-  antiFraudTranslations,
-  passwordResetTranslations,
-  profileTranslations,
-  loginTranslations
-];
-
-// Build the complete translations object
-const buildTranslations = () => {
-  const translations: Record<string, Record<string, string>> = {
-    en: {},
-    es: {}
-  };
-  
-  // Merge all translations from each module
-  translationModules.forEach(module => {
-    Object.keys(module).forEach(language => {
-      translations[language] = {
-        ...translations[language],
-        ...module[language]
-      };
-    });
-  });
-  
-  return translations;
+const translations = {
+  en: {
+    ...commonTranslations.en,
+    ...benefitsTranslations.en,
+    ...dashboardTranslations.en,
+    ...usersTranslations.en,
+    ...transactionsTranslations.en,
+    ...walletsTranslations.en,
+    ...antiFraudTranslations.en,
+    ...auditLogsTranslations.en,
+    ...backofficeOperatorsTranslations.en,
+    ...companySettingsTranslations.en,
+    ...userFieldSettingsTranslations.en,
+    ...backofficeSettingsTranslations.en,
+    ...myProfileTranslations.en,
+    ...notFoundTranslations.en,
+  },
+  es: {
+    ...commonTranslations.es,
+    ...benefitsTranslations.es,
+    ...dashboardTranslations.es,
+    ...usersTranslations.es,
+    ...transactionsTranslations.es,
+    ...walletsTranslations.es,
+    ...antiFraudTranslations.es,
+    ...auditLogsTranslations.es,
+    ...backofficeOperatorsTranslations.es,
+    ...companySettingsTranslations.es,
+    ...userFieldSettingsTranslations.es,
+    ...backofficeSettingsTranslations.es,
+    ...myProfileTranslations.es,
+    ...notFoundTranslations.es,
+  },
 };
 
-// The complete translations object
-const translations = buildTranslations();
-
-/**
- * Translates a key to the specified language
- * @param key The translation key
- * @param language The target language (defaults to 'en')
- * @returns The translated string or the key itself if no translation is found
- */
 export const translate = (key: string, language: string = 'en'): string => {
-  // If the key doesn't exist in the selected language, try to get it from English
-  if (!translations[language][key] && language !== 'en') {
-    return translations['en'][key] || key;
-  }
-
-  // Return the translated string or the key itself if no translation is found
-  return translations[language][key] || key;
+  const lang = language.startsWith('es') ? 'es' : 'en';
+  const translation = translations[lang as keyof typeof translations];
+  return (translation as any)?.[key] || key;
 };
-
-export default { translate };

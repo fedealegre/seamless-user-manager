@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -26,6 +25,9 @@ import UserFieldSettings from "./pages/UserFieldSettings";
 import BackofficeSettings from "./pages/BackofficeSettings";
 import MyProfilePage from "./pages/MyProfilePage";
 import NotFound from "./pages/NotFound";
+import Benefits from "./pages/Benefits";
+import Categories from "./pages/Categories";
+import MCCMaster from "./pages/MCCMaster";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -113,6 +115,13 @@ const App = () => (
                       </PrivateRoute>
                     } />
                     
+                    {/* Loyalty Routes - Available to operador, compensador, configurador */}
+                    <Route path="/beneficios" element={
+                      <PrivateRoute allowedRoles={["operador", "compensador", "configurador"]} noLayout={true}>
+                        <Benefits />
+                      </PrivateRoute>
+                    } />
+                    
                     {/* Security Routes - Only available to configurador */}
                     <Route path="/anti-fraud" element={
                       <PrivateRoute allowedRoles={["configurador"]} noLayout={true}>
@@ -144,6 +153,18 @@ const App = () => (
                     <Route path="/backoffice-settings" element={
                       <PrivateRoute allowedRoles={["configurador"]} noLayout={true}>
                         <BackofficeSettings />
+                      </PrivateRoute>
+                    } />
+                    
+                    {/* Master Routes - Only available to configurador */}
+                    <Route path="/maestros/categorias" element={
+                      <PrivateRoute allowedRoles={["configurador"]} noLayout={true}>
+                        <Categories />
+                      </PrivateRoute>
+                    } />
+                    <Route path="/maestros/mcc" element={
+                      <PrivateRoute allowedRoles={["configurador"]} noLayout={true}>
+                        <MCCMaster />
                       </PrivateRoute>
                     } />
                     
