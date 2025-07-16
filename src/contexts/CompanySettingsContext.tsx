@@ -44,8 +44,8 @@ const DEFAULT_APP_RULES: AppRule[] = [
 
 // Default company settings
 const DEFAULT_COMPANY_SETTINGS = {
-  name: "PayBackoffice Inc.",
-  backofficeTitle: "PayBackoffice",
+  name: "Daxia Inc.",
+  backofficeTitle: "Backoffice Daxia",
   companyLogo: null as string | null,
   backofficeIcon: null as string | null,
   appRules: DEFAULT_APP_RULES

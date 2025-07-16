@@ -1,7 +1,7 @@
 
 export const loginTranslations = {
   en: {
-    'login-title': 'Payment Backoffice',
+    'login-title': 'Backoffice Daxia',
     'login-description': 'Enter your credentials to access the dashboard',
     'username': 'Username',
     'password': 'Password',
@@ -12,7 +12,7 @@ export const loginTranslations = {
     'password-required': 'Password is required'
   },
   es: {
-    'login-title': 'Backoffice de Pagos',
+    'login-title': 'Backoffice Daxia',
     'login-description': 'Ingresa tus credenciales para acceder al panel',
     'username': 'Usuario',
     'password': 'Contraseña',
