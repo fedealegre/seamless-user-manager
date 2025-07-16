@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -63,6 +64,114 @@ const RootRedirect = () => {
   return <Navigate to={defaultPage} replace />;
 };
 
+// Internal App component that has access to all contexts
+const AppRoutes = () => (
+  <BrowserRouter>
+    <Routes>
+      {/* Public Routes - Login page */}
+      <Route path="/login" element={<Login />} />
+      
+      {/* Redirect from root to appropriate page based on user role */}
+      <Route path="/" element={<RootRedirect />} />
+      
+      {/* Private Routes with a shared layout */}
+      <Route element={<PrivateRoute />}>
+        {/* Dashboard - Only available to analista role */}
+        <Route path="/dashboard" element={
+          <PrivateRoute allowedRoles={["analista"]} noLayout={true}>
+            <Dashboard />
+          </PrivateRoute>
+        } />
+        
+        {/* User Management Routes - Only available to operador, compensador */}
+        <Route path="/users" element={
+          <PrivateRoute allowedRoles={["operador", "compensador"]} noLayout={true}>
+            <UserManagement />
+          </PrivateRoute>
+        } />
+        <Route path="/users/:userId" element={
+          <PrivateRoute allowedRoles={["operador", "compensador"]} noLayout={true}>
+            <UserDetailPage />
+          </PrivateRoute>
+        } />
+        
+        {/* Wallet Management - Only available to operador, compensador */}
+        <Route path="/wallets" element={
+          <PrivateRoute allowedRoles={["operador", "compensador"]} noLayout={true}>
+            <WalletManagement />
+          </PrivateRoute>
+        } />
+        
+        {/* Transaction Management - Only available to operador, compensador */}
+        <Route path="/transactions" element={
+          <PrivateRoute allowedRoles={["operador", "compensador"]} noLayout={true}>
+            <TransactionManagement />
+          </PrivateRoute>
+        } />
+        
+        {/* Loyalty Routes - Available to operador, compensador, configurador */}
+        <Route path="/beneficios" element={
+          <PrivateRoute allowedRoles={["operador", "compensador", "configurador"]} noLayout={true}>
+            <Benefits />
+          </PrivateRoute>
+        } />
+        
+        {/* Security Routes - Only available to configurador */}
+        <Route path="/anti-fraud" element={
+          <PrivateRoute allowedRoles={["configurador"]} noLayout={true}>
+            <AntiFraudRules />
+          </PrivateRoute>
+        } />
+        <Route path="/audit-logs" element={
+          <PrivateRoute allowedRoles={["configurador"]} noLayout={true}>
+            <AuditLogs />
+          </PrivateRoute>
+        } />
+        <Route path="/backoffice-operators" element={
+          <PrivateRoute allowedRoles={["configurador"]} noLayout={true}>
+            <BackofficeOperators />
+          </PrivateRoute>
+        } />
+        
+        {/* Settings Routes - Only available to configurador */}
+        <Route path="/company-settings" element={
+          <PrivateRoute allowedRoles={["configurador"]} noLayout={true}>
+            <CompanySettings />
+          </PrivateRoute>
+        } />
+        <Route path="/user-field-settings" element={
+          <PrivateRoute allowedRoles={["configurador"]} noLayout={true}>
+            <UserFieldSettings />
+          </PrivateRoute>
+        } />
+        <Route path="/backoffice-settings" element={
+          <PrivateRoute allowedRoles={["configurador"]} noLayout={true}>
+            <BackofficeSettings />
+          </PrivateRoute>
+        } />
+        
+        {/* Master Routes - Only available to configurador */}
+        <Route path="/maestros/categorias" element={
+          <PrivateRoute allowedRoles={["configurador"]} noLayout={true}>
+            <Categories />
+          </PrivateRoute>
+        } />
+        <Route path="/maestros/mcc" element={
+          <PrivateRoute allowedRoles={["configurador"]} noLayout={true}>
+            <MCCMaster />
+          </PrivateRoute>
+        } />
+        
+        {/* My Profile Page - Available to all authenticated users */}
+        <Route path="/my-profile" element={<MyProfilePage />} />
+      </Route>
+      
+      {/* Catch-all Route */}
+      <Route path="*" element={<NotFound />} />
+    </Routes>
+  </BrowserRouter>
+);
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
@@ -72,110 +181,7 @@ const App = () => (
             <TooltipProvider>
               <Toaster />
               <Sonner />
-              <BrowserRouter>
-                <Routes>
-                  {/* Public Routes */}
-                  <Route path="/login" element={<Login />} />
-                  
-                  {/* Redirect from root to appropriate page based on user role */}
-                  <Route path="/" element={<RootRedirect />} />
-                  
-                  {/* Private Routes with a shared layout */}
-                  <Route element={<PrivateRoute />}>
-                    {/* Dashboard - Only available to analista role */}
-                    <Route path="/dashboard" element={
-                      <PrivateRoute allowedRoles={["analista"]} noLayout={true}>
-                        <Dashboard />
-                      </PrivateRoute>
-                    } />
-                    
-                    {/* User Management Routes - Only available to operador, compensador */}
-                    <Route path="/users" element={
-                      <PrivateRoute allowedRoles={["operador", "compensador"]} noLayout={true}>
-                        <UserManagement />
-                      </PrivateRoute>
-                    } />
-                    <Route path="/users/:userId" element={
-                      <PrivateRoute allowedRoles={["operador", "compensador"]} noLayout={true}>
-                        <UserDetailPage />
-                      </PrivateRoute>
-                    } />
-                    
-                    {/* Wallet Management - Only available to operador, compensador */}
-                    <Route path="/wallets" element={
-                      <PrivateRoute allowedRoles={["operador", "compensador"]} noLayout={true}>
-                        <WalletManagement />
-                      </PrivateRoute>
-                    } />
-                    
-                    {/* Transaction Management - Only available to operador, compensador */}
-                    <Route path="/transactions" element={
-                      <PrivateRoute allowedRoles={["operador", "compensador"]} noLayout={true}>
-                        <TransactionManagement />
-                      </PrivateRoute>
-                    } />
-                    
-                    {/* Loyalty Routes - Available to operador, compensador, configurador */}
-                    <Route path="/beneficios" element={
-                      <PrivateRoute allowedRoles={["operador", "compensador", "configurador"]} noLayout={true}>
-                        <Benefits />
-                      </PrivateRoute>
-                    } />
-                    
-                    {/* Security Routes - Only available to configurador */}
-                    <Route path="/anti-fraud" element={
-                      <PrivateRoute allowedRoles={["configurador"]} noLayout={true}>
-                        <AntiFraudRules />
-                      </PrivateRoute>
-                    } />
-                    <Route path="/audit-logs" element={
-                      <PrivateRoute allowedRoles={["configurador"]} noLayout={true}>
-                        <AuditLogs />
-                      </PrivateRoute>
-                    } />
-                    <Route path="/backoffice-operators" element={
-                      <PrivateRoute allowedRoles={["configurador"]} noLayout={true}>
-                        <BackofficeOperators />
-                      </PrivateRoute>
-                    } />
-                    
-                    {/* Settings Routes - Only available to configurador */}
-                    <Route path="/company-settings" element={
-                      <PrivateRoute allowedRoles={["configurador"]} noLayout={true}>
-                        <CompanySettings />
-                      </PrivateRoute>
-                    } />
-                    <Route path="/user-field-settings" element={
-                      <PrivateRoute allowedRoles={["configurador"]} noLayout={true}>
-                        <UserFieldSettings />
-                      </PrivateRoute>
-                    } />
-                    <Route path="/backoffice-settings" element={
-                      <PrivateRoute allowedRoles={["configurador"]} noLayout={true}>
-                        <BackofficeSettings />
-                      </PrivateRoute>
-                    } />
-                    
-                    {/* Master Routes - Only available to configurador */}
-                    <Route path="/maestros/categorias" element={
-                      <PrivateRoute allowedRoles={["configurador"]} noLayout={true}>
-                        <Categories />
-                      </PrivateRoute>
-                    } />
-                    <Route path="/maestros/mcc" element={
-                      <PrivateRoute allowedRoles={["configurador"]} noLayout={true}>
-                        <MCCMaster />
-                      </PrivateRoute>
-                    } />
-                    
-                    {/* My Profile Page - Available to all authenticated users */}
-                    <Route path="/my-profile" element={<MyProfilePage />} />
-                  </Route>
-                  
-                  {/* Catch-all Route */}
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </BrowserRouter>
+              <AppRoutes />
             </TooltipProvider>
           </TransactionGeneratorProvider>
         </BackofficeSettingsProvider>
