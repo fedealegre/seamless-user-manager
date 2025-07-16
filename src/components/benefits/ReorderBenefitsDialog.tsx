@@ -35,31 +35,26 @@ export const ReorderBenefitsDialog: React.FC<ReorderBenefitsDialogProps> = ({
   
   const [orderedBenefits, setOrderedBenefits] = useState<Benefit[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [isDragDisabled, setIsDragDisabled] = useState(false);
 
   React.useEffect(() => {
     if (open && benefits.length > 0) {
       // Sort benefits by order when dialog opens
       const sortedBenefits = [...benefits].sort((a, b) => a.orden - b.orden);
       setOrderedBenefits(sortedBenefits);
-      setIsDragDisabled(false);
     }
   }, [open, benefits]);
 
-  const handleDragStart = () => {
-    setIsDragDisabled(false);
-  };
-
   const handleDragEnd = (result: DropResult) => {
-    // Re-enable drag after a short delay to prevent issues
-    setTimeout(() => setIsDragDisabled(false), 100);
-
-    if (!result.destination) return;
+    if (!result.destination) {
+      return;
+    }
 
     const sourceIndex = result.source.index;
     const destinationIndex = result.destination.index;
 
-    if (sourceIndex === destinationIndex) return;
+    if (sourceIndex === destinationIndex) {
+      return;
+    }
 
     const items = Array.from(orderedBenefits);
     const [reorderedItem] = items.splice(sourceIndex, 1);
@@ -116,25 +111,25 @@ export const ReorderBenefitsDialog: React.FC<ReorderBenefitsDialogProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-5xl w-[90vw] h-[80vh] flex flex-col p-0 overflow-hidden">
-        <DialogHeader className="flex-shrink-0 p-6 pb-4">
+      <DialogContent className="max-w-4xl w-[95vw] h-[85vh] flex flex-col">
+        <DialogHeader className="flex-shrink-0">
           <DialogTitle>{t('reorder-benefits') || 'Reordenar Beneficios'}</DialogTitle>
           <DialogDescription>
             {t('reorder-benefits-description') || 'Arrastra y suelta los beneficios para cambiar su orden. Los cambios se guardarán al hacer clic en "Guardar Cambios".'}
           </DialogDescription>
         </DialogHeader>
 
-        <div className="flex-1 overflow-hidden px-6">
+        <div className="flex-1 overflow-hidden">
           <ScrollArea className="h-full">
-            <div className="pr-4">
-              <DragDropContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-                <Droppable droppableId="benefits">
+            <div className="p-1">
+              <DragDropContext onDragEnd={handleDragEnd}>
+                <Droppable droppableId="benefits-list">
                   {(provided, snapshot) => (
                     <div
                       {...provided.droppableProps}
                       ref={provided.innerRef}
-                      className={`space-y-2 min-h-full pb-4 ${
-                        snapshot.isDraggingOver ? 'bg-blue-50' : ''
+                      className={`space-y-3 ${
+                        snapshot.isDraggingOver ? 'bg-blue-50 rounded-lg' : ''
                       }`}
                     >
                       {orderedBenefits.map((benefit, index) => (
@@ -142,7 +137,6 @@ export const ReorderBenefitsDialog: React.FC<ReorderBenefitsDialogProps> = ({
                           key={benefit.id}
                           draggableId={benefit.id}
                           index={index}
-                          isDragDisabled={isDragDisabled}
                         >
                           {(provided, snapshot) => (
                             <div
@@ -150,25 +144,19 @@ export const ReorderBenefitsDialog: React.FC<ReorderBenefitsDialogProps> = ({
                               {...provided.draggableProps}
                               className={`flex items-center gap-3 p-4 border rounded-lg bg-white transition-all ${
                                 snapshot.isDragging 
-                                  ? 'shadow-lg rotate-2 border-blue-300 z-50' 
+                                  ? 'shadow-lg border-blue-300 transform rotate-2' 
                                   : 'shadow-sm hover:shadow-md'
-                              } ${snapshot.draggingOver ? 'border-blue-200' : ''}`}
-                              style={{
-                                ...provided.draggableProps.style,
-                                transform: snapshot.isDragging 
-                                  ? `${provided.draggableProps.style?.transform} rotate(2deg)` 
-                                  : provided.draggableProps.style?.transform,
-                              }}
+                              }`}
                             >
                               <div
                                 {...provided.dragHandleProps}
-                                className="flex items-center justify-center w-8 h-8 text-gray-400 hover:text-gray-600 cursor-grab active:cursor-grabbing"
+                                className="flex items-center justify-center w-8 h-8 text-gray-400 hover:text-gray-600 cursor-grab active:cursor-grabbing transition-colors"
                               >
                                 <GripVertical className="h-5 w-5" />
                               </div>
                               
                               <div className="flex items-center justify-center w-8 h-8 bg-primary text-primary-foreground rounded-full text-sm font-semibold flex-shrink-0">
-                                {index + 1}
+                                {benefit.orden}
                               </div>
 
                               {benefit.imagen && (
@@ -204,7 +192,7 @@ export const ReorderBenefitsDialog: React.FC<ReorderBenefitsDialogProps> = ({
           </ScrollArea>
         </div>
 
-        <DialogFooter className="flex-shrink-0 p-6 pt-4 border-t">
+        <DialogFooter className="flex-shrink-0 border-t pt-4">
           <Button
             variant="outline"
             onClick={() => onOpenChange(false)}
