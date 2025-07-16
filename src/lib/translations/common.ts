@@ -44,7 +44,7 @@ export const commonTranslations = {
     'back': 'Back',
     'details': 'Details',
     'view': 'View',
-    'action-options': 'Action Options', // Changed from 'actions' to avoid duplicate
+    'action-options': 'Action Options',
     'compensate': 'Compensate',
     'customer': 'Customer',
     'change': 'Change',
@@ -86,6 +86,50 @@ export const commonTranslations = {
     'enter-email': 'Enter email',
     'create-backoffice-user-with-roles': 'Create backoffice user with roles',
     'application': 'Application',
+    
+    // Dashboard
+    'total-users': 'Total Users',
+    'active-users': 'Active Users',
+    'total-transactions': 'Total Transactions',
+    'total-amount': 'Total Amount',
+    'users-growth': 'Users Growth',
+    'transactions-growth': 'Transactions Growth',
+    'recent-transactions': 'Recent Transactions',
+    'user-registrations': 'User Registrations',
+    'loading': 'Loading...',
+    
+    // Settings
+    'language': 'Language',
+    'language-description': 'Choose your preferred language for the interface',
+    'select-language': 'Select language',
+    'timezone': 'Timezone',
+    'timezone-description': 'Select your timezone for date and time display',
+    'select-timezone': 'Select timezone',
+    'save-settings': 'Save Settings',
+    'date-time-preview': 'Date & Time Preview',
+    'date-time-preview-description': 'Preview how dates and times will be displayed',
+    'current-date-time': 'Current Date & Time',
+    
+    // Profile
+    'my-profile': 'My Profile',
+    'personal-information': 'Personal Information',
+    'your-personal-information': 'Your personal information and details',
+    'username': 'Username',
+    'full-name': 'Full Name',
+    'change-password': 'Change Password',
+    'account-information': 'Account Information',
+    'your-account-details': 'Your account details and status',
+    'account-status': 'Account Status',
+    'last-login': 'Last Login',
+    'roles': 'Roles',
+    
+    // User Details
+    'user-detail': 'User Detail',
+    'view-manage-user-info': 'View and manage user information',
+    'personal-info': 'Personal Info',
+    'user-not-found': 'User Not Found',
+    'requested-user-not-found': 'The requested user was not found',
+    'back-to-user-management': 'Back to User Management',
     
     // Toast notifications
     'toast-success': 'Success',
@@ -173,7 +217,7 @@ export const commonTranslations = {
     'back': 'Volver',
     'details': 'Detalles',
     'view': 'Ver',
-    'action-options': 'Opciones de Acción', // Changed from 'actions' to avoid duplicate
+    'action-options': 'Opciones de Acción',
     'compensate': 'Compensar',
     'customer': 'Cliente',
     'change': 'Cambiar',
@@ -215,6 +259,50 @@ export const commonTranslations = {
     'enter-email': 'Ingresar email',
     'create-backoffice-user-with-roles': 'Crear usuario backoffice con roles',
     'application': 'Aplicación',
+    
+    // Dashboard
+    'total-users': 'Total de Usuarios',
+    'active-users': 'Usuarios Activos',
+    'total-transactions': 'Total de Transacciones',
+    'total-amount': 'Monto Total',
+    'users-growth': 'Crecimiento de Usuarios',
+    'transactions-growth': 'Crecimiento de Transacciones',
+    'recent-transactions': 'Transacciones Recientes',
+    'user-registrations': 'Registros de Usuarios',
+    'loading': 'Cargando...',
+    
+    // Settings
+    'language': 'Idioma',
+    'language-description': 'Elige tu idioma preferido para la interfaz',
+    'select-language': 'Seleccionar idioma',
+    'timezone': 'Zona Horaria',
+    'timezone-description': 'Selecciona tu zona horaria para la visualización de fechas y horas',
+    'select-timezone': 'Seleccionar zona horaria',
+    'save-settings': 'Guardar Configuración',
+    'date-time-preview': 'Vista Previa de Fecha y Hora',
+    'date-time-preview-description': 'Vista previa de cómo se mostrarán las fechas y horas',
+    'current-date-time': 'Fecha y Hora Actual',
+    
+    // Profile
+    'my-profile': 'Mi Perfil',
+    'personal-information': 'Información Personal',
+    'your-personal-information': 'Tu información personal y detalles',
+    'username': 'Nombre de Usuario',
+    'full-name': 'Nombre Completo',
+    'change-password': 'Cambiar Contraseña',
+    'account-information': 'Información de Cuenta',
+    'your-account-details': 'Los detalles y estado de tu cuenta',
+    'account-status': 'Estado de Cuenta',
+    'last-login': 'Último Inicio de Sesión',
+    'roles': 'Roles',
+    
+    // User Details
+    'user-detail': 'Detalle de Usuario',
+    'view-manage-user-info': 'Ver y gestionar información del usuario',
+    'personal-info': 'Información Personal',
+    'user-not-found': 'Usuario No Encontrado',
+    'requested-user-not-found': 'El usuario solicitado no fue encontrado',
+    'back-to-user-management': 'Volver a Gestión de Usuarios',
     
     // Toast notifications
     'toast-success': 'Éxito',

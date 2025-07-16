@@ -15,8 +15,13 @@ import { getBadgeColor, operationTypes } from "@/components/audit-logs/utils";
 import { CSVExportService } from "@/lib/csv/csv-export-service";
 import { toast } from "@/components/ui/use-toast";
 import ExportCSVButton from "@/components/common/ExportCSVButton";
+import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
+import { translate } from "@/lib/translations";
 
 const AuditLogs = () => {
+  const { settings } = useBackofficeSettings();
+  const t = (key: string) => translate(key, settings.language);
+  
   const [filters, setFilters] = useState<FilterParams>({
     startDate: undefined,
     endDate: undefined,
@@ -85,8 +90,8 @@ const AuditLogs = () => {
   const handleExportLogs = () => {
     if (!logs || logs.length === 0) {
       toast({
-        title: "No data to export",
-        description: "There are no audit logs matching your filters to export.",
+        title: t('error'),
+        description: t('no-users-found'),
         variant: "destructive",
       });
       return;
@@ -94,7 +99,7 @@ const AuditLogs = () => {
 
     const filename = `audit-logs-${format(new Date(), "yyyy-MM-dd")}`;
 
-    const headers = ["Date & Time", "User", "Operation", "Entity", "Previous Value", "New Value"];
+    const headers = [t('current-date-time'), t('user'), t('operation-type'), "Entity", "Previous Value", "New Value"];
 
     CSVExportService.export({
       filename,
@@ -114,8 +119,8 @@ const AuditLogs = () => {
     });
 
     toast({
-      title: "Export Successful",
-      description: "The audit logs have been exported to CSV successfully.",
+      title: t('success'),
+      description: t('operation-successful'),
     });
   };
 
@@ -123,12 +128,12 @@ const AuditLogs = () => {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between md:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Audit Logs</h1>
-          <p className="text-muted-foreground">Review system activity and security events</p>
+          <h1 className="text-3xl font-bold tracking-tight">{t('audit-logs')}</h1>
+          <p className="text-muted-foreground">{t('manage-monitor-customer-accounts')}</p>
         </div>
         
         <Button variant="outline" onClick={() => refetch()} className="w-full md:w-auto">
-          <RefreshCw size={16} className="mr-2" /> Refresh
+          <RefreshCw size={16} className="mr-2" /> {t('search-again')}
         </Button>
       </div>
       
@@ -141,12 +146,12 @@ const AuditLogs = () => {
       
       <Card>
         <CardHeader>
-          <CardTitle>Audit Log Entries</CardTitle>
+          <CardTitle>{t('audit-logs')}</CardTitle>
           <CardDescription>
-            {isLoading ? "Loading audit logs..." : 
+            {isLoading ? t('loading') : 
               logs && logs.length > 0 
-                ? `${logs.length} log entries found` 
-                : "No log entries match your filters"}
+                ? `${logs.length} ${t('items')}`
+                : t('no-users-found')}
           </CardDescription>
         </CardHeader>
         <CardContent>
