@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Plus, Upload, ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -362,13 +363,19 @@ const Benefits: React.FC = () => {
   const [bulkUploadDialogOpen, setBulkUploadDialogOpen] = useState(false);
   const [reorderDialogOpen, setReorderDialogOpen] = useState(false);
   const [filters, setFilters] = useState<BenefitFilters>({});
+  const [benefits, setBenefits] = useState<Benefit[]>(mockBenefits);
 
   const handleFiltersChange = (newFilters: BenefitFilters) => {
     setFilters(newFilters);
   };
 
+  const handleReorderSuccess = (reorderedBenefits: Benefit[]) => {
+    setBenefits(reorderedBenefits);
+    setReorderDialogOpen(false);
+  };
+
   // Filter benefits based on filters for the table
-  const filteredBenefits = mockBenefits.filter((benefit) => {
+  const filteredBenefits = benefits.filter((benefit) => {
     if (filters.titulo && !benefit.titulo.toLowerCase().includes(filters.titulo.toLowerCase())) {
       return false;
     }
@@ -376,7 +383,7 @@ const Benefits: React.FC = () => {
       return false;
     }
     return true;
-  });
+  }).sort((a, b) => a.orden - b.orden);
 
   return (
     <div className="space-y-6">
@@ -431,11 +438,11 @@ const Benefits: React.FC = () => {
         onOpenChange={setBulkUploadDialogOpen}
       />
 
-      {/* Use all benefits (not filtered) for reordering */}
       <ReorderBenefitsDialog
         open={reorderDialogOpen}
         onOpenChange={setReorderDialogOpen}
-        benefits={mockBenefits}
+        benefits={benefits}
+        onReorderSuccess={handleReorderSuccess}
       />
     </div>
   );

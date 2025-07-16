@@ -35,12 +35,14 @@ interface ReorderBenefitsDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   benefits: Benefit[];
+  onReorderSuccess: (reorderedBenefits: Benefit[]) => void;
 }
 
 export const ReorderBenefitsDialog: React.FC<ReorderBenefitsDialogProps> = ({
   open,
   onOpenChange,
   benefits,
+  onReorderSuccess,
 }) => {
   const { settings } = useBackofficeSettings();
   const { toast } = useToast();
@@ -106,7 +108,8 @@ export const ReorderBenefitsDialog: React.FC<ReorderBenefitsDialogProps> = ({
         description: t('benefits-order-updated') || 'Orden de beneficios actualizado correctamente',
       });
       
-      onOpenChange(false);
+      // Call the success callback with the reordered benefits
+      onReorderSuccess(orderedBenefits);
     } catch (error) {
       toast({
         title: t('error'),
