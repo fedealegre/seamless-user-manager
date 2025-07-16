@@ -63,6 +63,14 @@ const UsersTable: React.FC<UsersTableProps> = ({
     setShowUnblockDialog(true);
   };
 
+  const getInitials = (name?: string, surname?: string) => {
+    const firstName = name || '';
+    const lastName = surname || '';
+    const firstInitial = firstName.charAt(0) || '';
+    const lastInitial = lastName.charAt(0) || '';
+    return `${firstInitial}${lastInitial}`.toUpperCase() || '??';
+  };
+
   return (
     <div className="rounded-md border overflow-hidden">
       <Table>
@@ -83,12 +91,12 @@ const UsersTable: React.FC<UsersTableProps> = ({
                   <div className="flex items-center gap-3">
                     <Avatar className="h-8 w-8">
                       <AvatarFallback className="bg-primary/10 text-primary">
-                        {user.name.charAt(0)}{user.surname.charAt(0)}
+                        {getInitials(user.name, user.surname)}
                       </AvatarFallback>
                     </Avatar>
                     <div>
-                      <div className="font-medium">{user.name} {user.surname}</div>
-                      <div className="text-xs text-muted-foreground">{user.username}</div>
+                      <div className="font-medium">{user.name || ''} {user.surname || ''}</div>
+                      <div className="text-xs text-muted-foreground">{user.username || '—'}</div>
                     </div>
                   </div>
                 </TableCell>
