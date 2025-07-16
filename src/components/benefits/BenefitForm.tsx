@@ -25,26 +25,8 @@ import { DatePicker } from "@/components/ui/date-picker";
 import { ImageUpload } from "./ImageUpload";
 import { MCCSelector } from "./MCCSelector";
 import { Benefit } from "@/types/benefits";
-
-const benefitSchema = z.object({
-  titulo: z.string().min(1, "El título es requerido"),
-  descripcion: z.string().min(1, "La descripción es requerida"),
-  descripcionExtendida: z.string().optional(),
-  legales: z.string().min(1, "Los legales son requeridos"),
-  valorPorcentaje: z.number().min(0.01, "El valor debe ser mayor a 0"),
-  topePorCompra: z.number().min(1, "El tope por compra es requerido"),
-  imagen: z.string().optional(),
-  orden: z.number().min(1, "El orden es requerido"),
-  categoria: z.string().min(1, "La categoría es requerida"),
-  mcc: z.array(z.string()).min(1, "Debe seleccionar al menos un MCC"),
-  fechaInicio: z.date({ required_error: "La fecha de inicio es requerida" }),
-  fechaFin: z.date({ required_error: "La fecha de fin es requerida" }),
-}).refine((data) => data.fechaFin > data.fechaInicio, {
-  message: "La fecha de fin debe ser posterior a la fecha de inicio",
-  path: ["fechaFin"],
-});
-
-type BenefitFormData = z.infer<typeof benefitSchema>;
+import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
+import { translate } from "@/lib/translations";
 
 interface BenefitFormProps {
   benefit?: Benefit;
@@ -65,6 +47,29 @@ export const BenefitForm: React.FC<BenefitFormProps> = ({
   onCancel,
 }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { settings } = useBackofficeSettings();
+  
+  const t = (key: string) => translate(key, settings.language);
+
+  const benefitSchema = z.object({
+    titulo: z.string().min(1, t('title-required')),
+    descripcion: z.string().min(1, t('description-required')),
+    descripcionExtendida: z.string().optional(),
+    legales: z.string().min(1, t('legal-terms-required')),
+    valorPorcentaje: z.number().min(0.01, t('value-required')),
+    topePorCompra: z.number().min(1, t('limit-required')),
+    imagen: z.string().optional(),
+    orden: z.number().min(1, t('order-required')),
+    categoria: z.string().min(1, t('category-required')),
+    mcc: z.array(z.string()).min(1, t('mcc-required')),
+    fechaInicio: z.date({ required_error: t('start-date-required') }),
+    fechaFin: z.date({ required_error: t('end-date-required') }),
+  }).refine((data) => data.fechaFin > data.fechaInicio, {
+    message: t('end-date-after-start'),
+    path: ["fechaFin"],
+  });
+
+  type BenefitFormData = z.infer<typeof benefitSchema>;
 
   const form = useForm<BenefitFormData>({
     resolver: zodResolver(benefitSchema),
@@ -122,7 +127,7 @@ export const BenefitForm: React.FC<BenefitFormProps> = ({
               name="titulo"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Título *</FormLabel>
+                  <FormLabel>{t('title')} *</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -136,7 +141,7 @@ export const BenefitForm: React.FC<BenefitFormProps> = ({
               name="descripcion"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Descripción *</FormLabel>
+                  <FormLabel>{t('description')} *</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -150,7 +155,7 @@ export const BenefitForm: React.FC<BenefitFormProps> = ({
               name="descripcionExtendida"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Descripción Extendida</FormLabel>
+                  <FormLabel>{t('extended-description')}</FormLabel>
                   <FormControl>
                     <Textarea {...field} rows={3} />
                   </FormControl>
@@ -164,7 +169,7 @@ export const BenefitForm: React.FC<BenefitFormProps> = ({
               name="legales"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Legales *</FormLabel>
+                  <FormLabel>{t('legal-terms')} *</FormLabel>
                   <FormControl>
                     <Textarea {...field} rows={3} />
                   </FormControl>
@@ -179,7 +184,7 @@ export const BenefitForm: React.FC<BenefitFormProps> = ({
                 name="valorPorcentaje"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Valor (%) *</FormLabel>
+                    <FormLabel>{t('value-percentage')} *</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
@@ -198,7 +203,7 @@ export const BenefitForm: React.FC<BenefitFormProps> = ({
                 name="topePorCompra"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Tope por Compra *</FormLabel>
+                    <FormLabel>{t('limit-per-purchase')} *</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
@@ -220,7 +225,7 @@ export const BenefitForm: React.FC<BenefitFormProps> = ({
               name="imagen"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Imagen</FormLabel>
+                  <FormLabel>{t('image')}</FormLabel>
                   <FormControl>
                     <ImageUpload
                       value={field.value}
@@ -238,7 +243,7 @@ export const BenefitForm: React.FC<BenefitFormProps> = ({
                 name="orden"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Orden *</FormLabel>
+                    <FormLabel>{t('order')} *</FormLabel>
                     <FormControl>
                       <Input
                         type="number"
@@ -256,11 +261,11 @@ export const BenefitForm: React.FC<BenefitFormProps> = ({
                 name="categoria"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Categoría *</FormLabel>
+                    <FormLabel>{t('category')} *</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value}>
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Seleccionar categoría" />
+                          <SelectValue placeholder={t('select-category')} />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
@@ -282,7 +287,7 @@ export const BenefitForm: React.FC<BenefitFormProps> = ({
               name="mcc"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Rubro (MCC) *</FormLabel>
+                  <FormLabel>{t('industry-mcc')} *</FormLabel>
                   <FormControl>
                     <MCCSelector
                       value={field.value}
@@ -300,7 +305,7 @@ export const BenefitForm: React.FC<BenefitFormProps> = ({
                 name="fechaInicio"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Fecha de Inicio *</FormLabel>
+                    <FormLabel>{t('start-date')} *</FormLabel>
                     <FormControl>
                       <DatePicker
                         date={field.value}
@@ -318,7 +323,7 @@ export const BenefitForm: React.FC<BenefitFormProps> = ({
                 name="fechaFin"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Fecha de Fin *</FormLabel>
+                    <FormLabel>{t('end-date')} *</FormLabel>
                     <FormControl>
                       <DatePicker
                         date={field.value}
@@ -336,10 +341,10 @@ export const BenefitForm: React.FC<BenefitFormProps> = ({
 
         <div className="flex justify-end gap-3 pt-6 border-t">
           <Button type="button" variant="outline" onClick={onCancel}>
-            Cancelar
+            {t('cancel')}
           </Button>
           <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Guardando..." : "Guardar"}
+            {isSubmitting ? t('saving') : t('save')}
           </Button>
         </div>
       </form>

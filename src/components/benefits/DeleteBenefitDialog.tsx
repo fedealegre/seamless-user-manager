@@ -10,6 +10,8 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Benefit } from "@/types/benefits";
+import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
+import { translate } from "@/lib/translations";
 
 interface DeleteBenefitDialogProps {
   open: boolean;
@@ -23,6 +25,9 @@ export const DeleteBenefitDialog: React.FC<DeleteBenefitDialogProps> = ({
   benefit,
 }) => {
   const [isDeleting, setIsDeleting] = useState(false);
+  const { settings } = useBackofficeSettings();
+  
+  const t = (key: string) => translate(key, settings.language);
 
   const handleDelete = async () => {
     if (!benefit) return;
@@ -46,10 +51,9 @@ export const DeleteBenefitDialog: React.FC<DeleteBenefitDialogProps> = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Confirmar Eliminación</DialogTitle>
+          <DialogTitle>{t('confirm-deletion')}</DialogTitle>
           <DialogDescription>
-            ¿Estás seguro de que deseas eliminar el beneficio "{benefit.titulo}"?
-            Esta acción no se puede deshacer.
+            {t('delete-benefit-confirmation').replace('{title}', benefit.titulo)}
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
@@ -58,14 +62,14 @@ export const DeleteBenefitDialog: React.FC<DeleteBenefitDialogProps> = ({
             onClick={() => onOpenChange(false)}
             disabled={isDeleting}
           >
-            Cancelar
+            {t('cancel')}
           </Button>
           <Button
             variant="destructive"
             onClick={handleDelete}
             disabled={isDeleting}
           >
-            {isDeleting ? "Eliminando..." : "Eliminar"}
+            {isDeleting ? t('deleting') : t('delete')}
           </Button>
         </DialogFooter>
       </DialogContent>

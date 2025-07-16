@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Edit, Trash2, ToggleLeft, ToggleRight } from "lucide-react";
 import {
@@ -15,6 +16,8 @@ import { Benefit, BenefitFilters } from "@/types/benefits";
 import { DeleteBenefitDialog } from "./DeleteBenefitDialog";
 import { EditBenefitDialog } from "./EditBenefitDialog";
 import { formatDateTime } from "@/lib/date-utils";
+import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
+import { translate } from "@/lib/translations";
 
 // Mock data
 const mockBenefits: Benefit[] = [
@@ -56,26 +59,29 @@ interface BenefitsTableProps {
   filters: BenefitFilters;
 }
 
-const getStatusBadge = (estado: string) => {
-  const statusConfig = {
-    activo: { label: "Activo", variant: "default" as const, className: "bg-green-100 text-green-800" },
-    inactivo: { label: "Inactivo", variant: "secondary" as const, className: "bg-gray-100 text-gray-800" },
-    programado: { label: "Programado", variant: "default" as const, className: "bg-blue-100 text-blue-800" },
-    finalizado: { label: "Finalizado", variant: "destructive" as const, className: "bg-red-100 text-red-800" },
-  };
-
-  const config = statusConfig[estado as keyof typeof statusConfig];
-  return (
-    <Badge variant={config.variant} className={config.className}>
-      {config.label}
-    </Badge>
-  );
-};
-
 export const BenefitsTable: React.FC<BenefitsTableProps> = ({ filters }) => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [selectedBenefit, setSelectedBenefit] = useState<Benefit | null>(null);
+  const { settings } = useBackofficeSettings();
+  
+  const t = (key: string) => translate(key, settings.language);
+
+  const getStatusBadge = (estado: string) => {
+    const statusConfig = {
+      activo: { label: t('active'), variant: "default" as const, className: "bg-green-100 text-green-800" },
+      inactivo: { label: t('inactive'), variant: "secondary" as const, className: "bg-gray-100 text-gray-800" },
+      programado: { label: t('scheduled'), variant: "default" as const, className: "bg-blue-100 text-blue-800" },
+      finalizado: { label: t('finished'), variant: "destructive" as const, className: "bg-red-100 text-red-800" },
+    };
+
+    const config = statusConfig[estado as keyof typeof statusConfig];
+    return (
+      <Badge variant={config.variant} className={config.className}>
+        {config.label}
+      </Badge>
+    );
+  };
 
   // Filter benefits based on filters
   const filteredBenefits = mockBenefits.filter((benefit) => {
@@ -110,20 +116,20 @@ export const BenefitsTable: React.FC<BenefitsTableProps> = ({ filters }) => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-20">Orden</TableHead>
-                <TableHead>Título</TableHead>
-                <TableHead>Categoría</TableHead>
-                <TableHead className="w-24">Valor (%)</TableHead>
-                <TableHead>Vigencia</TableHead>
-                <TableHead className="w-32">Estado</TableHead>
-                <TableHead className="w-32">Acciones</TableHead>
+                <TableHead className="w-20">{t('order')}</TableHead>
+                <TableHead>{t('title')}</TableHead>
+                <TableHead>{t('category')}</TableHead>
+                <TableHead className="w-24">{t('value-percentage')}</TableHead>
+                <TableHead>{t('validity')}</TableHead>
+                <TableHead className="w-32">{t('status')}</TableHead>
+                <TableHead className="w-32">{t('actions')}</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filteredBenefits.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
-                    No se encontraron beneficios
+                    {t('no-benefits-found')}
                   </TableCell>
                 </TableRow>
               ) : (

@@ -1,15 +1,21 @@
 
 import { commonTranslations } from './common';
 import { benefitsTranslations } from './benefits';
+import { loginTranslations } from './login';
+import { paginationTranslations } from './pagination';
 
 const translations = {
   en: {
     ...commonTranslations.en,
     ...benefitsTranslations.en,
+    ...loginTranslations.en,
+    ...paginationTranslations.en,
   },
   es: {
     ...commonTranslations.es,
     ...benefitsTranslations.es,
+    ...loginTranslations.es,
+    ...paginationTranslations.es,
   },
 };
 
