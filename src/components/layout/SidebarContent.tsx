@@ -48,7 +48,9 @@ const sidebarSections: SidebarSection[] = [
     title: "Loyalty",
     translationKey: "loyalty",
     items: [
-      { title: "Beneficios", translationKey: "benefits", icon: Gift, path: "/beneficios", roles: ["operador", "compensador", "configurador"] }
+      { title: "Beneficios", translationKey: "benefits", icon: Gift, path: "/beneficios", roles: ["operador", "compensador", "configurador"] },
+      { title: "Categorías", translationKey: "categories", icon: Tag, path: "/maestros/categorias", roles: ["configurador"] },
+      { title: "Rubros (MCC)", translationKey: "mcc", icon: CreditCard, path: "/maestros/mcc", roles: ["configurador"] }
     ]
   },
   {
@@ -67,14 +69,6 @@ const sidebarSections: SidebarSection[] = [
       { title: "Company Settings", translationKey: "company-settings", icon: Settings, path: "/company-settings", roles: ["configurador"] },
       { title: "User Field Settings", translationKey: "user-field-settings", icon: UserCog, path: "/user-field-settings", roles: ["configurador"] },
       { title: "Backoffice Settings", translationKey: "backoffice-settings", icon: Sliders, path: "/backoffice-settings", roles: ["configurador"] }
-    ]
-  },
-  {
-    title: "Masters",
-    translationKey: "masters",
-    items: [
-      { title: "Categorías", translationKey: "categories", icon: Tag, path: "/maestros/categorias", roles: ["configurador"] },
-      { title: "Rubros (MCC)", translationKey: "mcc", icon: CreditCard, path: "/maestros/mcc", roles: ["configurador"] }
     ]
   }
 ];
