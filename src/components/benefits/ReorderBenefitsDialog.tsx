@@ -10,6 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Benefit } from "@/types/benefits";
@@ -34,23 +35,37 @@ export const ReorderBenefitsDialog: React.FC<ReorderBenefitsDialogProps> = ({
   
   const [orderedBenefits, setOrderedBenefits] = useState<Benefit[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isDragDisabled, setIsDragDisabled] = useState(false);
 
   React.useEffect(() => {
-    if (open) {
+    if (open && benefits.length > 0) {
       // Sort benefits by order when dialog opens
       const sortedBenefits = [...benefits].sort((a, b) => a.orden - b.orden);
       setOrderedBenefits(sortedBenefits);
+      setIsDragDisabled(false);
     }
   }, [open, benefits]);
 
+  const handleDragStart = () => {
+    setIsDragDisabled(false);
+  };
+
   const handleDragEnd = (result: DropResult) => {
+    // Re-enable drag after a short delay to prevent issues
+    setTimeout(() => setIsDragDisabled(false), 100);
+
     if (!result.destination) return;
 
-    const items = Array.from(orderedBenefits);
-    const [reorderedItem] = items.splice(result.source.index, 1);
-    items.splice(result.destination.index, 0, reorderedItem);
+    const sourceIndex = result.source.index;
+    const destinationIndex = result.destination.index;
 
-    // Update order numbers
+    if (sourceIndex === destinationIndex) return;
+
+    const items = Array.from(orderedBenefits);
+    const [reorderedItem] = items.splice(sourceIndex, 1);
+    items.splice(destinationIndex, 0, reorderedItem);
+
+    // Update order numbers based on new positions
     const updatedItems = items.map((item, index) => ({
       ...item,
       orden: index + 1,
@@ -101,78 +116,93 @@ export const ReorderBenefitsDialog: React.FC<ReorderBenefitsDialogProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[80vh] overflow-hidden">
-        <DialogHeader>
+      <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col">
+        <DialogHeader className="flex-shrink-0">
           <DialogTitle>{t('reorder-benefits') || 'Reordenar Beneficios'}</DialogTitle>
           <DialogDescription>
             {t('reorder-benefits-description') || 'Arrastra y suelta los beneficios para cambiar su orden. Los cambios se guardarán al hacer clic en "Guardar Cambios".'}
           </DialogDescription>
         </DialogHeader>
 
-        <div className="flex-1 overflow-y-auto">
-          <DragDropContext onDragEnd={handleDragEnd}>
-            <Droppable droppableId="benefits">
-              {(provided) => (
-                <div
-                  {...provided.droppableProps}
-                  ref={provided.innerRef}
-                  className="space-y-2"
-                >
-                  {orderedBenefits.map((benefit, index) => (
-                    <Draggable
-                      key={benefit.id}
-                      draggableId={benefit.id}
-                      index={index}
-                    >
-                      {(provided, snapshot) => (
-                        <div
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          className={`flex items-center gap-3 p-4 border rounded-lg bg-white ${
-                            snapshot.isDragging ? 'shadow-lg' : 'shadow-sm'
-                          }`}
-                        >
+        <div className="flex-1 min-h-0">
+          <ScrollArea className="h-full pr-4">
+            <DragDropContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+              <Droppable droppableId="benefits">
+                {(provided, snapshot) => (
+                  <div
+                    {...provided.droppableProps}
+                    ref={provided.innerRef}
+                    className={`space-y-2 min-h-full ${
+                      snapshot.isDraggingOver ? 'bg-blue-50' : ''
+                    }`}
+                  >
+                    {orderedBenefits.map((benefit, index) => (
+                      <Draggable
+                        key={benefit.id}
+                        draggableId={benefit.id}
+                        index={index}
+                        isDragDisabled={isDragDisabled}
+                      >
+                        {(provided, snapshot) => (
                           <div
-                            {...provided.dragHandleProps}
-                            className="flex items-center justify-center w-8 h-8 text-gray-400 hover:text-gray-600 cursor-grab active:cursor-grabbing"
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            className={`flex items-center gap-3 p-4 border rounded-lg bg-white transition-all ${
+                              snapshot.isDragging 
+                                ? 'shadow-lg rotate-2 border-blue-300' 
+                                : 'shadow-sm hover:shadow-md'
+                            } ${snapshot.draggingOver ? 'border-blue-200' : ''}`}
+                            style={{
+                              ...provided.draggableProps.style,
+                              transform: snapshot.isDragging 
+                                ? `${provided.draggableProps.style?.transform} rotate(2deg)` 
+                                : provided.draggableProps.style?.transform,
+                            }}
                           >
-                            <GripVertical className="h-5 w-5" />
-                          </div>
-                          
-                          <div className="flex items-center justify-center w-8 h-8 bg-primary text-primary-foreground rounded-full text-sm font-semibold">
-                            {benefit.orden}
-                          </div>
+                            <div
+                              {...provided.dragHandleProps}
+                              className="flex items-center justify-center w-8 h-8 text-gray-400 hover:text-gray-600 cursor-grab active:cursor-grabbing"
+                            >
+                              <GripVertical className="h-5 w-5" />
+                            </div>
+                            
+                            <div className="flex items-center justify-center w-8 h-8 bg-primary text-primary-foreground rounded-full text-sm font-semibold">
+                              {index + 1}
+                            </div>
 
-                          {benefit.imagen && (
-                            <img 
-                              src={benefit.imagen} 
-                              alt={benefit.titulo}
-                              className="w-12 h-12 object-cover rounded-lg"
-                            />
-                          )}
+                            {benefit.imagen && (
+                              <img 
+                                src={benefit.imagen} 
+                                alt={benefit.titulo}
+                                className="w-12 h-12 object-cover rounded-lg flex-shrink-0"
+                              />
+                            )}
 
-                          <div className="flex-1">
-                            <div className="font-medium">{benefit.titulo}</div>
-                            <div className="text-sm text-muted-foreground">{benefit.categoria}</div>
+                            <div className="flex-1 min-w-0">
+                              <div className="font-medium truncate">{benefit.titulo}</div>
+                              <div className="text-sm text-muted-foreground truncate">{benefit.categoria}</div>
+                            </div>
+
+                            <div className="text-sm font-medium flex-shrink-0">
+                              {benefit.valorPorcentaje}%
+                            </div>
+
+                            <div className="flex-shrink-0">
+                              {getStatusBadge(benefit.estado)}
+                            </div>
                           </div>
-
-                          <div className="text-sm font-medium">
-                            {benefit.valorPorcentaje}%
-                          </div>
-
-                          {getStatusBadge(benefit.estado)}
-                        </div>
-                      )}
-                    </Draggable>
-                  ))}
-                  {provided.placeholder}
-                </div>
-              )}
-            </Droppable>
-          </DragDropContext>
+                        )}
+                      </Draggable>
+                    ))}
+                    {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
+            </DragDropContext>
+          </ScrollArea>
         </div>
 
-        <DialogFooter>
+        <DialogFooter className="flex-shrink-0 mt-4">
           <Button
             variant="outline"
             onClick={() => onOpenChange(false)}
