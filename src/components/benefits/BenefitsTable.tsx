@@ -15,6 +15,7 @@ import { Card } from "@/components/ui/card";
 import { Benefit, BenefitFilters } from "@/types/benefits";
 import { DeleteBenefitDialog } from "./DeleteBenefitDialog";
 import { EditBenefitDialog } from "./EditBenefitDialog";
+import { ReorderBenefitsDialog } from "./ReorderBenefitsDialog";
 import { formatDateTime } from "@/lib/date-utils";
 import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
 import { translate } from "@/lib/translations";
@@ -365,11 +366,13 @@ const mockBenefits: Benefit[] = [
 
 interface BenefitsTableProps {
   filters: BenefitFilters;
+  onReorderRequest?: () => void;
 }
 
-export const BenefitsTable: React.FC<BenefitsTableProps> = ({ filters }) => {
+export const BenefitsTable: React.FC<BenefitsTableProps> = ({ filters, onReorderRequest }) => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [reorderDialogOpen, setReorderDialogOpen] = useState(false);
   const [selectedBenefit, setSelectedBenefit] = useState<Benefit | null>(null);
   const { settings } = useBackofficeSettings();
   
@@ -410,6 +413,10 @@ export const BenefitsTable: React.FC<BenefitsTableProps> = ({ filters }) => {
   const handleDelete = (benefit: Benefit) => {
     setSelectedBenefit(benefit);
     setDeleteDialogOpen(true);
+  };
+
+  const handleReorder = () => {
+    setReorderDialogOpen(true);
   };
 
   return (
@@ -501,6 +508,12 @@ export const BenefitsTable: React.FC<BenefitsTableProps> = ({ filters }) => {
         open={editDialogOpen}
         onOpenChange={setEditDialogOpen}
         benefit={selectedBenefit}
+      />
+
+      <ReorderBenefitsDialog
+        open={reorderDialogOpen}
+        onOpenChange={setReorderDialogOpen}
+        benefits={filteredBenefits}
       />
     </>
   );

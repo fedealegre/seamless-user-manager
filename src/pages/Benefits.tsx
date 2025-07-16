@@ -1,11 +1,12 @@
 
 import React, { useState } from "react";
-import { Plus, Upload } from "lucide-react";
+import { Plus, Upload, ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BenefitsTable } from "@/components/benefits/BenefitsTable";
 import { BenefitsFilters } from "@/components/benefits/BenefitsFilters";
 import { CreateBenefitDialog } from "@/components/benefits/CreateBenefitDialog";
 import { BulkUploadDialog } from "@/components/benefits/BulkUploadDialog";
+import { ReorderBenefitsDialog } from "@/components/benefits/ReorderBenefitsDialog";
 import { BenefitFilters } from "@/types/benefits";
 import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
 import { translate } from "@/lib/translations";
@@ -16,6 +17,7 @@ const Benefits: React.FC = () => {
   
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
   const [bulkUploadDialogOpen, setBulkUploadDialogOpen] = useState(false);
+  const [reorderDialogOpen, setReorderDialogOpen] = useState(false);
   const [filters, setFilters] = useState<BenefitFilters>({});
 
   const handleFiltersChange = (newFilters: BenefitFilters) => {
@@ -28,6 +30,14 @@ const Benefits: React.FC = () => {
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">{t('benefits')}</h1>
         <div className="flex gap-3">
+          <Button
+            variant="outline"
+            onClick={() => setReorderDialogOpen(true)}
+            className="flex items-center gap-2"
+          >
+            <ArrowUpDown className="h-4 w-4" />
+            {t('reorder-benefits') || 'Reordenar'}
+          </Button>
           <Button
             variant="outline"
             onClick={() => setBulkUploadDialogOpen(true)}
@@ -50,7 +60,10 @@ const Benefits: React.FC = () => {
       <BenefitsFilters onFiltersChange={handleFiltersChange} />
 
       {/* Table */}
-      <BenefitsTable filters={filters} />
+      <BenefitsTable 
+        filters={filters} 
+        onReorderRequest={() => setReorderDialogOpen(true)} 
+      />
 
       {/* Dialogs */}
       <CreateBenefitDialog
@@ -61,6 +74,12 @@ const Benefits: React.FC = () => {
       <BulkUploadDialog
         open={bulkUploadDialogOpen}
         onOpenChange={setBulkUploadDialogOpen}
+      />
+
+      <ReorderBenefitsDialog
+        open={reorderDialogOpen}
+        onOpenChange={setReorderDialogOpen}
+        benefits={[]} // This will be passed from the table component
       />
     </div>
   );
