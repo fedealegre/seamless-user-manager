@@ -41,6 +41,8 @@ export const userTranslations = {
     'status-column': 'Status', 
     'registration-column': 'Registration Date',
     'last-login-column': 'Last Login',
+    'roles-column': 'Roles',
+    'actions-column': 'Actions',
     // User filters
     'filters': 'Filters',
     'filter-by-user-info': 'Filter by user information',
@@ -86,6 +88,12 @@ export const userTranslations = {
     'value': 'Value',
     'add-field': 'Add Field',
     'no-additional-fields': 'No additional fields',
+    'male': 'Male',
+    'female': 'Female',
+    'deleted': 'Deleted',
+    'never': 'Never',
+    'edit-user': 'Edit User',
+    'edit-roles': 'Edit Roles',
     // Compensation dialog
     'compensate-customer': 'Compensate Customer',
     'compensation-description': 'Create a compensation transaction for the customer',
@@ -138,6 +146,8 @@ export const userTranslations = {
     'status-column': 'Estado', 
     'registration-column': 'Fecha de Registro',
     'last-login-column': 'Último Acceso',
+    'roles-column': 'Roles',
+    'actions-column': 'Acciones',
     // User filters
     'filters': 'Filtros',
     'filter-by-user-info': 'Filtrar por información de usuario',
@@ -183,6 +193,12 @@ export const userTranslations = {
     'value': 'Valor',
     'add-field': 'Agregar Campo',
     'no-additional-fields': 'No hay campos adicionales',
+    'male': 'Masculino',
+    'female': 'Femenino',
+    'deleted': 'Eliminado',
+    'never': 'Nunca',
+    'edit-user': 'Editar Usuario',
+    'edit-roles': 'Editar Roles',
     // Compensation dialog
     'compensate-customer': 'Compensar al Cliente',
     'compensation-description': 'Crear una transacción de compensación para el cliente',

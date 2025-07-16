@@ -4,6 +4,7 @@ import { benefitsTranslations } from './benefits';
 import { loginTranslations } from './login';
 import { paginationTranslations } from './pagination';
 import { antiFraudTranslations } from './anti-fraud';
+import { userTranslations } from './users';
 
 const translations = {
   en: {
@@ -12,6 +13,7 @@ const translations = {
     ...loginTranslations.en,
     ...paginationTranslations.en,
     ...antiFraudTranslations.en,
+    ...userTranslations.en,
   },
   es: {
     ...commonTranslations.es,
@@ -19,6 +21,7 @@ const translations = {
     ...loginTranslations.es,
     ...paginationTranslations.es,
     ...antiFraudTranslations.es,
+    ...userTranslations.es,
   },
 };
 
