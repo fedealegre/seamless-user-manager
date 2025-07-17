@@ -87,6 +87,20 @@ const BACKOFFICE_USERS = [
       state: "active" as const,
       last_login: new Date().toISOString(),
       password: "configurador" // Added for consistency
+    },
+    ,
+  {
+    username: "loyalty",
+    password: "loyalty",
+    user: {
+      id: "loyalty-1",
+      name: "Loyalty",
+      surname: "User",
+      email: "loyalty@example.com",
+      roles: ["loyalty"],
+      state: "active" as const,
+      last_login: new Date().toISOString(),
+      password: "loyalty" // Added for consistency
     }
   }
 ];
