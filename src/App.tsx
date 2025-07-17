@@ -47,6 +47,8 @@ export const getDefaultLandingPage = (roles: string[]): string => {
     return "/users";
   } else if (roles.includes("configurador")) {
     return "/anti-fraud";
+  } else if (roles.includes("loyalty")) {
+    return "/beneficios";
   }
   // Fallback - should never happen if roles are properly assigned
   return "/login";
@@ -109,9 +111,9 @@ const AppRoutes = () => (
           </PrivateRoute>
         } />
         
-        {/* Loyalty Routes - Available to operador, compensador, configurador */}
+        {/* Loyalty Routes - Only available to loyalty role */}
         <Route path="/beneficios" element={
-          <PrivateRoute allowedRoles={["operador", "compensador", "configurador"]} noLayout={true}>
+          <PrivateRoute allowedRoles={["loyalty"]} noLayout={true}>
             <Benefits />
           </PrivateRoute>
         } />
@@ -150,14 +152,14 @@ const AppRoutes = () => (
           </PrivateRoute>
         } />
         
-        {/* Master Routes - Only available to configurador */}
+        {/* Master Routes - Only available to loyalty role */}
         <Route path="/maestros/categorias" element={
-          <PrivateRoute allowedRoles={["configurador"]} noLayout={true}>
+          <PrivateRoute allowedRoles={["loyalty"]} noLayout={true}>
             <Categories />
           </PrivateRoute>
         } />
         <Route path="/maestros/mcc" element={
-          <PrivateRoute allowedRoles={["configurador"]} noLayout={true}>
+          <PrivateRoute allowedRoles={["loyalty"]} noLayout={true}>
             <MCCMaster />
           </PrivateRoute>
         } />

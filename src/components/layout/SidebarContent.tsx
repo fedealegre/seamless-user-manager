@@ -80,28 +80,28 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ sidebarOpen }) => {
     {
       title: "Loyalty",
       translationKey: "loyalty",
-      permissionCheck: canAccessLoyaltyPages,
+      permissionCheck: () => user?.roles.includes("loyalty") || false,
       items: [
         { 
           title: "Beneficios", 
           translationKey: "benefits", 
           icon: Gift, 
           path: "/beneficios", 
-          permissionCheck: canAccessLoyaltyPages
+          permissionCheck: () => user?.roles.includes("loyalty") || false
         },
         { 
           title: "Categorías", 
           translationKey: "categories", 
           icon: Tag, 
           path: "/maestros/categorias", 
-          permissionCheck: canAccessLoyaltyPages
+          permissionCheck: () => user?.roles.includes("loyalty") || false
         },
         { 
           title: "Rubros (MCC)", 
           translationKey: "mcc", 
           icon: CreditCard, 
           path: "/maestros/mcc", 
-          permissionCheck: canAccessLoyaltyPages
+          permissionCheck: () => user?.roles.includes("loyalty") || false
         }
       ]
     },

@@ -25,7 +25,7 @@ export function usePermissions() {
   };
 
   const canAccessLoyaltyPages = (): boolean => {
-    return hasRole("admin") || hasRole("loyalty");
+    return hasRole("loyalty");
   };
 
   const canChangeTransactionStatus = (): boolean => {
