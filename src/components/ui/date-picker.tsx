@@ -21,7 +21,7 @@ interface DatePickerProps {
 }
 
 export function DatePicker({ date, onSelect, className, id, displayTime = false }: DatePickerProps) {
-  const { formatDate, settings } = useBackofficeSettings();
+  const { settings } = useBackofficeSettings();
   
   const getLocale = () => {
     return settings.language.startsWith('es') ? es : undefined;
@@ -31,16 +31,12 @@ export function DatePicker({ date, onSelect, className, id, displayTime = false 
   const formatDisplayDate = (date: Date) => {
     if (!date) return '';
     
-    if (displayTime) {
-      return formatDate(date);
-    } else {
-      // Use Intl.DateTimeFormat to format just the date part
-      const dateFormatter = new Intl.DateTimeFormat(
-        settings.language.startsWith('es') ? 'es-ES' : 'en-US', 
-        { year: 'numeric', month: '2-digit', day: '2-digit' }
-      );
-      return dateFormatter.format(date);
-    }
+    // Use Intl.DateTimeFormat to format just the date part
+    const dateFormatter = new Intl.DateTimeFormat(
+      settings.language.startsWith('es') ? 'es-ES' : 'en-US', 
+      { year: 'numeric', month: '2-digit', day: '2-digit' }
+    );
+    return dateFormatter.format(date);
   };
 
   return (

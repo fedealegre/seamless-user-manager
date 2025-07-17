@@ -314,7 +314,7 @@ export const BenefitForm: React.FC<BenefitFormProps> = ({
                       <DatePicker
                         date={field.value}
                         onSelect={field.onChange}
-                        displayTime={true}
+                        displayTime={false}
                       />
                     </FormControl>
                     <FormMessage />
@@ -332,7 +332,7 @@ export const BenefitForm: React.FC<BenefitFormProps> = ({
                       <DatePicker
                         date={field.value}
                         onSelect={field.onChange}
-                        displayTime={true}
+                        displayTime={false}
                       />
                     </FormControl>
                     <FormMessage />
