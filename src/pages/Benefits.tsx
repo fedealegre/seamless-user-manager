@@ -11,7 +11,7 @@ import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
 import { translate } from "@/lib/translations";
 import { calculateBenefitStatus } from "@/lib/benefits-utils";
 
-// Mock data with updated estados (only 'activo' or 'inactivo')
+// Mock data with updated fechas for active and scheduled benefits
 const mockBenefits: Benefit[] = [
   {
     id: "1",
@@ -21,9 +21,9 @@ const mockBenefits: Benefit[] = [
     valorPorcentaje: 5,
     topePorCompra: 50000,
     orden: 1,
-    categoria: "Alimentación",
+    categoria: "Supermercado",
     mcc: ["5411", "5499"],
-    fechaInicio: new Date("2024-01-01"),
+    fechaInicio: new Date("2024-07-01"), // Activo
     fechaFin: new Date("2024-12-31"),
     estado: "activo",
     fechaCreacion: new Date("2024-01-01"),
@@ -38,9 +38,9 @@ const mockBenefits: Benefit[] = [
     valorPorcentaje: 3,
     topePorCompra: 20000,
     orden: 2,
-    categoria: "Combustibles",
+    categoria: "Combustible",
     mcc: ["5541", "5542"],
-    fechaInicio: new Date("2024-08-01"), // Fecha futura = programado
+    fechaInicio: new Date("2024-08-01"), // Programado
     fechaFin: new Date("2024-11-30"),
     estado: "activo",
     fechaCreacion: new Date("2024-01-15"),
@@ -55,9 +55,9 @@ const mockBenefits: Benefit[] = [
     valorPorcentaje: 10,
     topePorCompra: 30000,
     orden: 3,
-    categoria: "Alimentación",
+    categoria: "Café",
     mcc: ["5812", "5814"],
-    fechaInicio: new Date("2024-01-15"),
+    fechaInicio: new Date("2024-07-10"), // Activo
     fechaFin: new Date("2024-12-15"),
     estado: "activo",
     fechaCreacion: new Date("2024-01-10"),
@@ -72,9 +72,9 @@ const mockBenefits: Benefit[] = [
     valorPorcentaje: 8,
     topePorCompra: 15000,
     orden: 4,
-    categoria: "Salud",
+    categoria: "Farmacia",
     mcc: ["5912"],
-    fechaInicio: new Date("2024-03-01"),
+    fechaInicio: new Date("2024-07-05"), // Activo
     fechaFin: new Date("2024-12-31"),
     estado: "activo",
     fechaCreacion: new Date("2024-02-20"),
@@ -89,9 +89,9 @@ const mockBenefits: Benefit[] = [
     valorPorcentaje: 15,
     topePorCompra: 100000,
     orden: 5,
-    categoria: "Tecnología",
+    categoria: "Librería",
     mcc: ["5732", "5734"],
-    fechaInicio: new Date("2024-04-01"),
+    fechaInicio: new Date("2024-08-15"), // Programado
     fechaFin: new Date("2024-10-31"),
     estado: "activo",
     fechaCreacion: new Date("2024-03-15"),
@@ -106,9 +106,9 @@ const mockBenefits: Benefit[] = [
     valorPorcentaje: 7,
     topePorCompra: 25000,
     orden: 6,
-    categoria: "Transporte",
+    categoria: "Combustible",
     mcc: ["4111", "4121"],
-    fechaInicio: new Date("2024-01-01"),
+    fechaInicio: new Date("2024-07-01"), // Activo
     fechaFin: new Date("2024-12-31"),
     estado: "activo",
     fechaCreacion: new Date("2024-01-01"),
@@ -123,9 +123,9 @@ const mockBenefits: Benefit[] = [
     valorPorcentaje: 12,
     topePorCompra: 75000,
     orden: 7,
-    categoria: "Moda",
+    categoria: "Librería",
     mcc: ["5651", "5661"],
-    fechaInicio: new Date("2024-05-01"),
+    fechaInicio: new Date("2024-09-01"), // Programado
     fechaFin: new Date("2024-11-30"),
     estado: "activo",
     fechaCreacion: new Date("2024-04-10"),
@@ -140,9 +140,9 @@ const mockBenefits: Benefit[] = [
     valorPorcentaje: 20,
     topePorCompra: 40000,
     orden: 8,
-    categoria: "Entretenimiento",
+    categoria: "Café",
     mcc: ["7832", "7841"],
-    fechaInicio: new Date("2024-06-01"),
+    fechaInicio: new Date("2024-07-15"), // Activo
     fechaFin: new Date("2024-12-31"),
     estado: "activo",
     fechaCreacion: new Date("2024-05-15"),
@@ -157,9 +157,9 @@ const mockBenefits: Benefit[] = [
     valorPorcentaje: 6,
     topePorCompra: 80000,
     orden: 9,
-    categoria: "Hogar",
+    categoria: "Supermercado",
     mcc: ["5712", "5722"],
-    fechaInicio: new Date("2024-02-01"),
+    fechaInicio: new Date("2024-07-20"), // Activo
     fechaFin: new Date("2024-12-31"),
     estado: "activo",
     fechaCreacion: new Date("2024-01-25"),
@@ -174,9 +174,9 @@ const mockBenefits: Benefit[] = [
     valorPorcentaje: 18,
     topePorCompra: 35000,
     orden: 10,
-    categoria: "Belleza",
+    categoria: "Farmacia",
     mcc: ["5977", "7230"],
-    fechaInicio: new Date("2024-03-01"),
+    fechaInicio: new Date("2024-08-20"), // Programado
     fechaFin: new Date("2024-09-30"),
     estado: "activo",
     fechaCreacion: new Date("2024-02-15"),
@@ -191,9 +191,9 @@ const mockBenefits: Benefit[] = [
     valorPorcentaje: 14,
     topePorCompra: 60000,
     orden: 11,
-    categoria: "Deportes",
+    categoria: "Juguetería",
     mcc: ["5940", "5941"],
-    fechaInicio: new Date("2024-07-01"),
+    fechaInicio: new Date("2024-09-15"), // Programado
     fechaFin: new Date("2024-12-31"),
     estado: "activo",
     fechaCreacion: new Date("2024-06-10"),
@@ -208,9 +208,9 @@ const mockBenefits: Benefit[] = [
     valorPorcentaje: 25,
     topePorCompra: 45000,
     orden: 12,
-    categoria: "Mascotas",
+    categoria: "Farmacia",
     mcc: ["0742", "5995"],
-    fechaInicio: new Date("2024-01-01"),
+    fechaInicio: new Date("2024-07-01"), // Activo
     fechaFin: new Date("2024-12-31"),
     estado: "activo",
     fechaCreacion: new Date("2024-01-01"),
@@ -225,9 +225,9 @@ const mockBenefits: Benefit[] = [
     valorPorcentaje: 9,
     topePorCompra: 20000,
     orden: 13,
-    categoria: "Educación",
+    categoria: "Librería",
     mcc: ["5942"],
-    fechaInicio: new Date("2024-08-01"),
+    fechaInicio: new Date("2024-08-01"), // Programado
     fechaFin: new Date("2024-12-31"),
     estado: "activo",
     fechaCreacion: new Date("2024-07-15"),
@@ -242,9 +242,9 @@ const mockBenefits: Benefit[] = [
     valorPorcentaje: 5,
     topePorCompra: 200000,
     orden: 14,
-    categoria: "Viajes",
+    categoria: "Café",
     mcc: ["4722", "3501"],
-    fechaInicio: new Date("2024-09-01"),
+    fechaInicio: new Date("2024-10-01"), // Programado
     fechaFin: new Date("2024-12-31"),
     estado: "activo",
     fechaCreacion: new Date("2024-08-10"),
@@ -259,9 +259,9 @@ const mockBenefits: Benefit[] = [
     valorPorcentaje: 11,
     topePorCompra: 30000,
     orden: 15,
-    categoria: "Hogar",
+    categoria: "Verdulería",
     mcc: ["5261"],
-    fechaInicio: new Date("2024-04-01"),
+    fechaInicio: new Date("2024-07-10"), // Activo
     fechaFin: new Date("2024-10-31"),
     estado: "activo",
     fechaCreacion: new Date("2024-03-20"),
@@ -276,9 +276,9 @@ const mockBenefits: Benefit[] = [
     valorPorcentaje: 4,
     topePorCompra: 150000,
     orden: 16,
-    categoria: "Seguros",
+    categoria: "Supermercado",
     mcc: ["6300"],
-    fechaInicio: new Date("2024-01-01"),
+    fechaInicio: new Date("2024-07-01"), // Activo
     fechaFin: new Date("2024-12-31"),
     estado: "activo",
     fechaCreacion: new Date("2024-01-01"),
@@ -293,9 +293,9 @@ const mockBenefits: Benefit[] = [
     valorPorcentaje: 30,
     topePorCompra: 90000,
     orden: 17,
-    categoria: "Entretenimiento",
+    categoria: "Librería",
     mcc: ["5733"],
-    fechaInicio: new Date("2024-10-01"),
+    fechaInicio: new Date("2024-10-01"), // Programado
     fechaFin: new Date("2024-12-31"),
     estado: "activo",
     fechaCreacion: new Date("2024-09-15"),
@@ -310,9 +310,9 @@ const mockBenefits: Benefit[] = [
     valorPorcentaje: 22,
     topePorCompra: 120000,
     orden: 18,
-    categoria: "Joyería",
+    categoria: "Librería",
     mcc: ["5944"],
-    fechaInicio: new Date("2024-11-01"),
+    fechaInicio: new Date("2024-11-01"), // Programado
     fechaFin: new Date("2024-12-31"),
     estado: "activo",
     fechaCreacion: new Date("2024-10-10"),
@@ -327,10 +327,10 @@ const mockBenefits: Benefit[] = [
     valorPorcentaje: 16,
     topePorCompra: 70000,
     orden: 19,
-    categoria: "Servicios",
+    categoria: "Librería",
     mcc: ["7221"],
     fechaInicio: new Date("2024-05-01"),
-    fechaFin: new Date("2024-06-30"), // Fecha fin pasada = vencido
+    fechaFin: new Date("2024-06-30"), // Vencido
     estado: "activo",
     fechaCreacion: new Date("2024-04-15"),
     fechaActualizacion: new Date("2024-04-15"),
@@ -344,11 +344,11 @@ const mockBenefits: Benefit[] = [
     valorPorcentaje: 13,
     topePorCompra: 100000,
     orden: 20,
-    categoria: "Educación",
+    categoria: "Librería",
     mcc: ["8220", "8299"],
-    fechaInicio: new Date("2024-01-01"),
+    fechaInicio: new Date("2024-07-01"), // Activo pero manualmente inactivo
     fechaFin: new Date("2024-12-31"),
-    estado: "inactivo", // Manualmente inactivo
+    estado: "inactivo",
     fechaCreacion: new Date("2024-01-01"),
     fechaActualizacion: new Date("2024-01-01"),
     imagen: "https://images.unsplash.com/photo-1482881497185-d4a9ddbe4151?w=680&h=352&fit=crop"
