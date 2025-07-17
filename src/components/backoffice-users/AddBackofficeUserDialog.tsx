@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiService as api } from "@/lib/api";
@@ -48,6 +47,7 @@ const roleOptions = [
   { id: "compensador", label: "Compensador" },
   { id: "operador", label: "Operador" },
   { id: "analista", label: "Analista" },
+  { id: "loyalty", label: "Loyalty" },
 ];
 
 const AddBackofficeUserDialog: React.FC<AddBackofficeUserDialogProps> = ({
