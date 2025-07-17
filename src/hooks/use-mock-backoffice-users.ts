@@ -48,6 +48,15 @@ const initialMockUsers: BackofficeUser[] = [
     state: "active",
     last_login: "2024-01-16T12:00:00Z",
   },
+  {
+    id: "6",
+    name: "Federico",
+    surname: "Alegre",
+    email: "fede.alegre@empresa.com",
+    roles: ["loyalty"],
+    state: "active",
+    last_login: "2024-01-17T08:00:00Z",
+  },
 ];
 
 export function useMockBackofficeUsers() {
