@@ -51,7 +51,8 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ sidebarOpen }) => {
     canAccessDashboard,
     canAccessManagementPages,
     canAccessSecurityPages,
-    canAccessSettingsPages
+    canAccessSettingsPages,
+    canAccessLoyaltyPages
   } = usePermissions();
 
   const sidebarSections: SidebarSection[] = [
@@ -79,28 +80,28 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ sidebarOpen }) => {
     {
       title: "Loyalty",
       translationKey: "loyalty",
-      permissionCheck: canAccessManagementPages,
+      permissionCheck: canAccessLoyaltyPages,
       items: [
         { 
           title: "Beneficios", 
           translationKey: "benefits", 
           icon: Gift, 
           path: "/beneficios", 
-          permissionCheck: canAccessManagementPages
+          permissionCheck: canAccessLoyaltyPages
         },
         { 
           title: "Categorías", 
           translationKey: "categories", 
           icon: Tag, 
           path: "/maestros/categorias", 
-          permissionCheck: canAccessSettingsPages
+          permissionCheck: canAccessLoyaltyPages
         },
         { 
           title: "Rubros (MCC)", 
           translationKey: "mcc", 
           icon: CreditCard, 
           path: "/maestros/mcc", 
-          permissionCheck: canAccessSettingsPages
+          permissionCheck: canAccessLoyaltyPages
         }
       ]
     },
