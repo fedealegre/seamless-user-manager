@@ -27,7 +27,7 @@ const BACKOFFICE_USERS = [
       name: "Federico",
       surname: "Alegre",
       email: "fede@example.com",
-      roles: ["configurador", "compensador", "operador", "analista"],
+      roles: ["configurador", "compensador", "operador", "analista", "loyalty"],
       state: "active" as const,
       last_login: new Date().toISOString(),
       password: "backoffice" // Added for consistency
