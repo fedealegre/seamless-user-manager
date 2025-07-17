@@ -19,7 +19,6 @@ import { formatDateTime } from "@/lib/date-utils";
 import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
 import { translate } from "@/lib/translations";
 import { calculateBenefitStatus, getBenefitStatusLabel, getBenefitStatusVariant } from "@/lib/benefits-utils";
-import { processPlaceholders } from "@/lib/benefit-placeholders";
 
 interface BenefitsTableProps {
   filters: BenefitFilters;
@@ -99,9 +98,7 @@ export const BenefitsTable: React.FC<BenefitsTableProps> = ({
                         )}
                         <div>
                           <div className="font-medium">{benefit.titulo}</div>
-                          <div className="text-sm text-muted-foreground">
-                            {processPlaceholders(benefit.descripcion, benefit)}
-                          </div>
+                          <div className="text-sm text-muted-foreground">{benefit.descripcion}</div>
                         </div>
                       </div>
                     </TableCell>
