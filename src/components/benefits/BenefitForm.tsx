@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -24,9 +24,11 @@ import {
 import { DatePicker } from "@/components/ui/date-picker";
 import { ImageUpload } from "./ImageUpload";
 import { MCCSelector } from "./MCCSelector";
+import { PlaceholderHelper } from "./PlaceholderHelper";
 import { Benefit } from "@/types/benefits";
 import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
 import { translate } from "@/lib/translations";
+import { processPlaceholders } from "@/lib/benefit-placeholders";
 
 interface BenefitFormProps {
   benefit?: Benefit;
@@ -48,6 +50,8 @@ export const BenefitForm: React.FC<BenefitFormProps> = ({
 }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { settings } = useBackofficeSettings();
+  const descriptionRef = useRef<HTMLInputElement>(null);
+  const extendedDescriptionRef = useRef<HTMLTextAreaElement>(null);
   
   const t = (key: string) => translate(key, settings.language);
 
@@ -116,6 +120,38 @@ export const BenefitForm: React.FC<BenefitFormProps> = ({
     }
   };
 
+  const handlePlaceholderClick = (placeholder: string) => {
+    const descriptionField = form.getValues('descripcion');
+    const newDescription = descriptionField + placeholder;
+    form.setValue('descripcion', newDescription);
+    
+    // Focus on the description field
+    if (descriptionRef.current) {
+      descriptionRef.current.focus();
+    }
+  };
+
+  // Get current form values to show preview
+  const currentValues = form.watch();
+  const previewBenefit: Benefit = {
+    id: benefit?.id || 'preview',
+    titulo: currentValues.titulo || 'Título del beneficio',
+    descripcion: currentValues.descripcion || 'Descripción del beneficio',
+    descripcionExtendida: currentValues.descripcionExtendida,
+    legales: currentValues.legales || 'Términos legales',
+    valorPorcentaje: currentValues.valorPorcentaje || 0,
+    topePorCompra: currentValues.topePorCompra || 0,
+    imagen: currentValues.imagen,
+    orden: currentValues.orden || 1,
+    categoria: currentValues.categoria || 'Categoría',
+    mcc: currentValues.mcc || [],
+    fechaInicio: currentValues.fechaInicio || new Date(),
+    fechaFin: currentValues.fechaFin || new Date(),
+    estado: 'activo',
+    fechaCreacion: new Date(),
+    fechaActualizacion: new Date(),
+  };
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -143,12 +179,19 @@ export const BenefitForm: React.FC<BenefitFormProps> = ({
                 <FormItem>
                   <FormLabel>{t('description')} *</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input {...field} ref={descriptionRef} />
                   </FormControl>
                   <FormMessage />
+                  {currentValues.descripcion && (
+                    <div className="mt-2 p-2 bg-muted rounded text-sm">
+                      <strong>{t('preview') || 'Vista previa'}:</strong> {processPlaceholders(currentValues.descripcion, previewBenefit)}
+                    </div>
+                  )}
                 </FormItem>
               )}
             />
+
+            <PlaceholderHelper onPlaceholderClick={handlePlaceholderClick} />
 
             <FormField
               control={form.control}
@@ -157,7 +200,7 @@ export const BenefitForm: React.FC<BenefitFormProps> = ({
                 <FormItem>
                   <FormLabel>{t('extended-description')}</FormLabel>
                   <FormControl>
-                    <Textarea {...field} rows={3} />
+                    <Textarea {...field} rows={3} ref={extendedDescriptionRef} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
