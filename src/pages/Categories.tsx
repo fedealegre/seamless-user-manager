@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Plus, Edit, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -26,21 +25,57 @@ import { Category } from "@/types/benefits";
 const mockCategories: Category[] = [
   {
     id: "1",
-    nombre: "Alimentación",
-    descripcion: "Supermercados, restaurantes y tiendas de comida",
+    nombre: "Librería",
+    descripcion: "Librerías y material educativo",
     fechaCreacion: new Date("2024-01-01"),
   },
   {
     id: "2",
-    nombre: "Combustibles",
-    descripcion: "Estaciones de servicio y combustibles",
+    nombre: "Carnicería",
+    descripcion: "Carnicerías y productos cárnicos",
     fechaCreacion: new Date("2024-01-02"),
   },
   {
     id: "3",
-    nombre: "Entretenimiento",
-    descripcion: "Cines, teatros, parques de diversiones",
+    nombre: "Juguetería",
+    descripcion: "Jugueterías y artículos para niños",
     fechaCreacion: new Date("2024-01-03"),
+  },
+  {
+    id: "4",
+    nombre: "Supermercado",
+    descripcion: "Supermercados y tiendas de comestibles",
+    fechaCreacion: new Date("2024-01-04"),
+  },
+  {
+    id: "5",
+    nombre: "Panadería",
+    descripcion: "Panaderías y productos de panadería",
+    fechaCreacion: new Date("2024-01-05"),
+  },
+  {
+    id: "6",
+    nombre: "Farmacia",
+    descripcion: "Farmacias y productos farmacéuticos",
+    fechaCreacion: new Date("2024-01-06"),
+  },
+  {
+    id: "7",
+    nombre: "Verdulería",
+    descripcion: "Verdulerías y productos frescos",
+    fechaCreacion: new Date("2024-01-07"),
+  },
+  {
+    id: "8",
+    nombre: "Combustible",
+    descripcion: "Estaciones de servicio y combustibles",
+    fechaCreacion: new Date("2024-01-08"),
+  },
+  {
+    id: "9",
+    nombre: "Café",
+    descripcion: "Cafeterías y tiendas de café",
+    fechaCreacion: new Date("2024-01-09"),
   },
 ];
 

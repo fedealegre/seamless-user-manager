@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -35,10 +34,15 @@ interface BenefitFormProps {
 }
 
 const mockCategories = [
-  { id: "1", nombre: "Alimentación" },
-  { id: "2", nombre: "Combustibles" },
-  { id: "3", nombre: "Entretenimiento" },
-  { id: "4", nombre: "Transporte" },
+  { id: "1", nombre: "Librería" },
+  { id: "2", nombre: "Carnicería" },
+  { id: "3", nombre: "Juguetería" },
+  { id: "4", nombre: "Supermercado" },
+  { id: "5", nombre: "Panadería" },
+  { id: "6", nombre: "Farmacia" },
+  { id: "7", nombre: "Verdulería" },
+  { id: "8", nombre: "Combustible" },
+  { id: "9", nombre: "Café" },
 ];
 
 export const BenefitForm: React.FC<BenefitFormProps> = ({
