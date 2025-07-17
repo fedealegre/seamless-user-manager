@@ -10,7 +10,7 @@ const initialMockUsers: BackofficeUser[] = [
     email: "juan.perez@empresa.com",
     roles: ["configurador", "operador"],
     state: "active",
-    lastLogin: new Date("2024-01-15T10:30:00Z"),
+    last_login: "2024-01-15T10:30:00Z",
   },
   {
     id: "2",
@@ -19,7 +19,7 @@ const initialMockUsers: BackofficeUser[] = [
     email: "maria.gonzalez@empresa.com",
     roles: ["compensador"],
     state: "active",
-    lastLogin: new Date("2024-01-14T14:22:00Z"),
+    last_login: "2024-01-14T14:22:00Z",
   },
   {
     id: "3",
@@ -28,7 +28,7 @@ const initialMockUsers: BackofficeUser[] = [
     email: "carlos.rodriguez@empresa.com",
     roles: ["analista"],
     state: "blocked",
-    lastLogin: new Date("2024-01-10T09:15:00Z"),
+    last_login: "2024-01-10T09:15:00Z",
   },
   {
     id: "4",
@@ -37,7 +37,7 @@ const initialMockUsers: BackofficeUser[] = [
     email: "ana.martinez@empresa.com",
     roles: ["operador", "analista"],
     state: "active",
-    lastLogin: new Date("2024-01-16T16:45:00Z"),
+    last_login: "2024-01-16T16:45:00Z",
   },
   {
     id: "5",
@@ -46,7 +46,7 @@ const initialMockUsers: BackofficeUser[] = [
     email: "loyalty@empresa.com",
     roles: ["loyalty"],
     state: "active",
-    lastLogin: new Date("2024-01-16T12:00:00Z"),
+    last_login: "2024-01-16T12:00:00Z",
   },
 ];
 
