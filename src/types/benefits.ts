@@ -13,7 +13,7 @@ export interface Benefit {
   mcc: string[];
   fechaInicio: Date;
   fechaFin: Date;
-  estado: 'activo' | 'inactivo' | 'programado' | 'finalizado';
+  estado: 'activo' | 'inactivo'; // Solo estados manuales: activo o inactivo
   fechaCreacion: Date;
   fechaActualizacion: Date;
 }

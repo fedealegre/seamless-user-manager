@@ -69,7 +69,7 @@ export const BenefitsFilters: React.FC<BenefitsFiltersProps> = ({
               <SelectItem value="activo">{t('active')}</SelectItem>
               <SelectItem value="inactivo">{t('inactive')}</SelectItem>
               <SelectItem value="programado">{t('scheduled')}</SelectItem>
-              <SelectItem value="finalizado">{t('finished')}</SelectItem>
+              <SelectItem value="vencido">{t('expired')}</SelectItem>
             </SelectContent>
           </Select>
         </div>

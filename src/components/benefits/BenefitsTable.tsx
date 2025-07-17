@@ -18,6 +18,7 @@ import { EditBenefitDialog } from "./EditBenefitDialog";
 import { formatDateTime } from "@/lib/date-utils";
 import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
 import { translate } from "@/lib/translations";
+import { calculateBenefitStatus, getBenefitStatusLabel, getBenefitStatusVariant } from "@/lib/benefits-utils";
 
 interface BenefitsTableProps {
   filters: BenefitFilters;
@@ -37,18 +38,14 @@ export const BenefitsTable: React.FC<BenefitsTableProps> = ({
   
   const t = (key: string) => translate(key, settings.language);
 
-  const getStatusBadge = (estado: string) => {
-    const statusConfig = {
-      activo: { label: t('active'), variant: "default" as const, className: "bg-green-100 text-green-800" },
-      inactivo: { label: t('inactive'), variant: "secondary" as const, className: "bg-gray-100 text-gray-800" },
-      programado: { label: t('scheduled'), variant: "default" as const, className: "bg-blue-100 text-blue-800" },
-      finalizado: { label: t('finished'), variant: "destructive" as const, className: "bg-red-100 text-red-800" },
-    };
-
-    const config = statusConfig[estado as keyof typeof statusConfig];
+  const getStatusBadge = (benefit: Benefit) => {
+    const calculatedStatus = calculateBenefitStatus(benefit);
+    const config = getBenefitStatusVariant(calculatedStatus);
+    const label = getBenefitStatusLabel(calculatedStatus, t);
+    
     return (
       <Badge variant={config.variant} className={config.className}>
-        {config.label}
+        {label}
       </Badge>
     );
   };
@@ -113,7 +110,7 @@ export const BenefitsTable: React.FC<BenefitsTableProps> = ({
                         <div>{formatDateTime(benefit.fechaFin, 'UTC', 'es-ES', { year: 'numeric', month: '2-digit', day: '2-digit' })}</div>
                       </div>
                     </TableCell>
-                    <TableCell>{getStatusBadge(benefit.estado)}</TableCell>
+                    <TableCell>{getStatusBadge(benefit)}</TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <Button

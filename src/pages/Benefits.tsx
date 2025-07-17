@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Plus, Upload, ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -10,8 +9,9 @@ import { ReorderBenefitsDialog } from "@/components/benefits/ReorderBenefitsDial
 import { BenefitFilters, Benefit } from "@/types/benefits";
 import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
 import { translate } from "@/lib/translations";
+import { calculateBenefitStatus } from "@/lib/benefits-utils";
 
-// Mock data with 20 benefits and images
+// Mock data with updated estados (only 'activo' or 'inactivo')
 const mockBenefits: Benefit[] = [
   {
     id: "1",
@@ -40,9 +40,9 @@ const mockBenefits: Benefit[] = [
     orden: 2,
     categoria: "Combustibles",
     mcc: ["5541", "5542"],
-    fechaInicio: new Date("2024-02-01"),
+    fechaInicio: new Date("2024-08-01"), // Fecha futura = programado
     fechaFin: new Date("2024-11-30"),
-    estado: "programado",
+    estado: "activo",
     fechaCreacion: new Date("2024-01-15"),
     fechaActualizacion: new Date("2024-01-15"),
     imagen: "https://images.unsplash.com/photo-1581090464777-f3220bbe1b8b?w=680&h=352&fit=crop"
@@ -330,8 +330,8 @@ const mockBenefits: Benefit[] = [
     categoria: "Servicios",
     mcc: ["7221"],
     fechaInicio: new Date("2024-05-01"),
-    fechaFin: new Date("2024-11-30"),
-    estado: "finalizado",
+    fechaFin: new Date("2024-06-30"), // Fecha fin pasada = vencido
+    estado: "activo",
     fechaCreacion: new Date("2024-04-15"),
     fechaActualizacion: new Date("2024-04-15"),
     imagen: "https://images.unsplash.com/photo-1504893524553-b855bce32c67?w=680&h=352&fit=crop"
@@ -348,7 +348,7 @@ const mockBenefits: Benefit[] = [
     mcc: ["8220", "8299"],
     fechaInicio: new Date("2024-01-01"),
     fechaFin: new Date("2024-12-31"),
-    estado: "inactivo",
+    estado: "inactivo", // Manualmente inactivo
     fechaCreacion: new Date("2024-01-01"),
     fechaActualizacion: new Date("2024-01-01"),
     imagen: "https://images.unsplash.com/photo-1482881497185-d4a9ddbe4151?w=680&h=352&fit=crop"
@@ -379,8 +379,11 @@ const Benefits: React.FC = () => {
     if (filters.titulo && !benefit.titulo.toLowerCase().includes(filters.titulo.toLowerCase())) {
       return false;
     }
-    if (filters.estado && benefit.estado !== filters.estado) {
-      return false;
+    if (filters.estado) {
+      const calculatedStatus = calculateBenefitStatus(benefit);
+      if (calculatedStatus !== filters.estado) {
+        return false;
+      }
     }
     return true;
   }).sort((a, b) => a.orden - b.orden);
