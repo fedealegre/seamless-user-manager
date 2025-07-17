@@ -24,10 +24,6 @@ export function usePermissions() {
     return hasRole("configurador");
   };
 
-  const canAccessLoyaltyPages = (): boolean => {
-    return hasRole("loyalty");
-  };
-
   const canChangeTransactionStatus = (): boolean => {
     return hasRole("compensador");
   };
@@ -42,7 +38,6 @@ export function usePermissions() {
     canAccessManagementPages,
     canAccessSecurityPages,
     canAccessSettingsPages,
-    canAccessLoyaltyPages,
     canChangeTransactionStatus,
     canCancelTransaction
   };

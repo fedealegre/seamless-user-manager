@@ -48,7 +48,6 @@ const roleOptions = [
   { id: "compensador", label: "Compensador" },
   { id: "operador", label: "Operador" },
   { id: "analista", label: "Analista" },
-  { id: "loyalty", label: "Loyalty" },
 ];
 
 const AddBackofficeUserDialog: React.FC<AddBackofficeUserDialogProps> = ({
