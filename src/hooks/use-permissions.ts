@@ -13,7 +13,7 @@ export function usePermissions() {
   };
 
   const canAccessManagementPages = (): boolean => {
-    return hasRole("operador") || hasRole("compensador");
+    return hasRole("operador") || hasRole("compensador") || hasRole("configurador");
   };
   
   const canAccessSecurityPages = (): boolean => {
