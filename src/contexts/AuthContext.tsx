@@ -88,8 +88,7 @@ const BACKOFFICE_USERS = [
       last_login: new Date().toISOString(),
       password: "configurador" // Added for consistency
     },
-    ,
-  {
+    {
     username: "loyalty",
     password: "loyalty",
     user: {
