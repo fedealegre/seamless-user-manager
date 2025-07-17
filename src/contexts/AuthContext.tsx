@@ -30,7 +30,7 @@ const BACKOFFICE_USERS = [
       roles: ["configurador", "compensador", "operador", "analista", "loyalty"],
       state: "active" as const,
       last_login: new Date().toISOString(),
-      password: "backoffice"
+      password: "backoffice" // Added for consistency
     }
   },
   {
@@ -44,7 +44,7 @@ const BACKOFFICE_USERS = [
       roles: ["operador"],
       state: "active" as const,
       last_login: new Date().toISOString(),
-      password: "operador"
+      password: "operador" // Added for consistency
     }
   },
   {
@@ -58,7 +58,7 @@ const BACKOFFICE_USERS = [
       roles: ["compensador"],
       state: "active" as const,
       last_login: new Date().toISOString(),
-      password: "compensador"
+      password: "compensador" // Added for consistency
     }
   },
   {
@@ -72,7 +72,7 @@ const BACKOFFICE_USERS = [
       roles: ["analista"],
       state: "active" as const,
       last_login: new Date().toISOString(),
-      password: "analista"
+      password: "analista" // Added for consistency
     }
   },
   {
@@ -86,21 +86,7 @@ const BACKOFFICE_USERS = [
       roles: ["configurador"],
       state: "active" as const,
       last_login: new Date().toISOString(),
-      password: "configurador"
-    }
-  },
-  {
-    username: "loyalty",
-    password: "loyalty",
-    user: {
-      id: "loyalty-1",
-      name: "Loyalty",
-      surname: "User",
-      email: "loyalty@example.com",
-      roles: ["loyalty"],
-      state: "active" as const,
-      last_login: new Date().toISOString(),
-      password: "loyalty"
+      password: "configurador" // Added for consistency
     }
   }
 ];
