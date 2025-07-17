@@ -93,7 +93,7 @@ const mockBenefits: Benefit[] = [
     mcc: ["5732", "5734"],
     fechaInicio: new Date("2024-04-01"),
     fechaFin: new Date("2024-10-31"),
-    estado: "programado",
+    estado: "activo",
     fechaCreacion: new Date("2024-03-15"),
     fechaActualizacion: new Date("2024-03-15"),
     imagen: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=680&h=352&fit=crop"
@@ -127,7 +127,7 @@ const mockBenefits: Benefit[] = [
     mcc: ["5651", "5661"],
     fechaInicio: new Date("2024-05-01"),
     fechaFin: new Date("2024-11-30"),
-    estado: "programado",
+    estado: "activo",
     fechaCreacion: new Date("2024-04-10"),
     fechaActualizacion: new Date("2024-04-10"),
     imagen: "https://images.unsplash.com/photo-1472396961693-142e6e269027?w=680&h=352&fit=crop"
@@ -144,7 +144,7 @@ const mockBenefits: Benefit[] = [
     mcc: ["7832", "7841"],
     fechaInicio: new Date("2024-06-01"),
     fechaFin: new Date("2024-12-31"),
-    estado: "programado",
+    estado: "activo",
     fechaCreacion: new Date("2024-05-15"),
     fechaActualizacion: new Date("2024-05-15"),
     imagen: "https://images.unsplash.com/photo-1433086966358-54859d0ed716?w=680&h=352&fit=crop"
@@ -195,7 +195,7 @@ const mockBenefits: Benefit[] = [
     mcc: ["5940", "5941"],
     fechaInicio: new Date("2024-07-01"),
     fechaFin: new Date("2024-12-31"),
-    estado: "programado",
+    estado: "activo",
     fechaCreacion: new Date("2024-06-10"),
     fechaActualizacion: new Date("2024-06-10"),
     imagen: "https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?w=680&h=352&fit=crop"
@@ -229,7 +229,7 @@ const mockBenefits: Benefit[] = [
     mcc: ["5942"],
     fechaInicio: new Date("2024-08-01"),
     fechaFin: new Date("2024-12-31"),
-    estado: "programado",
+    estado: "activo",
     fechaCreacion: new Date("2024-07-15"),
     fechaActualizacion: new Date("2024-07-15"),
     imagen: "https://images.unsplash.com/photo-1518495973542-4542c06a5843?w=680&h=352&fit=crop"
@@ -246,7 +246,7 @@ const mockBenefits: Benefit[] = [
     mcc: ["4722", "3501"],
     fechaInicio: new Date("2024-09-01"),
     fechaFin: new Date("2024-12-31"),
-    estado: "programado",
+    estado: "activo",
     fechaCreacion: new Date("2024-08-10"),
     fechaActualizacion: new Date("2024-08-10"),
     imagen: "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=680&h=352&fit=crop"
@@ -297,7 +297,7 @@ const mockBenefits: Benefit[] = [
     mcc: ["5733"],
     fechaInicio: new Date("2024-10-01"),
     fechaFin: new Date("2024-12-31"),
-    estado: "programado",
+    estado: "activo",
     fechaCreacion: new Date("2024-09-15"),
     fechaActualizacion: new Date("2024-09-15"),
     imagen: "https://images.unsplash.com/photo-1500375592092-40eb2168fd21?w=680&h=352&fit=crop"
@@ -314,7 +314,7 @@ const mockBenefits: Benefit[] = [
     mcc: ["5944"],
     fechaInicio: new Date("2024-11-01"),
     fechaFin: new Date("2024-12-31"),
-    estado: "programado",
+    estado: "activo",
     fechaCreacion: new Date("2024-10-10"),
     fechaActualizacion: new Date("2024-10-10"),
     imagen: "https://images.unsplash.com/photo-1458668383970-8ddd3927deed?w=680&h=352&fit=crop"
