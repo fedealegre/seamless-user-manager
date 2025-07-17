@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { BackofficeUser } from "@/lib/api/types";
 
@@ -52,7 +51,7 @@ const initialMockUsers: BackofficeUser[] = [
     id: "6",
     name: "Federico",
     surname: "Alegre",
-    email: "fede.alegre@empresa.com",
+    email: "fede@example.com",
     roles: ["loyalty"],
     state: "active",
     last_login: "2024-01-17T08:00:00Z",
