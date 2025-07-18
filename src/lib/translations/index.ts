@@ -6,6 +6,7 @@ import { paginationTranslations } from './pagination';
 import { antiFraudTranslations } from './anti-fraud';
 import { userTranslations } from './users';
 import { transactionTranslations } from './transactions';
+import { profileTranslations } from './profile';
 
 const translations = {
   en: {
@@ -16,6 +17,7 @@ const translations = {
     ...antiFraudTranslations.en,
     ...userTranslations.en,
     ...transactionTranslations.en,
+    ...profileTranslations.en,
   },
   es: {
     ...commonTranslations.es,
@@ -25,6 +27,7 @@ const translations = {
     ...antiFraudTranslations.es,
     ...userTranslations.es,
     ...transactionTranslations.es,
+    ...profileTranslations.es,
   },
 };
 
