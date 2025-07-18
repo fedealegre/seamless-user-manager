@@ -86,7 +86,11 @@ const UsersTable: React.FC<UsersTableProps> = ({
         <TableBody>
           {users && users.length > 0 ? (
             users.map((user) => (
-              <TableRow key={user.id}>
+              <TableRow 
+                key={user.id} 
+                className="cursor-pointer hover:bg-muted/50"
+                onClick={() => onViewDetails(user.id)}
+              >
                 <TableCell>
                   <div className="flex items-center gap-3">
                     <Avatar className="h-8 w-8">
@@ -109,7 +113,7 @@ const UsersTable: React.FC<UsersTableProps> = ({
                     <Badge className="bg-green-100 text-green-800 hover:bg-green-100">{t("active")}</Badge>
                   )}
                 </TableCell>
-                <TableCell className="text-right">
+                <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" size="icon">
