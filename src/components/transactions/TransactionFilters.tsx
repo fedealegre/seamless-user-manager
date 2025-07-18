@@ -22,7 +22,6 @@ interface FiltersType {
   transactionType: string;
   startDate: string;
   endDate: string;
-  currency: string;
 }
 
 interface TransactionFiltersProps {
@@ -105,7 +104,6 @@ const TransactionFilters: React.FC<TransactionFiltersProps> = ({
       transactionType: "",
       startDate: "",
       endDate: "",
-      currency: "",
     });
     onReset();
   };
@@ -121,7 +119,7 @@ const TransactionFilters: React.FC<TransactionFiltersProps> = ({
           </Button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="space-y-2">
             <Label htmlFor="status">{t("status")}</Label>
             <Select
@@ -172,25 +170,6 @@ const TransactionFilters: React.FC<TransactionFiltersProps> = ({
             </Select>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="currency">{t("currency")}</Label>
-            <Select
-              value={localFilters.currency}
-              onValueChange={(value) => handleChange("currency", value)}
-            >
-              <SelectTrigger id="currency">
-                <SelectValue placeholder={t("select-currency")} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectGroup>
-                  <SelectItem value="all">{t("all-currencies")}</SelectItem>
-                  <SelectItem value="USD">USD</SelectItem>
-                  <SelectItem value="EUR">EUR</SelectItem>
-                  <SelectItem value="GBP">GBP</SelectItem>
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-          </div>
 
           <div className="space-y-2">
             <Label htmlFor="startDate">{t("start-date")}</Label>
