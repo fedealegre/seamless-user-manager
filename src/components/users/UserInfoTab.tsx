@@ -131,15 +131,6 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
   return (
     <div className="space-y-6">
       <div className="flex justify-end gap-3">
-        <Button 
-          variant="outline" 
-          onClick={handleResetPassword}
-          className="flex items-center gap-2"
-        >
-          <Key className="h-4 w-4" />
-          {t("reset-password")}
-        </Button>
-        
         {hasEditableFields && (
           <Button onClick={() => setIsEditing(true)}>
             {t("edit")} {t("information")}
