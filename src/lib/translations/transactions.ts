@@ -93,7 +93,19 @@ export const transactionTranslations = {
     'compensation-reason': 'Compensation Reason',
     'compensation-details': 'Compensation Details',
     'unknown': 'Unknown',
-    'reason-not-provided': 'No reason provided for this compensation'
+    'reason-not-provided': 'No reason provided for this compensation',
+    // Filters and selections
+    'transaction-filters': 'Transaction Filters',
+    'clear-all': 'Clear All',
+    'select-status': 'Select status',
+    'all-statuses': 'All statuses',
+    'select-type': 'Select type',
+    'all-types': 'All types',
+    'select-currency': 'Select currency',
+    'all-currencies': 'All currencies',
+    'start-date': 'Start date',
+    'end-date': 'End date',
+    'apply-filters': 'Apply Filters'
   },
   es: {
     'transactions': 'Transacciones',
@@ -189,6 +201,18 @@ export const transactionTranslations = {
     'compensation-reason': 'Razón de la Compensación',
     'compensation-details': 'Detalles de la Compensación',
     'unknown': 'Desconocido',
-    'reason-not-provided': 'No se proporcionó razón para esta compensación'
+    'reason-not-provided': 'No se proporcionó razón para esta compensación',
+    // Filters and selections
+    'transaction-filters': 'Filtros de Transacciones',
+    'clear-all': 'Limpiar Todo',
+    'select-status': 'Seleccionar estado',
+    'all-statuses': 'Todos los estados',
+    'select-type': 'Seleccionar tipo',
+    'all-types': 'Todos los tipos',
+    'select-currency': 'Seleccionar moneda',
+    'all-currencies': 'Todas las monedas',
+    'start-date': 'Fecha de inicio',
+    'end-date': 'Fecha de fin',
+    'apply-filters': 'Aplicar Filtros'
   }
 };
