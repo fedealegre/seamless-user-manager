@@ -14,6 +14,7 @@ export type FiltersType = {
   startDate: string;
   endDate: string;
   currency: string;
+  transactionId: string;
 };
 
 export function useUserTransactions(userId: string, selectedWalletId: string | null) {
@@ -25,6 +26,7 @@ export function useUserTransactions(userId: string, selectedWalletId: string | n
     startDate: "",
     endDate: "",
     currency: "",
+    transactionId: "",
   });
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
   const [showTransactionDetails, setShowTransactionDetails] = useState(false);
@@ -60,6 +62,11 @@ export function useUserTransactions(userId: string, selectedWalletId: string | n
     if (filters.currency && filters.currency !== "all") {
       if ((tx.currency?.toLowerCase() || "") !== filters.currency.toLowerCase()) return false;
     }
+    if (filters.transactionId && filters.transactionId.trim()) {
+      const searchId = filters.transactionId.toLowerCase().trim();
+      const txId = (tx.transactionId || tx.id?.toString() || "").toLowerCase();
+      if (!txId.includes(searchId)) return false;
+    }
     if (filters.startDate) {
       const startDate = new Date(filters.startDate);
       startDate.setHours(0, 0, 0, 0);
@@ -92,6 +99,7 @@ export function useUserTransactions(userId: string, selectedWalletId: string | n
       startDate: "",
       endDate: "",
       currency: "",
+      transactionId: "",
     });
     setPage(1);
   };

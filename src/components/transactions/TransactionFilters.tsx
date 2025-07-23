@@ -22,6 +22,7 @@ interface FiltersType {
   transactionType: string;
   startDate: string;
   endDate: string;
+  transactionId?: string;
 }
 
 interface TransactionFiltersProps {
@@ -104,6 +105,7 @@ const TransactionFilters: React.FC<TransactionFiltersProps> = ({
       transactionType: "",
       startDate: "",
       endDate: "",
+      transactionId: "",
     });
     onReset();
   };
@@ -119,7 +121,7 @@ const TransactionFilters: React.FC<TransactionFiltersProps> = ({
           </Button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
           <div className="space-y-2">
             <Label htmlFor="status">{t("status")}</Label>
             <Select
@@ -188,6 +190,18 @@ const TransactionFilters: React.FC<TransactionFiltersProps> = ({
               date={endDateObj}
               onSelect={handleEndDateChange}
               displayTime={false}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="transactionId">{t("transaction-id")}</Label>
+            <input
+              id="transactionId"
+              type="text"
+              value={localFilters.transactionId || ""}
+              onChange={(e) => handleChange("transactionId", e.target.value)}
+              placeholder={t("search-transaction-id")}
+              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
             />
           </div>
         </div>

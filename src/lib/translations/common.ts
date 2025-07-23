@@ -170,6 +170,8 @@ export const commonTranslations = {
     'block-warning': ' This user will no longer be able to access the system.',
     'blocking': 'Blocking...',
     'cannot-block-without-id': 'Cannot block user without an ID',
+    'transaction-id': 'Transaction ID',
+    'search-transaction-id': 'Search by transaction ID...',
   },
   es: {
     'dashboard': 'Panel de Control',
@@ -341,5 +343,7 @@ export const commonTranslations = {
     'block-warning': ' Este usuario ya no podrá acceder al sistema.',
     'blocking': 'Bloqueando...',
     'cannot-block-without-id': 'No se puede bloquear un usuario sin ID',
+    'transaction-id': 'ID de Transacción',
+    'search-transaction-id': 'Buscar por ID de transacción...',
   }
 };
