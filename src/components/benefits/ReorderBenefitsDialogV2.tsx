@@ -270,113 +270,117 @@ export const ReorderBenefitsDialogV2: React.FC<ReorderBenefitsDialogV2Props> = (
               </Badge>
             </div>
 
-            <TabsContent value="visual" className="flex-1 min-h-0 overflow-y-auto data-[state=active]:flex data-[state=active]:flex-col">
-              <DndContext
-                sensors={sensors}
-                collisionDetection={closestCenter}
-                onDragEnd={handleDragEnd}
-              >
-                <SortableContext items={benefitIds} strategy={verticalListSortingStrategy}>
-                  <div className="space-y-3 mb-4">
-                    {paginatedBenefits.map((benefit, index) => (
-                      <div key={benefit.id} className="flex items-center gap-3">
-                        <div className="flex-1">
-                          <SortableBenefitItem
-                            benefit={benefit}
-                            index={(currentPage - 1) * ITEMS_PER_PAGE + index}
-                          />
+            <TabsContent value="visual" className="flex-1 min-h-0 data-[state=active]:flex data-[state=active]:flex-col">
+              <div className="flex-1 min-h-0 overflow-y-auto pr-2">
+                <DndContext
+                  sensors={sensors}
+                  collisionDetection={closestCenter}
+                  onDragEnd={handleDragEnd}
+                >
+                  <SortableContext items={benefitIds} strategy={verticalListSortingStrategy}>
+                    <div className="space-y-3 pb-4">
+                      {paginatedBenefits.map((benefit, index) => (
+                        <div key={benefit.id} className="flex items-center gap-3">
+                          <div className="flex-1">
+                            <SortableBenefitItem
+                              benefit={benefit}
+                              index={(currentPage - 1) * ITEMS_PER_PAGE + index}
+                            />
+                          </div>
+                          <div className="flex flex-col gap-1">
+                            <Input
+                              type="number"
+                              min="1"
+                              max={orderedBenefits.length}
+                              value={benefit.orden}
+                              onChange={(e) => {
+                                const newPos = parseInt(e.target.value);
+                                if (!isNaN(newPos)) {
+                                  handleMoveTo(benefit.id, newPos);
+                                }
+                              }}
+                              className="w-20 h-8 text-xs"
+                            />
+                            <div className="flex gap-1">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="h-6 w-6 p-0"
+                                onClick={() => handleMoveToTop(benefit.id)}
+                              >
+                                <ArrowUp className="h-3 w-3" />
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="h-6 w-6 p-0"
+                                onClick={() => handleMoveToBottom(benefit.id)}
+                              >
+                                <ArrowDown className="h-3 w-3" />
+                              </Button>
+                            </div>
+                          </div>
                         </div>
-                        <div className="flex flex-col gap-1">
-                          <Input
-                            type="number"
-                            min="1"
-                            max={orderedBenefits.length}
-                            value={benefit.orden}
-                            onChange={(e) => {
-                              const newPos = parseInt(e.target.value);
-                              if (!isNaN(newPos)) {
-                                handleMoveTo(benefit.id, newPos);
-                              }
-                            }}
-                            className="w-20 h-8 text-xs"
-                          />
-                          <div className="flex gap-1">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="h-6 w-6 p-0"
-                              onClick={() => handleMoveToTop(benefit.id)}
-                            >
-                              <ArrowUp className="h-3 w-3" />
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="h-6 w-6 p-0"
-                              onClick={() => handleMoveToBottom(benefit.id)}
-                            >
-                              <ArrowDown className="h-3 w-3" />
-                            </Button>
+                      ))}
+                    </div>
+                  </SortableContext>
+                </DndContext>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="batch" className="flex-1 min-h-0 data-[state=active]:flex data-[state=active]:flex-col">
+              <div className="flex-1 min-h-0 overflow-y-auto pr-2">
+                <div className="space-y-4 pb-4">
+                  <div className="flex items-center gap-4 p-4 border rounded-lg">
+                    <Checkbox
+                      checked={selectedBenefits.size === paginatedBenefits.length && paginatedBenefits.length > 0}
+                      onCheckedChange={handleSelectAll}
+                    />
+                    <span className="font-medium">Seleccionar todos en esta página</span>
+                    {selectedBenefits.size > 0 && (
+                      <Badge variant="secondary">
+                        {selectedBenefits.size} seleccionados
+                      </Badge>
+                    )}
+                  </div>
+
+                  {selectedBenefits.size > 0 && (
+                    <div className="flex gap-2 p-4 bg-muted rounded-lg">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleBatchMoveToPosition(1)}
+                      >
+                        <MoveUp className="h-4 w-4 mr-2" />
+                        Mover al inicio
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleBatchMoveToPosition(orderedBenefits.length)}
+                      >
+                        <MoveDown className="h-4 w-4 mr-2" />
+                        Mover al final
+                      </Button>
+                    </div>
+                  )}
+
+                  <div className="space-y-3">
+                    {paginatedBenefits.map((benefit, index) => (
+                      <div key={benefit.id} className="flex items-center gap-3 p-3 border rounded-lg">
+                        <Checkbox
+                          checked={selectedBenefits.has(benefit.id)}
+                          onCheckedChange={() => handleSelectBenefit(benefit.id)}
+                        />
+                        <div className="flex-1">
+                          <div className="font-medium">{benefit.titulo}</div>
+                          <div className="text-sm text-muted-foreground">
+                            Categoría: {benefit.categoria} | Orden actual: {benefit.orden}
                           </div>
                         </div>
                       </div>
                     ))}
                   </div>
-                </SortableContext>
-              </DndContext>
-            </TabsContent>
-
-            <TabsContent value="batch" className="flex-1 min-h-0 overflow-y-auto data-[state=active]:flex data-[state=active]:flex-col">
-              <div className="space-y-4">
-                <div className="flex items-center gap-4 p-4 border rounded-lg">
-                  <Checkbox
-                    checked={selectedBenefits.size === paginatedBenefits.length && paginatedBenefits.length > 0}
-                    onCheckedChange={handleSelectAll}
-                  />
-                  <span className="font-medium">Seleccionar todos en esta página</span>
-                  {selectedBenefits.size > 0 && (
-                    <Badge variant="secondary">
-                      {selectedBenefits.size} seleccionados
-                    </Badge>
-                  )}
-                </div>
-
-                {selectedBenefits.size > 0 && (
-                  <div className="flex gap-2 p-4 bg-muted rounded-lg">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleBatchMoveToPosition(1)}
-                    >
-                      <MoveUp className="h-4 w-4 mr-2" />
-                      Mover al inicio
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleBatchMoveToPosition(orderedBenefits.length)}
-                    >
-                      <MoveDown className="h-4 w-4 mr-2" />
-                      Mover al final
-                    </Button>
-                  </div>
-                )}
-
-                <div className="space-y-3">
-                  {paginatedBenefits.map((benefit, index) => (
-                    <div key={benefit.id} className="flex items-center gap-3 p-3 border rounded-lg">
-                      <Checkbox
-                        checked={selectedBenefits.has(benefit.id)}
-                        onCheckedChange={() => handleSelectBenefit(benefit.id)}
-                      />
-                      <div className="flex-1">
-                        <div className="font-medium">{benefit.titulo}</div>
-                        <div className="text-sm text-muted-foreground">
-                          Categoría: {benefit.categoria} | Orden actual: {benefit.orden}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
                 </div>
               </div>
             </TabsContent>
