@@ -242,8 +242,8 @@ export const ReorderBenefitsDialogV2: React.FC<ReorderBenefitsDialogV2Props> = (
           </DialogDescription>
         </DialogHeader>
 
-        <div className="flex-1 min-h-0 overflow-hidden">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full flex flex-col">
+        <div className="flex-1 min-h-0 flex flex-col">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
             <TabsList className="grid w-full grid-cols-2 mb-4">
               <TabsTrigger value="visual">Reordenamiento Visual</TabsTrigger>
               <TabsTrigger value="batch">Reordenamiento Masivo</TabsTrigger>
@@ -270,7 +270,7 @@ export const ReorderBenefitsDialogV2: React.FC<ReorderBenefitsDialogV2Props> = (
               </Badge>
             </div>
 
-            <TabsContent value="visual" className="flex-1 min-h-0 overflow-auto">
+            <TabsContent value="visual" className="flex-1 min-h-0 overflow-y-auto data-[state=active]:flex data-[state=active]:flex-col">
               <DndContext
                 sensors={sensors}
                 collisionDetection={closestCenter}
@@ -326,7 +326,7 @@ export const ReorderBenefitsDialogV2: React.FC<ReorderBenefitsDialogV2Props> = (
               </DndContext>
             </TabsContent>
 
-            <TabsContent value="batch" className="flex-1 min-h-0 overflow-auto">
+            <TabsContent value="batch" className="flex-1 min-h-0 overflow-y-auto data-[state=active]:flex data-[state=active]:flex-col">
               <div className="space-y-4">
                 <div className="flex items-center gap-4 p-4 border rounded-lg">
                   <Checkbox
