@@ -5,7 +5,7 @@ import { BenefitsTable } from "@/components/benefits/BenefitsTable";
 import { BenefitsFilters } from "@/components/benefits/BenefitsFilters";
 import { CreateBenefitDialog } from "@/components/benefits/CreateBenefitDialog";
 import { BulkUploadDialog } from "@/components/benefits/BulkUploadDialog";
-import { ReorderBenefitsDialogV2 } from "@/components/benefits/ReorderBenefitsDialogV2";
+import { OptimizedReorderDialog } from "@/components/benefits/OptimizedReorderDialog";
 import { BenefitFilters, Benefit } from "@/types/benefits";
 import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
 import { translate } from "@/lib/translations";
@@ -441,7 +441,7 @@ const Benefits: React.FC = () => {
         onOpenChange={setBulkUploadDialogOpen}
       />
 
-        <ReorderBenefitsDialogV2
+        <OptimizedReorderDialog
           open={reorderDialogOpen}
           onOpenChange={setReorderDialogOpen}
           benefits={benefits}
