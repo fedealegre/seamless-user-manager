@@ -49,17 +49,17 @@ const FIELD_CONFIGURATION = {
     },
     {
       "name": "nationality",
-      "isVisible": true,
+      "isVisible": false,
       "isEditable": true
     },
     {
       "name": "language",
-      "isVisible": true,
+      "isVisible": false,
       "isEditable": true
     },
     {
       "name": "region",
-      "isVisible": true,
+      "isVisible": false,
       "isEditable": true
     },
     {
