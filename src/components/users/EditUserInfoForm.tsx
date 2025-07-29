@@ -13,6 +13,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { formatFieldName, formatDateForInput, parseDate } from "@/lib/utils";
 import { X, PlusCircle } from 'lucide-react';
@@ -164,6 +165,21 @@ export const EditUserInfoForm: React.FC<EditUserInfoFormProps> = ({
       newFields[index][field] = value;
       setAdditionalFields(newFields);
     }
+  };
+
+  // Helper function to check if value is JSON and format it
+  const formatJSONIfValid = (value: string): string => {
+    try {
+      const parsed = JSON.parse(value);
+      return JSON.stringify(parsed, null, 2);
+    } catch {
+      return value;
+    }
+  };
+
+  // Helper function to detect if value should use textarea
+  const shouldUseTextarea = (value: string): boolean => {
+    return value.length > 100 || value.includes('\n') || value.includes('{') || value.includes('[');
   };
 
   const onSubmit = async (data: any) => {
@@ -410,12 +426,23 @@ export const EditUserInfoForm: React.FC<EditUserInfoFormProps> = ({
                     </div>
                     <div className="flex-1">
                       <FormLabel htmlFor={`field-value-${index}`}>{t("value")}</FormLabel>
-                      <Input
-                        id={`field-value-${index}`}
-                        value={field.value}
-                        onChange={(e) => handleAdditionalFieldChange(index, 'value', e.target.value)}
-                        placeholder={t("value")}
-                      />
+                      {shouldUseTextarea(field.value) ? (
+                        <Textarea
+                          id={`field-value-${index}`}
+                          value={field.value}
+                          onChange={(e) => handleAdditionalFieldChange(index, 'value', e.target.value)}
+                          placeholder={t("value")}
+                          className="min-h-[100px] max-h-[300px] resize-y font-mono text-sm"
+                          rows={4}
+                        />
+                      ) : (
+                        <Input
+                          id={`field-value-${index}`}
+                          value={field.value}
+                          onChange={(e) => handleAdditionalFieldChange(index, 'value', e.target.value)}
+                          placeholder={t("value")}
+                        />
+                      )}
                     </div>
                     <Button
                       type="button"

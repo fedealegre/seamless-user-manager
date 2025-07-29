@@ -11,9 +11,10 @@ import { useQueryClient } from "@tanstack/react-query";
 import { formatFieldName, parseDate } from "@/lib/utils";
 import { formatBirthDate } from "@/lib/date-utils";
 import { useStaticFieldSettings } from "@/hooks/use-static-field-settings";
-import { Key } from "lucide-react";
+import { Key, ChevronDown, ChevronUp, Copy } from "lucide-react";
 import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
 import { translate } from "@/lib/translations";
+import { useToast } from "@/hooks/use-toast";
 
 interface UserInfoTabProps {
   user: User;
@@ -22,9 +23,11 @@ interface UserInfoTabProps {
 export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [showResetPasswordDialog, setShowResetPasswordDialog] = useState(false);
+  const [expandedValues, setExpandedValues] = useState<Record<string, boolean>>({});
   const queryClient = useQueryClient();
   const { isFieldVisible, isFieldEditable } = useStaticFieldSettings();
   const { settings } = useBackofficeSettings();
+  const { toast } = useToast();
   const t = (key: string) => translate(key, settings.language);
 
   // Helper function to format dates
@@ -69,17 +72,119 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
     }
   };
 
+  // Helper function to detect if value is JSON
+  const isJSON = (value: string): boolean => {
+    try {
+      JSON.parse(value);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
+  // Helper function to format JSON with proper indentation
+  const formatJSON = (value: string): string => {
+    try {
+      return JSON.stringify(JSON.parse(value), null, 2);
+    } catch {
+      return value;
+    }
+  };
+
+  // Copy to clipboard function
+  const copyToClipboard = async (text: string, fieldName: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast({
+        title: "Copied!",
+        description: `${fieldName} value copied to clipboard`,
+      });
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Failed to copy",
+        description: "Unable to copy to clipboard",
+      });
+    }
+  };
+
+  // Toggle expanded state for a specific field
+  const toggleExpanded = (key: string) => {
+    setExpandedValues(prev => ({
+      ...prev,
+      [key]: !prev[key]
+    }));
+  };
+
+  const renderAdditionalInfoValue = (key: string, value: any) => {
+    const stringValue = formatDisplayValue(value);
+    const isLongValue = stringValue.length > 100;
+    const isJSONValue = typeof value === 'string' && isJSON(value);
+    const isExpanded = expandedValues[key] || false;
+    
+    // Determine display value
+    let displayValue = stringValue;
+    if (isJSONValue) {
+      displayValue = isExpanded ? formatJSON(value) : stringValue;
+    }
+    
+    // Truncate if not expanded and is long
+    const shouldTruncate = isLongValue && !isExpanded;
+    const truncatedValue = shouldTruncate ? displayValue.slice(0, 100) + "..." : displayValue;
+
+    return (
+      <div className="space-y-2">
+        <div className="flex items-start gap-2">
+          <div className="flex-1 min-w-0">
+            <pre className={`text-sm text-muted-foreground font-mono whitespace-pre-wrap break-words overflow-hidden ${
+              isJSONValue ? 'bg-muted/50 p-2 rounded border' : ''
+            }`}>
+              {truncatedValue}
+            </pre>
+          </div>
+          {(isLongValue || isJSONValue) && (
+            <div className="flex gap-1 flex-shrink-0">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => copyToClipboard(stringValue, formatFieldName(key))}
+                className="h-6 w-6 p-0"
+              >
+                <Copy className="h-3 w-3" />
+              </Button>
+              {isLongValue && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => toggleExpanded(key)}
+                  className="h-6 w-6 p-0"
+                >
+                  {isExpanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
+                </Button>
+              )}
+            </div>
+          )}
+        </div>
+        {isJSONValue && (
+          <div className="flex items-center gap-1">
+            <Badge variant="secondary" className="text-xs">JSON</Badge>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   const renderAdditionalInfo = () => {
     if (!user.additionalInfo || Object.keys(user.additionalInfo).length === 0) {
       return <p className="text-muted-foreground">{t("no-additional-info")}</p>;
     }
 
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="space-y-6">
         {Object.entries(user.additionalInfo).map(([key, value]) => (
-          <div key={key} className="space-y-1">
+          <div key={key} className="space-y-2">
             <p className="text-sm font-medium">{formatFieldName(key)}</p>
-            <p className="text-sm text-muted-foreground">{formatDisplayValue(value)}</p>
+            {renderAdditionalInfoValue(key, value)}
           </div>
         ))}
       </div>
