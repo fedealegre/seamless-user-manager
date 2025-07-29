@@ -16,6 +16,9 @@ const mockUsers: User[] = [
     blocked: false,
     status: "ACTIVE",
     blockReason: undefined,
+    additionalInfo: {
+      "Device1": "{'deviceId':'e1864a5c-c4ef-4c83-96c9-c5510b170eaa','firebaseToken':'fHFW09QYSli-jmN9ori7X5:APA91bFyJOMiH5hT-PD9VajzySutOvRJKeg89fKylAjMxXS4VLV8zNj3-N9ymILko1EntQAX2dMHG7dPQwoxONrhb_9oQYWmk4wABezXARcBWlmXhodMZxs','platform':'ANDROID','appVersion':1,'lastLogin':1753809368731}"
+    }
   },
   {
     id: 2,
