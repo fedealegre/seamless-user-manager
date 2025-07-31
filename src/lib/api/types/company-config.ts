@@ -66,6 +66,20 @@ export const defaultSearchConfig: CompanySearchConfig = {
       type: "text",
       placeholder: "search-by-phone-placeholder",
     },
+    {
+      id: "governmentIdentification",
+      key: "governmentIdentification",
+      label: "DNI",
+      type: "text",
+      placeholder: "Buscar por DNI",
+    },
+    {
+      id: "governmentIdentification2",
+      key: "governmentIdentification2",
+      label: "CUIL",
+      type: "text",
+      placeholder: "Buscar por CUIL",
+    },
   ],
   searchOnLoad: false,
   pagination: {

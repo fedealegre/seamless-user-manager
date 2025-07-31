@@ -16,6 +16,10 @@ const mockUsers: User[] = [
     blocked: false,
     status: "ACTIVE",
     blockReason: undefined,
+    governmentIdentification: "38671060",
+    governmentIdentificationType: "DNI",
+    governmentIdentification2: "20386710601",
+    governmentIdentificationType2: "CUIL",
     additionalInfo: {
       "Device1": "{'deviceId':'e1864a5c-c4ef-4c83-96c9-c5510b170eaa','firebaseToken':'fHFW09QYSli-jmN9ori7X5:APA91bFyJOMiH5hT-PD9VajzySutOvRJKeg89fKylAjMxXS4VLV8zNj3-N9ymILko1EntQAX2dMHG7dPQwoxONrhb_9oQYWmk4wABezXARcBWlmXhodMZxs','platform':'ANDROID','appVersion':1,'lastLogin':1753809368731}"
     }
@@ -32,6 +36,10 @@ const mockUsers: User[] = [
     blocked: true,
     status: "BLOCKED",
     blockReason: "Suspicious activity",
+    governmentIdentification: "87654321",
+    governmentIdentificationType: "DNI",
+    governmentIdentification2: "27876543210",
+    governmentIdentificationType2: "CUIL",
   },
   {
     id: 3,
@@ -197,6 +205,16 @@ export class MockUserService implements UserService {
             break;
           case 'id':
             if (user.id.toString() !== trimmedValue) {
+              return false;
+            }
+            break;
+          case 'governmentIdentification':
+            if (!user.governmentIdentification || user.governmentIdentification !== trimmedValue) {
+              return false;
+            }
+            break;
+          case 'governmentIdentification2':
+            if (!user.governmentIdentification2 || user.governmentIdentification2 !== trimmedValue) {
               return false;
             }
             break;
