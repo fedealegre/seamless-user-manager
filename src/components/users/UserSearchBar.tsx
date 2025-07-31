@@ -3,7 +3,7 @@ import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { CompanySearchConfig } from "@/lib/api/types/company-config";
+import { CompanySearchConfig, SearchField } from "@/lib/api/types/company-config";
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
@@ -105,6 +105,16 @@ const UserSearchBar: React.FC<UserSearchBarProps> = ({
     return fieldMappings[fieldId] || fieldId;
   };
 
+  // Helper function to get display label (prioritizes translations except for dynamic fields)
+  const getDisplayLabel = (field: SearchField) => {
+    // Para campos con etiquetas dinámicas (DNI/CUIL), usar field.label
+    if (field.id === 'governmentIdentification' || field.id === 'governmentIdentification2') {
+      return field.label;
+    }
+    // Para el resto, usar traducción
+    return t(getFieldTranslationKey(field.id));
+  };
+
   // Helper function to get help text message
   const getHelpText = (fieldId: string) => {
     if (fieldId === 'name' || fieldId === 'surname') {
@@ -129,7 +139,7 @@ const UserSearchBar: React.FC<UserSearchBarProps> = ({
                   name={field.id}
                   render={({ field: formField }) => (
                     <FormItem>
-                      <FormLabel>{field.label || t(getFieldTranslationKey(field.id))}</FormLabel>
+                      <FormLabel>{getDisplayLabel(field)}</FormLabel>
                       <FormControl>
                         <div className="relative">
                           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
