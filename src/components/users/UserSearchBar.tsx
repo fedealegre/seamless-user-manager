@@ -129,7 +129,7 @@ const UserSearchBar: React.FC<UserSearchBarProps> = ({
                   name={field.id}
                   render={({ field: formField }) => (
                     <FormItem>
-                      <FormLabel>{t(getFieldTranslationKey(field.id))}</FormLabel>
+                      <FormLabel>{field.label || t(getFieldTranslationKey(field.id))}</FormLabel>
                       <FormControl>
                         <div className="relative">
                           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
