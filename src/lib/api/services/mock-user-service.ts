@@ -367,4 +367,20 @@ export class MockUserService implements UserService {
   async getWalletUserAssociations(): Promise<WalletUserAssociation[]> {
     return Promise.resolve(this.walletUserAssociations);
   }
+
+  async getIdentificationTypes(): Promise<{ 
+    governmentIdentificationType: string | null; 
+    governmentIdentificationType2: string | null; 
+  }> {
+    // Get the most common identification types from mock data
+    const users = this.users.filter(user => !user.deleted);
+    
+    const type1 = users.find(user => user.governmentIdentificationType)?.governmentIdentificationType || null;
+    const type2 = users.find(user => user.governmentIdentificationType2)?.governmentIdentificationType2 || null;
+    
+    return Promise.resolve({
+      governmentIdentificationType: type1,
+      governmentIdentificationType2: type2
+    });
+  }
 }

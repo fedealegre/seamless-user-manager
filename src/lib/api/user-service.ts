@@ -105,6 +105,13 @@ class UserServiceWrapper implements UserService {
   async getWalletUserAssociations(): Promise<WalletUserAssociation[]> {
     return this.mockUserService.getWalletUserAssociations();
   }
+
+  async getIdentificationTypes(): Promise<{ 
+    governmentIdentificationType: string | null; 
+    governmentIdentificationType2: string | null; 
+  }> {
+    return this.mockUserService.getIdentificationTypes();
+  }
 }
 
 // Export the wrapped service instead of the original one

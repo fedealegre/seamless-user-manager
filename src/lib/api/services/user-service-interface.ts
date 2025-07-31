@@ -37,4 +37,10 @@ export interface UserService {
   addUserToWallet(walletId: string, userId: string, isOwner?: boolean): Promise<WalletUserAssociation>;
   removeUserFromWallet(walletId: string, userId: string): Promise<void>;
   getWalletUserAssociations(): Promise<WalletUserAssociation[]>;
+  
+  // Method to get identification types for dynamic labels
+  getIdentificationTypes(): Promise<{ 
+    governmentIdentificationType: string | null; 
+    governmentIdentificationType2: string | null; 
+  }>;
 }
