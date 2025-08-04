@@ -108,7 +108,7 @@ const UserSearchBar: React.FC<UserSearchBarProps> = ({
   // Helper function to get display label (prioritizes translations except for dynamic fields)
   const getDisplayLabel = (field: SearchField) => {
     // Para campos con etiquetas dinámicas (DNI/CUIL), usar field.label
-    if (field.id === 'governmentIdentification' || field.id === 'governmentIdentification2') {
+    if (field.id === 'government_identification' || field.id === 'government_identification2') {
       return field.label;
     }
     // Para el resto, usar traducción

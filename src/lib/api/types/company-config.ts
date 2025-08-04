@@ -67,14 +67,14 @@ export const defaultSearchConfig: CompanySearchConfig = {
       placeholder: "search-by-phone-placeholder",
     },
     {
-      id: "governmentIdentification",
+      id: "government_identification",
       key: "government_identification",
       label: "DNI",
       type: "text",
       placeholder: "Buscar por DNI",
     },
     {
-      id: "governmentIdentification2",
+      id: "government_identification2",
       key: "government_identification2",
       label: "CUIL",
       type: "text",
