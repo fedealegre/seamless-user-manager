@@ -68,14 +68,14 @@ export const defaultSearchConfig: CompanySearchConfig = {
     },
     {
       id: "governmentIdentification",
-      key: "governmentIdentification",
+      key: "government_identification",
       label: "DNI",
       type: "text",
       placeholder: "Buscar por DNI",
     },
     {
       id: "governmentIdentification2",
-      key: "governmentIdentification2",
+      key: "government_identification2",
       label: "CUIL",
       type: "text",
       placeholder: "Buscar por CUIL",

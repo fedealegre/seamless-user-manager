@@ -57,10 +57,10 @@ export interface User {
     phoneCompany?: string;
     cellPhone?: string;
     gender?: 'M' | 'F' | 'Other'; 
-    governmentIdentification2?: string;
-    governmentIdentificationType2?: string;
-    governmentIdentification?: string;
-    governmentIdentificationType?: string;
+    government_identification2?: string;
+    government_identification_type2?: string;
+    government_identification?: string;
+    government_identification_type?: string;
     birthDate?: string;
     nationality?: string;
     hasPin?: boolean;

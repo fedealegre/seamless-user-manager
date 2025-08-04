@@ -338,20 +338,20 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
               </div>
             </div>
             <div className="space-y-4">
-              {shouldRenderField("governmentIdentificationType") && shouldRenderField("governmentIdentification") && user.governmentIdentificationType && (
+              {shouldRenderField("government_identification_type") && shouldRenderField("government_identification") && user.government_identification_type && (
                 <div>
                   <h3 className="text-sm font-medium text-muted-foreground">
-                    {formatDisplayValue(user.governmentIdentificationType)}
+                    {formatDisplayValue(user.government_identification_type)}
                   </h3>
-                  <p>{formatDisplayValue(user.governmentIdentification)}</p>
+                  <p>{formatDisplayValue(user.government_identification)}</p>
                 </div>
               )}
-              {shouldRenderField("governmentIdentificationType2") && shouldRenderField("governmentIdentification2") && user.governmentIdentificationType2 && (
+              {shouldRenderField("government_identification_type2") && shouldRenderField("government_identification2") && user.government_identification_type2 && (
                 <div>
                   <h3 className="text-sm font-medium text-muted-foreground">
-                    {formatDisplayValue(user.governmentIdentificationType2)}
+                    {formatDisplayValue(user.government_identification_type2)}
                   </h3>
-                  <p>{formatDisplayValue(user.governmentIdentification2)}</p>
+                  <p>{formatDisplayValue(user.government_identification2)}</p>
                 </div>
               )}
             </div>

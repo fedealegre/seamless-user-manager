@@ -78,22 +78,22 @@ const FIELD_CONFIGURATION = {
       "isEditable": true
     },
     {
-      "name": "governmentIdentification",
+      "name": "government_identification",
       "isVisible": true,
       "isEditable": false
     },
     {
-      "name": "governmentIdentification2",
+      "name": "government_identification2",
       "isVisible": true,
       "isEditable": false
     },
     {
-      "name": "governmentIdentificationType2",
+      "name": "government_identification_type2",
       "isVisible": true,
       "isEditable": false
     },
     {
-      "name": "governmentIdentificationType",
+      "name": "government_identification_type",
       "isVisible": true,
       "isEditable": false
     },

@@ -23,8 +23,10 @@ export const defaultFieldSettings: FieldSetting[] = [
   { fieldName: "status", displayName: "Status", isVisible: true, isEditable: true },
   { fieldName: "hasPin", displayName: "Has PIN", isVisible: true, isEditable: false },
   { fieldName: "timeZone", displayName: "Time Zone", isVisible: true, isEditable: true },
-  { fieldName: "governmentIdentification", displayName: "Government ID", isVisible: true, isEditable: false },
-  { fieldName: "governmentIdentificationType", displayName: "Government ID Type", isVisible: true, isEditable: false },
+  { fieldName: "government_identification", displayName: "Government ID", isVisible: true, isEditable: false },
+  { fieldName: "government_identification_type", displayName: "Government ID Type", isVisible: true, isEditable: false },
+  { fieldName: "government_identification2", displayName: "Government ID 2", isVisible: true, isEditable: false },
+  { fieldName: "government_identification_type2", displayName: "Government ID Type 2", isVisible: true, isEditable: false },
   { fieldName: "additionalInfo", displayName: "Additional Information", isVisible: true, isEditable: true },
 ];
 

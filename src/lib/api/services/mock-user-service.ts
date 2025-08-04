@@ -16,10 +16,10 @@ const mockUsers: User[] = [
     blocked: false,
     status: "ACTIVE",
     blockReason: undefined,
-    governmentIdentification: "38671060",
-    governmentIdentificationType: "DNI",
-    governmentIdentification2: "20386710601",
-    governmentIdentificationType2: "CUIL",
+    government_identification: "25141556",
+    government_identification_type: "DNI",
+    government_identification2: "20251415561",
+    government_identification_type2: "CUIL",
     additionalInfo: {
       "Device1": "{'deviceId':'e1864a5c-c4ef-4c83-96c9-c5510b170eaa','firebaseToken':'fHFW09QYSli-jmN9ori7X5:APA91bFyJOMiH5hT-PD9VajzySutOvRJKeg89fKylAjMxXS4VLV8zNj3-N9ymILko1EntQAX2dMHG7dPQwoxONrhb_9oQYWmk4wABezXARcBWlmXhodMZxs','platform':'ANDROID','appVersion':1,'lastLogin':1753809368731}"
     }
@@ -36,10 +36,10 @@ const mockUsers: User[] = [
     blocked: true,
     status: "BLOCKED",
     blockReason: "Suspicious activity",
-    governmentIdentification: "87654321",
-    governmentIdentificationType: "DNI",
-    governmentIdentification2: "27876543210",
-    governmentIdentificationType2: "CUIL",
+    government_identification: "87654321",
+    government_identification_type: "DNI",
+    government_identification2: "27876543210",
+    government_identification_type2: "CUIL",
   },
   {
     id: 3,
@@ -208,13 +208,13 @@ export class MockUserService implements UserService {
               return false;
             }
             break;
-          case 'governmentIdentification':
-            if (!user.governmentIdentification || user.governmentIdentification !== trimmedValue) {
+          case 'government_identification':
+            if (!user.government_identification || user.government_identification !== trimmedValue) {
               return false;
             }
             break;
-          case 'governmentIdentification2':
-            if (!user.governmentIdentification2 || user.governmentIdentification2 !== trimmedValue) {
+          case 'government_identification2':
+            if (!user.government_identification2 || user.government_identification2 !== trimmedValue) {
               return false;
             }
             break;
@@ -375,8 +375,8 @@ export class MockUserService implements UserService {
     // Get the most common identification types from mock data
     const users = this.users.filter(user => !user.deleted);
     
-    const type1 = users.find(user => user.governmentIdentificationType)?.governmentIdentificationType || null;
-    const type2 = users.find(user => user.governmentIdentificationType2)?.governmentIdentificationType2 || null;
+    const type1 = users.find(user => user.government_identification_type)?.government_identification_type || null;
+    const type2 = users.find(user => user.government_identification_type2)?.government_identification_type2 || null;
     
     return Promise.resolve({
       governmentIdentificationType: type1,
