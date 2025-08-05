@@ -31,10 +31,15 @@ export function DatePicker({ date, onSelect, className, id, displayTime = false 
   const formatDisplayDate = (date: Date) => {
     if (!date) return '';
     
-    // Use Intl.DateTimeFormat to format just the date part
+    // Use Intl.DateTimeFormat to format just the date part in local timezone
     const dateFormatter = new Intl.DateTimeFormat(
       settings.language.startsWith('es') ? 'es-ES' : 'en-US', 
-      { year: 'numeric', month: '2-digit', day: '2-digit' }
+      { 
+        year: 'numeric', 
+        month: '2-digit', 
+        day: '2-digit',
+        timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+      }
     );
     return dateFormatter.format(date);
   };

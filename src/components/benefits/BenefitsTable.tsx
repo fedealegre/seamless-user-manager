@@ -106,8 +106,8 @@ export const BenefitsTable: React.FC<BenefitsTableProps> = ({
                     <TableCell>{benefit.valorPorcentaje}%</TableCell>
                     <TableCell>
                       <div className="text-sm">
-                        <div>{formatDateTime(benefit.fechaInicio, 'UTC', 'es-ES', { year: 'numeric', month: '2-digit', day: '2-digit' })} -</div>
-                        <div>{formatDateTime(benefit.fechaFin, 'UTC', 'es-ES', { year: 'numeric', month: '2-digit', day: '2-digit' })}</div>
+                        <div>{formatDateTime(benefit.fechaInicio, Intl.DateTimeFormat().resolvedOptions().timeZone, 'es-ES', { year: 'numeric', month: '2-digit', day: '2-digit' })} -</div>
+                        <div>{formatDateTime(benefit.fechaFin, Intl.DateTimeFormat().resolvedOptions().timeZone, 'es-ES', { year: 'numeric', month: '2-digit', day: '2-digit' })}</div>
                       </div>
                     </TableCell>
                     <TableCell>{getStatusBadge(benefit)}</TableCell>
