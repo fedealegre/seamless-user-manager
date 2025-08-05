@@ -46,3 +46,28 @@ export const getBenefitStatusVariant = (status: string) => {
 
   return statusConfig[status as keyof typeof statusConfig] || statusConfig.inactivo;
 };
+
+// Función para formatear fecha para API móvil (dd-MM-yyyy)
+export const formatDateForMobileAPI = (date: Date): string => {
+  const day = date.getDate().toString().padStart(2, '0');
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const year = date.getFullYear().toString();
+  return `${day}-${month}-${year}`;
+};
+
+// Función para transformar beneficio al formato de API móvil
+export const transformBenefitForMobileAPI = (benefit: Benefit) => {
+  return {
+    id: parseInt(benefit.id),
+    order: benefit.orden,
+    type: benefit.tipo,
+    title: benefit.titulo,
+    description: benefit.descripcion,
+    extended_description: benefit.descripcionExtendida || '',
+    image: benefit.imagen || '',
+    legal_description: benefit.legales,
+    category: benefit.categoria,
+    init_date: formatDateForMobileAPI(benefit.fechaInicio),
+    end_date: formatDateForMobileAPI(benefit.fechaFin)
+  };
+};

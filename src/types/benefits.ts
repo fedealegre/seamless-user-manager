@@ -1,6 +1,7 @@
 
 export interface Benefit {
   id: string;
+  tipo: 'Cashback';
   titulo: string;
   descripcion: string;
   descripcionExtendida?: string;
@@ -39,6 +40,7 @@ export interface BenefitFilters {
 }
 
 export interface CreateBenefitRequest {
+  tipo: 'Cashback';
   titulo: string;
   descripcion: string;
   descripcionExtendida?: string;

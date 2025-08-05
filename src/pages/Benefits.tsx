@@ -13,7 +13,7 @@ import { translate } from "@/lib/translations";
 import { calculateBenefitStatus } from "@/lib/benefits-utils";
 
 // Mock data with updated fechas for active and scheduled benefits
-const mockBenefits: Benefit[] = [
+const baseMockBenefits = [
   // Beneficios existentes
   {
     id: "1",
@@ -34,6 +34,7 @@ const mockBenefits: Benefit[] = [
   },
   {
     id: "2",
+    tipo: 'Cashback' as const,
     titulo: "Cashback en Combustibles",
     descripcion: "3% de cashback en estaciones de servicio",
     legales: "Máximo $20.000 por mes",
@@ -1718,6 +1719,13 @@ const mockBenefits: Benefit[] = [
     imagen: "https://images.unsplash.com/photo-1482881497185-d4a9ddbe4151?w=680&h=352&fit=crop"
   }
 ];
+
+// Transform base data to include tipo field
+const mockBenefits: Benefit[] = baseMockBenefits.map(benefit => ({
+  ...benefit,
+  tipo: 'Cashback' as const,
+  estado: benefit.estado as 'activo' | 'inactivo'
+}));
 
 const Benefits: React.FC = () => {
   const { settings } = useBackofficeSettings();

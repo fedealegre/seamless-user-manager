@@ -56,6 +56,7 @@ export const BenefitForm: React.FC<BenefitFormProps> = ({
   const t = (key: string) => translate(key, settings.language);
 
   const benefitSchema = z.object({
+    tipo: z.literal('Cashback'),
     titulo: z.string().min(1, t('title-required')),
     descripcion: z.string().min(1, t('description-required')),
     descripcionExtendida: z.string().optional(),
@@ -78,6 +79,7 @@ export const BenefitForm: React.FC<BenefitFormProps> = ({
   const form = useForm<BenefitFormData>({
     resolver: zodResolver(benefitSchema),
     defaultValues: benefit ? {
+      tipo: benefit.tipo,
       titulo: benefit.titulo,
       descripcion: benefit.descripcion,
       descripcionExtendida: benefit.descripcionExtendida || "",
@@ -91,6 +93,7 @@ export const BenefitForm: React.FC<BenefitFormProps> = ({
       fechaInicio: benefit.fechaInicio,
       fechaFin: benefit.fechaFin,
     } : {
+      tipo: 'Cashback' as const,
       titulo: "",
       descripcion: "",
       descripcionExtendida: "",
@@ -126,6 +129,20 @@ export const BenefitForm: React.FC<BenefitFormProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Left Column */}
           <div className="space-y-4">
+            <FormField
+              control={form.control}
+              name="tipo"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{t('type')} *</FormLabel>
+                  <FormControl>
+                    <Input {...field} disabled className="bg-muted" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
             <FormField
               control={form.control}
               name="titulo"
