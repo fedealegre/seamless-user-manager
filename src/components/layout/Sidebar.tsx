@@ -39,7 +39,7 @@ const Sidebar: React.FC<SidebarProps> = ({ sidebarOpen, toggleSidebar }) => {
                   className="w-full h-full object-contain"
                 />
               ) : (
-                <span className="text-primary-foreground font-bold">PB</span>
+                <span className="text-primary-foreground font-bold">BD</span>
               )}
             </div>
             <h1 className="text-xl font-semibold">{settings.backofficeTitle}</h1>
