@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useBackofficeSettings } from '@/contexts/BackofficeSettingsContext';
 import { translate } from '@/lib/translations';
-
 interface BenefitsPaginationProps {
   page: number;
   setPage: (page: number) => void;
@@ -13,25 +12,22 @@ interface BenefitsPaginationProps {
   totalPages: number;
   totalBenefits: number;
 }
-
 const BenefitsPagination: React.FC<BenefitsPaginationProps> = ({
   page,
   setPage,
   pageSize,
   setPageSize,
   totalPages,
-  totalBenefits,
+  totalBenefits
 }) => {
-  const { settings } = useBackofficeSettings();
+  const {
+    settings
+  } = useBackofficeSettings();
   const t = (key: string) => translate(key, settings.language);
-  
   const startItem = (page - 1) * pageSize + 1;
   const endItem = Math.min(page * pageSize, totalBenefits);
-
   const pageSizeOptions = [10, 25, 50, 100];
-
-  return (
-    <div className="flex flex-col sm:flex-row justify-between items-center mt-4 gap-4">
+  return <div className="flex flex-col sm:flex-row justify-between items-center mt-4 gap-4">
       <div className="flex items-center gap-4">
         <div className="text-sm text-muted-foreground">
           {t("showing")} <span className="font-medium">{startItem}</span> {t("to")}{" "}
@@ -39,36 +35,11 @@ const BenefitsPagination: React.FC<BenefitsPaginationProps> = ({
           <span className="font-medium">{totalBenefits}</span> {t("items")}
         </div>
         
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-muted-foreground">{t("items-per-page")}:</span>
-          <Select
-            value={pageSize.toString()}
-            onValueChange={(value) => {
-              setPageSize(parseInt(value));
-              setPage(1); // Reset to first page when changing page size
-            }}
-          >
-            <SelectTrigger className="w-20">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {pageSizeOptions.map((size) => (
-                <SelectItem key={size} value={size.toString()}>
-                  {size}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        
       </div>
       
       <div className="flex items-center space-x-2">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setPage(page - 1)}
-          disabled={page === 1}
-        >
+        <Button variant="outline" size="sm" onClick={() => setPage(page - 1)} disabled={page === 1}>
           <ChevronLeft className="h-4 w-4" />
           <span className="ml-1">{t("previous")}</span>
         </Button>
@@ -78,18 +49,11 @@ const BenefitsPagination: React.FC<BenefitsPaginationProps> = ({
           <span className="font-medium">{totalPages}</span>
         </div>
         
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setPage(page + 1)}
-          disabled={page === totalPages}
-        >
+        <Button variant="outline" size="sm" onClick={() => setPage(page + 1)} disabled={page === totalPages}>
           <span className="mr-1">{t("next")}</span>
           <ChevronRight className="h-4 w-4" />
         </Button>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default BenefitsPagination;
