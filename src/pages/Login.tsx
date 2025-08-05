@@ -80,7 +80,7 @@ const Login = () => {
           ) : (
             <div className="mx-auto w-12 h-12 bg-primary rounded-xl flex items-center justify-center mb-2">
               <span className="text-primary-foreground font-bold text-xl">
-                {(companySettings.backofficeTitle || t('login-title')).charAt(0)}
+                BD
               </span>
             </div>
           )}
