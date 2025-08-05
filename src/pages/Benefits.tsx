@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Plus, Upload, ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BenefitsTable } from "@/components/benefits/BenefitsTable";
@@ -6,6 +6,7 @@ import { BenefitsFilters } from "@/components/benefits/BenefitsFilters";
 import { CreateBenefitDialog } from "@/components/benefits/CreateBenefitDialog";
 import { BulkUploadDialog } from "@/components/benefits/BulkUploadDialog";
 import { OptimizedReorderDialog } from "@/components/benefits/OptimizedReorderDialog";
+import BenefitsPagination from "@/components/benefits/BenefitsPagination";
 import { BenefitFilters, Benefit } from "@/types/benefits";
 import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
 import { translate } from "@/lib/translations";
@@ -1787,11 +1788,20 @@ const Benefits: React.FC = () => {
       <BenefitsFilters onFiltersChange={handleFiltersChange} />
 
       {/* Table */}
-      <BenefitsTable 
-        filters={filters} 
-        benefits={filteredBenefits}
-        onReorderRequest={() => setReorderDialogOpen(true)} 
-      />
+        <BenefitsTable 
+          filters={filters} 
+          benefits={paginatedBenefits} 
+          onReorderRequest={() => setReorderDialogOpen(true)}
+        />
+        
+        <BenefitsPagination
+          page={page}
+          setPage={setPage}
+          pageSize={pageSize}
+          setPageSize={setPageSize}
+          totalPages={totalPages}
+          totalBenefits={totalBenefits}
+        />
 
       {/* Dialogs */}
       <CreateBenefitDialog
