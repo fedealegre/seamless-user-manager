@@ -20,6 +20,7 @@ export interface Benefit {
 
 export interface Category {
   id: string;
+  code: string;
   nombre: string;
   descripcion?: string;
   fechaCreacion: Date;

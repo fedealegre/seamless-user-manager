@@ -25,55 +25,64 @@ import { Category } from "@/types/benefits";
 const mockCategories: Category[] = [
   {
     id: "1",
-    nombre: "Librería",
+    code: "001",
+    nombre: "librería",
     descripcion: "Librerías y material educativo",
     fechaCreacion: new Date("2024-01-01"),
   },
   {
     id: "2",
-    nombre: "Carnicería",
+    code: "002",
+    nombre: "carnicería",
     descripcion: "Carnicerías y productos cárnicos",
     fechaCreacion: new Date("2024-01-02"),
   },
   {
     id: "3",
-    nombre: "Juguetería",
+    code: "003",
+    nombre: "juguetería",
     descripcion: "Jugueterías y artículos para niños",
     fechaCreacion: new Date("2024-01-03"),
   },
   {
     id: "4",
-    nombre: "Supermercado",
+    code: "004",
+    nombre: "supermercado",
     descripcion: "Supermercados y tiendas de comestibles",
     fechaCreacion: new Date("2024-01-04"),
   },
   {
     id: "5",
-    nombre: "Panadería",
+    code: "005",
+    nombre: "panadería",
     descripcion: "Panaderías y productos de panadería",
     fechaCreacion: new Date("2024-01-05"),
   },
   {
     id: "6",
-    nombre: "Farmacia",
+    code: "006",
+    nombre: "farmacia",
     descripcion: "Farmacias y productos farmacéuticos",
     fechaCreacion: new Date("2024-01-06"),
   },
   {
     id: "7",
-    nombre: "Verdulería",
+    code: "008",
+    nombre: "verdulería",
     descripcion: "Verdulerías y productos frescos",
     fechaCreacion: new Date("2024-01-07"),
   },
   {
     id: "8",
-    nombre: "Combustible",
+    code: "009",
+    nombre: "combustible",
     descripcion: "Estaciones de servicio y combustibles",
     fechaCreacion: new Date("2024-01-08"),
   },
   {
     id: "9",
-    nombre: "Café",
+    code: "010",
+    nombre: "café",
     descripcion: "Cafeterías y tiendas de café",
     fechaCreacion: new Date("2024-01-09"),
   },
@@ -83,17 +92,17 @@ const Categories: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>(mockCategories);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
-  const [formData, setFormData] = useState({ nombre: "", descripcion: "" });
+  const [formData, setFormData] = useState({ code: "", nombre: "", descripcion: "" });
 
   const handleAdd = () => {
     setEditingCategory(null);
-    setFormData({ nombre: "", descripcion: "" });
+    setFormData({ code: "", nombre: "", descripcion: "" });
     setDialogOpen(true);
   };
 
   const handleEdit = (category: Category) => {
     setEditingCategory(category);
-    setFormData({ nombre: category.nombre, descripcion: category.descripcion || "" });
+    setFormData({ code: category.code, nombre: category.nombre, descripcion: category.descripcion || "" });
     setDialogOpen(true);
   };
 
@@ -104,17 +113,33 @@ const Categories: React.FC = () => {
   };
 
   const handleSave = () => {
-    if (!formData.nombre.trim()) return;
+    if (!formData.nombre.trim() || !formData.code.trim()) return;
+
+    // Validate code format (3 digits)
+    if (!/^\d{3}$/.test(formData.code)) {
+      alert("El código debe tener exactamente 3 dígitos");
+      return;
+    }
+
+    // Check for duplicate code
+    const isDuplicateCode = categories.some(cat => 
+      cat.code === formData.code && cat.id !== editingCategory?.id
+    );
+    if (isDuplicateCode) {
+      alert("Ya existe una categoría con este código");
+      return;
+    }
 
     if (editingCategory) {
       setCategories(categories.map(cat =>
         cat.id === editingCategory.id
-          ? { ...cat, nombre: formData.nombre, descripcion: formData.descripcion }
+          ? { ...cat, code: formData.code, nombre: formData.nombre, descripcion: formData.descripcion }
           : cat
       ));
     } else {
       const newCategory: Category = {
         id: Date.now().toString(),
+        code: formData.code,
         nombre: formData.nombre,
         descripcion: formData.descripcion,
         fechaCreacion: new Date(),
@@ -123,7 +148,7 @@ const Categories: React.FC = () => {
     }
 
     setDialogOpen(false);
-    setFormData({ nombre: "", descripcion: "" });
+    setFormData({ code: "", nombre: "", descripcion: "" });
   };
 
   return (
@@ -140,14 +165,16 @@ const Categories: React.FC = () => {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead>Código</TableHead>
               <TableHead>Nombre</TableHead>
               <TableHead>Descripción</TableHead>
               <TableHead className="w-32">Acciones</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {categories.map((category) => (
+            {categories.sort((a, b) => a.code.localeCompare(b.code)).map((category) => (
               <TableRow key={category.id}>
+                <TableCell className="font-mono font-medium">{category.code}</TableCell>
                 <TableCell className="font-medium">{category.nombre}</TableCell>
                 <TableCell>{category.descripcion}</TableCell>
                 <TableCell>
@@ -185,6 +212,17 @@ const Categories: React.FC = () => {
           </DialogHeader>
           <div className="space-y-4">
             <div>
+              <Label htmlFor="code">Código *</Label>
+              <Input
+                id="code"
+                value={formData.code}
+                onChange={(e) => setFormData({ ...formData, code: e.target.value })}
+                placeholder="Código de 3 dígitos (ej: 001)"
+                maxLength={3}
+                pattern="[0-9]{3}"
+              />
+            </div>
+            <div>
               <Label htmlFor="nombre">Nombre *</Label>
               <Input
                 id="nombre"
@@ -208,7 +246,7 @@ const Categories: React.FC = () => {
             <Button variant="outline" onClick={() => setDialogOpen(false)}>
               Cancelar
             </Button>
-            <Button onClick={handleSave} disabled={!formData.nombre.trim()}>
+            <Button onClick={handleSave} disabled={!formData.nombre.trim() || !formData.code.trim()}>
               Guardar
             </Button>
           </DialogFooter>
