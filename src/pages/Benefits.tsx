@@ -1806,6 +1806,27 @@ const Benefits: React.FC = () => {
       {/* Filters */}
       <BenefitsFilters onFiltersChange={handleFiltersChange} />
 
+      {/* Page Size Selector */}
+      <div className="flex items-center justify-end mb-2">
+        <label htmlFor="page-size-select" className="mr-2 text-sm text-muted-foreground">
+          {t("items-per-page")}:
+        </label>
+        <select
+          id="page-size-select"
+          value={pageSize.toString()}
+          onChange={(e) => {
+            setPageSize(parseInt(e.target.value));
+            setPage(1); // Reset to first page when changing page size
+          }}
+          className="w-20 px-2 py-1 border border-input bg-background text-sm rounded-md"
+        >
+          <option value="10">10</option>
+          <option value="25">25</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+        </select>
+      </div>
+
       {/* Table */}
         <BenefitsTable 
           filters={filters} 

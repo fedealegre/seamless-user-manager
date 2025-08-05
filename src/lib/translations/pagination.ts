@@ -5,6 +5,7 @@ export const paginationTranslations = {
     'to': 'to',
     'of': 'of',
     'items': 'items',
+    'items-per-page': 'Items per page',
     'page': 'Page',
     'next': 'Next',
     'previous': 'Previous'
@@ -14,6 +15,7 @@ export const paginationTranslations = {
     'to': 'a',
     'of': 'de',
     'items': 'items',
+    'items-per-page': 'Items por página',
     'page': 'Página',
     'next': 'Siguiente',
     'previous': 'Anterior'
