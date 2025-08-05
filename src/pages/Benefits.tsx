@@ -1728,6 +1728,8 @@ const Benefits: React.FC = () => {
   const [reorderDialogOpen, setReorderDialogOpen] = useState(false);
   const [filters, setFilters] = useState<BenefitFilters>({});
   const [benefits, setBenefits] = useState<Benefit[]>(mockBenefits);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(25);
 
   const handleFiltersChange = (newFilters: BenefitFilters) => {
     setFilters(newFilters);
@@ -1751,6 +1753,15 @@ const Benefits: React.FC = () => {
     }
     return true;
   }).sort((a, b) => a.orden - b.orden);
+
+  // Pagination calculations
+  const totalBenefits = filteredBenefits.length;
+  const totalPages = Math.ceil(totalBenefits / pageSize);
+  const paginatedBenefits = useMemo(() => {
+    const startIndex = (page - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    return filteredBenefits.slice(startIndex, endIndex);
+  }, [filteredBenefits, page, pageSize]);
 
   return (
     <div className="space-y-6">
