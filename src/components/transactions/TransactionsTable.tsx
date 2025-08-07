@@ -105,7 +105,7 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
                   {getTranslatedTypeBadge(transaction.movementType || "unknown", settings.language)}
                 </TableCell>
                 <TableCell>
-                  {getTranslatedTransactionTypeBadge(transaction.transactionType || transaction.type || "unknown", settings.language)}
+                  {getTranslatedTransactionTypeBadge(transaction.additionalInfo?.payment_type || transaction.transactionType || transaction.type || "unknown", settings.language)}
                 </TableCell>
                 <TableCell>
                   <div className={`font-medium ${(transaction.movementType === 'deposit' || transaction.movementType === 'INCOME') ? 'text-green-600' : transaction.movementType === 'OUTCOME' ? 'text-red-600' : ''}`}>

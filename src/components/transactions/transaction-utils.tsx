@@ -58,6 +58,10 @@ export const getTranslatedTransactionTypeBadge = (type?: string, language: strin
   const translatedType = t(typeKey);
   
   switch(typeKey) {
+    case 'transfer_p2p':
+      return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">{translatedType}</Badge>;
+    case 'qr_payment':
+      return <Badge className="bg-purple-100 text-purple-800 hover:bg-purple-100">{translatedType}</Badge>;
     case 'cash_in':
     case 'transfer_cash_in':
       return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">{translatedType}</Badge>;

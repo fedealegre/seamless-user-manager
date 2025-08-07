@@ -56,8 +56,9 @@ export function useUserTransactions(userId: string, selectedWalletId: string | n
     if (filters.status && filters.status !== "all" && tx.status?.toLowerCase() !== filters.status.toLowerCase())
       return false;
     if (filters.transactionType && filters.transactionType !== "all") {
+      const paymentType = tx.additionalInfo?.payment_type?.toLowerCase() || "";
       const txType = tx.transactionType?.toLowerCase() || tx.type?.toLowerCase() || "";
-      if (txType !== filters.transactionType.toLowerCase()) return false;
+      if (paymentType !== filters.transactionType.toLowerCase() && txType !== filters.transactionType.toLowerCase()) return false;
     }
     if (filters.currency && filters.currency !== "all") {
       if ((tx.currency?.toLowerCase() || "") !== filters.currency.toLowerCase()) return false;

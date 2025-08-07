@@ -156,6 +156,8 @@ const TransactionFilters: React.FC<TransactionFiltersProps> = ({
               <SelectContent>
                 <SelectGroup>
                   <SelectItem value="all">{t("all-types")}</SelectItem>
+                  <SelectItem value="TRANSFER_P2P">{t("transfer_p2p")}</SelectItem>
+                  <SelectItem value="QR_PAYMENT">{t("qr_payment")}</SelectItem>
                   <SelectItem value="CASH_IN">{t("cash_in")}</SelectItem>
                   <SelectItem value="CASH_OUT">{t("cash_out")}</SelectItem>
                   <SelectItem value="TRANSFER_CASH_IN">{t("transfer_cash_in")}</SelectItem>
