@@ -150,6 +150,180 @@ const mockWalletUserAssociations: WalletUserAssociation[] = [
 ];
 
 const mockTransactions: Transaction[] = [
+  // John Doe's new transactions based on provided JSON format
+  {
+    id: 15134,
+    transactionId: "15134",
+    customerId: "1",
+    walletId: "1",
+    amount: -10.0,
+    currency: "ARS",
+    status: "CONFIRMED",
+    date: new Date(1754531073000).toISOString(),
+    movementType: "OUTCOME",
+    transactionType: "CASH_OUT",
+    additionalInfo: {
+      payment_type: "TRANSFER_P2P",
+      address: "0001",
+      receipt_concept: "Seguro",
+      receipt_description: "otro",
+      receipt_destiny_cuit: "destinyCUIT",
+      accountType: "dummyAddress",
+      internal_transaction_id: "33tMvpbKO0LaypRtW4",
+      accountNumber: "N/A",
+      receipt_destiny_cbu: "destinyCBU",
+      receipt_origin_entity: "originEntity",
+      receipt_destiny_entity: "destinyEntity",
+      receipt_origin_account: "0029941603",
+      receipt_origin_cbu: "0200900511000029941630",
+      receipt_origin_full_name: "Juan Perez",
+      receipt_destiny_full_name: "destinyFullName",
+      receipt_origin_cuit: "27302090713",
+      entity: "ARGENTINE_VAULT"
+    }
+  },
+  {
+    id: 15085,
+    transactionId: "15085",
+    customerId: "1",
+    walletId: "1",
+    amount: -3604.45,
+    currency: "ARS",
+    status: "CONFIRMED",
+    date: new Date(1754406837000).toISOString(),
+    movementType: "OUTCOME",
+    transactionType: "CASH_OUT",
+    additionalInfo: {
+      payment_type: "QR_PAYMENT",
+      address: "0001",
+      accountType: "dummyAddress",
+      internal_transaction_id: "HbmgNpUj73dAOSZ8RG",
+      mcc: "5411",
+      accountNumber: "N/A",
+      entity: "ARGENTINE_VAULT"
+    }
+  },
+  {
+    id: 15083,
+    transactionId: "15083",
+    customerId: "1",
+    walletId: "1",
+    amount: 5000.0,
+    currency: "ARS",
+    status: "CONFIRMED",
+    date: new Date(1754335332000).toISOString(),
+    movementType: "INCOME",
+    transactionType: "CASH_IN"
+  },
+  {
+    id: 15082,
+    transactionId: "15082",
+    customerId: "1",
+    walletId: "1",
+    amount: 5000.0,
+    currency: "ARS",
+    status: "CONFIRMED",
+    date: new Date(1754335331000).toISOString(),
+    movementType: "INCOME",
+    transactionType: "CASH_IN"
+  },
+  {
+    id: 15081,
+    transactionId: "15081",
+    customerId: "1",
+    walletId: "1",
+    amount: 5000.0,
+    currency: "ARS",
+    status: "CONFIRMED",
+    date: new Date(1754335329000).toISOString(),
+    movementType: "INCOME",
+    transactionType: "CASH_IN"
+  },
+  {
+    id: 15080,
+    transactionId: "15080",
+    customerId: "1",
+    walletId: "1",
+    amount: 5000.0,
+    currency: "ARS",
+    status: "CONFIRMED",
+    date: new Date(1754335316000).toISOString(),
+    movementType: "INCOME",
+    transactionType: "CASH_IN"
+  },
+  {
+    id: 15079,
+    transactionId: "15079",
+    customerId: "1",
+    walletId: "1",
+    amount: 5000.0,
+    currency: "ARS",
+    status: "CONFIRMED",
+    date: new Date(1754335315000).toISOString(),
+    movementType: "INCOME",
+    transactionType: "CASH_IN"
+  },
+  {
+    id: 15078,
+    transactionId: "15078",
+    customerId: "1",
+    walletId: "1",
+    amount: 5000.0,
+    currency: "ARS",
+    status: "CONFIRMED",
+    date: new Date(1754335313000).toISOString(),
+    movementType: "INCOME",
+    transactionType: "CASH_IN"
+  },
+  {
+    id: 15077,
+    transactionId: "15077",
+    customerId: "1",
+    walletId: "1",
+    amount: 5000.0,
+    currency: "ARS",
+    status: "CONFIRMED",
+    date: new Date(1754335312000).toISOString(),
+    movementType: "INCOME",
+    transactionType: "CASH_IN"
+  },
+  {
+    id: 15076,
+    transactionId: "15076",
+    customerId: "1",
+    walletId: "1",
+    amount: 5000.0,
+    currency: "ARS",
+    status: "CONFIRMED",
+    date: new Date(1754335310000).toISOString(),
+    movementType: "INCOME",
+    transactionType: "CASH_IN"
+  },
+  {
+    id: 15075,
+    transactionId: "15075",
+    customerId: "1",
+    walletId: "1",
+    amount: 5000.0,
+    currency: "ARS",
+    status: "CONFIRMED",
+    date: new Date(1754335308000).toISOString(),
+    movementType: "INCOME",
+    transactionType: "CASH_IN"
+  },
+  {
+    id: 15074,
+    transactionId: "15074",
+    customerId: "1",
+    walletId: "1",
+    amount: 5000.0,
+    currency: "ARS",
+    status: "CONFIRMED",
+    date: new Date(1754335289000).toISOString(),
+    movementType: "INCOME",
+    transactionType: "CASH_IN"
+  },
+  // Original transactions for other users
   { id: 1, customerId: "1", walletId: "1", amount: 100, type: "deposit", date: "2024-01-01", additionalInfo: { description: "Initial deposit" }, status: "confirmed" },
   { id: 2, customerId: "1", walletId: "1", amount: -50, type: "withdrawal", date: "2024-01-01", additionalInfo: { description: "Grocery shopping" }, status: "confirmed" },
   { id: 3, customerId: "1", walletId: "2", amount: 200, type: "deposit", date: "2024-01-01", additionalInfo: { description: "Bonus payment" }, status: "pending" },
@@ -312,16 +486,35 @@ export class MockUserService implements UserService {
   }
 
   async generateRandomTransaction(): Promise<Transaction> {
+    const movementTypes = ["INCOME", "OUTCOME"];
+    const paymentTypes = ["TRANSFER_P2P", "QR_PAYMENT"];
+    const currencies = ["ARS", "USD"];
+    const statuses = ["CONFIRMED", "PENDING"];
+    
+    const randomMovementType = movementTypes[Math.floor(Math.random() * movementTypes.length)];
+    const randomAmount = randomMovementType === "INCOME" ? 
+      Math.floor(Math.random() * 5000) + 100 : 
+      -(Math.floor(Math.random() * 1000) + 10);
+    
     const randomTransaction: Transaction = {
-      id: Math.floor(Math.random() * 1000),
+      id: Math.floor(Math.random() * 100000) + 20000,
+      transactionId: `TXN_${Date.now()}`,
       customerId: "1",
       walletId: "1",
-      amount: Math.floor(Math.random() * 100) - 50,
-      type: "deposit",
+      amount: randomAmount,
+      currency: currencies[Math.floor(Math.random() * currencies.length)],
+      status: statuses[Math.floor(Math.random() * statuses.length)],
       date: new Date().toISOString(),
-      additionalInfo: { description: "Random transaction" },
-      status: "confirmed",
+      movementType: randomMovementType,
+      transactionType: randomMovementType === "INCOME" ? "CASH_IN" : "CASH_OUT",
+      additionalInfo: {
+        payment_type: paymentTypes[Math.floor(Math.random() * paymentTypes.length)],
+        internal_transaction_id: `INT_${Math.random().toString(36).substr(2, 9)}`,
+        entity: "ARGENTINE_VAULT"
+      }
     };
+    
+    this.transactions.push(randomTransaction);
     return Promise.resolve(randomTransaction);
   }
 
