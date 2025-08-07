@@ -17,7 +17,11 @@ import {
   ArrowRight,
   ArrowLeft,
   AlertCircle,
-  MessageSquare
+  MessageSquare,
+  Building,
+  CreditCard,
+  MapPin,
+  Receipt
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
@@ -63,6 +67,21 @@ const TransactionDetails: React.FC<TransactionDetailsProps> = ({
     const compensationType = amount >= 0 ? "Crédito" : "Débito";
     
     return `${compensationType}, ${transaction.reference}`;
+  };
+
+  // Get additional info safely
+  const additionalInfo = transaction.additionalInfo || {};
+  const paymentType = additionalInfo.payment_type;
+  
+  // Helper function to render field if value exists
+  const renderField = (label: string, value: string | undefined) => {
+    if (!value || value === 'N/A') return null;
+    return (
+      <>
+        <div className="text-sm font-medium">{t(label)}</div>
+        <div className="text-sm">{value}</div>
+      </>
+    );
   };
 
   return (
@@ -217,8 +236,142 @@ const TransactionDetails: React.FC<TransactionDetailsProps> = ({
             </div>
           )}
           
-          {/* Flow Visualization */}
-          {(transaction.transactionType === 'TRANSFER_CASH_IN' || transaction.transactionType === 'TRANSFER_CASH_OUT') && (
+          {/* P2P Transfer Details */}
+          {paymentType === 'TRANSFER_P2P' && (
+            <div className="space-y-1">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <ArrowRight size={14} />
+                <span>{t("transfer-details")}</span>
+              </div>
+              
+              <div className="grid grid-cols-1 gap-4 p-3 border rounded-md">
+                {/* Origin Information */}
+                {(additionalInfo.receipt_origin_full_name || additionalInfo.receipt_origin_cbu || additionalInfo.receipt_origin_cuit) && (
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 text-sm font-medium text-primary">
+                      <User size={14} />
+                      <span>{t("origin-information")}</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 ml-4">
+                      {renderField("origin-full-name", additionalInfo.receipt_origin_full_name)}
+                      {renderField("origin-cbu", additionalInfo.receipt_origin_cbu)}
+                      {renderField("origin-cuit", additionalInfo.receipt_origin_cuit)}
+                      {renderField("origin-account", additionalInfo.receipt_origin_account)}
+                      {renderField("origin-entity", additionalInfo.receipt_origin_entity)}
+                    </div>
+                  </div>
+                )}
+                
+                {/* Destination Information */}
+                {(additionalInfo.receipt_destiny_full_name || additionalInfo.receipt_destiny_cbu || additionalInfo.receipt_destiny_cuit) && (
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 text-sm font-medium text-primary">
+                      <User size={14} />
+                      <span>{t("destination-information")}</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 ml-4">
+                      {renderField("destination-full-name", additionalInfo.receipt_destiny_full_name)}
+                      {renderField("destination-cbu", additionalInfo.receipt_destiny_cbu)}
+                      {renderField("destination-cuit", additionalInfo.receipt_destiny_cuit)}
+                      {renderField("destination-entity", additionalInfo.receipt_destiny_entity)}
+                    </div>
+                  </div>
+                )}
+                
+                {/* Receipt Information */}
+                {(additionalInfo.receipt_concept || additionalInfo.receipt_description) && (
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 text-sm font-medium text-primary">
+                      <Receipt size={14} />
+                      <span>{t("receipt-information")}</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 ml-4">
+                      {renderField("receipt-concept", additionalInfo.receipt_concept)}
+                      {renderField("receipt-description", additionalInfo.receipt_description)}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* QR Payment Details */}
+          {paymentType === 'QR_PAYMENT' && (
+            <div className="space-y-1">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <CreditCard size={14} />
+                <span>{t("payment-details")}</span>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-2 p-3 border rounded-md">
+                {renderField("merchant-code", additionalInfo.mcc)}
+                {renderField("merchant-address", additionalInfo.address)}
+                {renderField("account-type", additionalInfo.accountType)}
+                {renderField("account-number", additionalInfo.accountNumber)}
+                {renderField("internal-transaction-id", additionalInfo.internal_transaction_id)}
+              </div>
+            </div>
+          )}
+
+          {/* Entity Information */}
+          {additionalInfo.entity && (
+            <div className="space-y-1">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <Building size={14} />
+                <span>{t("entity-details")}</span>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-2 p-3 border rounded-md">
+                {renderField("financial-entity", additionalInfo.entity)}
+                {renderField("payment-method", paymentType)}
+              </div>
+            </div>
+          )}
+
+          {/* Enhanced Flow Visualization */}
+          {paymentType === 'TRANSFER_P2P' && additionalInfo.receipt_origin_full_name && additionalInfo.receipt_destiny_full_name && (
+            <div className="p-4 mt-4 border rounded-md">
+              <div className="flex items-center justify-between">
+                <div className="text-center flex-1">
+                  <User className="h-8 w-8 mx-auto text-primary" />
+                  <div className="mt-1 text-sm font-medium">{t("origin-information")}</div>
+                  <div className="text-xs text-muted-foreground max-w-[120px] mx-auto break-words">
+                    {additionalInfo.receipt_origin_full_name}
+                  </div>
+                  {additionalInfo.receipt_origin_cbu && (
+                    <div className="text-xs text-muted-foreground mt-1">
+                      CBU: {additionalInfo.receipt_origin_cbu.slice(-6)}...
+                    </div>
+                  )}
+                </div>
+                
+                <div className="flex-1 flex justify-center">
+                  <div className="relative">
+                    <ArrowRight className="h-6 w-6 text-primary" />
+                    <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-medium bg-muted px-2 py-1 rounded whitespace-nowrap">
+                      {formatCurrency(transaction.amount, transaction.currency)}
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="text-center flex-1">
+                  <User className="h-8 w-8 mx-auto text-primary" />
+                  <div className="mt-1 text-sm font-medium">{t("destination-information")}</div>
+                  <div className="text-xs text-muted-foreground max-w-[120px] mx-auto break-words">
+                    {additionalInfo.receipt_destiny_full_name}
+                  </div>
+                  {additionalInfo.receipt_destiny_cbu && (
+                    <div className="text-xs text-muted-foreground mt-1">
+                      CBU: {additionalInfo.receipt_destiny_cbu.slice(-6)}...
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* QR Payment Flow */}
+          {paymentType === 'QR_PAYMENT' && (
             <div className="p-4 mt-4 border rounded-md">
               <div className="flex items-center justify-between">
                 <div className="text-center">
@@ -239,11 +392,16 @@ const TransactionDetails: React.FC<TransactionDetailsProps> = ({
                 </div>
                 
                 <div className="text-center">
-                  <Wallet className="h-8 w-8 mx-auto text-primary" />
-                  <div className="mt-1 text-sm font-medium">{t("destination-wallet")}</div>
+                  <CreditCard className="h-8 w-8 mx-auto text-primary" />
+                  <div className="mt-1 text-sm font-medium">{t("merchant-information")}</div>
                   <div className="text-xs text-muted-foreground">
-                    {t("id")}: {transaction.destinationTransactionId || t('unknown')}
+                    MCC: {additionalInfo.mcc || t('unknown')}
                   </div>
+                  {additionalInfo.address && (
+                    <div className="text-xs text-muted-foreground">
+                      {additionalInfo.address}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
