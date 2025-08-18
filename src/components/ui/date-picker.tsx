@@ -66,7 +66,7 @@ export function DatePicker({ date, onSelect, className, id, displayTime = false 
           selected={date}
           onSelect={onSelect}
           initialFocus
-          month={date}
+          defaultMonth={date ?? new Date()}
           showOutsideDays={true}
           className="p-3 pointer-events-auto min-w-[300px] max-w-[320px]"
           locale={getLocale()}
