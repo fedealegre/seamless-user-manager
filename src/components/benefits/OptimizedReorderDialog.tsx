@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useCallback, useRef, useEffect } from "react";
+import { useReorderBenefits } from "@/hooks/use-benefits";
 import {
   DndContext,
   closestCenter,
@@ -40,7 +41,7 @@ interface OptimizedReorderDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   benefits: Benefit[];
-  onReorderSuccess: (reorderedBenefits: Benefit[]) => void;
+  onReorderSuccess: () => void;
 }
 
 const ITEM_HEIGHT = 120; // Height of each benefit item
@@ -149,6 +150,7 @@ export const OptimizedReorderDialog: React.FC<OptimizedReorderDialogProps> = ({
   const { settings } = useBackofficeSettings();
   const { toast } = useToast();
   const t = (key: string) => translate(key, settings.language);
+  const reorderBenefits = useReorderBenefits();
   
   const [orderedBenefits, setOrderedBenefits] = useState<Benefit[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -288,19 +290,19 @@ export const OptimizedReorderDialog: React.FC<OptimizedReorderDialogProps> = ({
   const handleSave = async () => {
     setIsLoading(true);
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Prepare reorder data for API
+      const reorderData = orderedBenefits.map((benefit, index) => ({
+        id: benefit.id,
+        order: index + 1
+      }));
       
-      toast({
-        title: t('success'),
-        description: t('benefits-order-updated') || 'Orden de beneficios actualizado correctamente',
-      });
-      
-      onReorderSuccess(orderedBenefits);
+      await reorderBenefits.mutateAsync(reorderData);
+      onReorderSuccess();
     } catch (error) {
+      console.error("Error saving benefit order:", error);
       toast({
         title: t('error'),
-        description: t('error-updating-order') || 'Error al actualizar el orden de beneficios',
+        description: t('error-saving-order') || 'Error al guardar el orden de beneficios',
         variant: "destructive",
       });
     } finally {

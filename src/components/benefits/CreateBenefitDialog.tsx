@@ -9,6 +9,7 @@ import {
 import { BenefitForm } from "./BenefitForm";
 import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
 import { translate } from "@/lib/translations";
+import { useCreateBenefit } from "@/hooks/use-benefits";
 
 interface CreateBenefitDialogProps {
   open: boolean;
@@ -21,6 +22,7 @@ export const CreateBenefitDialog: React.FC<CreateBenefitDialogProps> = ({
 }) => {
   const { settings } = useBackofficeSettings();
   const t = (key: string) => translate(key, settings.language);
+  const createBenefit = useCreateBenefit();
 
   const handleSuccess = () => {
     onOpenChange(false);

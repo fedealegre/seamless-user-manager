@@ -13,6 +13,7 @@ export const benefitsTranslations = {
     'reorder-benefits-description': 'Drag and drop benefits to change their order. Changes will be saved when you click "Save Changes".',
     'save-changes': 'Save Changes',
     'benefits-order-updated': 'Benefits order updated successfully',
+    'error-saving-order': 'Error saving benefits order',
     'error-updating-order': 'Error updating benefits order',
     'confirm-deletion': 'Confirm Deletion',
     'delete-benefit-confirmation': 'Are you sure you want to delete the benefit "{title}"? This action cannot be undone.',
