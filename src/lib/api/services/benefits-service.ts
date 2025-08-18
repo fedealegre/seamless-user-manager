@@ -2,7 +2,7 @@ import axios from 'axios';
 import { BenefitsListResponse, BenefitDTO, Benefit } from '@/types/benefits';
 import { mapDTOToBenefit, mapBenefitToDTO } from '@/lib/benefits-mapper';
 
-const API_BASE_URL = process.env.VITE_API_BASE_URL || 'https://api-sandbox.waasabi.io/bancorbff';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://api-sandbox.waasabi.io/bancorbff';
 
 // API client instance
 const apiClient = axios.create({
