@@ -34,9 +34,9 @@ export const DeleteBenefitDialog: React.FC<DeleteBenefitDialogProps> = ({
 
     setIsDeleting(true);
     try {
-      console.log("Deleting benefit:", benefit.id);
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Use the mock service directly for now - in production this would be handled by useDeleteBenefit hook
+      const { CurrentBenefitsService } = await import('@/lib/api/services/benefits');
+      await CurrentBenefitsService.deleteBenefit(benefit.id);
       onOpenChange(false);
     } catch (error) {
       console.error("Error deleting benefit:", error);

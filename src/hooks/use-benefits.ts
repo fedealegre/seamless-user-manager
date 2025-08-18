@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { BenefitsService, ListBenefitsParams } from '@/lib/api/services/benefits-service';
+import { CurrentBenefitsService as BenefitsService, ListBenefitsParams } from '@/lib/api/services/benefits';
 import { Benefit } from '@/types/benefits';
 import { useToast } from '@/hooks/use-toast';
 

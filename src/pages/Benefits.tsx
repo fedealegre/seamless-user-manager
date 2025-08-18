@@ -55,6 +55,13 @@ const Benefits: React.FC = () => {
           <p className="text-muted-foreground mt-2">
             No se pudieron cargar los beneficios. Por favor, intenta nuevamente.
           </p>
+          <Button 
+            onClick={() => window.location.reload()} 
+            className="mt-4"
+            variant="outline"
+          >
+            Reintentar
+          </Button>
         </div>
       </div>
     );
