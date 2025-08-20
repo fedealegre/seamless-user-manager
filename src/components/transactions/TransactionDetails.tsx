@@ -232,6 +232,38 @@ const TransactionDetails: React.FC<TransactionDetailsProps> = ({
             </AccordionItem>
           </Accordion>
           
+          {/* Status Change History - Show if transaction has status changes */}
+          {transaction.statusHistory && transaction.statusHistory.length > 0 && (
+            <div className="space-y-1">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                <AlertCircle size={14} />
+                <span>{t("status-change-history")}</span>
+              </div>
+              
+              <div className="space-y-2">
+                {transaction.statusHistory.map((change, index) => (
+                  <div key={index} className="p-3 border rounded-md bg-orange-50/50">
+                    <div className="flex justify-between items-start mb-2">
+                      <div className="flex items-center gap-2">
+                        <Badge variant="outline" className="text-xs">
+                          {t(change.oldStatus?.toLowerCase() || 'unknown')} → {t(change.newStatus?.toLowerCase() || 'unknown')}
+                        </Badge>
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {formatDateTime(new Date(change.changedAt))}
+                      </div>
+                    </div>
+                    <div className="text-sm font-medium mb-1">{t("reason")}:</div>
+                    <div className="text-sm text-muted-foreground">{change.reason}</div>
+                    <div className="text-xs text-muted-foreground mt-1">
+                      {t("changed-by")}: {change.changedBy}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Compensation Details - Only show for compensation transactions */}
           {isCompensation && (
             <div className="space-y-1">

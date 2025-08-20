@@ -172,6 +172,9 @@ export const commonTranslations = {
     'cannot-block-without-id': 'Cannot block user without an ID',
     'transaction-id': 'Transaction ID',
     'search-transaction-id': 'Search by transaction ID...',
+    'status-change-history': 'Status Change History',
+    'reason': 'Reason',
+    'changed-by': 'Changed by',
   },
   es: {
     'dashboard': 'Panel de Control',
@@ -345,5 +348,8 @@ export const commonTranslations = {
     'cannot-block-without-id': 'No se puede bloquear un usuario sin ID',
     'transaction-id': 'ID de Transacción',
     'search-transaction-id': 'Buscar por ID de transacción...',
+    'status-change-history': 'Historial de Cambios de Estado',
+    'reason': 'Motivo',
+    'changed-by': 'Cambiado por',
   }
 };

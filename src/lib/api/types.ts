@@ -1,5 +1,13 @@
 // API types based on the OpenAPI specifications
 
+export interface TransactionStatusChange {
+    oldStatus: string;
+    newStatus: string;
+    reason: string;
+    changedBy: string;
+    changedAt: string;
+}
+
 export interface Transaction {
     originalTransactionId?: string;
     customerId: string;
@@ -22,6 +30,7 @@ export interface Transaction {
     amount?: number;
     date?: string;
     additionalInfo?: Record<string, any>; // Added to support mock data
+    statusHistory?: TransactionStatusChange[]; // New field for status change history
 }
 
 export interface Wallet {

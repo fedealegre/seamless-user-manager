@@ -169,7 +169,16 @@ const mockTransactions: Transaction[] = [
       receipt_description: "Pending payment verification",
       internal_transaction_id: "PEND001",
       entity: "ARGENTINE_VAULT"
-    }
+    },
+    statusHistory: [
+      {
+        oldStatus: "confirmed",
+        newStatus: "pending",
+        reason: "Reversión temporal por verificación de seguridad adicional",
+        changedBy: "admin@company.com",
+        changedAt: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString() // 1 hour ago
+      }
+    ]
   },
   {
     id: 16002,
@@ -209,7 +218,23 @@ const mockTransactions: Transaction[] = [
       receipt_description: "Merchant verification pending",
       internal_transaction_id: "PEND003",
       entity: "ARGENTINE_VAULT"
-    }
+    },
+    statusHistory: [
+      {
+        oldStatus: "cancelled",
+        newStatus: "pending",
+        reason: "Solicitud del cliente - transacción válida, revertir cancelación",
+        changedBy: "configurador@company.com",
+        changedAt: new Date(Date.now() - 20 * 60 * 1000).toISOString() // 20 minutes ago
+      },
+      {
+        oldStatus: "confirmed",
+        newStatus: "cancelled",
+        reason: "Detección automática de actividad sospechosa",
+        changedBy: "sistema-antifraude",
+        changedAt: new Date(Date.now() - 45 * 60 * 1000).toISOString() // 45 minutes ago
+      }
+    ]
   },
   {
     id: 16004,
