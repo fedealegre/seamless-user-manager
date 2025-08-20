@@ -29,7 +29,7 @@ export function usePermissions() {
   };
 
   const canChangeTransactionStatus = (): boolean => {
-    return hasRole("compensador");
+    return hasRole("compensador") || hasRole("configurador");
   };
 
   const canCancelTransaction = (): boolean => {

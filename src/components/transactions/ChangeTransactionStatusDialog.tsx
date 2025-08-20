@@ -42,7 +42,7 @@ interface ChangeTransactionStatusDialogProps {
 
 // Define the form validation schema
 const formSchema = z.object({
-  status: z.enum(["cancelled", "rejected", "confirmed", "approved"]),
+  status: z.enum(["cancelled", "confirmed"]),
   reason: z.string().min(3, { message: "Reason must be at least 3 characters" }),
 });
 
@@ -94,8 +94,6 @@ const ChangeTransactionStatusDialog: React.FC<ChangeTransactionStatusDialogProps
                     </FormControl>
                     <SelectContent>
                       <SelectItem value="confirmed">{t("confirmed")}</SelectItem>
-                      <SelectItem value="approved">{t("approved")}</SelectItem>
-                      <SelectItem value="rejected">{t("rejected")}</SelectItem>
                       <SelectItem value="cancelled">{t("cancelled")}</SelectItem>
                     </SelectContent>
                   </Select>
