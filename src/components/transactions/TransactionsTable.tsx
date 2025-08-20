@@ -133,7 +133,7 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
                       <DropdownMenuItem onClick={() => handleViewDetails(transaction)}>
                         <Eye size={16} className="mr-2" /> {t("view")} {t("details")}
                       </DropdownMenuItem>
-                      {transaction.status === "pending" && handleChangeStatus && (
+                      {transaction.status?.toLowerCase() === "pending" && handleChangeStatus && (
                         <DropdownMenuItem 
                           onClick={() => canChangeTransactionStatus() 
                             ? handleChangeStatus(transaction)

@@ -150,7 +150,108 @@ const mockWalletUserAssociations: WalletUserAssociation[] = [
 ];
 
 const mockTransactions: Transaction[] = [
-  // John Doe's new transactions based on provided JSON format
+  // John Doe's pending transactions for testing
+  {
+    id: 16001,
+    transactionId: "16001",
+    customerId: "1",
+    walletId: "1",
+    amount: -25.50,
+    currency: "USD",
+    status: "pending",
+    date: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
+    movementType: "OUTCOME",
+    transactionType: "CASH_OUT",
+    additionalInfo: {
+      payment_type: "TRANSFER_P2P",
+      address: "0001",
+      receipt_concept: "Payment",
+      receipt_description: "Pending payment verification",
+      internal_transaction_id: "PEND001",
+      entity: "ARGENTINE_VAULT"
+    }
+  },
+  {
+    id: 16002,
+    transactionId: "16002",
+    customerId: "1",
+    walletId: "1",
+    amount: 100.00,
+    currency: "USD",
+    status: "pending",
+    date: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(), // 1 hour ago
+    movementType: "INCOME",
+    transactionType: "CASH_IN",
+    additionalInfo: {
+      payment_type: "BANK_TRANSFER",
+      address: "0001",
+      receipt_concept: "Deposit",
+      receipt_description: "Awaiting bank confirmation",
+      internal_transaction_id: "PEND002",
+      entity: "ARGENTINE_VAULT"
+    }
+  },
+  {
+    id: 16003,
+    transactionId: "16003",
+    customerId: "1",
+    walletId: "1",
+    amount: -75.25,
+    currency: "USD",
+    status: "pending",
+    date: new Date(Date.now() - 30 * 60 * 1000).toISOString(), // 30 minutes ago
+    movementType: "OUTCOME",
+    transactionType: "PURCHASE",
+    additionalInfo: {
+      payment_type: "QR_PAYMENT",
+      address: "0001",
+      receipt_concept: "Purchase",
+      receipt_description: "Merchant verification pending",
+      internal_transaction_id: "PEND003",
+      entity: "ARGENTINE_VAULT"
+    }
+  },
+  {
+    id: 16004,
+    transactionId: "16004",
+    customerId: "1",
+    walletId: "1",
+    amount: 50.00,
+    currency: "USD",
+    status: "pending",
+    date: new Date(Date.now() - 15 * 60 * 1000).toISOString(), // 15 minutes ago
+    movementType: "INCOME",
+    transactionType: "REFUND",
+    additionalInfo: {
+      payment_type: "REFUND",
+      address: "0001",
+      receipt_concept: "Refund",
+      receipt_description: "Refund processing",
+      internal_transaction_id: "PEND004",
+      entity: "ARGENTINE_VAULT"
+    }
+  },
+  {
+    id: 16005,
+    transactionId: "16005",
+    customerId: "1",
+    walletId: "1",
+    amount: -15.75,
+    currency: "USD",
+    status: "pending",
+    date: new Date(Date.now() - 5 * 60 * 1000).toISOString(), // 5 minutes ago
+    movementType: "OUTCOME",
+    transactionType: "FEE",
+    additionalInfo: {
+      payment_type: "COMMISSION",
+      address: "0001",
+      receipt_concept: "Service Fee",
+      receipt_description: "Processing fee verification",
+      internal_transaction_id: "PEND005",
+      entity: "ARGENTINE_VAULT"
+    }
+  },
+  // John Doe's existing confirmed transactions
   {
     id: 15134,
     transactionId: "15134",
