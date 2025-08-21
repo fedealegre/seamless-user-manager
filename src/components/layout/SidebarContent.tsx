@@ -95,13 +95,6 @@ const SidebarContent: React.FC<SidebarContentProps> = ({ sidebarOpen }) => {
           icon: Tag, 
           path: "/maestros/categorias", 
           permissionCheck: () => user?.roles.includes("loyalty") || false
-        },
-        { 
-          title: "Rubros (MCC)", 
-          translationKey: "mcc", 
-          icon: CreditCard, 
-          path: "/maestros/mcc", 
-          permissionCheck: () => user?.roles.includes("loyalty") || false
         }
       ]
     },
