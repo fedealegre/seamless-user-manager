@@ -138,9 +138,18 @@ export class MockBenefitsService {
     }
 
     if (params.status) {
-      filteredBenefits = filteredBenefits.filter(benefit =>
-        benefit.estado === params.status
-      );
+      if (params.status === 'expirado') {
+        // Filter expired benefits based on end date
+        const currentDate = new Date();
+        filteredBenefits = filteredBenefits.filter(benefit =>
+          benefit.fechaFin < currentDate
+        );
+      } else {
+        // Filter by direct status comparison
+        filteredBenefits = filteredBenefits.filter(benefit =>
+          benefit.estado === params.status
+        );
+      }
     }
 
     // Sort by order
