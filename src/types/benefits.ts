@@ -21,13 +21,7 @@ export interface Benefit {
   fechaActualizacion: Date;
 }
 
-export interface Category {
-  id: string;
-  code: string;
-  nombre: string;
-  descripcion?: string;
-  fechaCreacion: Date;
-}
+import { Category } from "@/types/category";
 
 export interface MCC {
   id: string;

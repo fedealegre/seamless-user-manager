@@ -20,79 +20,19 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Category } from "@/types/benefits";
-
-const mockCategories: Category[] = [
-  {
-    id: "1",
-    code: "001",
-    nombre: "librería",
-    descripcion: "Librerías y material educativo",
-    fechaCreacion: new Date("2024-01-01"),
-  },
-  {
-    id: "2",
-    code: "002",
-    nombre: "carnicería",
-    descripcion: "Carnicerías y productos cárnicos",
-    fechaCreacion: new Date("2024-01-02"),
-  },
-  {
-    id: "3",
-    code: "003",
-    nombre: "juguetería",
-    descripcion: "Jugueterías y artículos para niños",
-    fechaCreacion: new Date("2024-01-03"),
-  },
-  {
-    id: "4",
-    code: "004",
-    nombre: "supermercado",
-    descripcion: "Supermercados y tiendas de comestibles",
-    fechaCreacion: new Date("2024-01-04"),
-  },
-  {
-    id: "5",
-    code: "005",
-    nombre: "panadería",
-    descripcion: "Panaderías y productos de panadería",
-    fechaCreacion: new Date("2024-01-05"),
-  },
-  {
-    id: "6",
-    code: "006",
-    nombre: "farmacia",
-    descripcion: "Farmacias y productos farmacéuticos",
-    fechaCreacion: new Date("2024-01-06"),
-  },
-  {
-    id: "7",
-    code: "008",
-    nombre: "verdulería",
-    descripcion: "Verdulerías y productos frescos",
-    fechaCreacion: new Date("2024-01-07"),
-  },
-  {
-    id: "8",
-    code: "009",
-    nombre: "combustible",
-    descripcion: "Estaciones de servicio y combustibles",
-    fechaCreacion: new Date("2024-01-08"),
-  },
-  {
-    id: "9",
-    code: "010",
-    nombre: "café",
-    descripcion: "Cafeterías y tiendas de café",
-    fechaCreacion: new Date("2024-01-09"),
-  },
-];
+import { Category } from "@/types/category";
+import { useCategories, useCreateCategory, useUpdateCategory, useDeleteCategory } from "@/hooks/use-categories";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const Categories: React.FC = () => {
-  const [categories, setCategories] = useState<Category[]>(mockCategories);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
   const [formData, setFormData] = useState({ code: "", nombre: "", descripcion: "" });
+
+  const { data: categories = [], isLoading } = useCategories();
+  const createCategory = useCreateCategory();
+  const updateCategory = useUpdateCategory();
+  const deleteCategory = useDeleteCategory();
 
   const handleAdd = () => {
     setEditingCategory(null);
@@ -106,13 +46,17 @@ const Categories: React.FC = () => {
     setDialogOpen(true);
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (code: string) => {
     if (confirm("¿Estás seguro de que deseas eliminar esta categoría?")) {
-      setCategories(categories.filter(cat => cat.id !== id));
+      try {
+        await deleteCategory.mutateAsync(code);
+      } catch (error) {
+        // Error is handled by the hook
+      }
     }
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!formData.nombre.trim() || !formData.code.trim()) return;
 
     // Validate code format (3 digits)
@@ -130,25 +74,26 @@ const Categories: React.FC = () => {
       return;
     }
 
-    if (editingCategory) {
-      setCategories(categories.map(cat =>
-        cat.id === editingCategory.id
-          ? { ...cat, code: formData.code, nombre: formData.nombre, descripcion: formData.descripcion }
-          : cat
-      ));
-    } else {
-      const newCategory: Category = {
-        id: Date.now().toString(),
-        code: formData.code,
-        nombre: formData.nombre,
-        descripcion: formData.descripcion,
-        fechaCreacion: new Date(),
-      };
-      setCategories([...categories, newCategory]);
-    }
+    const categoryData: Category = {
+      id: formData.code,
+      code: formData.code,
+      nombre: formData.nombre,
+      descripcion: formData.descripcion,
+      fechaCreacion: new Date(),
+    };
 
-    setDialogOpen(false);
-    setFormData({ code: "", nombre: "", descripcion: "" });
+    try {
+      if (editingCategory) {
+        await updateCategory.mutateAsync(categoryData);
+      } else {
+        await createCategory.mutateAsync(categoryData);
+      }
+
+      setDialogOpen(false);
+      setFormData({ code: "", nombre: "", descripcion: "" });
+    } catch (error) {
+      // Error is handled by the hooks
+    }
   };
 
   return (
@@ -172,33 +117,46 @@ const Categories: React.FC = () => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {categories.sort((a, b) => a.code.localeCompare(b.code)).map((category) => (
-              <TableRow key={category.id}>
-                <TableCell className="font-mono font-medium">{category.code}</TableCell>
-                <TableCell className="font-medium">{category.nombre}</TableCell>
-                <TableCell>{category.descripcion}</TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleEdit(category)}
-                      className="h-8 w-8"
-                    >
-                      <Edit className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleDelete(category.id)}
-                      className="h-8 w-8"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
+            {isLoading ? (
+              Array.from({ length: 5 }).map((_, index) => (
+                <TableRow key={index}>
+                  <TableCell><Skeleton className="h-4 w-12" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-24" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-32" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-16" /></TableCell>
+                </TableRow>
+              ))
+            ) : (
+              categories.sort((a, b) => a.code.localeCompare(b.code)).map((category) => (
+                <TableRow key={category.id}>
+                  <TableCell className="font-mono font-medium">{category.code}</TableCell>
+                  <TableCell className="font-medium">{category.nombre}</TableCell>
+                  <TableCell>{category.descripcion}</TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleEdit(category)}
+                        className="h-8 w-8"
+                        disabled={updateCategory.isPending}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleDelete(category.code)}
+                        className="h-8 w-8"
+                        disabled={deleteCategory.isPending}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </Card>
@@ -243,11 +201,14 @@ const Categories: React.FC = () => {
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDialogOpen(false)}>
+            <Button variant="outline" onClick={() => setDialogOpen(false)} disabled={createCategory.isPending || updateCategory.isPending}>
               Cancelar
             </Button>
-            <Button onClick={handleSave} disabled={!formData.nombre.trim() || !formData.code.trim()}>
-              Guardar
+            <Button 
+              onClick={handleSave} 
+              disabled={!formData.nombre.trim() || !formData.code.trim() || createCategory.isPending || updateCategory.isPending}
+            >
+              {createCategory.isPending || updateCategory.isPending ? "Guardando..." : "Guardar"}
             </Button>
           </DialogFooter>
         </DialogContent>

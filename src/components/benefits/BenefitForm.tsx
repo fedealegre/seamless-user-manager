@@ -27,24 +27,13 @@ import { Benefit } from "@/types/benefits";
 import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
 import { translate } from "@/lib/translations";
 import { useCreateBenefit, useUpdateBenefit } from "@/hooks/use-benefits";
+import { useCategories } from "@/hooks/use-categories";
 
 interface BenefitFormProps {
   benefit?: Benefit;
   onSuccess: () => void;
   onCancel: () => void;
 }
-
-const mockCategories = [
-  { id: "1", nombre: "Librería" },
-  { id: "2", nombre: "Carnicería" },
-  { id: "3", nombre: "Juguetería" },
-  { id: "4", nombre: "Supermercado" },
-  { id: "5", nombre: "Panadería" },
-  { id: "6", nombre: "Farmacia" },
-  { id: "7", nombre: "Verdulería" },
-  { id: "8", nombre: "Combustible" },
-  { id: "9", nombre: "Café" },
-];
 
 export const BenefitForm: React.FC<BenefitFormProps> = ({
   benefit,
@@ -56,6 +45,7 @@ export const BenefitForm: React.FC<BenefitFormProps> = ({
   
   const createBenefit = useCreateBenefit();
   const updateBenefit = useUpdateBenefit();
+  const { data: categories = [] } = useCategories();
   
   const isSubmitting = benefit ? updateBenefit.isPending : createBenefit.isPending;
 
@@ -316,7 +306,7 @@ export const BenefitForm: React.FC<BenefitFormProps> = ({
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {mockCategories.map((category) => (
+                        {categories.map((category) => (
                           <SelectItem key={category.id} value={category.nombre}>
                             {category.nombre}
                           </SelectItem>

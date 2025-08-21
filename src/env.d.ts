@@ -16,6 +16,11 @@ interface ImportMetaEnv {
   readonly VITE_WAASABI_OAUTH_CLIENT_ID: string;
   readonly VITE_WAASABI_OAUTH_CLIENT_SECRET: string;
   readonly VITE_WAASABI_OAUTH_TOKEN_URL: string;
+  // Backend integration environment variables
+  readonly VITE_AUTH_TOKEN: string;
+  readonly VITE_CUSTOMER_ID: string;
+  readonly VITE_OPERATOR_ID: string;
+  readonly VITE_USER_ID: string;
 }
 
 interface ImportMeta {

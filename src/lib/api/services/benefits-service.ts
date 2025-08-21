@@ -13,13 +13,26 @@ const apiClient = axios.create({
   },
 });
 
-// Add Authorization interceptor
+// Add interceptors
 apiClient.interceptors.request.use((config) => {
-  // In a real implementation, get the token from storage/context
-  const token = 'eyJhbGciO'; // This should come from auth context
+  // Add authorization token
+  const token = import.meta.env.VITE_AUTH_TOKEN || 'eyJhbGciO';
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+  
+  // Add custom headers for specific operations
+  const customerId = import.meta.env.VITE_CUSTOMER_ID || '6752';
+  const operatorId = import.meta.env.VITE_OPERATOR_ID || '122444';
+  
+  if (config.url?.includes('/benefits') && (config.method === 'get' || config.method === 'delete')) {
+    config.headers['x-consumer-custom-id'] = customerId;
+  }
+  
+  if (config.method === 'delete') {
+    config.headers['operatorId'] = operatorId;
+  }
+  
   return config;
 });
 
@@ -89,7 +102,7 @@ export class BenefitsService {
   static async updateBenefit(benefit: Benefit): Promise<Benefit> {
     try {
       const dto = mapBenefitToDTO(benefit);
-      const response = await apiClient.put<BenefitDTO>(`/benefits/${benefit.id}`, dto);
+      const response = await apiClient.patch<BenefitDTO>('/benefits', dto);
       return mapDTOToBenefit(response.data);
     } catch (error) {
       console.error('Error updating benefit:', error);
