@@ -20,7 +20,7 @@ let mockBenefits: Benefit[] = [
     legales: 'Válido para compras realizadas con tarjeta de débito o crédito. Máximo $50.000 por transacción. Promoción válida hasta agotar stock.',
     valorPorcentaje: 5,
     topePorCompra: 50000,
-    imagen: 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400',
+    imagen: '/lovable-uploads/31fa3810-4258-4192-b821-7273d85bf0f2.png',
     orden: 1,
     categoria: 'Alimentación',
     mcc: ['5411', '5499'],
