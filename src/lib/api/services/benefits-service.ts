@@ -2,14 +2,25 @@ import axios from 'axios';
 import { BenefitsListResponse, BenefitDTO, Benefit } from '@/types/benefits';
 import { mapDTOToBenefit, mapBenefitToDTO } from '@/lib/benefits-mapper';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://api-sandbox.waasabi.io/bancorbff';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://api-sandbox.daxiaplatform.com/backoffice/bo/v1';
 
 // API client instance
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
   headers: {
+    'Accept': 'application/json, text/plain, */*',
     'Content-Type': 'application/json',
   },
+});
+
+// Add Authorization interceptor
+apiClient.interceptors.request.use((config) => {
+  // In a real implementation, get the token from storage/context
+  const token = 'eyJhbGciO'; // This should come from auth context
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
 });
 
 export interface ListBenefitsParams {

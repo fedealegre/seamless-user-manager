@@ -10,8 +10,6 @@ import { BenefitForm } from "./BenefitForm";
 import { Benefit } from "@/types/benefits";
 import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
 import { translate } from "@/lib/translations";
-import { useUpdateBenefit } from "@/hooks/use-benefits";
-
 interface EditBenefitDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -25,7 +23,6 @@ export const EditBenefitDialog: React.FC<EditBenefitDialogProps> = ({
 }) => {
   const { settings } = useBackofficeSettings();
   const t = (key: string) => translate(key, settings.language);
-  const updateBenefit = useUpdateBenefit();
 
   const handleSuccess = () => {
     onOpenChange(false);

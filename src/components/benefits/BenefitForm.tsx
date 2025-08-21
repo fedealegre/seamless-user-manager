@@ -26,6 +26,7 @@ import { MCCSelector } from "./MCCSelector";
 import { Benefit } from "@/types/benefits";
 import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
 import { translate } from "@/lib/translations";
+import { useCreateBenefit, useUpdateBenefit } from "@/hooks/use-benefits";
 
 interface BenefitFormProps {
   benefit?: Benefit;
@@ -50,10 +51,13 @@ export const BenefitForm: React.FC<BenefitFormProps> = ({
   onSuccess,
   onCancel,
 }) => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const { settings } = useBackofficeSettings();
-  
   const t = (key: string) => translate(key, settings.language);
+  
+  const createBenefit = useCreateBenefit();
+  const updateBenefit = useUpdateBenefit();
+  
+  const isSubmitting = benefit ? updateBenefit.isPending : createBenefit.isPending;
 
   const benefitSchema = z.object({
     tipo: z.literal('Cashback'),
@@ -110,16 +114,38 @@ export const BenefitForm: React.FC<BenefitFormProps> = ({
   });
 
   const onSubmit = async (data: BenefitFormData) => {
-    setIsSubmitting(true);
     try {
-      console.log("Submitting benefit:", data);
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const benefitData: Benefit = {
+        id: benefit?.id || '',
+        code: benefit?.code,
+        version: benefit?.version,
+        tipo: data.tipo,
+        titulo: data.titulo,
+        descripcion: data.descripcion,
+        descripcionExtendida: data.descripcionExtendida,
+        legales: data.legales,
+        valorPorcentaje: data.valorPorcentaje,
+        topePorCompra: data.topePorCompra,
+        imagen: data.imagen,
+        orden: data.orden,
+        categoria: data.categoria,
+        mcc: data.mcc,
+        fechaInicio: data.fechaInicio,
+        fechaFin: data.fechaFin,
+        estado: benefit?.estado || 'inactivo',
+        fechaCreacion: benefit?.fechaCreacion || new Date(),
+        fechaActualizacion: new Date(),
+      };
+
+      if (benefit) {
+        await updateBenefit.mutateAsync(benefitData);
+      } else {
+        await createBenefit.mutateAsync(benefitData);
+      }
+      
       onSuccess();
     } catch (error) {
       console.error("Error submitting benefit:", error);
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
