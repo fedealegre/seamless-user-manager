@@ -1,10 +1,9 @@
 import React, { useState, useMemo } from "react";
-import { Plus, Upload, ArrowUpDown } from "lucide-react";
+import { Plus, ArrowUpDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BenefitsTable } from "@/components/benefits/BenefitsTable";
 import { BenefitsFilters } from "@/components/benefits/BenefitsFilters";
 import { CreateBenefitDialog } from "@/components/benefits/CreateBenefitDialog";
-import { BulkUploadDialog } from "@/components/benefits/BulkUploadDialog";
 import { OptimizedReorderDialog } from "@/components/benefits/OptimizedReorderDialog";
 import BenefitsPagination from "@/components/benefits/BenefitsPagination";
 import { BenefitFilters, Benefit } from "@/types/benefits";
@@ -18,7 +17,6 @@ const Benefits: React.FC = () => {
   const t = (key: string) => translate(key, settings.language);
   
   const [createDialogOpen, setCreateDialogOpen] = useState(false);
-  const [bulkUploadDialogOpen, setBulkUploadDialogOpen] = useState(false);
   const [reorderDialogOpen, setReorderDialogOpen] = useState(false);
   const [filters, setFilters] = useState<BenefitFilters>({});
   const [page, setPage] = useState(1);
@@ -80,14 +78,6 @@ const Benefits: React.FC = () => {
           >
             <ArrowUpDown className="h-4 w-4" />
             {t('reorder-benefits') || 'Reordenar'}
-          </Button>
-          <Button
-            variant="outline"
-            onClick={() => setBulkUploadDialogOpen(true)}
-            className="flex items-center gap-2"
-          >
-            <Upload className="h-4 w-4" />
-            {t('bulk-upload') || 'Carga Masiva'}
           </Button>
           <Button
             onClick={() => setCreateDialogOpen(true)}
@@ -153,11 +143,6 @@ const Benefits: React.FC = () => {
       <CreateBenefitDialog
         open={createDialogOpen}
         onOpenChange={setCreateDialogOpen}
-      />
-
-      <BulkUploadDialog
-        open={bulkUploadDialogOpen}
-        onOpenChange={setBulkUploadDialogOpen}
       />
 
         <OptimizedReorderDialog
