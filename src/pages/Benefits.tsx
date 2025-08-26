@@ -145,12 +145,12 @@ const Benefits: React.FC = () => {
         onOpenChange={setCreateDialogOpen}
       />
 
-        <OptimizedReorderDialog
-          open={reorderDialogOpen}
-          onOpenChange={setReorderDialogOpen}
-          benefits={sortedBenefits}
-          onReorderSuccess={handleReorderSuccess}
-        />
+      <OptimizedReorderDialog
+        open={reorderDialogOpen}
+        onOpenChange={setReorderDialogOpen}
+        benefits={sortedBenefits}
+        onReorderSuccess={handleReorderSuccess}
+      />
     </div>
   );
 };
