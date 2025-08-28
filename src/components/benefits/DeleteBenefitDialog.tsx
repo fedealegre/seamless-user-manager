@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React from "react";
 import {
   Dialog,
   DialogContent,
@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Benefit } from "@/types/benefits";
 import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
 import { translate } from "@/lib/translations";
+import { useDeleteBenefit } from "@/hooks/use-benefits";
 
 interface DeleteBenefitDialogProps {
   open: boolean;
@@ -24,25 +25,19 @@ export const DeleteBenefitDialog: React.FC<DeleteBenefitDialogProps> = ({
   onOpenChange,
   benefit,
 }) => {
-  const [isDeleting, setIsDeleting] = useState(false);
   const { settings } = useBackofficeSettings();
+  const deleteBenefitMutation = useDeleteBenefit();
   
   const t = (key: string) => translate(key, settings.language);
 
   const handleDelete = async () => {
     if (!benefit) return;
 
-    setIsDeleting(true);
-    try {
-      // Use the mock service directly for now - in production this would be handled by useDeleteBenefit hook
-      const { CurrentBenefitsService } = await import('@/lib/api/services/benefits');
-      await CurrentBenefitsService.deleteBenefit(benefit.id);
-      onOpenChange(false);
-    } catch (error) {
-      console.error("Error deleting benefit:", error);
-    } finally {
-      setIsDeleting(false);
-    }
+    deleteBenefitMutation.mutate(benefit.id, {
+      onSuccess: () => {
+        onOpenChange(false);
+      },
+    });
   };
 
   if (!benefit) return null;
@@ -60,16 +55,16 @@ export const DeleteBenefitDialog: React.FC<DeleteBenefitDialogProps> = ({
           <Button
             variant="outline"
             onClick={() => onOpenChange(false)}
-            disabled={isDeleting}
+            disabled={deleteBenefitMutation.isPending}
           >
             {t('cancel')}
           </Button>
           <Button
             variant="destructive"
             onClick={handleDelete}
-            disabled={isDeleting}
+            disabled={deleteBenefitMutation.isPending}
           >
-            {isDeleting ? t('deleting') : t('delete')}
+            {deleteBenefitMutation.isPending ? t('deleting') : t('delete')}
           </Button>
         </DialogFooter>
       </DialogContent>
