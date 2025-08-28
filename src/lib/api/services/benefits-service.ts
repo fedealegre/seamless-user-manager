@@ -25,12 +25,14 @@ apiClient.interceptors.request.use((config) => {
   const customerId = import.meta.env.VITE_CUSTOMER_ID || '6752';
   const operatorId = import.meta.env.VITE_OPERATOR_ID || '122444';
   
-  if (config.url?.includes('/benefits') && (config.method === 'get' || config.method === 'delete')) {
-    config.headers['x-consumer-custom-id'] = customerId;
-  }
-  
-  if (config.method === 'delete') {
-    config.headers['operatorId'] = operatorId;
+  const method = (config.method || '').toLowerCase();
+  if (config.url?.includes('/benefits')) {
+    if (['get', 'delete', 'patch', 'post'].includes(method)) {
+      config.headers['x-consumer-custom-id'] = customerId;
+    }
+    if (['delete', 'patch', 'post'].includes(method)) {
+      config.headers['operatorId'] = operatorId;
+    }
   }
   
   return config;
@@ -123,7 +125,11 @@ export class BenefitsService {
   // Reorder benefits
   static async reorderBenefits(reorderData: { id: string; order: number }[]): Promise<void> {
     try {
-      await apiClient.patch('/benefits/reorder', { benefits: reorderData });
+      await Promise.all(
+        reorderData.map(({ id, order }) =>
+          apiClient.patch(`/benefits/${id}`, { order })
+        )
+      );
     } catch (error) {
       console.error('Error reordering benefits:', error);
       throw new Error('Failed to reorder benefits');

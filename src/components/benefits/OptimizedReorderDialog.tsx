@@ -161,6 +161,15 @@ export const OptimizedReorderDialog: React.FC<OptimizedReorderDialogProps> = ({
   const listRef = useRef<List>(null);
   const batchListRef = useRef<List>(null);
 
+  // Track original order for comparison
+  const originalOrderById = useMemo(() => {
+    const map = new Map<string, number>();
+    [...benefits].sort((a, b) => a.orden - b.orden).forEach(benefit => {
+      map.set(benefit.id, benefit.orden);
+    });
+    return map;
+  }, [benefits]);
+
   // Configure sensors for better touch and mouse support
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -290,13 +299,26 @@ export const OptimizedReorderDialog: React.FC<OptimizedReorderDialogProps> = ({
   const handleSave = async () => {
     setIsLoading(true);
     try {
-      // Prepare reorder data for API
-      const reorderData = orderedBenefits.map((benefit, index) => ({
-        id: benefit.id,
-        order: index + 1
-      }));
-      
-      await reorderBenefits.mutateAsync(reorderData);
+      // Calculate changes - only send benefits whose order actually changed
+      const changes = orderedBenefits
+        .map((benefit, index) => ({ 
+          id: benefit.id, 
+          order: index + 1, 
+          original: originalOrderById.get(benefit.id) 
+        }))
+        .filter(x => x.original !== x.order)
+        .map(({ id, order }) => ({ id, order }));
+
+      if (changes.length === 0) {
+        toast({
+          title: t('info') || 'Información',
+          description: t('no-changes-detected') || 'No se detectaron cambios en el orden',
+        });
+        onReorderSuccess();
+        return;
+      }
+
+      await reorderBenefits.mutateAsync(changes);
       onReorderSuccess();
     } catch (error) {
       console.error("Error saving benefit order:", error);
