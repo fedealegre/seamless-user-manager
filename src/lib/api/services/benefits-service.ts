@@ -112,6 +112,16 @@ export class BenefitsService {
     }
   }
 
+  // Update specific fields of a benefit
+  static async updateBenefitFields(id: string, fields: Record<string, any>): Promise<void> {
+    try {
+      await apiClient.patch(`/benefits/${id}`, fields);
+    } catch (error) {
+      console.error('Error updating benefit fields:', error);
+      throw new Error('Failed to update benefit fields');
+    }
+  }
+
   // Delete a benefit
   static async deleteBenefit(id: string): Promise<void> {
     try {

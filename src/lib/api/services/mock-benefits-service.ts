@@ -223,6 +223,24 @@ export class MockBenefitsService {
     return updatedBenefit;
   }
 
+  // Update specific fields of a benefit
+  static async updateBenefitFields(id: string, fields: Record<string, any>): Promise<void> {
+    // Simulate network delay
+    await new Promise(resolve => setTimeout(resolve, 300));
+
+    const benefit = mockBenefits.find(b => b.id === id);
+    if (!benefit) {
+      throw new Error('Benefit not found');
+    }
+
+    // Update the specific fields
+    if (fields.order !== undefined) {
+      benefit.orden = fields.order;
+    }
+    
+    benefit.fechaActualizacion = new Date();
+  }
+
   // Delete a benefit
   static async deleteBenefit(id: string): Promise<void> {
     // Simulate network delay

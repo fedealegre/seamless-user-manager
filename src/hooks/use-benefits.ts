@@ -105,12 +105,12 @@ export const useReorderBenefits = () => {
 
   return useMutation({
     mutationFn: (reorderData: { id: string; order: number }[]) => {
-      // Defensive check to ensure the method exists
-      if (!BenefitsService.reorderBenefits) {
-        console.error('BenefitsService.reorderBenefits is not available:', BenefitsService);
-        throw new Error('reorderBenefits method is not available in the current service');
-      }
-      return BenefitsService.reorderBenefits(reorderData);
+      // Use individual PATCH requests for each benefit's order
+      return Promise.all(
+        reorderData.map(({ id, order }) => 
+          BenefitsService.updateBenefitFields(id, { order })
+        )
+      );
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [BENEFITS_QUERY_KEY] });
