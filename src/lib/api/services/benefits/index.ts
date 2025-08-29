@@ -30,10 +30,6 @@ export const CurrentBenefitsService = {
     const service = useMockApi ? MockBenefitsService : BenefitsService;
     return service.deleteBenefit(...args);
   },
-  reorderBenefits: (...args: Parameters<typeof BenefitsService.reorderBenefits>) => {
-    const service = useMockApi ? MockBenefitsService : BenefitsService;
-    return service.reorderBenefits(...args);
-  },
   bulkUploadBenefits: (...args: Parameters<typeof BenefitsService.bulkUploadBenefits>) => {
     const service = useMockApi ? MockBenefitsService : BenefitsService;
     return service.bulkUploadBenefits(...args);

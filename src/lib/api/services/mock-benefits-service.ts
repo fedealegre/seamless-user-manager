@@ -254,24 +254,6 @@ export class MockBenefitsService {
     mockBenefits.splice(index, 1);
   }
 
-  // Reorder benefits
-  static async reorderBenefits(reorderData: { id: string; order: number }[]): Promise<void> {
-    // Simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 600));
-
-    // Update the order of each benefit
-    reorderData.forEach(({ id, order }) => {
-      const benefit = mockBenefits.find(b => b.id === id);
-      if (benefit) {
-        benefit.orden = order;
-        benefit.fechaActualizacion = new Date();
-      }
-    });
-
-    // Sort the array by the new order
-    mockBenefits.sort((a, b) => a.orden - b.orden);
-  }
-
   // Bulk upload benefits
   static async bulkUploadBenefits(csvData: string): Promise<{
     success: boolean;

@@ -318,6 +318,7 @@ export const OptimizedReorderDialog: React.FC<OptimizedReorderDialogProps> = ({
         return;
       }
 
+      console.debug('Reordering benefits - sending changes for:', changes);
       await reorderBenefits.mutateAsync(changes);
       onReorderSuccess();
     } catch (error) {

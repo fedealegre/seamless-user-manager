@@ -132,20 +132,6 @@ export class BenefitsService {
     }
   }
 
-  // Reorder benefits
-  static async reorderBenefits(reorderData: { id: string; order: number }[]): Promise<void> {
-    try {
-      await Promise.all(
-        reorderData.map(({ id, order }) =>
-          apiClient.patch(`/benefits/${id}`, { order })
-        )
-      );
-    } catch (error) {
-      console.error('Error reordering benefits:', error);
-      throw new Error('Failed to reorder benefits');
-    }
-  }
-
   // Bulk upload benefits
   static async bulkUploadBenefits(csvData: string): Promise<{
     success: boolean;

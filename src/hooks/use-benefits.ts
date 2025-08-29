@@ -105,6 +105,11 @@ export const useReorderBenefits = () => {
 
   return useMutation({
     mutationFn: (reorderData: { id: string; order: number }[]) => {
+      // Early return if no changes to process
+      if (!reorderData || reorderData.length === 0) {
+        return Promise.resolve([]);
+      }
+      
       // Use individual PATCH requests for each benefit's order
       return Promise.all(
         reorderData.map(({ id, order }) => 
