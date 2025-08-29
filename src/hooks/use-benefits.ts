@@ -104,8 +104,14 @@ export const useReorderBenefits = () => {
   const { toast } = useToast();
 
   return useMutation({
-    mutationFn: (reorderData: { id: string; order: number }[]) => 
-      BenefitsService.reorderBenefits(reorderData),
+    mutationFn: (reorderData: { id: string; order: number }[]) => {
+      // Defensive check to ensure the method exists
+      if (!BenefitsService.reorderBenefits) {
+        console.error('BenefitsService.reorderBenefits is not available:', BenefitsService);
+        throw new Error('reorderBenefits method is not available in the current service');
+      }
+      return BenefitsService.reorderBenefits(reorderData);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [BENEFITS_QUERY_KEY] });
       toast({
