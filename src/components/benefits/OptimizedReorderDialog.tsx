@@ -205,6 +205,34 @@ export const OptimizedReorderDialog: React.FC<OptimizedReorderDialogProps> = ({
   // Benefit IDs for drag and drop
   const benefitIds = useMemo(() => filteredBenefits.map(benefit => benefit.id), [filteredBenefits]);
 
+  // Helper function to reorder benefits with minimal order changes
+  const reorderAndRotate = useCallback((benefits: Benefit[], fromIndex: number, toIndex: number): Benefit[] => {
+    if (fromIndex === toIndex) return benefits;
+    
+    const newBenefits = [...benefits];
+    const [movedItem] = newBenefits.splice(fromIndex, 1);
+    newBenefits.splice(toIndex, 0, movedItem);
+    
+    // Only update order values for affected range
+    const minIndex = Math.min(fromIndex, toIndex);
+    const maxIndex = Math.max(fromIndex, toIndex);
+    
+    // Get the order values of items at the boundary positions
+    const startOrder = benefits[minIndex].orden;
+    
+    // Preserve existing order values outside the affected range
+    return newBenefits.map((benefit, index) => {
+      if (index >= minIndex && index <= maxIndex) {
+        // Rotate order values within the affected range
+        return {
+          ...benefit,
+          orden: startOrder + (index - minIndex)
+        };
+      }
+      return benefit;
+    });
+  }, []);
+
   const handleDragEnd = useCallback((event: DragEndEvent) => {
     const { active, over } = event;
 
@@ -213,39 +241,25 @@ export const OptimizedReorderDialog: React.FC<OptimizedReorderDialogProps> = ({
     }
 
     setOrderedBenefits((benefits) => {
-      const allBenefits = [...benefits];
-      const oldIndex = allBenefits.findIndex(benefit => benefit.id === active.id);
-      const overIndex = allBenefits.findIndex(benefit => benefit.id === over.id);
+      const oldIndex = benefits.findIndex(benefit => benefit.id === active.id);
+      const newIndex = benefits.findIndex(benefit => benefit.id === over.id);
 
-      if (oldIndex === -1 || overIndex === -1) return benefits;
+      if (oldIndex === -1 || newIndex === -1) return benefits;
 
-      const newOrder = arrayMove(allBenefits, oldIndex, overIndex);
-      
-      // Update order numbers based on new positions
-      return newOrder.map((benefit, index) => ({
-        ...benefit,
-        orden: index + 1,
-      }));
+      return reorderAndRotate(benefits, oldIndex, newIndex);
     });
-  }, []);
+  }, [reorderAndRotate]);
 
   const handleMoveTo = useCallback((benefitId: string, newPosition: number) => {
     if (newPosition < 1 || newPosition > orderedBenefits.length) return;
 
     setOrderedBenefits((benefits) => {
-      const newBenefits = [...benefits];
-      const currentIndex = newBenefits.findIndex(b => b.id === benefitId);
+      const currentIndex = benefits.findIndex(b => b.id === benefitId);
       if (currentIndex === -1) return benefits;
 
-      const [movedBenefit] = newBenefits.splice(currentIndex, 1);
-      newBenefits.splice(newPosition - 1, 0, movedBenefit);
-
-      return newBenefits.map((benefit, index) => ({
-        ...benefit,
-        orden: index + 1,
-      }));
+      return reorderAndRotate(benefits, currentIndex, newPosition - 1);
     });
-  }, [orderedBenefits.length]);
+  }, [orderedBenefits.length, reorderAndRotate]);
 
   const handleMoveToTop = useCallback((benefitId: string) => {
     handleMoveTo(benefitId, 1);
@@ -259,18 +273,37 @@ export const OptimizedReorderDialog: React.FC<OptimizedReorderDialogProps> = ({
     if (selectedBenefits.size === 0) return;
 
     setOrderedBenefits((benefits) => {
-      const newBenefits = [...benefits];
-      const selectedItems = newBenefits.filter(b => selectedBenefits.has(b.id));
-      const remainingItems = newBenefits.filter(b => !selectedBenefits.has(b.id));
+      // Find selected and non-selected benefits while preserving original order
+      const selectedIndices: number[] = [];
+      const selectedItems: Benefit[] = [];
+      const remainingItems: Benefit[] = [];
 
-      // Insert selected items at the specified position
-      const insertIndex = Math.min(position - 1, remainingItems.length);
+      benefits.forEach((benefit, index) => {
+        if (selectedBenefits.has(benefit.id)) {
+          selectedIndices.push(index);
+          selectedItems.push(benefit);
+        } else {
+          remainingItems.push(benefit);
+        }
+      });
+
+      // Insert selected items at target position
+      const insertIndex = Math.min(Math.max(0, position - 1), remainingItems.length);
       remainingItems.splice(insertIndex, 0, ...selectedItems);
 
-      return remainingItems.map((benefit, index) => ({
-        ...benefit,
-        orden: index + 1,
-      }));
+      // Only reassign order values to items that actually moved
+      const minAffectedIndex = Math.min(insertIndex, ...selectedIndices);
+      const maxAffectedIndex = Math.max(insertIndex + selectedItems.length - 1, ...selectedIndices);
+      
+      return remainingItems.map((benefit, index) => {
+        if (index >= minAffectedIndex && index <= maxAffectedIndex) {
+          return {
+            ...benefit,
+            orden: benefits[minAffectedIndex].orden + (index - minAffectedIndex)
+          };
+        }
+        return benefit;
+      });
     });
 
     setSelectedBenefits(new Set());
@@ -301,9 +334,9 @@ export const OptimizedReorderDialog: React.FC<OptimizedReorderDialogProps> = ({
     try {
       // Calculate changes - only send benefits whose order actually changed
       const changes = orderedBenefits
-        .map((benefit, index) => ({ 
+        .map((benefit) => ({ 
           id: benefit.id, 
-          order: index + 1, 
+          order: benefit.orden,  // Use actual order value, not index + 1
           original: originalOrderById.get(benefit.id) 
         }))
         .filter(x => x.original !== x.order)
