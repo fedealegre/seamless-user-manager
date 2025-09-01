@@ -16,7 +16,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { FixedSizeList as List } from 'react-window';
-import { Save, X, Search, ArrowUp, ArrowDown, MoveUp, MoveDown } from "lucide-react";
+import { Save, X, Search, ArrowUp, ArrowDown } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -27,10 +27,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Benefit } from "@/types/benefits";
 import { SortableBenefitItem } from "./SortableBenefitItem";
 import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
@@ -45,7 +42,6 @@ interface OptimizedReorderDialogProps {
 }
 
 const ITEM_HEIGHT = 120; // Height of each benefit item
-const BATCH_ITEM_HEIGHT = 80; // Height of each item in batch mode
 
 // Virtualized benefit item for visual reordering
 const VirtualizedBenefitItem = React.memo<{
@@ -108,38 +104,6 @@ const VirtualizedBenefitItem = React.memo<{
   );
 });
 
-// Virtualized benefit item for batch mode
-const VirtualizedBatchItem = React.memo<{
-  index: number;
-  style: any;
-  data: {
-    benefits: Benefit[];
-    selectedBenefits: Set<string>;
-    onSelectBenefit: (id: string) => void;
-  };
-}>(({ index, style, data }) => {
-  const { benefits, selectedBenefits, onSelectBenefit } = data;
-  const benefit = benefits[index];
-
-  if (!benefit) return null;
-
-  return (
-    <div style={style} className="px-2">
-      <div className="flex items-center gap-3 p-3 border rounded-lg mx-1 my-1">
-        <Checkbox
-          checked={selectedBenefits.has(benefit.id)}
-          onCheckedChange={() => onSelectBenefit(benefit.id)}
-        />
-        <div className="flex-1 min-w-0">
-          <div className="font-medium truncate">{benefit.titulo}</div>
-          <div className="text-sm text-muted-foreground truncate">
-            Categoría: {benefit.categoria} | Orden actual: {benefit.orden}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-});
 
 export const OptimizedReorderDialog: React.FC<OptimizedReorderDialogProps> = ({
   open,
@@ -155,11 +119,8 @@ export const OptimizedReorderDialog: React.FC<OptimizedReorderDialogProps> = ({
   const [orderedBenefits, setOrderedBenefits] = useState<Benefit[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedBenefits, setSelectedBenefits] = useState<Set<string>>(new Set());
-  const [activeTab, setActiveTab] = useState("visual");
   
   const listRef = useRef<List>(null);
-  const batchListRef = useRef<List>(null);
 
   // Track original order for comparison
   const originalOrderById = useMemo(() => {
@@ -188,7 +149,6 @@ export const OptimizedReorderDialog: React.FC<OptimizedReorderDialogProps> = ({
       const sortedBenefits = [...benefits].sort((a, b) => a.orden - b.orden);
       setOrderedBenefits(sortedBenefits);
       setSearchQuery("");
-      setSelectedBenefits(new Set());
     }
   }, [open, benefits]);
 
@@ -269,65 +229,6 @@ export const OptimizedReorderDialog: React.FC<OptimizedReorderDialogProps> = ({
     handleMoveTo(benefitId, orderedBenefits.length);
   }, [handleMoveTo, orderedBenefits.length]);
 
-  const handleBatchMoveToPosition = useCallback((position: number) => {
-    if (selectedBenefits.size === 0) return;
-
-    setOrderedBenefits((benefits) => {
-      // Find selected and non-selected benefits while preserving original order
-      const selectedIndices: number[] = [];
-      const selectedItems: Benefit[] = [];
-      const remainingItems: Benefit[] = [];
-
-      benefits.forEach((benefit, index) => {
-        if (selectedBenefits.has(benefit.id)) {
-          selectedIndices.push(index);
-          selectedItems.push(benefit);
-        } else {
-          remainingItems.push(benefit);
-        }
-      });
-
-      // Insert selected items at target position
-      const insertIndex = Math.min(Math.max(0, position - 1), remainingItems.length);
-      remainingItems.splice(insertIndex, 0, ...selectedItems);
-
-      // Only reassign order values to items that actually moved
-      const minAffectedIndex = Math.min(insertIndex, ...selectedIndices);
-      const maxAffectedIndex = Math.max(insertIndex + selectedItems.length - 1, ...selectedIndices);
-      
-      return remainingItems.map((benefit, index) => {
-        if (index >= minAffectedIndex && index <= maxAffectedIndex) {
-          return {
-            ...benefit,
-            orden: benefits[minAffectedIndex].orden + (index - minAffectedIndex)
-          };
-        }
-        return benefit;
-      });
-    });
-
-    setSelectedBenefits(new Set());
-  }, [selectedBenefits]);
-
-  const handleSelectAll = useCallback(() => {
-    if (selectedBenefits.size === filteredBenefits.length) {
-      setSelectedBenefits(new Set());
-    } else {
-      setSelectedBenefits(new Set(filteredBenefits.map(b => b.id)));
-    }
-  }, [selectedBenefits.size, filteredBenefits]);
-
-  const handleSelectBenefit = useCallback((benefitId: string) => {
-    setSelectedBenefits(prev => {
-      const newSelection = new Set(prev);
-      if (newSelection.has(benefitId)) {
-        newSelection.delete(benefitId);
-      } else {
-        newSelection.add(benefitId);
-      }
-      return newSelection;
-    });
-  }, []);
 
   const handleSave = async () => {
     setIsLoading(true);
@@ -374,7 +275,7 @@ export const OptimizedReorderDialog: React.FC<OptimizedReorderDialogProps> = ({
   const dialogHeight = Math.min(window.innerHeight * 0.9, 800);
   const contentHeight = dialogHeight - 200; // Account for header and footer
 
-  // Prepare data for virtualized lists
+  // Prepare data for virtualized list
   const visualListData = useMemo(() => ({
     benefits: filteredBenefits,
     onMoveTo: handleMoveTo,
@@ -382,12 +283,6 @@ export const OptimizedReorderDialog: React.FC<OptimizedReorderDialogProps> = ({
     onMoveToBottom: handleMoveToBottom,
     totalCount: orderedBenefits.length,
   }), [filteredBenefits, handleMoveTo, handleMoveToTop, handleMoveToBottom, orderedBenefits.length]);
-
-  const batchListData = useMemo(() => ({
-    benefits: filteredBenefits,
-    selectedBenefits,
-    onSelectBenefit: handleSelectBenefit,
-  }), [filteredBenefits, selectedBenefits, handleSelectBenefit]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -403,138 +298,66 @@ export const OptimizedReorderDialog: React.FC<OptimizedReorderDialogProps> = ({
         </DialogHeader>
 
         <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
-            <TabsList className="grid w-full grid-cols-2 mb-4 flex-shrink-0">
-              <TabsTrigger value="visual">Reordenamiento Visual</TabsTrigger>
-              <TabsTrigger value="batch">Reordenamiento Masivo</TabsTrigger>
-            </TabsList>
-
-            {/* Search and filters */}
-            <div className="flex gap-4 mb-4 flex-shrink-0">
-              <div className="flex-1">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                  <Input
-                    placeholder="Buscar por título o categoría..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10"
-                  />
-                </div>
-              </div>
-              <div className="flex gap-2 items-center">
-                <Badge variant="secondary">
-                  {filteredBenefits.length} de {orderedBenefits.length} beneficios
-                </Badge>
-                {searchQuery && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setSearchQuery("")}
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                )}
+          {/* Search and filters */}
+          <div className="flex gap-4 mb-4 flex-shrink-0">
+            <div className="flex-1">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                <Input
+                  placeholder="Buscar por título o categoría..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10"
+                />
               </div>
             </div>
-
-            <TabsContent value="visual" className="flex-1 min-h-0 data-[state=active]:flex data-[state=active]:flex-col">
-              <div className="flex-1 min-h-0 border rounded-lg">
-                <DndContext
-                  sensors={sensors}
-                  collisionDetection={closestCenter}
-                  onDragEnd={handleDragEnd}
+            <div className="flex gap-2 items-center">
+              <Badge variant="secondary">
+                {filteredBenefits.length} de {orderedBenefits.length} beneficios
+              </Badge>
+              {searchQuery && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setSearchQuery("")}
                 >
-                  <SortableContext items={benefitIds} strategy={verticalListSortingStrategy}>
-                    <List
-                      ref={listRef}
-                      height={contentHeight - 100}
-                      width="100%"
-                      itemCount={filteredBenefits.length}
-                      itemSize={ITEM_HEIGHT}
-                      itemData={visualListData}
-                      className="scrollbar-thin scrollbar-thumb-border scrollbar-track-background"
-                    >
-                      {VirtualizedBenefitItem}
-                    </List>
-                  </SortableContext>
-                </DndContext>
-              </div>
-            </TabsContent>
+                  <X className="h-4 w-4" />
+                </Button>
+              )}
+            </div>
+          </div>
 
-            <TabsContent value="batch" className="flex-1 min-h-0 data-[state=active]:flex data-[state=active]:flex-col">
-              <div className="flex flex-col gap-4 flex-1 min-h-0">
-                {/* Batch controls */}
-                <div className="flex-shrink-0 space-y-4">
-                  <div className="flex items-center gap-4 p-4 border rounded-lg">
-                    <Checkbox
-                      checked={selectedBenefits.size === filteredBenefits.length && filteredBenefits.length > 0}
-                      onCheckedChange={handleSelectAll}
-                    />
-                    <span className="font-medium">Seleccionar todos</span>
-                    {selectedBenefits.size > 0 && (
-                      <Badge variant="secondary">
-                        {selectedBenefits.size} seleccionados
-                      </Badge>
-                    )}
-                  </div>
-
-                  {selectedBenefits.size > 0 && (
-                    <div className="flex gap-2 p-4 bg-muted rounded-lg">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleBatchMoveToPosition(1)}
-                      >
-                        <MoveUp className="h-4 w-4 mr-2" />
-                        Mover al inicio
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleBatchMoveToPosition(orderedBenefits.length)}
-                      >
-                        <MoveDown className="h-4 w-4 mr-2" />
-                        Mover al final
-                      </Button>
-                    </div>
-                  )}
-                </div>
-
-                {/* Virtualized batch list */}
-                <div className="flex-1 min-h-0 border rounded-lg">
-                  <List
-                    ref={batchListRef}
-                    height={contentHeight - 200}
-                    width="100%"
-                    itemCount={filteredBenefits.length}
-                    itemSize={BATCH_ITEM_HEIGHT}
-                    itemData={batchListData}
-                    className="scrollbar-thin scrollbar-thumb-border scrollbar-track-background"
-                  >
-                    {VirtualizedBatchItem}
-                  </List>
-                </div>
-              </div>
-            </TabsContent>
-          </Tabs>
+          {/* Visual reordering content */}
+          <div className="flex-1 min-h-0 border rounded-lg">
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext items={benefitIds} strategy={verticalListSortingStrategy}>
+                <List
+                  ref={listRef}
+                  height={contentHeight - 100}
+                  width="100%"
+                  itemCount={filteredBenefits.length}
+                  itemSize={ITEM_HEIGHT}
+                  itemData={visualListData}
+                  className="scrollbar-thin scrollbar-thumb-border scrollbar-track-background"
+                >
+                  {VirtualizedBenefitItem}
+                </List>
+              </SortableContext>
+            </DndContext>
+          </div>
         </div>
 
-        <DialogFooter className="flex-shrink-0 border-t pt-4">
-          <Button
-            variant="outline"
-            onClick={handleCancel}
-            disabled={isLoading}
-          >
-            <X className="h-4 w-4 mr-2" />
-            {t('cancel')}
+        <DialogFooter className="flex-shrink-0 pt-4 border-t">
+          <Button variant="outline" onClick={handleCancel}>
+            Cancelar
           </Button>
-          <Button
-            onClick={handleSave}
-            disabled={isLoading}
-          >
+          <Button onClick={handleSave} disabled={isLoading}>
             <Save className="h-4 w-4 mr-2" />
-            {isLoading ? t('saving') : (t('save-changes') || 'Guardar Cambios')}
+            {isLoading ? 'Guardando...' : 'Guardar Orden'}
           </Button>
         </DialogFooter>
       </DialogContent>
