@@ -61,6 +61,9 @@ export class BenefitsService {
       if (params.size) queryParams.append('size', params.size.toString());
       if (params.title) queryParams.append('title', params.title);
       if (params.status) queryParams.append('status', params.status);
+      
+      // Add timestamp to bust cache
+      queryParams.append('_t', Date.now().toString());
 
       const response = await apiClient.get<BenefitsListResponse>(`/benefits?${queryParams}`);
       

@@ -31,7 +31,7 @@ export const useCreateBenefit = () => {
   return useMutation({
     mutationFn: (benefit: Benefit) => BenefitsService.createBenefit(benefit),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [BENEFITS_QUERY_KEY, 'list'] });
+      queryClient.refetchQueries({ queryKey: [BENEFITS_QUERY_KEY, 'list'] });
       toast({
         title: "Beneficio creado",
         description: "El beneficio se ha creado exitosamente",
@@ -56,7 +56,7 @@ export const useUpdateBenefit = () => {
   return useMutation({
     mutationFn: (benefit: Benefit) => BenefitsService.updateBenefit(benefit),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [BENEFITS_QUERY_KEY, 'list'] });
+      queryClient.refetchQueries({ queryKey: [BENEFITS_QUERY_KEY, 'list'] });
       toast({
         title: "Beneficio actualizado",
         description: "El beneficio se ha actualizado exitosamente",
@@ -81,7 +81,7 @@ export const useDeleteBenefit = () => {
   return useMutation({
     mutationFn: (id: string) => BenefitsService.deleteBenefit(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [BENEFITS_QUERY_KEY, 'list'] });
+      queryClient.refetchQueries({ queryKey: [BENEFITS_QUERY_KEY, 'list'] });
       toast({
         title: "Beneficio eliminado",
         description: "El beneficio se ha eliminado exitosamente",
@@ -118,7 +118,7 @@ export const useReorderBenefits = () => {
       );
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [BENEFITS_QUERY_KEY, 'list'] });
+      queryClient.refetchQueries({ queryKey: [BENEFITS_QUERY_KEY, 'list'] });
       toast({
         title: "Orden actualizado",
         description: "El orden de los beneficios se ha actualizado exitosamente",
