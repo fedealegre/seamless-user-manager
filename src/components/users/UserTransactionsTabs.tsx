@@ -80,18 +80,10 @@ const UserTransactionsTabs: React.FC<UserTransactionsTabsProps> = ({
       {wallets.map((wallet) => (
         <TabsContent key={wallet.id} value={wallet.id.toString()}>
           {/* Wallet Indicators */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <div className="bg-muted/50 rounded-lg p-4">
-              <p className="text-sm text-muted-foreground">{t("currency")}</p>
-              <p className="text-lg font-semibold">{wallet.currency}</p>
-            </div>
-            <div className="bg-muted/50 rounded-lg p-4">
-              <p className="text-sm text-muted-foreground">{t("balance")}</p>
-              <p className="text-lg font-semibold">{wallet.balance} {wallet.currency}</p>
-            </div>
+          <div className="grid grid-cols-1 gap-4 mb-6">
             <div className="bg-muted/50 rounded-lg p-4">
               <p className="text-sm text-muted-foreground">{t("available-balance")}</p>
-              <p className="text-lg font-semibold">{wallet.availableBalance} {wallet.currency}</p>
+              <p className="text-lg font-semibold">{wallet.balance} {wallet.currency}</p>
             </div>
           </div>
           
