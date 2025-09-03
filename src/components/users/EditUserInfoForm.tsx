@@ -16,7 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { formatFieldName, formatDateForInput, parseDate } from "@/lib/utils";
-import { X, PlusCircle } from 'lucide-react';
+import { X } from 'lucide-react';
 import { useStaticFieldSettings } from "@/hooks/use-static-field-settings";
 import {
   Select,
@@ -145,12 +145,6 @@ export const EditUserInfoForm: React.FC<EditUserInfoFormProps> = ({
 
   const isAdditionalInfoEditable = isFieldEditable("additionalInfo");
 
-  const handleAddAdditionalField = () => {
-    if (isAdditionalInfoEditable) {
-      setAdditionalFields([...additionalFields, { key: "", value: "" }]);
-    }
-  };
-
   const handleRemoveAdditionalField = (index: number) => {
     if (isAdditionalInfoEditable) {
       const newFields = [...additionalFields];
@@ -159,7 +153,7 @@ export const EditUserInfoForm: React.FC<EditUserInfoFormProps> = ({
     }
   };
 
-  const handleAdditionalFieldChange = (index: number, field: 'key' | 'value', value: string) => {
+  const handleAdditionalFieldChange = (index: number, field: 'value', value: string) => {
     if (isAdditionalInfoEditable) {
       const newFields = [...additionalFields];
       newFields[index][field] = value;
@@ -397,16 +391,8 @@ export const EditUserInfoForm: React.FC<EditUserInfoFormProps> = ({
         {/* Additional Information Section */}
         {isFieldEditable("additionalInfo") && (
           <div className="mt-8">
-            <div className="flex justify-between items-center mb-4">
+            <div className="mb-4">
               <h3 className="text-lg font-medium">{t("additional-information")}</h3>
-              <Button 
-                type="button" 
-                variant="outline" 
-                size="sm" 
-                onClick={handleAddAdditionalField}
-              >
-                <PlusCircle className="h-4 w-4 mr-2" /> {t("add-field")}
-              </Button>
             </div>
             
             {additionalFields.length === 0 ? (
@@ -416,16 +402,7 @@ export const EditUserInfoForm: React.FC<EditUserInfoFormProps> = ({
                 {additionalFields.map((field, index) => (
                   <div key={index} className="flex gap-3 items-start">
                     <div className="flex-1">
-                      <FormLabel htmlFor={`field-key-${index}`}>{t("field-name")}</FormLabel>
-                      <Input
-                        id={`field-key-${index}`}
-                        value={field.key}
-                        onChange={(e) => handleAdditionalFieldChange(index, 'key', e.target.value)}
-                        placeholder={t("field-name")}
-                      />
-                    </div>
-                    <div className="flex-1">
-                      <FormLabel htmlFor={`field-value-${index}`}>{t("value")}</FormLabel>
+                      <FormLabel htmlFor={`field-value-${index}`}>{field.key}</FormLabel>
                       {shouldUseTextarea(field.value) ? (
                         <Textarea
                           id={`field-value-${index}`}
@@ -448,7 +425,7 @@ export const EditUserInfoForm: React.FC<EditUserInfoFormProps> = ({
                       type="button"
                       variant="ghost"
                       size="icon"
-                      className="mt-8"
+                      className="mt-6"
                       onClick={() => handleRemoveAdditionalField(index)}
                     >
                       <X className="h-4 w-4" />
