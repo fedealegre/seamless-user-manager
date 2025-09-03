@@ -96,6 +96,7 @@ export const userTranslations = {
     'edit-roles': 'Edit Roles',
     // Transactions tab specific
     'wallets': 'Wallets',
+    'cards': 'Cards',
     'transactions': 'Transactions',
     'view-wallet-transactions': 'View all transactions for this user\'s wallets',
     'no-wallets-found': 'No wallets found for this user',
@@ -114,7 +115,24 @@ export const userTranslations = {
     'process-compensation': 'Process Compensation',
     'compensation-processed': 'Compensation Processed',
     'compensation-success': 'The compensation transaction has been created successfully',
-    'compensation-error': 'Failed to process compensation. Please try again'
+    'compensation-error': 'Failed to process compensation. Please try again',
+    // Cards tab specific
+    'user-cards': 'User Cards',
+    'view-card-transactions': 'View all transactions for this user\'s cards',
+    'no-cards-found': 'No cards found for this user',
+    'card': 'Card',
+    'card-type': 'Card Type',
+    'card-status': 'Status',
+    'default-card': 'Default Card',
+    'debit': 'Debit',
+    'credit': 'Credit',
+    'prepaid': 'Prepaid',
+    'visa': 'Visa',
+    'mastercard': 'Mastercard',
+    'amex': 'American Express',
+    'merchant': 'Merchant',
+    'category': 'Category',
+    'geo-location': 'Location'
   },
   es: {
     'user-detail': 'Detalle de Usuario',
@@ -212,6 +230,7 @@ export const userTranslations = {
     'edit-roles': 'Editar Roles',
     // Transactions tab specific
     'wallets': 'Billeteras',
+    'cards': 'Tarjetas',
     'transactions': 'Transacciones',
     'view-wallet-transactions': 'Ver todas las transacciones de las billeteras de este usuario',
     'no-wallets-found': 'No se encontraron billeteras para este usuario',
@@ -230,6 +249,23 @@ export const userTranslations = {
     'process-compensation': 'Procesar Compensación',
     'compensation-processed': 'Compensación Procesada',
     'compensation-success': 'La transacción de compensación ha sido creada exitosamente',
-    'compensation-error': 'Error al procesar la compensación. Por favor intente nuevamente'
+    'compensation-error': 'Error al procesar la compensación. Por favor intente nuevamente',
+    // Cards tab specific
+    'user-cards': 'Tarjetas del Usuario',
+    'view-card-transactions': 'Ver todas las transacciones de las tarjetas de este usuario',
+    'no-cards-found': 'No se encontraron tarjetas para este usuario',
+    'card': 'Tarjeta',
+    'card-type': 'Tipo de Tarjeta',
+    'card-status': 'Estado',
+    'default-card': 'Tarjeta Predeterminada',
+    'debit': 'Débito',
+    'credit': 'Crédito',
+    'prepaid': 'Prepaga',
+    'visa': 'Visa',
+    'mastercard': 'Mastercard',
+    'amex': 'American Express',
+    'merchant': 'Comercio',
+    'category': 'Categoría',
+    'geo-location': 'Ubicación'
   }
 };

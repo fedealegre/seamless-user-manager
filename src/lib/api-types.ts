@@ -3,6 +3,7 @@ export interface Transaction {
     originalTransactionId?: string;
     customerId: string;
     walletId: string;
+    cardId?: string; // Added for card transactions
     initDate?: string;
     endDate?: string;
     reference?: string;
@@ -18,6 +19,22 @@ export interface Transaction {
     transactionType?: string;
     amount?: number; // Added for display purposes
     date?: string; // Added for display purposes
+}
+
+export interface Card {
+    id: number;
+    userId: string;
+    cardNumber: string; // Full card number (will be obfuscated in UI)
+    maskedCardNumber: string; // Pre-formatted masked number
+    cardType: 'debit' | 'credit' | 'prepaid';
+    brand: 'visa' | 'mastercard' | 'amex' | 'other';
+    status: 'active' | 'blocked' | 'expired';
+    expiryDate: string;
+    isDefault: boolean;
+    currency: string;
+    availableLimit?: number;
+    usedLimit?: number;
+    createdAt: string;
 }
 
 export interface Wallet {

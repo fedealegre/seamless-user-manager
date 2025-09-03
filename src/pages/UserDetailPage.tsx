@@ -10,6 +10,7 @@ import { ArrowLeft, UserIcon } from "lucide-react";
 import { UserInfoTab } from "@/components/users/UserInfoTab";
 import { UserWalletsTab } from "@/components/users/UserWalletsTab";
 import { UserTransactionsTab } from "@/components/users/UserTransactionsTab";
+import { UserCardsTab } from "@/components/users/UserCardsTab";
 import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
 import { translate } from "@/lib/translations";
 
@@ -26,7 +27,7 @@ const UserDetailPage = () => {
   
   // Set initial tab state based on URL or default to 'info'
   const [activeTab, setActiveTab] = useState<string>(
-    tabFromUrl === 'wallets' || tabFromUrl === 'transactions' ? 'wallets' : 'info'
+    tabFromUrl === 'wallets' || tabFromUrl === 'transactions' || tabFromUrl === 'cards' ? tabFromUrl : 'info'
   );
   
   const { 
@@ -45,7 +46,7 @@ const UserDetailPage = () => {
   
   // Update tab when URL parameters change
   useEffect(() => {
-    if (tabFromUrl === 'wallets') {
+    if (tabFromUrl === 'wallets' || tabFromUrl === 'cards') {
       setActiveTab(tabFromUrl);
     } else if (tabFromUrl === 'transactions') {
       // Redirect old transactions tab to wallets tab
@@ -135,9 +136,10 @@ const UserDetailPage = () => {
       </div>
 
       <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-        <TabsList className="w-full sm:w-auto grid grid-cols-2 sm:inline-flex">
+        <TabsList className="w-full sm:w-auto grid grid-cols-3 sm:inline-flex">
           <TabsTrigger value="info">{t("personal-info")}</TabsTrigger>
           <TabsTrigger value="wallets">{t("wallets")}</TabsTrigger>
+          <TabsTrigger value="cards">{t("cards")}</TabsTrigger>
         </TabsList>
         
         <TabsContent value="info">
@@ -150,6 +152,10 @@ const UserDetailPage = () => {
             wallets={wallets} 
             defaultWalletId={user.defaultWalletId?.toString()}
           />
+        </TabsContent>
+        
+        <TabsContent value="cards">
+          <UserCardsTab userId={userId!} />
         </TabsContent>
       </Tabs>
     </div>
