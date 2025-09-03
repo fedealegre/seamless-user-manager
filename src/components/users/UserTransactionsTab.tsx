@@ -20,9 +20,10 @@ import { useQuery } from "@tanstack/react-query";
 interface UserTransactionsTabProps {
   userId: string;
   wallets: Wallet[];
+  defaultWalletId?: string;
 }
 
-export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId, wallets }) => {
+export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId, wallets, defaultWalletId }) => {
   const [selectedWalletId, setSelectedWalletId] = useState<string | null>(null);
   const [showFilters, setShowFilters] = useState(false);
   const [showCompensateDialogDirect, setShowCompensateDialogDirect] = useState(false);
@@ -32,11 +33,15 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
   const { canChangeTransactionStatus } = usePermissions();
   const queryClient = useQueryClient();
 
+  // Set the default wallet or first wallet as selected when wallets are loaded
   useEffect(() => {
-    if (wallets.length > 0 && !selectedWalletId) {
-      setSelectedWalletId(wallets[0].id.toString());
+    if (wallets && wallets.length > 0 && !selectedWalletId) {
+      // Try to use defaultWalletId first, fallback to first wallet
+      const defaultWallet = defaultWalletId ? wallets.find(w => w.id.toString() === defaultWalletId) : null;
+      const walletToSelect = defaultWallet || wallets[0];
+      setSelectedWalletId(walletToSelect.id.toString());
     }
-  }, [wallets, selectedWalletId]);
+  }, [wallets, selectedWalletId, defaultWalletId]);
 
   // Fetch company wallets for compensation
   const { data: companyWallets = [] } = useQuery({

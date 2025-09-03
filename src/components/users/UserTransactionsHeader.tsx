@@ -38,44 +38,42 @@ const UserTransactionsHeader: React.FC<UserTransactionsHeaderProps> = ({
         <h3 className="text-2xl font-semibold leading-none tracking-tight">{t("user-transactions")}</h3>
         <p className="text-muted-foreground">{t("view-wallet-transactions")}</p>
       </div>
-      {transactions && transactions.length > 0 && (
-        <div className="flex flex-wrap items-center gap-2">
-          <FilterButton
-            showFilters={showFilters}
-            setShowFilters={setShowFilters}
-            activeFiltersCount={activeFiltersCount}
-          />
-          <ExportCSVButton
-            filename={`user-${userId}-transactions-${new Date().toISOString().slice(0, 10)}`}
-            headers={[
-              t('transaction-id'),
-              t('reference'),
-              t('date'),
-              t('movement-type'),
-              t('transaction-type'),
-              t('amount'),
-              t('currency'),
-              t('status'),
-              t('user-id'),
-              t('wallet-id')
-            ]}
-            data={allTransactions}
-            mapRow={mapTransactionToCSV}
+      <div className="flex flex-wrap items-center gap-2">
+        <FilterButton
+          showFilters={showFilters}
+          setShowFilters={setShowFilters}
+          activeFiltersCount={activeFiltersCount}
+        />
+        <ExportCSVButton
+          filename={`user-${userId}-transactions-${new Date().toISOString().slice(0, 10)}`}
+          headers={[
+            t('transaction-id'),
+            t('reference'),
+            t('date'),
+            t('movement-type'),
+            t('transaction-type'),
+            t('amount'),
+            t('currency'),
+            t('status'),
+            t('user-id'),
+            t('wallet-id')
+          ]}
+          data={allTransactions}
+          mapRow={mapTransactionToCSV}
+        >
+          {t('export-csv')}
+        </ExportCSVButton>
+        
+        {showCompensateButton && onCompensateCustomer && (
+          <Button 
+            onClick={onCompensateCustomer}
+            className="bg-amber-500 hover:bg-amber-600 text-white"
           >
-            {t('export-csv')}
-          </ExportCSVButton>
-          
-          {showCompensateButton && onCompensateCustomer && (
-            <Button 
-              onClick={onCompensateCustomer}
-              className="bg-amber-500 hover:bg-amber-600 text-white"
-            >
-              <CircleDollarSign className="mr-2 h-4 w-4" />
-              {t('compensate-customer')}
-            </Button>
-          )}
-        </div>
-      )}
+            <CircleDollarSign className="mr-2 h-4 w-4" />
+            {t('compensate-customer')}
+          </Button>
+        )}
+      </div>
     </div>
   );
 };

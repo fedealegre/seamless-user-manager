@@ -26,7 +26,7 @@ const UserDetailPage = () => {
   
   // Set initial tab state based on URL or default to 'info'
   const [activeTab, setActiveTab] = useState<string>(
-    tabFromUrl === 'wallets' || tabFromUrl === 'transactions' ? tabFromUrl : 'info'
+    tabFromUrl === 'wallets' || tabFromUrl === 'transactions' ? 'wallets' : 'info'
   );
   
   const { 
@@ -45,10 +45,14 @@ const UserDetailPage = () => {
   
   // Update tab when URL parameters change
   useEffect(() => {
-    if (tabFromUrl === 'wallets' || tabFromUrl === 'transactions') {
+    if (tabFromUrl === 'wallets') {
       setActiveTab(tabFromUrl);
+    } else if (tabFromUrl === 'transactions') {
+      // Redirect old transactions tab to wallets tab
+      navigate(`/users/${userId}?tab=wallets`, { replace: true });
+      setActiveTab('wallets');
     }
-  }, [tabFromUrl]);
+  }, [tabFromUrl, navigate, userId]);
 
   const handleBack = () => {
     navigate("/users");
@@ -131,10 +135,9 @@ const UserDetailPage = () => {
       </div>
 
       <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-        <TabsList className="w-full sm:w-auto grid grid-cols-3 sm:inline-flex">
+        <TabsList className="w-full sm:w-auto grid grid-cols-2 sm:inline-flex">
           <TabsTrigger value="info">{t("personal-info")}</TabsTrigger>
           <TabsTrigger value="wallets">{t("wallets")}</TabsTrigger>
-          <TabsTrigger value="transactions">{t("transactions")}</TabsTrigger>
         </TabsList>
         
         <TabsContent value="info">
@@ -142,15 +145,11 @@ const UserDetailPage = () => {
         </TabsContent>
         
         <TabsContent value="wallets">
-          <UserWalletsTab 
+          <UserTransactionsTab 
             userId={userId!} 
             wallets={wallets} 
-            isLoading={isLoadingWallets} 
+            defaultWalletId={user.defaultWalletId?.toString()}
           />
-        </TabsContent>
-        
-        <TabsContent value="transactions">
-          <UserTransactionsTab userId={userId!} wallets={wallets} />
         </TabsContent>
       </Tabs>
     </div>

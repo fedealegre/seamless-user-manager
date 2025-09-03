@@ -19,7 +19,7 @@ export type FiltersType = {
 
 export function useUserTransactions(userId: string, selectedWalletId: string | null) {
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(50);
+  const [pageSize, setPageSize] = useState(25);
   const [filters, setFilters] = useState<FiltersType>({
     status: "",
     transactionType: "",
@@ -51,8 +51,9 @@ export function useUserTransactions(userId: string, selectedWalletId: string | n
     staleTime: 0, // Always refetch to ensure fresh data
   });
 
-  // Apply filters to transactions
-  const filteredTransactions = (allTransactions as Transaction[]).filter(tx => {
+  // Apply filters and sort transactions (newest first)
+  const filteredTransactions = (allTransactions as Transaction[])
+    .filter(tx => {
     if (filters.status && filters.status !== "all" && tx.status?.toLowerCase() !== filters.status.toLowerCase())
       return false;
     if (filters.transactionType && filters.transactionType !== "all") {
@@ -78,8 +79,14 @@ export function useUserTransactions(userId: string, selectedWalletId: string | n
       endDate.setHours(23, 59, 59, 999);
       if (!tx.date || new Date(tx.date) > endDate) return false;
     }
-    return true;
-  });
+      return true;
+    })
+    .sort((a, b) => {
+      // Sort by date, newest first
+      const dateA = new Date(a.date || 0).getTime();
+      const dateB = new Date(b.date || 0).getTime();
+      return dateB - dateA;
+    });
 
   // Calculate pagination values
   const totalTransactions = filteredTransactions.length;
