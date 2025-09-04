@@ -1,7 +1,6 @@
 
 import { MockUserService } from "./services/mock-user-service";
 import { User, Wallet, Transaction, CompensationRequest, ResetPasswordRequest, ResetPasswordResponse, WalletUserAssociation } from "./types";
-import { Card } from "../api-types";
 import { ChangeTransactionStatusRequest, UserService } from "./services/user-service-interface";
 
 // Create a wrapper service that adapts the MockUserService to the updated interface
@@ -112,14 +111,6 @@ class UserServiceWrapper implements UserService {
     governmentIdentificationType2: string | null; 
   }> {
     return this.mockUserService.getIdentificationTypes();
-  }
-
-  async getUserCards(userId: string): Promise<Card[]> {
-    return this.mockUserService.getUserCards(userId);
-  }
-
-  async getCardTransactions(cardId: string, userId: string): Promise<Transaction[]> {
-    return this.mockUserService.getCardTransactions(cardId, userId);
   }
 }
 

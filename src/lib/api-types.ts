@@ -1,14 +1,12 @@
 
 export interface Transaction {
-    id?: string | number; // Add id field
     originalTransactionId?: string;
     customerId: string;
     walletId: string;
-    cardId?: string; // Added for card transactions
     initDate?: string;
     endDate?: string;
     reference?: string;
-    transactionId?: string;
+    transactionId: string;
     originTransactionId?: string;
     destinationTransactionId?: string;
     status?: string;
@@ -18,26 +16,8 @@ export interface Transaction {
     lastIdTransaction?: string;
     length?: number;
     transactionType?: string;
-    movementType?: string; // Add movementType field
     amount?: number; // Added for display purposes
     date?: string; // Added for display purposes
-    additionalInfo?: Record<string, any>; // Add additionalInfo field
-}
-
-export interface Card {
-    id: number;
-    userId: string;
-    cardNumber: string; // Full card number (will be obfuscated in UI)
-    maskedCardNumber: string; // Pre-formatted masked number
-    cardType: 'debit' | 'credit' | 'prepaid';
-    brand: 'visa' | 'mastercard' | 'amex' | 'other';
-    status: 'active' | 'blocked' | 'expired';
-    expiryDate: string;
-    isDefault: boolean;
-    currency: string;
-    availableLimit?: number;
-    usedLimit?: number;
-    createdAt: string;
 }
 
 export interface Wallet {

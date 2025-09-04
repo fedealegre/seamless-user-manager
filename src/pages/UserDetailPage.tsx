@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useUserDetails } from "@/hooks/use-user-details";
-import { useUserCards } from "@/hooks/use-user-cards";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -11,7 +10,6 @@ import { ArrowLeft, UserIcon } from "lucide-react";
 import { UserInfoTab } from "@/components/users/UserInfoTab";
 import { UserWalletsTab } from "@/components/users/UserWalletsTab";
 import { UserTransactionsTab } from "@/components/users/UserTransactionsTab";
-import { UserCardsTab } from "@/components/users/UserCardsTab";
 import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
 import { translate } from "@/lib/translations";
 
@@ -28,8 +26,7 @@ const UserDetailPage = () => {
   
   // Set initial tab state based on URL or default to 'info'
   const [activeTab, setActiveTab] = useState<string>(
-    tabFromUrl === 'wallets' || tabFromUrl === 'transactions' ? 
-      (tabFromUrl === 'transactions' ? 'wallets' : tabFromUrl) : 'info'
+    tabFromUrl === 'wallets' || tabFromUrl === 'transactions' ? tabFromUrl : 'info'
   );
   
   const { 
@@ -40,9 +37,6 @@ const UserDetailPage = () => {
     error
   } = useUserDetails(userId);
 
-  // Fetch user cards to determine if cards tab should be shown
-  const { cards, isLoadingCards } = useUserCards(userId);
-
   useEffect(() => {
     if (error) {
       console.error("Error loading user details:", error);
@@ -51,23 +45,10 @@ const UserDetailPage = () => {
   
   // Update tab when URL parameters change
   useEffect(() => {
-    if (tabFromUrl === 'wallets') {
+    if (tabFromUrl === 'wallets' || tabFromUrl === 'transactions') {
       setActiveTab(tabFromUrl);
-    } else if (tabFromUrl === 'cards') {
-      // Only allow cards tab if user has cards
-      if (cards && cards.length > 0) {
-        setActiveTab(tabFromUrl);
-      } else {
-        // Redirect to info tab if user has no cards
-        navigate(`/users/${userId}`, { replace: true });
-        setActiveTab('info');
-      }
-    } else if (tabFromUrl === 'transactions') {
-      // Redirect old transactions tab to wallets tab
-      navigate(`/users/${userId}?tab=wallets`, { replace: true });
-      setActiveTab('wallets');
     }
-  }, [tabFromUrl, navigate, userId, cards]);
+  }, [tabFromUrl]);
 
   const handleBack = () => {
     navigate("/users");
@@ -85,7 +66,7 @@ const UserDetailPage = () => {
     }
   };
 
-  if (isLoadingUser || isLoadingCards) {
+  if (isLoadingUser) {
     return (
       <div className="space-y-6">
         <div className="flex items-center gap-4">
@@ -150,12 +131,10 @@ const UserDetailPage = () => {
       </div>
 
       <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-        <TabsList className={`w-full sm:w-auto grid ${cards && cards.length > 0 ? 'grid-cols-3' : 'grid-cols-2'} sm:inline-flex`}>
+        <TabsList className="w-full sm:w-auto grid grid-cols-3 sm:inline-flex">
           <TabsTrigger value="info">{t("personal-info")}</TabsTrigger>
           <TabsTrigger value="wallets">{t("wallets")}</TabsTrigger>
-          {cards && cards.length > 0 && (
-            <TabsTrigger value="cards">{t("cards")}</TabsTrigger>
-          )}
+          <TabsTrigger value="transactions">{t("transactions")}</TabsTrigger>
         </TabsList>
         
         <TabsContent value="info">
@@ -163,18 +142,16 @@ const UserDetailPage = () => {
         </TabsContent>
         
         <TabsContent value="wallets">
-          <UserTransactionsTab 
+          <UserWalletsTab 
             userId={userId!} 
             wallets={wallets} 
-            defaultWalletId={user.defaultWalletId?.toString()}
+            isLoading={isLoadingWallets} 
           />
         </TabsContent>
         
-        {cards && cards.length > 0 && (
-          <TabsContent value="cards">
-            <UserCardsTab userId={userId!} />
-          </TabsContent>
-        )}
+        <TabsContent value="transactions">
+          <UserTransactionsTab userId={userId!} wallets={wallets} />
+        </TabsContent>
       </Tabs>
     </div>
   );

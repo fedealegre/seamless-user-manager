@@ -144,21 +144,7 @@ export const transactionTranslations = {
     'original-transaction-id': 'Original Transaction ID',
     'origin-transaction-id': 'Origin Transaction ID',
     'destination-transaction-id': 'Destination Transaction ID',
-    'id': 'ID',
-    // Card related translations
-    'card': 'Card',
-    'cards': 'Cards',
-    'select-cards': 'Select cards',
-    'all-cards': 'All cards',
-    'search-transaction-id': 'Search by transaction ID...',
-    'manage-user-cards-description': 'View and manage user card transactions',
-    'all-card-transactions-description': 'All transactions made with user cards',
-    'loading': 'Loading',
-    'loading-transactions': 'Loading transactions',
-    'page': 'Page',
-    'of': 'of',
-    'previous': 'Previous',
-    'next': 'Next'
+    'id': 'ID'
   },
   es: {
     'transactions': 'Transacciones',
@@ -305,20 +291,6 @@ export const transactionTranslations = {
     'original-transaction-id': 'ID de Transacción Original',
     'origin-transaction-id': 'ID de Transacción de Origen',
     'destination-transaction-id': 'ID de Transacción de Destino',
-    'id': 'ID',
-    // Card related translations
-    'card': 'Tarjeta',
-    'cards': 'Tarjetas',
-    'select-cards': 'Seleccionar tarjetas',
-    'all-cards': 'Todas las tarjetas',
-    'search-transaction-id': 'Buscar por ID de transacción...',
-    'manage-user-cards-description': 'Ver y gestionar las transacciones de tarjetas del usuario',
-    'all-card-transactions-description': 'Todas las transacciones realizadas con tarjetas del usuario',
-    'loading': 'Cargando',
-    'loading-transactions': 'Cargando transacciones',
-    'page': 'Página',
-    'of': 'de',
-    'previous': 'Anterior',
-    'next': 'Siguiente'
+    'id': 'ID'
   }
 };

@@ -1,5 +1,4 @@
 import { User, Wallet, Transaction, CompensationRequest, ResetPasswordRequest, ResetPasswordResponse, WalletUserAssociation } from "../types";
-import { Card } from "../../api-types";
 
 export interface ChangeTransactionStatusRequest {
   newStatus: 'cancelled' | 'rejected' | 'confirmed' | 'approved';
@@ -44,8 +43,4 @@ export interface UserService {
     governmentIdentificationType: string | null; 
     governmentIdentificationType2: string | null; 
   }>;
-  
-  // Methods for card management
-  getUserCards(userId: string): Promise<Card[]>;
-  getCardTransactions(cardId: string, userId: string): Promise<Transaction[]>;
 }
