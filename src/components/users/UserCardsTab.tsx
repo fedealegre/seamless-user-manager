@@ -185,20 +185,20 @@ export const UserCardsTab: React.FC<UserCardsTabProps> = ({ userId }) => {
           <TransactionDetails
             transaction={selectedTransaction as Transaction}
             open={showTransactionDetails}
-            onClose={() => setShowTransactionDetails(false)}
+            onOpenChange={setShowTransactionDetails}
           />
           
           <CompensateCustomerDialog
             transaction={selectedTransaction as Transaction}
             open={showCompensateDialog}
-            onClose={() => setShowCompensateDialog(false)}
+            onOpenChange={setShowCompensateDialog}
             onSubmit={handleCompensateSubmit}
           />
           
           <ChangeTransactionStatusDialog
             transaction={selectedTransaction as Transaction}
             open={showChangeStatusDialog}
-            onClose={() => setShowChangeStatusDialog(false)}
+            onOpenChange={setShowChangeStatusDialog}
             onSubmit={handleSubmitStatusChange}
           />
         </>
