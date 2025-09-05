@@ -90,7 +90,7 @@ const UserProfile: React.FC<UserProfileProps> = ({ type, sidebarOpen }) => {
             </Avatar>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
+        <DropdownMenuContent align="end" className="hidden">
           <DropdownMenuLabel>{t('my-account')}</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={handleNavigateToProfile}>
