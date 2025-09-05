@@ -237,7 +237,7 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
     <div className="space-y-6">
       <div className="flex justify-end gap-3">
         {hasEditableFields && (
-          <Button onClick={() => setIsEditing(true)}>
+          <Button onClick={() => setIsEditing(true)} className="hidden">
             {t("edit")} {t("information")}
           </Button>
         )}
