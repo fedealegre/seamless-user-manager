@@ -27,7 +27,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 const Categories: React.FC = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
-  const [formData, setFormData] = useState({ code: "", nombre: "", descripcion: "" });
+  const [formData, setFormData] = useState({ nombre: "", descripcion: "" });
 
   const { data: categories = [], isLoading } = useCategories();
   const createCategory = useCreateCategory();
@@ -36,13 +36,13 @@ const Categories: React.FC = () => {
 
   const handleAdd = () => {
     setEditingCategory(null);
-    setFormData({ code: "", nombre: "", descripcion: "" });
+    setFormData({ nombre: "", descripcion: "" });
     setDialogOpen(true);
   };
 
   const handleEdit = (category: Category) => {
     setEditingCategory(category);
-    setFormData({ code: category.code, nombre: category.nombre, descripcion: category.descripcion || "" });
+    setFormData({ nombre: category.nombre, descripcion: category.descripcion || "" });
     setDialogOpen(true);
   };
 
@@ -57,29 +57,26 @@ const Categories: React.FC = () => {
   };
 
   const handleSave = async () => {
-    if (!formData.nombre.trim() || !formData.code.trim()) return;
+    if (!formData.nombre.trim()) return;
 
-    // Validate code format (3 digits)
-    if (!/^\d{3}$/.test(formData.code)) {
-      alert("El código debe tener exactamente 3 dígitos");
-      return;
-    }
-
-    // Check for duplicate code
-    const isDuplicateCode = categories.some(cat => 
-      cat.code === formData.code && cat.id !== editingCategory?.id
-    );
-    if (isDuplicateCode) {
-      alert("Ya existe una categoría con este código");
-      return;
+    let categoryCode: string;
+    
+    if (editingCategory) {
+      // When editing, keep the existing code
+      categoryCode = editingCategory.code;
+    } else {
+      // When creating, generate next available code
+      const existingCodes = categories.map(cat => parseInt(cat.code, 10)).filter(code => !isNaN(code));
+      const maxCode = existingCodes.length > 0 ? Math.max(...existingCodes) : 0;
+      categoryCode = String(maxCode + 1).padStart(3, '0');
     }
 
     const categoryData: Category = {
-      id: formData.code,
-      code: formData.code,
+      id: categoryCode,
+      code: categoryCode,
       nombre: formData.nombre,
       descripcion: formData.descripcion,
-      fechaCreacion: new Date(),
+      fechaCreacion: editingCategory?.fechaCreacion || new Date(),
     };
 
     try {
@@ -90,7 +87,7 @@ const Categories: React.FC = () => {
       }
 
       setDialogOpen(false);
-      setFormData({ code: "", nombre: "", descripcion: "" });
+      setFormData({ nombre: "", descripcion: "" });
     } catch (error) {
       // Error is handled by the hooks
     }
@@ -110,7 +107,6 @@ const Categories: React.FC = () => {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Código</TableHead>
               <TableHead>Nombre</TableHead>
               <TableHead>Descripción</TableHead>
               <TableHead className="w-32">Acciones</TableHead>
@@ -120,7 +116,6 @@ const Categories: React.FC = () => {
             {isLoading ? (
               Array.from({ length: 5 }).map((_, index) => (
                 <TableRow key={index}>
-                  <TableCell><Skeleton className="h-4 w-12" /></TableCell>
                   <TableCell><Skeleton className="h-4 w-24" /></TableCell>
                   <TableCell><Skeleton className="h-4 w-32" /></TableCell>
                   <TableCell><Skeleton className="h-4 w-16" /></TableCell>
@@ -129,7 +124,6 @@ const Categories: React.FC = () => {
             ) : (
               categories.sort((a, b) => a.code.localeCompare(b.code)).map((category) => (
                 <TableRow key={category.id}>
-                  <TableCell className="font-mono font-medium">{category.code}</TableCell>
                   <TableCell className="font-medium">{category.nombre}</TableCell>
                   <TableCell>{category.descripcion}</TableCell>
                   <TableCell>
@@ -170,17 +164,6 @@ const Categories: React.FC = () => {
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <Label htmlFor="code">Código *</Label>
-              <Input
-                id="code"
-                value={formData.code}
-                onChange={(e) => setFormData({ ...formData, code: e.target.value })}
-                placeholder="Código de 3 dígitos (ej: 001)"
-                maxLength={3}
-                pattern="[0-9]{3}"
-              />
-            </div>
-            <div>
               <Label htmlFor="nombre">Nombre *</Label>
               <Input
                 id="nombre"
@@ -206,7 +189,7 @@ const Categories: React.FC = () => {
             </Button>
             <Button 
               onClick={handleSave} 
-              disabled={!formData.nombre.trim() || !formData.code.trim() || createCategory.isPending || updateCategory.isPending}
+              disabled={!formData.nombre.trim() || createCategory.isPending || updateCategory.isPending}
             >
               {createCategory.isPending || updateCategory.isPending ? "Guardando..." : "Guardar"}
             </Button>
