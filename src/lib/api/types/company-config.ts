@@ -32,13 +32,6 @@ export interface CompanySearchConfig {
 export const defaultSearchConfig: CompanySearchConfig = {
   fields: [
     {
-      id: "id",
-      key: "id",
-      label: "User ID",
-      type: "text",
-      placeholder: "search-by-id-placeholder",
-    },
-    {
       id: "name",
       key: "name",
       label: "Name",
