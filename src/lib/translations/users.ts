@@ -116,7 +116,8 @@ export const userTranslations = {
     'compensation-success': 'The compensation transaction has been created successfully',
     'compensation-error': 'Failed to process compensation. Please try again',
     'no-search-fields-available': 'No search fields available',
-    'contact-administrator-for-search-permissions': 'Please contact your administrator for search permissions'
+    'contact-administrator-for-search-permissions': 'Please contact your administrator for search permissions',
+    'loading-search-configuration': 'Loading search configuration...'
   },
   es: {
     'user-detail': 'Detalle de Usuario',
@@ -234,6 +235,7 @@ export const userTranslations = {
     'compensation-success': 'La transacción de compensación ha sido creada exitosamente',
     'compensation-error': 'Error al procesar la compensación. Por favor intente nuevamente',
     'no-search-fields-available': 'No hay campos de búsqueda disponibles',
-    'contact-administrator-for-search-permissions': 'Por favor contacte a su administrador para permisos de búsqueda'
+    'contact-administrator-for-search-permissions': 'Por favor contacte a su administrador para permisos de búsqueda',
+    'loading-search-configuration': 'Cargando configuración de búsqueda...'
   }
 };

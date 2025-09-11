@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { CompanyUserConfiguration } from "@/lib/api/types/company-user-config";
 import { companyConfigService } from "@/lib/api/services/mock-company-config-service";
 import { useAuth } from "@/contexts/AuthContext";
@@ -32,23 +32,23 @@ export function useCompanyUserConfig() {
     loadConfig();
   }, [user?.companyId]);
 
-  const isFieldVisible = (fieldName: string): boolean => {
+  const isFieldVisible = useCallback((fieldName: string): boolean => {
     if (!config) return false;
     return config.user.visible_fields.includes(fieldName) || 
            config.additional_properties.visible_fields.includes(fieldName);
-  };
+  }, [config]);
 
-  const isFieldEditable = (fieldName: string): boolean => {
+  const isFieldEditable = useCallback((fieldName: string): boolean => {
     if (!config) return false;
     return config.user.mutable_fields.includes(fieldName) || 
            config.additional_properties.mutable_fields.includes(fieldName);
-  };
+  }, [config]);
 
-  const isFieldSearchable = (fieldName: string): boolean => {
+  const isFieldSearchable = useCallback((fieldName: string): boolean => {
     if (!config) return false;
     return config.user.searcheable_fields.includes(fieldName) || 
            config.additional_properties.searcheable_fields.includes(fieldName);
-  };
+  }, [config]);
 
   return {
     config,

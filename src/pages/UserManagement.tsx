@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useUserManagement } from "@/hooks/use-user-management";
+import { useCompanySearchConfig } from "@/hooks/use-company-search-config";
 import UsersTable from "@/components/users/UsersTable";
 import UsersLoadingSkeleton from "@/components/users/UsersLoadingSkeleton";
 import UserActionDialogs from "@/components/users/UserActionDialogs";
@@ -40,6 +41,8 @@ const UserManagement = () => {
     executeSearch,
     searchConfig
   } = useUserManagement();
+  
+  const { isConfigReady } = useCompanySearchConfig();
 
   // Calculate the number of active filters
   const activeFiltersCount = searchParams ? 
@@ -90,7 +93,7 @@ const UserManagement = () => {
         </div>
       </div>
 
-      {showFilters && searchConfig && searchConfig.fields.length > 0 && (
+      {showFilters && searchConfig && searchConfig.fields.length > 0 && isConfigReady && (
         <CollapsibleUserSearch
           searchConfig={searchConfig}
           onSearch={handleSearch}
@@ -98,12 +101,18 @@ const UserManagement = () => {
         />
       )}
 
-      {showFilters && (!searchConfig || searchConfig.fields.length === 0) && (
+      {showFilters && (!searchConfig || !isConfigReady || searchConfig.fields.length === 0) && (
         <Card>
           <CardContent className="p-4">
             <div className="text-center text-muted-foreground">
-              <p>{t("no-search-fields-available")}</p>
-              <p className="text-sm mt-2">{t("contact-administrator-for-search-permissions")}</p>
+              {!isConfigReady ? (
+                <p>{t("loading-search-configuration")}</p>
+              ) : (
+                <>
+                  <p>{t("no-search-fields-available")}</p>
+                  <p className="text-sm mt-2">{t("contact-administrator-for-search-permissions")}</p>
+                </>
+              )}
             </div>
           </CardContent>
         </Card>
