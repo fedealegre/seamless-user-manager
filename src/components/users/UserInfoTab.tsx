@@ -11,6 +11,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { formatFieldName, parseDate } from "@/lib/utils";
 import { formatBirthDate } from "@/lib/date-utils";
 import { useCompanyUserConfig } from "@/hooks/use-company-user-config";
+import { usePermissions } from "@/hooks/use-permissions";
 import { Key, ChevronDown, ChevronUp, Copy } from "lucide-react";
 import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
 import { translate } from "@/lib/translations";
@@ -26,6 +27,7 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
   const [expandedValues, setExpandedValues] = useState<Record<string, boolean>>({});
   const queryClient = useQueryClient();
   const { isFieldVisible, isFieldEditable, loading: configLoading } = useCompanyUserConfig();
+  const { canEditUserFields } = usePermissions();
   const { settings } = useBackofficeSettings();
   const { toast } = useToast();
   const t = (key: string) => translate(key, settings.language);
@@ -256,8 +258,8 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
   return (
     <div className="space-y-6">
       <div className="flex justify-end gap-3">
-        {hasEditableFields && (
-          <Button onClick={() => setIsEditing(true)} className="hidden">
+        {canEditUserFields() && hasEditableFields && (
+          <Button onClick={() => setIsEditing(true)}>
             {t("edit")} {t("information")}
           </Button>
         )}
