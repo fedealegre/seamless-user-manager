@@ -90,12 +90,23 @@ const UserManagement = () => {
         </div>
       </div>
 
-      {showFilters && (
+      {showFilters && searchConfig && searchConfig.fields.length > 0 && (
         <CollapsibleUserSearch
           searchConfig={searchConfig}
           onSearch={handleSearch}
           activeFiltersCount={activeFiltersCount}
         />
+      )}
+
+      {showFilters && (!searchConfig || searchConfig.fields.length === 0) && (
+        <Card>
+          <CardContent className="p-4">
+            <div className="text-center text-muted-foreground">
+              <p>{t("no-search-fields-available")}</p>
+              <p className="text-sm mt-2">{t("contact-administrator-for-search-permissions")}</p>
+            </div>
+          </CardContent>
+        </Card>
       )}
 
       <Card>
