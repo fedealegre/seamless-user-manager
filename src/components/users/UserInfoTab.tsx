@@ -10,7 +10,7 @@ import { userService } from "@/lib/api/user-service";
 import { useQueryClient } from "@tanstack/react-query";
 import { formatFieldName, parseDate } from "@/lib/utils";
 import { formatBirthDate } from "@/lib/date-utils";
-import { useStaticFieldSettings } from "@/hooks/use-static-field-settings";
+import { useCompanyUserConfig } from "@/hooks/use-company-user-config";
 import { Key, ChevronDown, ChevronUp, Copy } from "lucide-react";
 import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
 import { translate } from "@/lib/translations";
@@ -25,7 +25,7 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
   const [showResetPasswordDialog, setShowResetPasswordDialog] = useState(false);
   const [expandedValues, setExpandedValues] = useState<Record<string, boolean>>({});
   const queryClient = useQueryClient();
-  const { isFieldVisible, isFieldEditable } = useStaticFieldSettings();
+  const { isFieldVisible, isFieldEditable, loading: configLoading } = useCompanyUserConfig();
   const { settings } = useBackofficeSettings();
   const { toast } = useToast();
   const t = (key: string) => translate(key, settings.language);
@@ -225,6 +225,26 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
     return isFieldVisible(fieldName);
   };
 
+  // Show loading state while configuration is loading
+  if (configLoading) {
+    return (
+      <div className="space-y-6">
+        <Card>
+          <CardHeader>
+            <CardTitle>Loading user configuration...</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="h-4 bg-muted animate-pulse rounded" />
+              <div className="h-4 bg-muted animate-pulse rounded w-3/4" />
+              <div className="h-4 bg-muted animate-pulse rounded w-1/2" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   // Check if the edit button should be visible
   // There should be at least one editable field
   const hasEditableFields = [
@@ -338,18 +358,18 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
               </div>
             </div>
             <div className="space-y-4">
-              {shouldRenderField("government_identification_type") && shouldRenderField("government_identification") && user.government_identification_type && (
+              {shouldRenderField("government_identification") && (
                 <div>
                   <h3 className="text-sm font-medium text-muted-foreground">
-                    {formatDisplayValue(user.government_identification_type)}
+                    {user.government_identification_type ? formatDisplayValue(user.government_identification_type) : t("government-id")}
                   </h3>
                   <p>{formatDisplayValue(user.government_identification)}</p>
                 </div>
               )}
-              {shouldRenderField("government_identification_type2") && shouldRenderField("government_identification2") && user.government_identification_type2 && (
+              {shouldRenderField("government_identification2") && user.government_identification2 && (
                 <div>
                   <h3 className="text-sm font-medium text-muted-foreground">
-                    {formatDisplayValue(user.government_identification_type2)}
+                    {user.government_identification_type2 ? formatDisplayValue(user.government_identification_type2) : t("government-id-2")}
                   </h3>
                   <p>{formatDisplayValue(user.government_identification2)}</p>
                 </div>
