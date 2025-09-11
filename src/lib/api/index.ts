@@ -15,7 +15,8 @@ const mockBackofficeUsers: BackofficeUser[] = [
     email: "admin@example.com",
     roles: ["configurador"],
     state: "active",
-    last_login: "2023-09-01T10:00:00Z"
+    last_login: "2023-09-01T10:00:00Z",
+    companyId: "1111"
   },
   {
     id: "2",
@@ -24,7 +25,8 @@ const mockBackofficeUsers: BackofficeUser[] = [
     email: "support@example.com",
     roles: ["operador"],
     state: "active",
-    last_login: "2023-09-02T11:00:00Z"
+    last_login: "2023-09-02T11:00:00Z",
+    companyId: "1111"
   },
   {
     id: "3",
@@ -33,7 +35,8 @@ const mockBackofficeUsers: BackofficeUser[] = [
     email: "operations@example.com",
     roles: ["operador", "analista"],
     state: "active",
-    last_login: "2023-09-03T09:30:00Z"
+    last_login: "2023-09-03T09:30:00Z",
+    companyId: "2222"
   },
   {
     id: "4",
@@ -42,7 +45,8 @@ const mockBackofficeUsers: BackofficeUser[] = [
     email: "finance@example.com",
     roles: ["compensador"],
     state: "blocked",
-    last_login: "2023-08-25T14:20:00Z"
+    last_login: "2023-08-25T14:20:00Z",
+    companyId: "2222"
   }
 ];
 
@@ -197,7 +201,8 @@ export const apiService = {
       email: loginRequest.userName,
       roles: ["operador"],
       state: "active",
-      last_login: new Date().toISOString()
+      last_login: new Date().toISOString(),
+      companyId: "1111"
     };
     
     return {
