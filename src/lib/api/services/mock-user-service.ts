@@ -463,14 +463,19 @@ export class MockUserService implements UserService {
   private transactions: Transaction[] = mockTransactions;
   private walletUserAssociations: WalletUserAssociation[] = mockWalletUserAssociations;
 
-  async searchUsers(params: Record<string, string>): Promise<User[]> {
-    console.log("Searching users with params:", params);
+  async searchUsers(params: Record<string, string>, companyId?: string): Promise<User[]> {
+    console.log("Searching users with params:", params, "for company:", companyId);
     
     if (!params || Object.keys(params).length === 0) {
       return [];
     }
 
-    return this.users.filter(user => {
+    // Filter by company first if companyId is provided
+    let filteredUsers = companyId 
+      ? this.users.filter(user => user.companyId?.toString() === companyId)
+      : this.users;
+
+    return filteredUsers.filter(user => {
       for (const [key, value] of Object.entries(params)) {
         if (!value || value.trim() === '') continue;
         

@@ -6,7 +6,7 @@ export interface ChangeTransactionStatusRequest {
 }
 
 export interface UserService {
-  searchUsers(params: any): Promise<User[]>;
+  searchUsers(params: any, companyId?: string): Promise<User[]>;
   getUserData(userId: string): Promise<User>;
   updateUser(userId: string, userData: Partial<User>): Promise<User>;
   deleteUser(userId: string): Promise<void>;

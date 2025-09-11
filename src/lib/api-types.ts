@@ -81,6 +81,7 @@ export interface BackofficeUser {
     state: 'active' | 'blocked';
     last_login?: string;
     password?: string; // Added for user creation and authentication
+    companyId: string;
 }
 
 export interface AuditLog {

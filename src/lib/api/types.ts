@@ -139,6 +139,7 @@ export interface BackofficeUser {
     roles: string[];
     state: 'active' | 'blocked';
     last_login?: string;
+    companyId: string;
 }
 
 export interface AuditLog {

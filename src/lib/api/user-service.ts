@@ -11,8 +11,8 @@ class UserServiceWrapper implements UserService {
     this.mockUserService = new MockUserService();
   }
 
-  async searchUsers(params: any): Promise<User[]> {
-    return this.mockUserService.searchUsers(params);
+  async searchUsers(params: any, companyId?: string): Promise<User[]> {
+    return this.mockUserService.searchUsers(params, companyId);
   }
 
   async getUserData(userId: string): Promise<User> {

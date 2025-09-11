@@ -30,7 +30,8 @@ const BACKOFFICE_USERS = [
       roles: ["configurador", "compensador", "operador", "analista", "loyalty"],
       state: "active" as const,
       last_login: new Date().toISOString(),
-      password: "backoffice"
+      password: "backoffice",
+      companyId: "1111"
     }
   },
   {
@@ -44,7 +45,8 @@ const BACKOFFICE_USERS = [
       roles: ["operador"],
       state: "active" as const,
       last_login: new Date().toISOString(),
-      password: "operador"
+      password: "operador",
+      companyId: "1111"
     }
   },
   {
@@ -58,7 +60,8 @@ const BACKOFFICE_USERS = [
       roles: ["compensador"],
       state: "active" as const,
       last_login: new Date().toISOString(),
-      password: "compensador"
+      password: "compensador",
+      companyId: "1111"
     }
   },
   {
@@ -72,7 +75,8 @@ const BACKOFFICE_USERS = [
       roles: ["analista"],
       state: "active" as const,
       last_login: new Date().toISOString(),
-      password: "analista"
+      password: "analista",
+      companyId: "1111"
     }
   },
   {
@@ -86,7 +90,8 @@ const BACKOFFICE_USERS = [
       roles: ["configurador"],
       state: "active" as const,
       last_login: new Date().toISOString(),
-      password: "configurador"
+      password: "configurador",
+      companyId: "1111"
     }
   },
   {
@@ -100,7 +105,38 @@ const BACKOFFICE_USERS = [
       roles: ["loyalty"],
       state: "active" as const,
       last_login: new Date().toISOString(),
-      password: "loyalty"
+      password: "loyalty",
+      companyId: "1111"
+    }
+  },
+  {
+    username: "backoffice1",
+    password: "backoffice1",
+    user: {
+      id: "backoffice1",
+      name: "Company 1111",
+      surname: "Admin",
+      email: "admin1@company1111.com",
+      roles: ["configurador", "compensador", "operador", "analista", "loyalty"],
+      state: "active" as const,
+      last_login: new Date().toISOString(),
+      password: "backoffice1",
+      companyId: "1111"
+    }
+  },
+  {
+    username: "backoffice2",
+    password: "backoffice2",
+    user: {
+      id: "backoffice2",
+      name: "Company 2222",
+      surname: "Admin",
+      email: "admin2@company2222.com",
+      roles: ["configurador", "compensador", "operador", "analista", "loyalty"],
+      state: "active" as const,
+      last_login: new Date().toISOString(),
+      password: "backoffice2",
+      companyId: "2222"
     }
   }
 ];

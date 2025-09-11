@@ -3,29 +3,38 @@ import { useState, useEffect } from "react";
 import { CompanySearchConfig, defaultSearchConfig } from "@/lib/api/types/company-config";
 import { useCompanySettings } from "@/contexts/CompanySettingsContext";
 import { userService } from "@/lib/api/user-service";
+import { useCompanyUserConfig } from "./use-company-user-config";
 
 export function useCompanySearchConfig() {
   const [searchConfig, setSearchConfig] = useState<CompanySearchConfig>(defaultSearchConfig);
   const { settings } = useCompanySettings();
+  const { config, loading, isFieldSearchable } = useCompanyUserConfig();
 
-  // Load dynamic search configuration with identification types
+  // Load dynamic search configuration with identification types and company restrictions
   useEffect(() => {
     const loadSearchConfig = async () => {
+      if (loading || !config) return;
+      
       try {
         // Get dynamic identification types
         const identificationTypes = await userService.getIdentificationTypes();
         
-        // Create config with dynamic labels
+        // Filter searchable fields based on company configuration
+        const allowedFields = defaultSearchConfig.fields.filter(field => 
+          isFieldSearchable(field.id)
+        );
+        
+        // Create config with dynamic labels and filtered fields
         const dynamicConfig = {
           ...defaultSearchConfig,
-          fields: defaultSearchConfig.fields.map(field => {
-            if (field.id === 'governmentIdentification') {
+          fields: allowedFields.map(field => {
+            if (field.id === 'government_identification') {
               return {
                 ...field,
                 label: identificationTypes.governmentIdentificationType || "DNI"
               };
             }
-            if (field.id === 'governmentIdentification2') {
+            if (field.id === 'government_identification2') {
               return {
                 ...field,
                 label: identificationTypes.governmentIdentificationType2 || "CUIL"
@@ -39,15 +48,17 @@ export function useCompanySearchConfig() {
         const savedConfig = localStorage.getItem(`company_search_config_${settings.name}`);
         if (savedConfig) {
           const parsedConfig = JSON.parse(savedConfig);
-          // Apply dynamic labels to saved config
-          parsedConfig.fields = parsedConfig.fields.map((field: any) => {
-            if (field.id === 'governmentIdentification') {
+          // Filter saved config fields based on company permissions
+          parsedConfig.fields = parsedConfig.fields.filter((field: any) => 
+            isFieldSearchable(field.id)
+          ).map((field: any) => {
+            if (field.id === 'government_identification') {
               return {
                 ...field,
                 label: identificationTypes.governmentIdentificationType || "DNI"
               };
             }
-            if (field.id === 'governmentIdentification2') {
+            if (field.id === 'government_identification2') {
               return {
                 ...field,
                 label: identificationTypes.governmentIdentificationType2 || "CUIL"
@@ -66,7 +77,7 @@ export function useCompanySearchConfig() {
     };
 
     loadSearchConfig();
-  }, [settings.name]);
+  }, [settings.name, config, loading, isFieldSearchable]);
 
   const updateSearchConfig = (newConfig: CompanySearchConfig) => {
     setSearchConfig(newConfig);
