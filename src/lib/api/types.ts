@@ -139,7 +139,6 @@ export interface BackofficeUser {
     roles: string[];
     state: 'active' | 'blocked';
     last_login?: string;
-    password?: string; // Added for user creation and authentication
 }
 
 export interface AuditLog {

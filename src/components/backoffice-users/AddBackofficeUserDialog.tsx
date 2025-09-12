@@ -96,13 +96,11 @@ const AddBackofficeUserDialog: React.FC<AddBackofficeUserDialogProps> = ({
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     const newUser: BackofficeUser = {
-      id: "", // Will be set by the API
       name: values.name,
       surname: values.surname,
       email: values.email,
       roles: values.roles,
       state: "active",
-      last_login: new Date().toISOString()
     };
 
     createUserMutation.mutate(newUser);

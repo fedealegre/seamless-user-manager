@@ -56,8 +56,8 @@ const UserSearchBar: React.FC<UserSearchBarProps> = ({
             return false;
           }
         }
-        // Other fields (id, phone, cellPhone, phoneNumber, government_identification) require at least 1 character
-        if (['id', 'phone', 'cellPhone', 'phoneNumber', 'government_identification', 'government_identification2'].includes(fieldId) && value.trim().length < 1) {
+        // Other fields (id, phone, cellPhone) require at least 1 character
+        if (['id', 'phone', 'cellPhone'].includes(fieldId) && value.trim().length < 1) {
           return false;
         }
       }
@@ -97,12 +97,9 @@ const UserSearchBar: React.FC<UserSearchBarProps> = ({
       'surname': 'surname-filter',
       'email': 'email-filter',
       'phone': 'phone-filter',
-      'phoneNumber': 'phone-filter',
       'id': 'id-filter',
       'status': 'status-filter',
       'cellPhone': 'phone-filter',
-      'government_identification': 'id-filter',
-      'government_identification2': 'id-filter',
     };
     
     return fieldMappings[fieldId] || fieldId;
@@ -111,7 +108,7 @@ const UserSearchBar: React.FC<UserSearchBarProps> = ({
   // Helper function to get display label (prioritizes translations except for dynamic fields)
   const getDisplayLabel = (field: SearchField) => {
     // Para campos con etiquetas dinámicas (DNI/CUIL), usar field.label
-    if (field.id === 'government_identification' || field.id === 'government_identification2') {
+    if (field.id === 'government_identification' || field.id === 'government_identification2' || field.id === 'publicId') {
       return field.label;
     }
     // Para el resto, usar traducción

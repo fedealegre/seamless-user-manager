@@ -17,7 +17,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { formatFieldName, formatDateForInput, parseDate } from "@/lib/utils";
 import { X } from 'lucide-react';
-import { useCompanyUserConfig } from "@/hooks/use-company-user-config";
+import { useStaticFieldSettings } from "@/hooks/use-static-field-settings";
 import {
   Select,
   SelectContent,
@@ -101,7 +101,7 @@ export const EditUserInfoForm: React.FC<EditUserInfoFormProps> = ({
   onCancel,
 }) => {
   const { toast } = useToast();
-  const { isFieldEditable } = useCompanyUserConfig();
+  const { isFieldEditable } = useStaticFieldSettings();
   const { settings } = useBackofficeSettings();
   const t = (key: string) => translate(key, settings.language);
   const [additionalFields, setAdditionalFields] = useState<AdditionalInfoField[]>(
@@ -123,9 +123,9 @@ export const EditUserInfoForm: React.FC<EditUserInfoFormProps> = ({
   const createDefaultValues = () => {
     const defaultValues: Record<string, any> = {};
     
-    if (isFieldEditable("name")) defaultValues.name = user.name || "";
-    if (isFieldEditable("surname")) defaultValues.surname = user.surname || "";
-    if (isFieldEditable("username")) defaultValues.username = user.username || "";
+    if (isFieldEditable("name")) defaultValues.name = user.name;
+    if (isFieldEditable("surname")) defaultValues.surname = user.surname;
+    if (isFieldEditable("username")) defaultValues.username = user.username;
     if (isFieldEditable("email")) defaultValues.email = user.email || "";
     if (isFieldEditable("cellPhone")) defaultValues.cellPhone = user.cellPhone || "";
     if (isFieldEditable("birthDate")) defaultValues.birthDate = birthDateValue;
@@ -142,11 +142,6 @@ export const EditUserInfoForm: React.FC<EditUserInfoFormProps> = ({
     resolver: zodResolver(userFormSchema),
     defaultValues: createDefaultValues(),
   });
-
-  // Reset form when user data changes
-  useEffect(() => {
-    form.reset(createDefaultValues());
-  }, [user, isFieldEditable]);
 
   const isAdditionalInfoEditable = isFieldEditable("additionalInfo");
 
@@ -223,7 +218,7 @@ export const EditUserInfoForm: React.FC<EditUserInfoFormProps> = ({
                 <FormItem>
                   <FormLabel>{t("first-name")}</FormLabel>
                   <FormControl>
-                    <Input {...field} value={field.value || ""} />
+                    <Input {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -239,7 +234,7 @@ export const EditUserInfoForm: React.FC<EditUserInfoFormProps> = ({
                 <FormItem>
                   <FormLabel>{t("last-name")}</FormLabel>
                   <FormControl>
-                    <Input {...field} value={field.value || ""} />
+                    <Input {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -255,7 +250,7 @@ export const EditUserInfoForm: React.FC<EditUserInfoFormProps> = ({
                 <FormItem>
                   <FormLabel>{t("username")}</FormLabel>
                   <FormControl>
-                    <Input {...field} value={field.value || ""} />
+                    <Input {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

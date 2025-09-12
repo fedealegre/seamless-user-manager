@@ -36,10 +36,6 @@ export function usePermissions() {
     return hasRole("compensador");
   };
 
-  const canEditUserFields = (): boolean => {
-    return hasRole("compensador") || hasRole("configurador");
-  };
-
   return {
     hasRole,
     canAccessDashboard,
@@ -48,7 +44,6 @@ export function usePermissions() {
     canAccessSettingsPages,
     canAccessLoyaltyPages,
     canChangeTransactionStatus,
-    canCancelTransaction,
-    canEditUserFields
+    canCancelTransaction
   };
 }

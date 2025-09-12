@@ -15,11 +15,8 @@ interface SearchHistoryItem {
 const SEARCH_PARAMS_STORAGE_KEY = 'userSearchParams';
 const SEARCH_HISTORY_STORAGE_KEY = 'userSearchHistory';
 
-import { useAuth } from "@/contexts/AuthContext";
-
 export function useUserManagement() {
   const { searchConfig } = useCompanySearchConfig();
-  const { user } = useAuth();
   const [searchParams, setSearchParams] = useState<Record<string, string>>({});
   const [showBlockDialog, setShowBlockDialog] = useState(false);
   const [showUnblockDialog, setShowUnblockDialog] = useState(false);

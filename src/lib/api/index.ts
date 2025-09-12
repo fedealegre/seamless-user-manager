@@ -1,3 +1,4 @@
+
 // Export the types
 export * from "./types";
 
@@ -5,7 +6,7 @@ export * from "./types";
 import { mockUsers } from "./mock/mock-users-data";
 import { BackofficeUser, AntiFraudRule, AuditLog, LoginRequest, LoginResponse } from "./types";
 
-// Mock backoffice users (without companyId as it's now in HTTP header)
+// Mock backoffice users
 const mockBackofficeUsers: BackofficeUser[] = [
   {
     id: "1",
@@ -188,7 +189,7 @@ export const apiService = {
   login: async (loginRequest: LoginRequest): Promise<LoginResponse> => {
     console.log("Mock: Login attempt", loginRequest);
     
-    // Simulate a successful login (without companyId in user object)
+    // Simulate a successful login
     const mockUser: BackofficeUser = {
       id: "mock-user-1",
       name: "Mock",

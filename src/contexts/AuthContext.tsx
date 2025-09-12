@@ -5,7 +5,6 @@ import { BackofficeUser, LoginRequest } from "@/lib/api-types";
 import { useToast } from "@/hooks/use-toast";
 import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
 import { translate } from "@/lib/translations";
-import { setGlobalCompanyId } from "@/lib/api/http-client";
 
 interface AuthContextType {
   user: BackofficeUser | null;
@@ -31,14 +30,12 @@ const BACKOFFICE_USERS = [
       roles: ["configurador", "compensador", "operador", "analista", "loyalty"],
       state: "active" as const,
       last_login: new Date().toISOString(),
-      password: "backoffice",
-      companyId: "1111"
+      password: "backoffice"
     }
   },
   {
     username: "operador",
     password: "operador",
-    companyId: "1111",
     user: {
       id: "operator-1",
       name: "Operator",
@@ -53,7 +50,6 @@ const BACKOFFICE_USERS = [
   {
     username: "compensador",
     password: "compensador",
-    companyId: "1111",
     user: {
       id: "compensator-1",
       name: "Compensator",
@@ -68,7 +64,6 @@ const BACKOFFICE_USERS = [
   {
     username: "analista",
     password: "analista",
-    companyId: "1111",
     user: {
       id: "analyst-1",
       name: "Analyst",
@@ -83,7 +78,6 @@ const BACKOFFICE_USERS = [
   {
     username: "configurador",
     password: "configurador",
-    companyId: "1111",
     user: {
       id: "configurator-1",
       name: "Configurator",
@@ -98,7 +92,6 @@ const BACKOFFICE_USERS = [
   {
     username: "loyalty",
     password: "loyalty",
-    companyId: "1111",
     user: {
       id: "loyalty-1",
       name: "Loyalty",
@@ -108,36 +101,6 @@ const BACKOFFICE_USERS = [
       state: "active" as const,
       last_login: new Date().toISOString(),
       password: "loyalty"
-    }
-  },
-  {
-    username: "backoffice1",
-    password: "backoffice1",
-    companyId: "1111",
-    user: {
-      id: "backoffice1",
-      name: "Company 1111",
-      surname: "Admin",
-      email: "admin1@company1111.com",
-      roles: ["configurador", "compensador", "operador", "analista", "loyalty"],
-      state: "active" as const,
-      last_login: new Date().toISOString(),
-      password: "backoffice1"
-    }
-  },
-  {
-    username: "backoffice2",
-    password: "backoffice2",
-    companyId: "2222",
-    user: {
-      id: "backoffice2",
-      name: "Company 2222",
-      surname: "Admin",
-      email: "admin2@company2222.com",
-      roles: ["configurador", "compensador", "operador", "analista", "loyalty"],
-      state: "active" as const,
-      last_login: new Date().toISOString(),
-      password: "backoffice2"
     }
   }
 ];
@@ -153,20 +116,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Check if user is already logged in
     const storedUser = localStorage.getItem("user");
     const storedToken = localStorage.getItem("token");
-    const storedCompanyId = localStorage.getItem("companyId");
     
     if (storedUser && storedToken) {
       try {
         setUser(JSON.parse(storedUser));
-        // Set global company ID for HTTP client
-        if (storedCompanyId) {
-          setGlobalCompanyId(storedCompanyId);
-        }
       } catch (error) {
         console.error("Failed to parse stored user:", error);
         localStorage.removeItem("user");
         localStorage.removeItem("token");
-        localStorage.removeItem("companyId");
       }
     }
     
@@ -188,9 +145,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         localStorage.setItem("user", JSON.stringify(matchedUser.user));
         localStorage.setItem("token", "mock-token-" + Date.now());
         localStorage.setItem("refreshToken", "mock-refresh-token-" + Date.now());
-        
-        // Store company ID separately and set it globally
-        setGlobalCompanyId(matchedUser.companyId);
         
         // Store token expiration (24 hours)
         const expiresAt = Date.now() + (24 * 60 * 60 * 1000);
@@ -255,9 +209,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem("token");
     localStorage.removeItem("refreshToken");
     localStorage.removeItem("expiresAt");
-    
-    // Clear global company ID
-    setGlobalCompanyId(null);
     
     toast({
       title: t("logout-successful"),
