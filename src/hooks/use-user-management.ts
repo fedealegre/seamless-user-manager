@@ -63,8 +63,8 @@ export function useUserManagement() {
   }, []);
 
   const { data: users, isLoading, refetch } = useQuery({
-    queryKey: ["users", searchParams, user?.companyId],
-    queryFn: () => userService.searchUsers(searchParams, user?.companyId),
+    queryKey: ["users", searchParams],
+    queryFn: () => userService.searchUsers(searchParams),
     enabled: Object.keys(searchParams).length > 0,
   });
 

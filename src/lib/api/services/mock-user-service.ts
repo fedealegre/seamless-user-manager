@@ -680,14 +680,23 @@ export class MockUserService implements UserService {
   private transactions: Transaction[] = mockTransactions;
   private walletUserAssociations: WalletUserAssociation[] = mockWalletUserAssociations;
 
-  async searchUsers(params: Record<string, string>, companyId?: string): Promise<User[]> {
+  // Helper method to get company ID from x-consumer-custom-id header (simulated)
+  private getCompanyIdFromHeader(): string | null {
+    // In a real scenario, this would read from request headers
+    // For testing, we use environment variable or localStorage
+    return import.meta.env.VITE_COMPANY_ID || localStorage.getItem('companyId');
+  }
+
+  async searchUsers(params: Record<string, string>): Promise<User[]> {
+    // Mock implementation - in real scenario, backend uses x-consumer-custom-id header
+    const companyId = this.getCompanyIdFromHeader();
     console.log("Searching users with params:", params, "for company:", companyId);
     
     if (!params || Object.keys(params).length === 0) {
       return [];
     }
 
-    // Filter by company first if companyId is provided
+    // Filter by company first based on header
     let filteredUsers = companyId 
       ? this.users.filter(user => user.companyId?.toString() === companyId)
       : this.users;

@@ -1,4 +1,3 @@
-
 // Export the types
 export * from "./types";
 
@@ -6,7 +5,7 @@ export * from "./types";
 import { mockUsers } from "./mock/mock-users-data";
 import { BackofficeUser, AntiFraudRule, AuditLog, LoginRequest, LoginResponse } from "./types";
 
-// Mock backoffice users
+// Mock backoffice users (without companyId as it's now in HTTP header)
 const mockBackofficeUsers: BackofficeUser[] = [
   {
     id: "1",
@@ -15,8 +14,7 @@ const mockBackofficeUsers: BackofficeUser[] = [
     email: "admin@example.com",
     roles: ["configurador"],
     state: "active",
-    last_login: "2023-09-01T10:00:00Z",
-    companyId: "1111"
+    last_login: "2023-09-01T10:00:00Z"
   },
   {
     id: "2",
@@ -25,8 +23,7 @@ const mockBackofficeUsers: BackofficeUser[] = [
     email: "support@example.com",
     roles: ["operador"],
     state: "active",
-    last_login: "2023-09-02T11:00:00Z",
-    companyId: "1111"
+    last_login: "2023-09-02T11:00:00Z"
   },
   {
     id: "3",
@@ -35,8 +32,7 @@ const mockBackofficeUsers: BackofficeUser[] = [
     email: "operations@example.com",
     roles: ["operador", "analista"],
     state: "active",
-    last_login: "2023-09-03T09:30:00Z",
-    companyId: "2222"
+    last_login: "2023-09-03T09:30:00Z"
   },
   {
     id: "4",
@@ -45,8 +41,7 @@ const mockBackofficeUsers: BackofficeUser[] = [
     email: "finance@example.com",
     roles: ["compensador"],
     state: "blocked",
-    last_login: "2023-08-25T14:20:00Z",
-    companyId: "2222"
+    last_login: "2023-08-25T14:20:00Z"
   }
 ];
 
@@ -193,7 +188,7 @@ export const apiService = {
   login: async (loginRequest: LoginRequest): Promise<LoginResponse> => {
     console.log("Mock: Login attempt", loginRequest);
     
-    // Simulate a successful login
+    // Simulate a successful login (without companyId in user object)
     const mockUser: BackofficeUser = {
       id: "mock-user-1",
       name: "Mock",
@@ -201,8 +196,7 @@ export const apiService = {
       email: loginRequest.userName,
       roles: ["operador"],
       state: "active",
-      last_login: new Date().toISOString(),
-      companyId: "1111"
+      last_login: new Date().toISOString()
     };
     
     return {

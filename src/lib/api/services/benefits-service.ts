@@ -1,42 +1,20 @@
-import axios from 'axios';
 import { BenefitsListResponse, BenefitDTO, Benefit } from '@/types/benefits';
 import { mapDTOToBenefit, mapBenefitToDTO } from '@/lib/benefits-mapper';
+import { apiClient } from '@/lib/api/http-client';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://api-sandbox.daxiaplatform.com/backoffice/bo/v1';
-
-// API client instance
-const apiClient = axios.create({
-  baseURL: API_BASE_URL,
-  headers: {
-    'Accept': 'application/json, text/plain, */*',
-    'Content-Type': 'application/json',
-  },
-});
-
-// Add interceptors
-apiClient.interceptors.request.use((config) => {
-  // Add authorization token
-  const token = import.meta.env.VITE_AUTH_TOKEN || 'eyJhbGciO';
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  
-  // Add custom headers for specific operations
-  const customerId = import.meta.env.VITE_CUSTOMER_ID || '6752';
+// Add specific headers for benefits operations
+const addBenefitsHeaders = (config: any) => {
   const operatorId = import.meta.env.VITE_OPERATOR_ID || '122444';
-  
   const method = (config.method || '').toLowerCase();
+  
   if (config.url?.includes('/benefits')) {
-    if (['get', 'delete', 'patch', 'post'].includes(method)) {
-      config.headers['x-consumer-custom-id'] = customerId;
-    }
     if (['delete', 'patch', 'post'].includes(method)) {
       config.headers['operatorId'] = operatorId;
     }
   }
   
   return config;
-});
+};
 
 export interface ListBenefitsParams {
   page?: number;
@@ -83,7 +61,9 @@ export class BenefitsService {
   // Get a single benefit by ID
   static async getBenefit(id: string): Promise<Benefit> {
     try {
-      const response = await apiClient.get<BenefitDTO>(`/benefits/${id}`);
+      const config = { url: `/benefits/${id}`, method: 'get', headers: {} };
+      addBenefitsHeaders(config);
+      const response = await apiClient.get<BenefitDTO>(`/benefits/${id}`, { headers: config.headers });
       return mapDTOToBenefit(response.data);
     } catch (error) {
       console.error('Error getting benefit:', error);
@@ -95,7 +75,9 @@ export class BenefitsService {
   static async createBenefit(benefit: Benefit): Promise<Benefit> {
     try {
       const dto = mapBenefitToDTO(benefit);
-      const response = await apiClient.post<BenefitDTO>('/benefits', dto);
+      const config = { url: '/benefits', method: 'post', headers: {} };
+      addBenefitsHeaders(config);
+      const response = await apiClient.post<BenefitDTO>('/benefits', dto, { headers: config.headers });
       return mapDTOToBenefit(response.data);
     } catch (error) {
       console.error('Error creating benefit:', error);
@@ -107,7 +89,9 @@ export class BenefitsService {
   static async updateBenefit(benefit: Benefit): Promise<Benefit> {
     try {
       const dto = mapBenefitToDTO(benefit);
-      const response = await apiClient.patch<BenefitDTO>('/benefits', dto);
+      const config = { url: '/benefits', method: 'patch', headers: {} };
+      addBenefitsHeaders(config);
+      const response = await apiClient.patch<BenefitDTO>('/benefits', dto, { headers: config.headers });
       return mapDTOToBenefit(response.data);
     } catch (error) {
       console.error('Error updating benefit:', error);
@@ -118,7 +102,9 @@ export class BenefitsService {
   // Update specific fields of a benefit
   static async updateBenefitFields(id: string, fields: Record<string, any>): Promise<void> {
     try {
-      await apiClient.patch(`/benefits/${id}`, fields);
+      const config = { url: `/benefits/${id}`, method: 'patch', headers: {} };
+      addBenefitsHeaders(config);
+      await apiClient.patch(`/benefits/${id}`, fields, { headers: config.headers });
     } catch (error) {
       console.error('Error updating benefit fields:', error);
       throw new Error('Failed to update benefit fields');
@@ -128,7 +114,9 @@ export class BenefitsService {
   // Delete a benefit
   static async deleteBenefit(id: string): Promise<void> {
     try {
-      await apiClient.delete(`/benefits/${id}`);
+      const config = { url: `/benefits/${id}`, method: 'delete', headers: {} };
+      addBenefitsHeaders(config);
+      await apiClient.delete(`/benefits/${id}`, { headers: config.headers });
     } catch (error) {
       console.error('Error deleting benefit:', error);
       throw new Error('Failed to delete benefit');
@@ -141,7 +129,9 @@ export class BenefitsService {
     errors?: Array<{ linea: number; datoConError: string; descripcionError: string }>;
   }> {
     try {
-      const response = await apiClient.post('/benefits/bulk-upload', { csvData });
+      const config = { url: '/benefits/bulk-upload', method: 'post', headers: {} };
+      addBenefitsHeaders(config);
+      const response = await apiClient.post('/benefits/bulk-upload', { csvData }, { headers: config.headers });
       return response.data;
     } catch (error) {
       console.error('Error bulk uploading benefits:', error);

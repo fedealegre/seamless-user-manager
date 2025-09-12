@@ -1,24 +1,24 @@
 import { useState, useEffect, useCallback } from "react";
 import { CompanyUserConfiguration } from "@/lib/api/types/company-user-config";
 import { companyConfigService } from "@/lib/api/services/mock-company-config-service";
-import { useAuth } from "@/contexts/AuthContext";
+import { getGlobalCompanyId } from "@/lib/api/http-client";
 
 export function useCompanyUserConfig() {
   const [config, setConfig] = useState<CompanyUserConfiguration | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { user } = useAuth();
 
   useEffect(() => {
     const loadConfig = async () => {
-      if (!user?.companyId) {
+      const companyId = getGlobalCompanyId();
+      if (!companyId) {
         setLoading(false);
         return;
       }
 
       try {
         setLoading(true);
-        const companyConfig = await companyConfigService.getCompanyUserConfiguration(user.companyId);
+        const companyConfig = await companyConfigService.getCompanyUserConfiguration(companyId);
         setConfig(companyConfig);
         setError(null);
       } catch (err) {
@@ -30,7 +30,7 @@ export function useCompanyUserConfig() {
     };
 
     loadConfig();
-  }, [user?.companyId]);
+  }, []);
 
   const isFieldVisible = useCallback((fieldName: string): boolean => {
     if (!config) return false;
