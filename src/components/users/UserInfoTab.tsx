@@ -26,7 +26,7 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
   const [showResetPasswordDialog, setShowResetPasswordDialog] = useState(false);
   const [expandedValues, setExpandedValues] = useState<Record<string, boolean>>({});
   const queryClient = useQueryClient();
-  const { isFieldVisible, isFieldEditable, loading: configLoading } = useCompanyUserConfig();
+  const { config, isFieldVisible, isFieldEditable, loading: configLoading } = useCompanyUserConfig();
   const { canEditUserFields } = usePermissions();
   const { settings } = useBackofficeSettings();
   const { toast } = useToast();
@@ -222,9 +222,136 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
     );
   }
 
-  // Field visibility check helper
-  const shouldRenderField = (fieldName: string) => {
-    return isFieldVisible(fieldName);
+  // Get all visible fields in order: user fields first, then additional_properties fields
+  const getOrderedVisibleFields = (): Array<{fieldName: string, source: 'user' | 'additional'}> => {
+    if (!config) return [];
+    
+    const orderedFields: Array<{fieldName: string, source: 'user' | 'additional'}> = [];
+    
+    // Add user fields first
+    config.user.visible_fields.forEach(fieldName => {
+      orderedFields.push({ fieldName, source: 'user' });
+    });
+    
+    // Then add additional_properties fields
+    config.additional_properties.visible_fields.forEach(fieldName => {
+      // Only add if the field actually exists in additionalInfo
+      if (user.additionalInfo && user.additionalInfo.hasOwnProperty(fieldName)) {
+        orderedFields.push({ fieldName, source: 'additional' });
+      }
+    });
+    
+    return orderedFields;
+  };
+
+  // Unified field renderer for both user and additional info fields
+  const renderField = (fieldName: string, source: 'user' | 'additional') => {
+    let value: any;
+    let label: string;
+    
+    if (source === 'additional') {
+      value = user.additionalInfo?.[fieldName];
+      label = formatFieldName(fieldName);
+    } else {
+      // Handle user fields
+      switch (fieldName) {
+        case 'name':
+        case 'surname':
+          // Combine name and surname for display
+          if (fieldName === 'name' && config?.user.visible_fields.includes('surname')) {
+            value = `${formatDisplayValue(user.name)} ${formatDisplayValue(user.surname)}`;
+            label = t("full-name");
+          } else if (fieldName === 'surname' && config?.user.visible_fields.includes('name')) {
+            // Skip surname if name is also visible (already combined)
+            return null;
+          } else {
+            value = user[fieldName as keyof User];
+            label = fieldName === 'name' ? t("name") : t("surname");
+          }
+          break;
+        case 'status':
+          return (
+            <div key={fieldName} className="space-y-2">
+              <h3 className="text-sm font-medium text-muted-foreground">{t("status")}</h3>
+              <div>{renderStatus()}</div>
+            </div>
+          );
+        case 'birthDate':
+          value = formatDate(user.birthDate);
+          label = t("birth-date");
+          break;
+        case 'gender':
+          value = user.gender === 'M' ? t('male') : user.gender === 'F' ? t('female') : formatDisplayValue(user.gender);
+          label = t("gender");
+          break;
+        case 'government_identification':
+          value = formatDisplayValue(user.government_identification);
+          label = user.government_identification_type ? formatDisplayValue(user.government_identification_type) : t("government-id");
+          break;
+        case 'government_identification2':
+          if (!user.government_identification2) return null;
+          value = formatDisplayValue(user.government_identification2);
+          label = user.government_identification_type2 ? formatDisplayValue(user.government_identification_type2) : t("government-id-2");
+          break;
+        case 'id':
+          value = formatDisplayValue(user.id);
+          label = t("user-id");
+          break;
+        case 'publicId':
+          value = formatDisplayValue(user.publicId);
+          label = t("public-id");
+          break;
+        case 'defaultWalletId':
+          value = formatDisplayValue(user.defaultWalletId);
+          label = t("default-wallet");
+          break;
+        case 'username':
+          value = formatDisplayValue(user.username);
+          label = t("username");
+          break;
+        case 'email':
+          value = formatDisplayValue(user.email);
+          label = t("email");
+          break;
+        case 'cellPhone':
+          value = formatDisplayValue(user.cellPhone);
+          label = t("cell-phone");
+          break;
+        case 'nationality':
+          value = formatDisplayValue(user.nationality);
+          label = t("nationality");
+          break;
+        case 'language':
+          value = formatDisplayValue(user.language);
+          label = t("language");
+          break;
+        case 'region':
+          value = formatDisplayValue(user.region);
+          label = t("region");
+          break;
+        default:
+          value = formatDisplayValue(user[fieldName as keyof User]);
+          label = formatFieldName(fieldName);
+      }
+    }
+
+    // For additional info fields, use the existing complex renderer
+    if (source === 'additional') {
+      return (
+        <div key={fieldName} className="space-y-2">
+          <h3 className="text-sm font-medium text-muted-foreground">{label}</h3>
+          {renderAdditionalInfoValue(fieldName, value)}
+        </div>
+      );
+    }
+
+    // For user fields, use simple display
+    return (
+      <div key={fieldName} className="space-y-2">
+        <h3 className="text-sm font-medium text-muted-foreground">{label}</h3>
+        <p className="text-sm">{value}</p>
+      </div>
+    );
   };
 
   // Show loading state while configuration is loading
@@ -249,11 +376,9 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
 
   // Check if the edit button should be visible
   // There should be at least one editable field
-  const hasEditableFields = [
-    "name", "surname", "username", "email", "cellPhone", 
-    "birthDate", "nationality", "gender", "language", "region",
-    "additionalInfo"
-  ].some(field => isFieldEditable(field));
+  const hasEditableFields = getOrderedVisibleFields().some(({ fieldName }) => isFieldEditable(fieldName));
+
+  const orderedFields = getOrderedVisibleFields();
 
   return (
     <div className="space-y-6">
@@ -267,130 +392,21 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
       
       <Card>
         <CardHeader>
-          <CardTitle>{t("basic-information")}</CardTitle>
+          <CardTitle>{t("personal-information")}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-4">
-              {shouldRenderField("name") && shouldRenderField("surname") && (
-                <div>
-                  <h3 className="text-sm font-medium text-muted-foreground">{t("full-name")}</h3>
-                  <p>{formatDisplayValue(user.name)} {formatDisplayValue(user.surname)}</p>
-                </div>
-              )}
-              {shouldRenderField("username") && (
-                <div>
-                  <h3 className="text-sm font-medium text-muted-foreground">{t("username")}</h3>
-                  <p>{formatDisplayValue(user.username)}</p>
-                </div>
-              )}
-              {shouldRenderField("status") && (
-                <div>
-                  <h3 className="text-sm font-medium text-muted-foreground">{t("status")}</h3>
-                  <div>{renderStatus()}</div>
-                </div>
-              )}
-              {shouldRenderField("email") && (
-                <div>
-                  <h3 className="text-sm font-medium text-muted-foreground">{t("email")}</h3>
-                  <p>{formatDisplayValue(user.email)}</p>
-                </div>
-              )}
-              {shouldRenderField("cellPhone") && (
-                <div>
-                  <h3 className="text-sm font-medium text-muted-foreground">{t("cell-phone")}</h3>
-                  <p>{formatDisplayValue(user.cellPhone)}</p>
-                </div>
-              )}
-            </div>
-            <div className="space-y-4">
-              {shouldRenderField("birthDate") && (
-                <div>
-                  <h3 className="text-sm font-medium text-muted-foreground">{t("birth-date")}</h3>
-                  <p>{formatDate(user.birthDate)}</p>
-                </div>
-              )}
-              {shouldRenderField("nationality") && (
-                <div>
-                  <h3 className="text-sm font-medium text-muted-foreground">{t("nationality")}</h3>
-                  <p>{formatDisplayValue(user.nationality)}</p>
-                </div>
-              )}
-              {shouldRenderField("gender") && (
-                <div>
-                  <h3 className="text-sm font-medium text-muted-foreground">{t("gender")}</h3>
-                  <p>{user.gender === 'M' ? t('male') : user.gender === 'F' ? t('female') : formatDisplayValue(user.gender)}</p>
-                </div>
-              )}
-              {shouldRenderField("language") && (
-                <div>
-                  <h3 className="text-sm font-medium text-muted-foreground">{t("language")}</h3>
-                  <p>{formatDisplayValue(user.language)}</p>
-                </div>
-              )}
-              {shouldRenderField("region") && (
-                <div>
-                  <h3 className="text-sm font-medium text-muted-foreground">{t("region")}</h3>
-                  <p>{formatDisplayValue(user.region)}</p>
-                </div>
-              )}
-            </div>
+            {orderedFields.map(({ fieldName, source }) => {
+              const fieldComponent = renderField(fieldName, source);
+              return fieldComponent;
+            }).filter(Boolean)}
+            
+            {orderedFields.length === 0 && (
+              <p className="text-muted-foreground col-span-full">{t("no-information-available")}</p>
+            )}
           </div>
         </CardContent>
       </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>{t("identification")}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-4">
-              <div>
-                <h3 className="text-sm font-medium text-muted-foreground">{t("user-id")}</h3>
-                <p>{formatDisplayValue(user.id)}</p>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium text-muted-foreground">{t("public-id")}</h3>
-                <p>{formatDisplayValue(user.publicId)}</p>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium text-muted-foreground">{t("default-wallet")}</h3>
-                <p>{formatDisplayValue(user.defaultWalletId)}</p>
-              </div>
-            </div>
-            <div className="space-y-4">
-              {shouldRenderField("government_identification") && (
-                <div>
-                  <h3 className="text-sm font-medium text-muted-foreground">
-                    {user.government_identification_type ? formatDisplayValue(user.government_identification_type) : t("government-id")}
-                  </h3>
-                  <p>{formatDisplayValue(user.government_identification)}</p>
-                </div>
-              )}
-              {shouldRenderField("government_identification2") && user.government_identification2 && (
-                <div>
-                  <h3 className="text-sm font-medium text-muted-foreground">
-                    {user.government_identification_type2 ? formatDisplayValue(user.government_identification_type2) : t("government-id-2")}
-                  </h3>
-                  <p>{formatDisplayValue(user.government_identification2)}</p>
-                </div>
-              )}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {shouldRenderField("additionalInfo") && (
-        <Card>
-          <CardHeader>
-            <CardTitle>{t("additional-information")}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {renderAdditionalInfo()}
-          </CardContent>
-        </Card>
-      )}
       
       {/* Reset Password Dialog */}
       {showResetPasswordDialog && (
