@@ -102,8 +102,7 @@ const AddBackofficeUserDialog: React.FC<AddBackofficeUserDialogProps> = ({
       email: values.email,
       roles: values.roles,
       state: "active",
-      last_login: new Date().toISOString(),
-      companyId: "1111" // Default to company 1111 for mock data
+      last_login: new Date().toISOString()
     };
 
     createUserMutation.mutate(newUser);
