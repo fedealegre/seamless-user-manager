@@ -246,10 +246,12 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
       <Card>
         <CardContent className="p-6">
           <div className="space-y-1">
+            {/* Render user fields first in backend order, excluding id and additionalInfo */}
             {Object.entries(user)
-              .filter(([key, value]) => key !== 'id' && key !== 'additionalInfo')
+              .filter(([key, value]) => key !== 'additionalInfo')
               .map(([key, value]) => renderUserField(key, value))}
             
+            {/* Then render additional info fields in backend order */}
             {user.additionalInfo && Object.entries(user.additionalInfo).map(([key, value]) => 
               renderUserField(key, value)
             )}
