@@ -114,7 +114,28 @@ export const userTranslations = {
     'process-compensation': 'Process Compensation',
     'compensation-processed': 'Compensation Processed',
     'compensation-success': 'The compensation transaction has been created successfully',
-    'compensation-error': 'Failed to process compensation. Please try again'
+    'compensation-error': 'Failed to process compensation. Please try again',
+    // User information section
+    'user-information': 'User Information',
+    'edit-information': 'Edit Information',
+    'active': 'Active',
+    'blocked': 'Blocked',
+    'other': 'Other',
+    'select-gender': 'Select Gender',
+    'user-updated': 'User Updated',
+    'user-info-updated-success': 'User information updated successfully',
+    'failed-update-user': 'Failed to update user',
+    'user-updated-successfully': 'User updated successfully',
+    'failed-to-update-user': 'Failed to update user',
+    // Additional field mappings
+    'publicId': 'Public ID',
+    'defaultWalletId': 'Default Wallet ID',
+    'government_identification_type': 'Government ID Type',
+    'government_identification': 'Government ID',
+    'government_identification_type2': 'Government ID Type 2',
+    'government_identification2': 'Government ID 2',
+    'created_at': 'Created At',
+    'updated_at': 'Updated At'
   },
   es: {
     'user-detail': 'Detalle de Usuario',
@@ -230,6 +251,27 @@ export const userTranslations = {
     'process-compensation': 'Procesar Compensación',
     'compensation-processed': 'Compensación Procesada',
     'compensation-success': 'La transacción de compensación ha sido creada exitosamente',
-    'compensation-error': 'Error al procesar la compensación. Por favor intente nuevamente'
+    'compensation-error': 'Error al procesar la compensación. Por favor intente nuevamente',
+    // User information section
+    'user-information': 'Información del usuario',
+    'edit-information': 'Editar información',
+    'active': 'Activo',
+    'blocked': 'Bloqueado',
+    'other': 'Otro',
+    'select-gender': 'Seleccionar género',
+    'user-updated': 'Usuario actualizado',
+    'user-info-updated-success': 'La información del usuario se actualizó correctamente',
+    'failed-update-user': 'Error al actualizar el usuario',
+    'user-updated-successfully': 'Usuario actualizado correctamente',
+    'failed-to-update-user': 'Error al actualizar el usuario',
+    // Additional field mappings
+    'publicId': 'ID Público',
+    'defaultWalletId': 'ID Billetera Predeterminada',
+    'government_identification_type': 'Tipo de Identificación Gubernamental',
+    'government_identification': 'Identificación Gubernamental',
+    'government_identification_type2': 'Tipo de Identificación Gubernamental 2',
+    'government_identification2': 'Identificación Gubernamental 2',
+    'created_at': 'Fecha de Creación',
+    'updated_at': 'Fecha de Actualización'
   }
 };
