@@ -3,7 +3,6 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { queryClient } from "@/lib/api/query-client";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { CompanySettingsProvider } from "@/contexts/CompanySettingsContext";
@@ -31,6 +30,16 @@ import Benefits from "./pages/Benefits";
 import Categories from "./pages/Categories";
 import MCCMaster from "./pages/MCCMaster";
 
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: 1,
+    },
+  },
+});
+
+// Helper function to determine the default landing page based on user roles
 export const getDefaultLandingPage = (roles: string[]): string => {
   if (roles.includes("analista")) {
     return "/dashboard";

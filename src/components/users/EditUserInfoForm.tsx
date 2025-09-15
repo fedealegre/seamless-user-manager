@@ -17,7 +17,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { formatFieldName, formatDateForInput, parseDate } from "@/lib/utils";
 import { X } from 'lucide-react';
-import { useCompanyUserConfig } from "@/hooks/use-company-user-config";
+import { useStaticFieldSettings } from "@/hooks/use-static-field-settings";
 import {
   Select,
   SelectContent,
@@ -101,7 +101,7 @@ export const EditUserInfoForm: React.FC<EditUserInfoFormProps> = ({
   onCancel,
 }) => {
   const { toast } = useToast();
-  const { isFieldEditable } = useCompanyUserConfig();
+  const { isFieldEditable } = useStaticFieldSettings();
   const { settings } = useBackofficeSettings();
   const t = (key: string) => translate(key, settings.language);
   const [additionalFields, setAdditionalFields] = useState<AdditionalInfoField[]>(

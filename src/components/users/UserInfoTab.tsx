@@ -10,7 +10,7 @@ import { userService } from "@/lib/api/user-service";
 import { useQueryClient } from "@tanstack/react-query";
 import { formatFieldName, parseDate } from "@/lib/utils";
 import { formatBirthDate } from "@/lib/date-utils";
-import { useCompanyUserConfig } from "@/hooks/use-company-user-config";
+import { useStaticFieldSettings } from "@/hooks/use-static-field-settings";
 import { Key, ChevronDown, ChevronUp, Copy } from "lucide-react";
 import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
 import { translate } from "@/lib/translations";
@@ -25,24 +25,10 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
   const [showResetPasswordDialog, setShowResetPasswordDialog] = useState(false);
   const [expandedValues, setExpandedValues] = useState<Record<string, boolean>>({});
   const queryClient = useQueryClient();
-  const { isFieldVisible, isFieldEditable, isLoaded } = useCompanyUserConfig();
+  const { isFieldVisible, isFieldEditable } = useStaticFieldSettings();
   const { settings } = useBackofficeSettings();
   const { toast } = useToast();
   const t = (key: string) => translate(key, settings.language);
-  
-  // Show loading state while config loads
-  if (!isLoaded) {
-    return (
-      <div className="space-y-6">
-        <div className="h-6 w-32 bg-muted animate-pulse rounded" />
-        <div className="space-y-3">
-          <div className="h-4 w-full bg-muted animate-pulse rounded" />
-          <div className="h-4 w-3/4 bg-muted animate-pulse rounded" />
-          <div className="h-4 w-1/2 bg-muted animate-pulse rounded" />
-        </div>
-      </div>
-    );
-  }
 
   // Helper function to format dates
   const formatDate = (dateString?: string): string => {
