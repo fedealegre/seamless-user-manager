@@ -177,6 +177,25 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
     );
   };
 
+  // Helper function to render government identification fields
+  const renderGovernmentIdentification = (typeKey: string, idKey: string, userData: any) => {
+    const type = userData[typeKey];
+    const identification = userData[idKey];
+    
+    if (!type || !identification) {
+      return null;
+    }
+
+    return (
+      <div key={`${typeKey}-${idKey}`} className="flex justify-between items-start py-2 border-b last:border-b-0">
+        <span className="font-medium text-muted-foreground min-w-0 flex-1">
+          {type}:
+        </span>
+        {renderFieldValue(idKey, identification)}
+      </div>
+    );
+  };
+
   const renderUserField = (key: string, value: any) => {
     if (value === undefined || value === null || value === '') {
       return null;
@@ -246,15 +265,43 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
       <Card>
         <CardContent className="p-6">
           <div className="space-y-1">
-            {/* Render user fields first in backend order, excluding id and additionalInfo */}
+            {/* First render government identification pairs from user fields */}
+            {user.government_identification_type && user.government_identification && 
+              renderGovernmentIdentification('government_identification_type', 'government_identification', user)
+            }
+            {user.government_identification_type2 && user.government_identification2 && 
+              renderGovernmentIdentification('government_identification_type2', 'government_identification2', user)
+            }
+            
+            {/* Then render remaining user fields, excluding government identification fields and additionalInfo */}
             {Object.entries(user)
-              .filter(([key, value]) => key !== 'additionalInfo')
+              .filter(([key, value]) => 
+                key !== 'additionalInfo' && 
+                key !== 'government_identification_type' && 
+                key !== 'government_identification' &&
+                key !== 'government_identification_type2' && 
+                key !== 'government_identification2'
+              )
               .map(([key, value]) => renderUserField(key, value))}
             
-            {/* Then render additional info fields in backend order */}
-            {user.additionalInfo && Object.entries(user.additionalInfo).map(([key, value]) => 
-              renderUserField(key, value)
-            )}
+            {/* Check for government identification pairs in additional info */}
+            {user.additionalInfo?.government_identification_type && user.additionalInfo?.government_identification && 
+              renderGovernmentIdentification('government_identification_type', 'government_identification', user.additionalInfo)
+            }
+            {user.additionalInfo?.government_identification_type2 && user.additionalInfo?.government_identification2 && 
+              renderGovernmentIdentification('government_identification_type2', 'government_identification2', user.additionalInfo)
+            }
+            
+            {/* Then render remaining additional info fields, excluding government identification fields */}
+            {user.additionalInfo && Object.entries(user.additionalInfo)
+              .filter(([key, value]) => 
+                key !== 'government_identification_type' && 
+                key !== 'government_identification' &&
+                key !== 'government_identification_type2' && 
+                key !== 'government_identification2'
+              )
+              .map(([key, value]) => renderUserField(key, value))
+            }
           </div>
         </CardContent>
       </Card>
