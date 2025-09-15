@@ -1,72 +1,40 @@
-
 import { useState, useEffect } from "react";
 import { CompanySearchConfig, defaultSearchConfig } from "@/lib/api/types/company-config";
 import { useCompanySettings } from "@/contexts/CompanySettingsContext";
-import { userService } from "@/lib/api/user-service";
+import { useCompanyUserConfig } from "@/hooks/use-company-user-config";
 
 export function useCompanySearchConfig() {
   const [searchConfig, setSearchConfig] = useState<CompanySearchConfig>(defaultSearchConfig);
   const { settings } = useCompanySettings();
+  const { getSearcheableFields, isLoaded } = useCompanyUserConfig();
 
-  // Load dynamic search configuration with identification types
+  // Update search configuration based on dynamic searcheable fields
   useEffect(() => {
-    const loadSearchConfig = async () => {
-      try {
-        // Get dynamic identification types
-        const identificationTypes = await userService.getIdentificationTypes();
-        
-        // Create config with dynamic labels
-        const dynamicConfig = {
-          ...defaultSearchConfig,
-          fields: defaultSearchConfig.fields.map(field => {
-            if (field.id === 'governmentIdentification') {
-              return {
-                ...field,
-                label: identificationTypes.governmentIdentificationType || "DNI"
-              };
-            }
-            if (field.id === 'governmentIdentification2') {
-              return {
-                ...field,
-                label: identificationTypes.governmentIdentificationType2 || "CUIL"
-              };
-            }
-            return field;
-          })
-        };
-
-        // Try loading from localStorage
-        const savedConfig = localStorage.getItem(`company_search_config_${settings.name}`);
-        if (savedConfig) {
-          const parsedConfig = JSON.parse(savedConfig);
-          // Apply dynamic labels to saved config
-          parsedConfig.fields = parsedConfig.fields.map((field: any) => {
-            if (field.id === 'governmentIdentification') {
-              return {
-                ...field,
-                label: identificationTypes.governmentIdentificationType || "DNI"
-              };
-            }
-            if (field.id === 'governmentIdentification2') {
-              return {
-                ...field,
-                label: identificationTypes.governmentIdentificationType2 || "CUIL"
-              };
-            }
-            return field;
-          });
-          setSearchConfig(parsedConfig);
-        } else {
-          setSearchConfig(dynamicConfig);
+    if (isLoaded) {
+      const searcheableFields = getSearcheableFields();
+      
+      const dynamicFields = searcheableFields.map(fieldName => {
+        const existingField = defaultSearchConfig.fields.find(f => f.key === fieldName);
+        if (existingField) {
+          return existingField;
         }
-      } catch (error) {
-        console.error("Failed to load search configuration:", error);
-        setSearchConfig(defaultSearchConfig);
-      }
-    };
+        
+        // Create a default configuration for new fields
+        return {
+          id: fieldName,
+          key: fieldName,
+          label: fieldName.charAt(0).toUpperCase() + fieldName.slice(1),
+          type: "text" as const,
+          placeholder: `Search by ${fieldName}`,
+        };
+      });
 
-    loadSearchConfig();
-  }, [settings.name]);
+      setSearchConfig({
+        ...defaultSearchConfig,
+        fields: dynamicFields,
+      });
+    }
+  }, [getSearcheableFields, isLoaded]);
 
   const updateSearchConfig = (newConfig: CompanySearchConfig) => {
     setSearchConfig(newConfig);
