@@ -1,6 +1,7 @@
 
 import { User, Wallet, Transaction, CompensationRequest, ResetPasswordRequest, ResetPasswordResponse, WalletUserAssociation } from "../types";
 import { UserService, ChangeTransactionStatusRequest } from "./user-service-interface";
+import { companyUserConfigService } from "./company-user-config-service";
 
 // Mock data - replace with your actual data source
 const mockUsers: User[] = [
@@ -20,8 +21,21 @@ const mockUsers: User[] = [
     government_identification_type: "DNI",
     government_identification2: "20251415561",
     government_identification_type2: "CUIL",
+    birthDate: "1990-05-15",
+    nationality: "AR",
+    language: "es",
+    region: "Buenos Aires",
+    timeZone: "America/Argentina/Buenos_Aires",
+    gender: "M",
+    hasPin: true,
     additionalInfo: {
-      "Device1": "{'deviceId':'e1864a5c-c4ef-4c83-96c9-c5510b170eaa','firebaseToken':'fHFW09QYSli-jmN9ori7X5:APA91bFyJOMiH5hT-PD9VajzySutOvRJKeg89fKylAjMxXS4VLV8zNj3-N9ymILko1EntQAX2dMHG7dPQwoxONrhb_9oQYWmk4wABezXARcBWlmXhodMZxs','platform':'ANDROID','appVersion':1,'lastLogin':1753809368731}"
+      "Device1": "{'deviceId':'e1864a5c-c4ef-4c83-96c9-c5510b170eaa','firebaseToken':'fHFW09QYSli-jmN9ori7X5:APA91bFyJOMiH5hT-PD9VajzySutOvRJKeg89fKylAjMxXS4VLV8zNj3-N9ymILko1EntQAX2dMHG7dPQwoxONrhb_9oQYWmk4wABezXARcBWlmXhodMZxs','platform':'ANDROID','appVersion':1,'lastLogin':1753809368731}",
+      "client_uri": "https://app.company.com/user/johndoe",
+      "onboarding_status": "completed",
+      "devices": "Android Mobile, Chrome Browser",
+      "last_login": "2024-12-15T10:30:00Z",
+      "registration_source": "mobile",
+      "kyc_level": "3"
     }
   },
   {
@@ -40,6 +54,21 @@ const mockUsers: User[] = [
     government_identification_type: "DNI",
     government_identification2: "27876543210",
     government_identification_type2: "CUIL",
+    birthDate: "1985-08-22",
+    nationality: "AR",
+    language: "es",
+    region: "Córdoba",
+    timeZone: "America/Argentina/Cordoba",
+    gender: "F",
+    hasPin: false,
+    additionalInfo: {
+      "client_uri": "https://app.company.com/user/janesmith",
+      "onboarding_status": "pending",
+      "devices": "iOS Mobile",
+      "last_login": "2024-12-10T15:45:00Z",
+      "registration_source": "web",
+      "kyc_level": "1"
+    }
   },
   {
     id: 3,
@@ -537,7 +566,40 @@ export class MockUserService implements UserService {
     if (!user) {
       throw new Error("User not found");
     }
-    return Promise.resolve(user);
+
+    // Get company configuration to determine which fields to return
+    const config = await companyUserConfigService.getCompanyUserConfiguration();
+    const visibleFields = [
+      ...config.user.visible_fields,
+      ...config.additional_properties.visible_fields
+    ];
+
+    // Filter user data to only include visible fields
+    const filteredUser: Partial<User> = { id: user.id }; // Always include ID
+    
+    // Add visible user fields
+    config.user.visible_fields.forEach(fieldName => {
+      if (fieldName in user && user[fieldName as keyof User] !== undefined) {
+        (filteredUser as any)[fieldName] = user[fieldName as keyof User];
+      }
+    });
+
+    // Handle additional_properties visible fields
+    if (user.additionalInfo) {
+      const filteredAdditionalInfo: Record<string, string> = {};
+      
+      config.additional_properties.visible_fields.forEach(fieldName => {
+        if (user.additionalInfo && fieldName in user.additionalInfo) {
+          filteredAdditionalInfo[fieldName] = user.additionalInfo[fieldName];
+        }
+      });
+
+      if (Object.keys(filteredAdditionalInfo).length > 0) {
+        filteredUser.additionalInfo = filteredAdditionalInfo;
+      }
+    }
+
+    return Promise.resolve(filteredUser as User);
   }
 
   async updateUser(userId: string, userData: Partial<User>): Promise<User> {
