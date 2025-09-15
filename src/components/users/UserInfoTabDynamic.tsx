@@ -168,11 +168,6 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
             </div>
           )}
         </div>
-        {isJSONValue && (
-          <div className="flex justify-end mt-1">
-            <Badge variant="secondary" className="text-xs">JSON</Badge>
-          </div>
-        )}
       </div>
     );
   };
