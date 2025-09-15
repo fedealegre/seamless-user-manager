@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, UserIcon } from "lucide-react";
-import { UserInfoTab } from "@/components/users/UserInfoTabDynamic";
+import { UserInfoTab } from "@/components/users/UserInfoTab";
 import { UserWalletsTab } from "@/components/users/UserWalletsTab";
 import { UserTransactionsTab } from "@/components/users/UserTransactionsTab";
 import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
