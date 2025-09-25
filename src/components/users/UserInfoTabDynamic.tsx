@@ -7,6 +7,7 @@ import { EditUserInfoForm } from "./EditUserInfoForm";
 import { userService } from "@/lib/api/user-service";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCompanyUserConfig } from "@/hooks/use-company-user-config";
+import { usePermissions } from "@/hooks/use-permissions";
 import { Copy, Edit2, ChevronDown, ChevronUp } from "lucide-react";
 import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
 import { translate } from "@/lib/translations";
@@ -21,6 +22,7 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
   const [expandedValues, setExpandedValues] = useState<Record<string, boolean>>({});
   const queryClient = useQueryClient();
   const { hasEditableFields } = useCompanyUserConfig();
+  const { hasRole } = usePermissions();
   const { settings } = useBackofficeSettings();
   const { toast } = useToast();
   const t = (key: string) => translate(key, settings.language);
@@ -243,7 +245,7 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
           {renderStatus()}
         </div>
         <div className="flex gap-2">
-          {hasEditableFields() && (
+          {hasEditableFields() && !hasRole("operador") && (
             <Button 
               variant="outline" 
               size="sm" 
