@@ -114,9 +114,6 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
 
   const renderFieldValue = (key: string, value: any) => {
     const stringValue = formatDisplayValue(value);
-    const isLongValue = stringValue.length > 100;
-    const isJSONValue = typeof value === 'string' && isJSON(value);
-    const isExpanded = expandedValues[key] || false;
     
     // Special handling for status field
     if (key === 'status' || key === 'blocked' || key === 'deleted') {
@@ -127,49 +124,9 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
       );
     }
     
-    // Determine display value
-    let displayValue = stringValue;
-    if (isJSONValue) {
-      displayValue = isExpanded ? formatJSON(value) : stringValue;
-    }
-    
-    // Truncate if not expanded and is long
-    const shouldTruncate = isLongValue && !isExpanded;
-    const truncatedValue = shouldTruncate ? displayValue.slice(0, 100) + "..." : displayValue;
-
     return (
       <div className="text-right min-w-0 flex-1 ml-4">
-        <div className="flex items-start gap-2 justify-end">
-          <div className="flex-1 min-w-0 text-right">
-            <pre className={`text-sm break-words whitespace-pre-wrap text-right ${
-              isJSONValue ? 'bg-muted/50 p-2 rounded border font-mono' : ''
-            }`}>
-              {truncatedValue}
-            </pre>
-          </div>
-          {(isLongValue || isJSONValue) && (
-            <div className="flex gap-1 flex-shrink-0">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => copyToClipboard(stringValue, getFieldLabel(key))}
-                className="h-6 w-6 p-0"
-              >
-                <Copy className="h-3 w-3" />
-              </Button>
-              {isLongValue && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => toggleExpanded(key)}
-                  className="h-6 w-6 p-0"
-                >
-                  {isExpanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
-                </Button>
-              )}
-            </div>
-          )}
-        </div>
+        <span className="text-sm">{stringValue}</span>
       </div>
     );
   };
