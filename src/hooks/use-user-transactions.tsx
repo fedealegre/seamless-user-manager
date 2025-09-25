@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { userService } from "@/lib/api/user-service";
 import { Transaction } from "@/lib/api/types";
@@ -56,9 +56,14 @@ export function useUserTransactions(userId: string, selectedWalletId: string | n
     if (filters.status && filters.status !== "all" && tx.status?.toLowerCase() !== filters.status.toLowerCase())
       return false;
     if (filters.transactionType && filters.transactionType !== "all") {
-      const paymentType = tx.additionalInfo?.payment_type?.toLowerCase() || "";
-      const txType = tx.transactionType?.toLowerCase() || tx.type?.toLowerCase() || "";
-      if (paymentType !== filters.transactionType.toLowerCase() && txType !== filters.transactionType.toLowerCase()) return false;
+      // Handle both old format (transactionType/type) and new QR format (transaction_type)
+      const txType = tx.transaction_type || tx.transactionType || tx.type;
+      const paymentType = tx.additionalInfo?.payment_type;
+      
+      if (txType?.toLowerCase() !== filters.transactionType.toLowerCase() && 
+          paymentType?.toLowerCase() !== filters.transactionType.toLowerCase()) {
+        return false;
+      }
     }
     if (filters.currency && filters.currency !== "all") {
       if ((tx.currency?.toLowerCase() || "") !== filters.currency.toLowerCase()) return false;
@@ -272,6 +277,41 @@ export function useUserTransactions(userId: string, selectedWalletId: string | n
     return Object.entries(filters).filter(([k, v]) => !!v && v !== "all").length;
   };
 
+  // Extract unique statuses and types from all transactions for dynamic filtering
+  const availableStatuses = useMemo(() => {
+    const statusSet = new Set<string>();
+    allTransactions.forEach(tx => {
+      if (tx.status) {
+        statusSet.add(tx.status);
+      }
+    });
+    
+    return Array.from(statusSet).map(status => ({
+      value: status,
+      label: t(status.toLowerCase()) || status
+    }));
+  }, [allTransactions, t]);
+
+  const availableTypes = useMemo(() => {
+    const typeSet = new Set<string>();
+    allTransactions.forEach(tx => {
+      // Handle both old format (transactionType/type) and new QR format (transaction_type)
+      const txType = tx.transaction_type || tx.transactionType || tx.type;
+      if (txType) {
+        typeSet.add(txType);
+      }
+      // Also check payment_type in additional_info for QR payments
+      if (tx.additionalInfo?.payment_type) {
+        typeSet.add(tx.additionalInfo.payment_type);
+      }
+    });
+    
+    return Array.from(typeSet).map(type => ({
+      value: type,
+      label: t(type.toLowerCase().replace(/\s+/g, '_')) || type
+    }));
+  }, [allTransactions, t]);
+
   return {
     page,
     setPage,
@@ -299,6 +339,8 @@ export function useUserTransactions(userId: string, selectedWalletId: string | n
     handleSubmitStatusChange,
     handlePageSizeChange,
     getActiveFiltersCount,
+    availableStatuses,
+    availableTypes,
     refreshTransactions, // Export the refresh function
     t
   };

@@ -38,6 +38,8 @@ const TransactionManagement = () => {
     totalPages,
     totalTransactions,
     activeFiltersCount,
+    availableStatuses,
+    availableTypes,
     setSearchTerm,
     setShowFilters,
     handleSearch,
@@ -104,7 +106,9 @@ const TransactionManagement = () => {
           <TransactionFilters 
             filters={filters} 
             onApply={handleApplyFilters} 
-            onReset={resetFilters} 
+            onReset={resetFilters}
+            availableStatuses={availableStatuses}
+            availableTypes={availableTypes}
           />
         )}
         

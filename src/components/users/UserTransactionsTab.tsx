@@ -71,6 +71,8 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
     handleSubmitStatusChange,
     handlePageSizeChange,
     getActiveFiltersCount,
+    availableStatuses,
+    availableTypes,
     refreshTransactions,
     t: transactionT
   } = useUserTransactions(userId, selectedWalletId);
@@ -215,6 +217,8 @@ export const UserTransactionsTab: React.FC<UserTransactionsTabProps> = ({ userId
           handleCancelTransaction={handleCancelTransaction}
           handleCompensateCustomer={handleCompensateCustomer}
           handleChangeStatus={handleChangeStatus}
+          availableStatuses={availableStatuses}
+          availableTypes={availableTypes}
         />
       </CardContent>
       {selectedTransaction && (

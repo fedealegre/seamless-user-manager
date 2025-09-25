@@ -32,6 +32,8 @@ interface UserTransactionsTabsProps {
   handleCancelTransaction: (transaction: Transaction) => void;
   handleCompensateCustomer: (transaction: Transaction) => void;
   handleChangeStatus: (transaction: Transaction) => void;
+  availableStatuses?: Array<{ value: string; label: string }>;
+  availableTypes?: Array<{ value: string; label: string }>;
 }
 
 const UserTransactionsTabs: React.FC<UserTransactionsTabsProps> = ({
@@ -55,6 +57,8 @@ const UserTransactionsTabs: React.FC<UserTransactionsTabsProps> = ({
   handleCancelTransaction,
   handleCompensateCustomer,
   handleChangeStatus,
+  availableStatuses = [],
+  availableTypes = [],
 }) => {
   if (wallets.length === 0) {
     return (
@@ -85,6 +89,8 @@ const UserTransactionsTabs: React.FC<UserTransactionsTabsProps> = ({
                 filters={filters}
                 onApply={onApplyFilters}
                 onReset={onResetFilters}
+                availableStatuses={availableStatuses}
+                availableTypes={availableTypes}
               />
             )}
           </div>

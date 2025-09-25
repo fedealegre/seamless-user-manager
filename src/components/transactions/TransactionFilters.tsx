@@ -25,16 +25,25 @@ interface FiltersType {
   transactionId?: string;
 }
 
+interface FilterOption {
+  value: string;
+  label: string;
+}
+
 interface TransactionFiltersProps {
   filters: FiltersType;
   onApply: (filters: FiltersType) => void;
   onReset: () => void;
+  availableStatuses?: FilterOption[];
+  availableTypes?: FilterOption[];
 }
 
 const TransactionFilters: React.FC<TransactionFiltersProps> = ({
   filters,
   onApply,
   onReset,
+  availableStatuses = [],
+  availableTypes = [],
 }) => {
   const { settings } = useBackofficeSettings();
   const t = (key: string) => translate(key, settings.language);
@@ -134,11 +143,11 @@ const TransactionFilters: React.FC<TransactionFiltersProps> = ({
               <SelectContent>
                 <SelectGroup>
                   <SelectItem value="all">{t("all-statuses")}</SelectItem>
-                  <SelectItem value="CONFIRMED">{t("confirmed")}</SelectItem>
-                  <SelectItem value="completed">{t("completed")}</SelectItem>
-                  <SelectItem value="pending">{t("pending")}</SelectItem>
-                  <SelectItem value="cancelled">{t("cancelled")}</SelectItem>
-                  <SelectItem value="failed">{t("failed")}</SelectItem>
+                  {availableStatuses.map((status) => (
+                    <SelectItem key={status.value} value={status.value}>
+                      {status.label}
+                    </SelectItem>
+                  ))}
                 </SelectGroup>
               </SelectContent>
             </Select>
@@ -156,19 +165,11 @@ const TransactionFilters: React.FC<TransactionFiltersProps> = ({
               <SelectContent>
                 <SelectGroup>
                   <SelectItem value="all">{t("all-types")}</SelectItem>
-                  <SelectItem value="TRANSFER_P2P">{t("transfer_p2p")}</SelectItem>
-                  <SelectItem value="QR_PAYMENT">{t("qr_payment")}</SelectItem>
-                  <SelectItem value="CASH_IN">{t("cash_in")}</SelectItem>
-                  <SelectItem value="CASH_OUT">{t("cash_out")}</SelectItem>
-                  <SelectItem value="TRANSFER_CASH_IN">{t("transfer_cash_in")}</SelectItem>
-                  <SelectItem value="TRANSFER_CASH_OUT">{t("transfer_cash_out")}</SelectItem>
-                  <SelectItem value="TK_PAY_REQ">{t("tk_pay_req")}</SelectItem>
-                  <SelectItem value="TK_PAY_REQ_CASH_OUT">{t("tk_pay_req_cash_out")}</SelectItem>
-                  <SelectItem value="COMPENSATE">{t("compensate")}</SelectItem>
-                  <SelectItem value="deposit">{t("deposit")}</SelectItem>
-                  <SelectItem value="withdrawal">{t("withdrawal")}</SelectItem>
-                  <SelectItem value="transfer">{t("transfer")}</SelectItem>
-                  <SelectItem value="compensation">{t("compensation")}</SelectItem>
+                  {availableTypes.map((type) => (
+                    <SelectItem key={type.value} value={type.value}>
+                      {type.label}
+                    </SelectItem>
+                  ))}
                 </SelectGroup>
               </SelectContent>
             </Select>

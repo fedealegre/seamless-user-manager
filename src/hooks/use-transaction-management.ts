@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { userService } from "@/lib/api/user-service";
 import { Transaction } from "@/lib/api/types";
@@ -53,10 +53,14 @@ export const useTransactionManagement = () => {
         }
         
         if (filters.transactionType && filters.transactionType !== 'all') {
-          filteredTxns = filteredTxns.filter(t => 
-            t.transactionType?.toLowerCase() === filters.transactionType.toLowerCase() ||
-            t.type?.toLowerCase() === filters.transactionType.toLowerCase()
-          );
+          filteredTxns = filteredTxns.filter(t => {
+            // Handle both old format (transactionType/type) and new QR format (transaction_type)
+            const txType = t.transaction_type || t.transactionType || t.type;
+            const paymentType = t.additionalInfo?.payment_type;
+            
+            return txType?.toLowerCase() === filters.transactionType.toLowerCase() ||
+                   paymentType?.toLowerCase() === filters.transactionType.toLowerCase();
+          });
         }
         
         if (filters.currency && filters.currency !== 'all') {
@@ -338,6 +342,41 @@ export const useTransactionManagement = () => {
 
   const activeFiltersCount = Object.values(filters).filter(v => v !== "").length;
 
+  // Extract unique statuses and types from all transactions for dynamic filtering
+  const availableStatuses = useMemo(() => {
+    const statusSet = new Set<string>();
+    allTransactions.forEach(tx => {
+      if (tx.status) {
+        statusSet.add(tx.status);
+      }
+    });
+    
+    return Array.from(statusSet).map(status => ({
+      value: status,
+      label: t(status.toLowerCase()) || status
+    }));
+  }, [allTransactions, t]);
+
+  const availableTypes = useMemo(() => {
+    const typeSet = new Set<string>();
+    allTransactions.forEach(tx => {
+      // Handle both old format (transactionType/type) and new QR format (transaction_type)
+      const txType = tx.transaction_type || tx.transactionType || tx.type;
+      if (txType) {
+        typeSet.add(txType);
+      }
+      // Also check payment_type in additional_info for QR payments
+      if (tx.additionalInfo?.payment_type) {
+        typeSet.add(tx.additionalInfo.payment_type);
+      }
+    });
+    
+    return Array.from(typeSet).map(type => ({
+      value: type,
+      label: t(type.toLowerCase().replace(/\s+/g, '_')) || type
+    }));
+  }, [allTransactions, t]);
+
   return {
     page,
     pageSize,
@@ -355,6 +394,8 @@ export const useTransactionManagement = () => {
     totalPages,
     totalTransactions,
     activeFiltersCount,
+    availableStatuses,
+    availableTypes,
     setSearchTerm,
     setShowFilters,
     handleSearch,
