@@ -157,27 +157,27 @@ export default function TransactionDetails({
                 <AccordionTrigger className="text-lg font-medium">
                   <div className="flex items-center gap-2">
                     <User className="h-5 w-5" />
-                    {translate("account-information")}
+                    {t("account-information")}
                   </div>
                 </AccordionTrigger>
                 <AccordionContent>
                   <div className="grid grid-cols-2 gap-4 pt-2">
                     <div>
                       <Label className="text-sm font-medium text-muted-foreground">
-                        {translate("customer-id")}
+                        {t("customer-id")}
                       </Label>
                       <p className="text-sm">{transactionData?.customerId || "-"}</p>
                     </div>
                     <div>
                       <Label className="text-sm font-medium text-muted-foreground">
-                        {translate("wallet-id")}
+                        {t("wallet-id")}
                       </Label>
                       <p className="text-sm">{transactionData?.walletId || "-"}</p>
                     </div>
                     {transactionData?.additionalInfo?.original_customer_id && (
                       <div>
                         <Label className="text-sm font-medium text-muted-foreground">
-                          {translate("original-customer-id")}
+                          {t("original-customer-id")}
                         </Label>
                         <p className="text-sm">{transactionData.additionalInfo.original_customer_id}</p>
                       </div>
@@ -191,26 +191,26 @@ export default function TransactionDetails({
                 <AccordionTrigger className="text-lg font-medium">
                   <div className="flex items-center gap-2">
                     <Info className="h-5 w-5" />
-                    {translate("basic-information")}
+                    {t("basic-information")}
                   </div>
                 </AccordionTrigger>
                 <AccordionContent>
                   <div className="grid grid-cols-1 gap-4 pt-2">
                     <div>
                       <Label className="text-sm font-medium text-muted-foreground">
-                        {translate("transaction-id")}
+                        {t("transaction-id")}
                       </Label>
                       <p className="text-sm font-mono">{transactionData?.transactionId || "-"}</p>
                     </div>
                     <div>
                       <Label className="text-sm font-medium text-muted-foreground">
-                        {translate("reference")}
+                        {t("reference")}
                       </Label>
                       <p className="text-sm">{transactionData?.reference || "-"}</p>
                     </div>
                     <div>
                       <Label className="text-sm font-medium text-muted-foreground">
-                        {translate("transaction-type")}
+                        {t("transaction-type")}
                       </Label>
                       <p className="text-sm">
                         <Badge variant="outline">
@@ -221,7 +221,7 @@ export default function TransactionDetails({
                     {transactionData?.additionalInfo?.reference_id && (
                       <div>
                         <Label className="text-sm font-medium text-muted-foreground">
-                          {translate("reference-id")}
+                          {t("reference-id")}
                         </Label>
                         <p className="text-sm font-mono">{transactionData.additionalInfo.reference_id}</p>
                       </div>
@@ -229,7 +229,7 @@ export default function TransactionDetails({
                     {transactionData?.additionalInfo?.coelsa_id && (
                       <div>
                         <Label className="text-sm font-medium text-muted-foreground">
-                          {translate("coelsa-id")}
+                          {t("coelsa-id")}
                         </Label>
                         <p className="text-sm font-mono">{transactionData.additionalInfo.coelsa_id}</p>
                       </div>
@@ -237,7 +237,7 @@ export default function TransactionDetails({
                     {transactionData?.additionalInfo?.code_id && (
                       <div>
                         <Label className="text-sm font-medium text-muted-foreground">
-                          {translate("code-id")}
+                          {t("code-id")}
                         </Label>
                         <p className="text-sm font-mono">{transactionData.additionalInfo.code_id}</p>
                       </div>
@@ -251,14 +251,14 @@ export default function TransactionDetails({
                 <AccordionTrigger className="text-lg font-medium">
                   <div className="flex items-center gap-2">
                     <Clock className="h-5 w-5" />
-                    {translate("date-time")}
+                    {t("date-time")}
                   </div>
                 </AccordionTrigger>
                 <AccordionContent>
                   <div className="grid grid-cols-1 gap-4 pt-2">
                     <div>
                       <Label className="text-sm font-medium text-muted-foreground">
-                        {translate("transaction-date")}
+                        {t("transaction-date")}
                       </Label>
                       <p className="text-sm">
                         {transactionData?.date ? formatDateTime(transactionData.date) : "-"}
@@ -268,39 +268,6 @@ export default function TransactionDetails({
                 </AccordionContent>
               </AccordionItem>
 
-              {/* Status Change History */}
-              {transactionData?.statusHistory && transactionData.statusHistory.length > 0 && (
-                <AccordionItem value="status-history">
-                  <AccordionTrigger className="text-lg font-medium">
-                    <div className="flex items-center gap-2">
-                      <AlertTriangle className="h-5 w-5" />
-                      {translate("status-change-history")}
-                    </div>
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    <div className="space-y-3 pt-2">
-                      {transactionData.statusHistory.map((change, index) => (
-                        <div key={index} className="p-3 border rounded-md bg-muted/50">
-                          <div className="flex justify-between items-center mb-2">
-                            <Badge variant="outline">
-                              {change.oldStatus} → {change.newStatus}
-                            </Badge>
-                            <span className="text-xs text-muted-foreground">
-                              {formatDateTime(new Date(change.changedAt))}
-                            </span>
-                          </div>
-                          <div className="text-sm">
-                            <strong>Reason:</strong> {change.reason}
-                          </div>
-                          <div className="text-xs text-muted-foreground">
-                            Changed by: {change.changedBy}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
-              )}
 
               {/* Compensation Details */}
               {(transactionData?.transactionType === 'compensation' || transactionData?.transactionType === 'compensacion') && (
@@ -308,15 +275,15 @@ export default function TransactionDetails({
                   <AccordionTrigger className="text-lg font-medium">
                     <div className="flex items-center gap-2">
                       <DollarSign className="h-5 w-5" />
-                      {translate("compensation-details")}
+                      {t("compensation-details")}
                     </div>
                   </AccordionTrigger>
                   <AccordionContent>
                     <div className="pt-2">
                       <Label className="text-sm font-medium text-muted-foreground">
-                        {translate("compensation-reason")}
+                        {t("compensation-reason")}
                       </Label>
-                      <p className="text-sm">{transactionData?.reference || translate("reason-not-provided")}</p>
+                      <p className="text-sm">{transactionData?.reference || t("reason-not-provided")}</p>
                     </div>
                   </AccordionContent>
                 </AccordionItem>
@@ -328,7 +295,7 @@ export default function TransactionDetails({
                   <AccordionTrigger className="text-lg font-medium">
                     <div className="flex items-center gap-2">
                       <QrCode className="h-5 w-5" />
-                      {translate("qr-payment-details")}
+                      {t("qr-payment-details")}
                     </div>
                   </AccordionTrigger>
                   <AccordionContent>
@@ -337,28 +304,28 @@ export default function TransactionDetails({
                       {transactionData?.additionalInfo?.resolver && (
                         <div>
                           <Label className="text-sm font-semibold text-muted-foreground mb-2 block">
-                            {translate("acceptor-information")}
+                            {t("acceptor-information")}
                           </Label>
                           <div className="grid grid-cols-2 gap-4 pl-4">
                             <div>
-                              <Label className="text-sm font-medium text-muted-foreground">
-                                {translate("resolver")}
-                              </Label>
+                                <Label className="text-sm font-medium text-muted-foreground">
+                                  {t("resolver")}
+                                </Label>
                               <p className="text-sm">{transactionData.additionalInfo.resolver}</p>
                             </div>
                             {transactionData?.additionalInfo?.mcc && (
                               <div>
-                                <Label className="text-sm font-medium text-muted-foreground">
-                                  {translate("mcc")}
-                                </Label>
+                                  <Label className="text-sm font-medium text-muted-foreground">
+                                    {t("mcc")}
+                                  </Label>
                                 <p className="text-sm">{transactionData.additionalInfo.mcc}</p>
                               </div>
                             )}
                             {transactionData?.additionalInfo?.branch && (
                               <div>
-                                <Label className="text-sm font-medium text-muted-foreground">
-                                  {translate("branch")}
-                                </Label>
+                                  <Label className="text-sm font-medium text-muted-foreground">
+                                    {t("branch")}
+                                  </Label>
                                 <p className="text-sm">{transactionData.additionalInfo.branch}</p>
                               </div>
                             )}
@@ -370,22 +337,22 @@ export default function TransactionDetails({
                       {(transactionData?.additionalInfo?.destination_cbu || transactionData?.additionalInfo?.destination_cuit) && (
                         <div>
                           <Label className="text-sm font-semibold text-muted-foreground mb-2 block">
-                            {translate("destination-information")}
+                            {t("destination-information")}
                           </Label>
                           <div className="grid grid-cols-2 gap-4 pl-4">
                             {transactionData?.additionalInfo?.destination_cbu && (
                               <div>
-                                <Label className="text-sm font-medium text-muted-foreground">
-                                  {translate("destination-cbu")}
-                                </Label>
+                                  <Label className="text-sm font-medium text-muted-foreground">
+                                    {t("destination-cbu")}
+                                  </Label>
                                 <p className="text-sm font-mono">{transactionData.additionalInfo.destination_cbu}</p>
                               </div>
                             )}
                             {transactionData?.additionalInfo?.destination_cuit && (
                               <div>
-                                <Label className="text-sm font-medium text-muted-foreground">
-                                  {translate("destination-cuit")}
-                                </Label>
+                                  <Label className="text-sm font-medium text-muted-foreground">
+                                    {t("destination-cuit")}
+                                  </Label>
                                 <p className="text-sm font-mono">{transactionData.additionalInfo.destination_cuit}</p>
                               </div>
                             )}
