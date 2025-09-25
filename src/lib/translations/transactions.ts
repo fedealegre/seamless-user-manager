@@ -85,6 +85,7 @@ export const transactionTranslations = {
     'status-change-failed': 'Status Change Failed',
     'only-pending-transactions': 'Only pending transactions can have their status changed',
     // New translations for TransactionDetails
+    'transaction-details': 'Transaction Details',
     'transaction-details-title': 'Transaction Details',
     'transaction-details-description': 'Complete information for this transaction',
     'basic-information': 'Basic Information',
@@ -248,6 +249,7 @@ export const transactionTranslations = {
     'status-change-failed': 'Cambio de Estado Fallido',
     'only-pending-transactions': 'Solo se puede cambiar el estado de las transacciones pendientes',
     // New translations for TransactionDetails
+    'transaction-details': 'Detalle de transacción',
     'transaction-details-title': 'Detalles de la Transacción',
     'transaction-details-description': 'Información completa de esta transacción',
     'basic-information': 'Información Básica',
