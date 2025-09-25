@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ChevronDown, ChevronUp, Copy, Edit } from "lucide-react";
+import { ChevronDown, ChevronUp, Edit } from "lucide-react";
 import { User } from "@/lib/api/types";
 import { EditUserInfoForm } from "./EditUserInfoForm";
 import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
@@ -158,36 +158,18 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
               >
                 {isExpanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
               </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => copyToClipboard(stringValue, getFieldLabel(key))}
-                className="h-6 w-6 p-0 text-muted-foreground hover:text-foreground"
-              >
-                <Copy className="h-3 w-3" />
-              </Button>
             </div>
           </div>
         </div>
       );
     }
     
-    // Regular value with copy button
+    // Regular value
     return (
       <div className="text-right min-w-0 flex-1 ml-4">
-        <div className="flex items-center gap-2">
-          <span className="text-sm break-words flex-1">
-            {stringValue}
-          </span>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => copyToClipboard(stringValue, getFieldLabel(key))}
-            className="h-6 w-6 p-0 text-muted-foreground hover:text-foreground"
-          >
-            <Copy className="h-3 w-3" />
-          </Button>
-        </div>
+        <span className="text-sm break-words">
+          {stringValue}
+        </span>
       </div>
     );
   };
@@ -202,24 +184,14 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
           <span className="font-medium text-foreground">
             {getFieldLabel(key)}
           </span>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => copyToClipboard(JSON.stringify(obj, null, 2), getFieldLabel(key))}
-              className="h-6 w-6 p-0 text-muted-foreground hover:text-foreground"
-            >
-              <Copy className="h-3 w-3" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => toggleObjectExpanded(key)}
-              className="h-6 w-6 p-0 text-muted-foreground hover:text-foreground"
-            >
-              {isExpanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
-            </Button>
-          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => toggleObjectExpanded(key)}
+            className="h-6 w-6 p-0 text-muted-foreground hover:text-foreground"
+          >
+            {isExpanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
+          </Button>
         </div>
         
         {isExpanded && (
@@ -230,19 +202,9 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
                   {getFieldLabel(subKey)}
                 </span>
                 <div className="text-right min-w-0 flex-1 ml-4">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm break-words flex-1">
-                      {formatDisplayValue(subValue)}
-                    </span>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => copyToClipboard(formatDisplayValue(subValue), getFieldLabel(subKey))}
-                      className="h-6 w-6 p-0 text-muted-foreground hover:text-foreground"
-                    >
-                      <Copy className="h-3 w-3" />
-                    </Button>
-                  </div>
+                  <span className="text-sm break-words">
+                    {formatDisplayValue(subValue)}
+                  </span>
                 </div>
               </div>
             ))}
