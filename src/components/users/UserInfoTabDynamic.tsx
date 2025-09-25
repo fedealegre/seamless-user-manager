@@ -1,16 +1,15 @@
 import React, { useState } from "react";
-import { User } from "@/lib/api/types";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { ChevronDown, ChevronUp, Copy, Edit } from "lucide-react";
+import { User } from "@/lib/api/types";
 import { EditUserInfoForm } from "./EditUserInfoForm";
-import { userService } from "@/lib/api/user-service";
-import { useQueryClient } from "@tanstack/react-query";
-import { useCompanyUserConfig } from "@/hooks/use-company-user-config";
-import { usePermissions } from "@/hooks/use-permissions";
-import { Copy, Edit2, ChevronDown, ChevronUp } from "lucide-react";
 import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
 import { translate } from "@/lib/translations";
+import { usePermissions } from "@/hooks/use-permissions";
+import { useQueryClient } from "@tanstack/react-query";
+import { userService } from "@/lib/api/user-service";
 import { useToast } from "@/hooks/use-toast";
 
 interface UserInfoTabProps {
@@ -20,55 +19,55 @@ interface UserInfoTabProps {
 export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [expandedValues, setExpandedValues] = useState<Record<string, boolean>>({});
-  const queryClient = useQueryClient();
-  const { hasEditableFields } = useCompanyUserConfig();
-  const { hasRole } = usePermissions();
+  const [expandedObjects, setExpandedObjects] = useState<Record<string, boolean>>({});
   const { settings } = useBackofficeSettings();
+  const { hasRole } = usePermissions();
+  const queryClient = useQueryClient();
   const { toast } = useToast();
+  
   const t = (key: string) => translate(key, settings.language);
 
-  // Helper function to get Spanish field name
+  // Fields to exclude from display
+  const excludedFields = ['hasPin', 'has_pin', 'accountBlocked', 'account_blocked', 'accountDeleted', 'account_deleted'];
+  
+  // Fields that should only appear once (avoid duplication between root and additional_info)
+  const uniqueFields = ['status'];
+
   const getFieldLabel = (fieldName: string): string => {
-    // Try to get the translation first, if not found, format the field name
-    const translationKey = fieldName.toLowerCase();
-    const translated = translate(translationKey, settings.language);
+    const translationKey = fieldName.toLowerCase().replace(/[._]/g, '_');
+    const translation = translate(translationKey, settings.language);
     
-    // If translation exists and is different from the key, use it
-    if (translated !== translationKey) {
-      return translated;
+    if (translation === translationKey) {
+      // If no translation found, format the field name
+      return fieldName
+        .replace(/([A-Z])/g, ' $1')
+        .replace(/[._]/g, ' ')
+        .replace(/\b\w/g, l => l.toUpperCase())
+        .trim();
     }
     
-    // Otherwise, format the field name nicely
-    return fieldName
-      .replace(/([A-Z])/g, ' $1')
-      .replace(/_/g, ' ')
-      .replace(/\b\w/g, (char) => char.toUpperCase())
-      .trim();
+    return translation;
   };
 
   const formatDisplayValue = (value: any): string => {
-    if (value === undefined || value === null || value === "") {
-      return "Empty";
-    }
-    
-    if (typeof value === "boolean") {
-      return value ? t("active") : "No";
-    }
-    
+    if (value === null || value === undefined) return "-";
+    if (typeof value === "boolean") return value ? t("yes") : t("no");
+    if (typeof value === "object") return JSON.stringify(value);
     return String(value);
   };
 
   const renderStatus = () => {
-    if (user.blocked || user.status === "BLOCKED") {
-      return <Badge variant="destructive">{t("blocked")}</Badge>;
-    } else if (user.deleted) {
-      return <Badge variant="destructive">{t("deleted")}</Badge>;
-    } else {
-      return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">{t("active")}</Badge>;
-    }
+    const statusValue = user.status || "unknown";
+    const variant = statusValue === "active" ? "default" : 
+                   statusValue === "blocked" ? "destructive" : "secondary";
+    
+    return (
+      <Badge variant={variant} className="capitalize">
+        {t(statusValue)}
+      </Badge>
+    );
   };
 
-  // Helper function to detect if value is JSON
   const isJSON = (value: string): boolean => {
     try {
       JSON.parse(value);
@@ -78,7 +77,6 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
     }
   };
 
-  // Helper function to format JSON with proper indentation
   const formatJSON = (value: string): string => {
     try {
       return JSON.stringify(JSON.parse(value), null, 2);
@@ -87,24 +85,15 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
     }
   };
 
-  // Copy to clipboard function
-  const copyToClipboard = async (text: string, fieldName: string) => {
-    try {
-      await navigator.clipboard.writeText(text);
+  const copyToClipboard = (text: string, fieldName: string) => {
+    navigator.clipboard.writeText(text).then(() => {
       toast({
-        title: "Copiado!",
-        description: `Valor de ${fieldName} copiado al portapapeles`,
+        title: t("copied-to-clipboard"),
+        description: `${fieldName}: ${text.substring(0, 50)}${text.length > 50 ? '...' : ''}`,
       });
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Error al copiar",
-        description: "No se pudo copiar al portapapeles",
-      });
-    }
+    });
   };
 
-  // Toggle expanded state for a specific field
   const toggleExpanded = (key: string) => {
     setExpandedValues(prev => ({
       ...prev,
@@ -112,11 +101,22 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
     }));
   };
 
+  const toggleObjectExpanded = (key: string) => {
+    setExpandedObjects(prev => ({
+      ...prev,
+      [key]: !prev[key]
+    }));
+  };
+
+  const isObject = (value: any): boolean => {
+    return value !== null && typeof value === 'object' && !Array.isArray(value);
+  };
+
   const renderFieldValue = (key: string, value: any) => {
     const stringValue = formatDisplayValue(value);
     
-    // Special handling for status field
-    if (key === 'status' || key === 'blocked' || key === 'deleted') {
+    // Handle status field specially
+    if (key.toLowerCase() === 'status') {
       return (
         <div className="text-right min-w-0 flex-1 ml-4">
           {renderStatus()}
@@ -172,41 +172,101 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
       );
     }
     
+    // Regular value with copy button
     return (
       <div className="text-right min-w-0 flex-1 ml-4">
-        <span className="text-sm">{stringValue}</span>
+        <div className="flex items-center gap-2">
+          <span className="text-sm break-words flex-1">
+            {stringValue}
+          </span>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => copyToClipboard(stringValue, getFieldLabel(key))}
+            className="h-6 w-6 p-0 text-muted-foreground hover:text-foreground"
+          >
+            <Copy className="h-3 w-3" />
+          </Button>
+        </div>
       </div>
     );
   };
 
-  // Helper function to render government identification fields
-  const renderGovernmentIdentification = (typeKey: string, idKey: string, userData: any) => {
-    const type = userData[typeKey];
-    const identification = userData[idKey];
+  const renderObjectField = (key: string, obj: any) => {
+    const isExpanded = expandedObjects[key] || false;
+    const objectEntries = Object.entries(obj);
     
-    if (!type || !identification) {
-      return null;
-    }
-
     return (
-      <div key={`${typeKey}-${idKey}`} className="flex justify-between items-start py-2 border-b last:border-b-0">
-        <span className="font-medium text-muted-foreground min-w-0 flex-1">
-          {type}:
-        </span>
-        {renderFieldValue(idKey, identification)}
+      <div key={key} className="space-y-2">
+        <div className="flex justify-between items-center py-2 border-b border-border/40">
+          <span className="font-medium text-foreground">
+            {getFieldLabel(key)}
+          </span>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => copyToClipboard(JSON.stringify(obj, null, 2), getFieldLabel(key))}
+              className="h-6 w-6 p-0 text-muted-foreground hover:text-foreground"
+            >
+              <Copy className="h-3 w-3" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => toggleObjectExpanded(key)}
+              className="h-6 w-6 p-0 text-muted-foreground hover:text-foreground"
+            >
+              {isExpanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
+            </Button>
+          </div>
+        </div>
+        
+        {isExpanded && (
+          <div className="ml-4 space-y-2 pl-4 border-l-2 border-border/20">
+            {objectEntries.map(([subKey, subValue]) => (
+              <div key={subKey} className="flex justify-between items-start py-1">
+                <span className="text-sm text-muted-foreground">
+                  {getFieldLabel(subKey)}
+                </span>
+                <div className="text-right min-w-0 flex-1 ml-4">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm break-words flex-1">
+                      {formatDisplayValue(subValue)}
+                    </span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => copyToClipboard(formatDisplayValue(subValue), getFieldLabel(subKey))}
+                      className="h-6 w-6 p-0 text-muted-foreground hover:text-foreground"
+                    >
+                      <Copy className="h-3 w-3" />
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     );
   };
 
   const renderUserField = (key: string, value: any) => {
-    if (value === undefined || value === null || value === '') {
+    // Skip excluded fields
+    if (excludedFields.includes(key)) {
       return null;
     }
 
+    // Handle object fields (like address)
+    if (isObject(value)) {
+      return renderObjectField(key, value);
+    }
+
     return (
-      <div key={key} className="flex justify-between items-start py-2 border-b last:border-b-0">
-        <span className="font-medium text-muted-foreground min-w-0 flex-1">
-          {getFieldLabel(key)}:
+      <div key={key} className="flex justify-between items-start py-2 border-b border-border/40">
+        <span className="font-medium text-foreground">
+          {getFieldLabel(key)}
         </span>
         {renderFieldValue(key, value)}
       </div>
@@ -215,19 +275,23 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
 
   const handleUpdateUser = async (updatedUserData: any) => {
     try {
-      await userService.updateUser(user.id.toString(), updatedUserData);
-      queryClient.invalidateQueries({ queryKey: ['user', user.id.toString()] });
-      setIsEditing(false);
+      await userService.updateUser(String(user.id), updatedUserData);
+      
+      // Invalidate and refetch user data
+      queryClient.invalidateQueries({ queryKey: ['user', String(user.id)] });
+      
       toast({
-        title: t("success"),
-        description: t("user-updated-successfully"),
+        title: t("user-updated-successfully"),
+        description: t("user-information-has-been-updated"),
       });
+      
+      setIsEditing(false);
     } catch (error) {
-      console.error("Failed to update user:", error);
+      console.error("Error updating user:", error);
       toast({
         title: t("error"),
-        description: t("failed-to-update-user"),
-        variant: "destructive",
+        description: t("error-updating-user"),
+        variant: "destructive"
       });
     }
   };
@@ -242,71 +306,68 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
     );
   }
 
+  // Prepare data for rendering
+  const rootFields: [string, any][] = [];
+  const additionalInfoFields: [string, any][] = [];
+  const statusShown = { current: false };
+
+  // Process root fields first
+  Object.entries(user).forEach(([key, value]) => {
+    if (key === 'additionalInfo' || key === 'additional_info') return;
+    
+    // Handle status uniqueness
+    if (uniqueFields.includes(key.toLowerCase())) {
+      if (!statusShown.current) {
+        rootFields.push([key, value]);
+        statusShown.current = true;
+      }
+      return;
+    }
+    
+    rootFields.push([key, value]);
+  });
+
+  // Process additional_info fields
+  const additionalInfo = user.additionalInfo || {};
+  Object.entries(additionalInfo).forEach(([key, value]) => {
+    // Handle status uniqueness
+    if (uniqueFields.includes(key.toLowerCase())) {
+      if (!statusShown.current) {
+        additionalInfoFields.push([key, value]);
+        statusShown.current = true;
+      }
+      return;
+    }
+    
+    additionalInfoFields.push([key, value]);
+  });
+
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div className="flex items-center gap-2">
-          <h3 className="text-lg font-semibold">{t("user-information")}</h3>
-          {renderStatus()}
-        </div>
-        <div className="flex gap-2">
-          {hasEditableFields() && !hasRole("operador") && (
-            <Button 
-              variant="outline" 
-              size="sm" 
+    <Card>
+      <CardHeader>
+        <div className="flex justify-between items-center">
+          <div>
+            <CardTitle className="text-lg">{t("personal-info")}</CardTitle>
+          </div>
+          {hasRole("admin") && (
+            <Button
+              variant="outline"
+              size="sm"
               onClick={() => setIsEditing(true)}
-              className="flex items-center gap-2"
             >
-              <Edit2 className="h-4 w-4" />
-              {t("edit-information")}
+              <Edit className="mr-2 h-4 w-4" />
+              {t("edit")}
             </Button>
           )}
         </div>
-      </div>
-
-      <Card>
-        <CardContent className="p-6">
-          <div className="space-y-1">
-            {/* First render government identification pairs from user fields */}
-            {user.government_identification_type && user.government_identification && 
-              renderGovernmentIdentification('government_identification_type', 'government_identification', user)
-            }
-            {user.government_identification_type2 && user.government_identification2 && 
-              renderGovernmentIdentification('government_identification_type2', 'government_identification2', user)
-            }
-            
-            {/* Then render remaining user fields, excluding government identification fields and additionalInfo */}
-            {Object.entries(user)
-              .filter(([key, value]) => 
-                key !== 'additionalInfo' && 
-                key !== 'government_identification_type' && 
-                key !== 'government_identification' &&
-                key !== 'government_identification_type2' && 
-                key !== 'government_identification2'
-              )
-              .map(([key, value]) => renderUserField(key, value))}
-            
-            {/* Check for government identification pairs in additional info */}
-            {user.additionalInfo?.government_identification_type && user.additionalInfo?.government_identification && 
-              renderGovernmentIdentification('government_identification_type', 'government_identification', user.additionalInfo)
-            }
-            {user.additionalInfo?.government_identification_type2 && user.additionalInfo?.government_identification2 && 
-              renderGovernmentIdentification('government_identification_type2', 'government_identification2', user.additionalInfo)
-            }
-            
-            {/* Then render remaining additional info fields, excluding government identification fields */}
-            {user.additionalInfo && Object.entries(user.additionalInfo)
-              .filter(([key, value]) => 
-                key !== 'government_identification_type' && 
-                key !== 'government_identification' &&
-                key !== 'government_identification_type2' && 
-                key !== 'government_identification2'
-              )
-              .map(([key, value]) => renderUserField(key, value))
-            }
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+      </CardHeader>
+      <CardContent className="space-y-1">
+        {/* Render root fields */}
+        {rootFields.map(([key, value]) => renderUserField(key, value))}
+        
+        {/* Render additional_info fields */}
+        {additionalInfoFields.map(([key, value]) => renderUserField(key, value))}
+      </CardContent>
+    </Card>
   );
 };
