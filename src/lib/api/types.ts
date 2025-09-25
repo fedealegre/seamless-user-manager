@@ -9,27 +9,50 @@ export interface TransactionStatusChange {
 }
 
 export interface Transaction {
+    id: number;
     originalTransactionId?: string;
     customerId: string;
     walletId: string;
     initDate?: string;
     endDate?: string;
     reference?: string;
-    id: number;
     transactionId?: string; // Added to match usage in components
+    transaction_id?: string; // QR payment format
+    transaction_date?: number; // Timestamp for QR payments
     originTransactionId?: string;
     destinationTransactionId?: string;
     status?: string;
     currency?: string;
     transactionType?: string; // Single definition
+    transaction_type?: string; // QR payment format
     movementType?: string;
+    movement_type?: 'INCOME' | 'OUTCOME'; // QR payment format
     type?: string; // Added to match usage in components
     removed?: boolean;
     lastIdTransaction?: string;
     length?: number;
     amount?: number;
     date?: string;
-    additionalInfo?: Record<string, any>; // Added to support mock data
+    payment?: { // QR payment object
+        currency?: string;
+        value?: string;
+    };
+    additionalInfo?: {
+        payment_type?: string;
+        qr_code?: string;
+        destination_account?: string;
+        merchant_info?: string;
+        resolver?: string; // QR payment - acceptor
+        destination_cbu?: string; // QR payment
+        destination_cuit?: string; // QR payment
+        reference_id?: string; // QR payment
+        coelsa_id?: string; // QR payment
+        original_customer_id?: string; // QR payment
+        branch?: string; // QR payment
+        code_id?: string; // QR payment
+        mcc?: string; // QR payment - merchant category code
+        [key: string]: any;
+    }; // Added to support mock data
     statusHistory?: TransactionStatusChange[]; // New field for status change history
 }
 
