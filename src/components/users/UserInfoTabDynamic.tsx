@@ -124,6 +124,54 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
       );
     }
     
+    // Check if the value is long and should be collapsible (more than ~200 characters or multiline)
+    const isLongValue = stringValue.length > 200 || stringValue.includes('\n');
+    const isExpanded = expandedValues[key] || false;
+    
+    if (isLongValue) {
+      // Show truncated version if not expanded
+      const truncatedValue = isExpanded ? stringValue : stringValue.substring(0, 200) + (stringValue.length > 200 ? '...' : '');
+      
+      return (
+        <div className="text-right min-w-0 flex-1 ml-4">
+          <div className="flex items-start gap-2">
+            <div className="flex-1 min-w-0">
+              <span 
+                className={`text-sm break-words ${isJSON(stringValue) ? 'font-mono' : ''}`}
+                style={{ 
+                  display: '-webkit-box',
+                  WebkitLineClamp: isExpanded ? 'none' : 2,
+                  WebkitBoxOrient: 'vertical',
+                  overflow: 'hidden',
+                  wordBreak: 'break-all'
+                }}
+              >
+                {isJSON(stringValue) && isExpanded ? formatJSON(stringValue) : truncatedValue}
+              </span>
+            </div>
+            <div className="flex gap-1">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => toggleExpanded(key)}
+                className="h-6 w-6 p-0 text-muted-foreground hover:text-foreground"
+              >
+                {isExpanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => copyToClipboard(stringValue, getFieldLabel(key))}
+                className="h-6 w-6 p-0 text-muted-foreground hover:text-foreground"
+              >
+                <Copy className="h-3 w-3" />
+              </Button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+    
     return (
       <div className="text-right min-w-0 flex-1 ml-4">
         <span className="text-sm">{stringValue}</span>

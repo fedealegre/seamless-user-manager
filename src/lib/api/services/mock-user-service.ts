@@ -29,6 +29,7 @@ const mockUsers: User[] = [
     gender: "M",
     hasPin: true,
     additionalInfo: {
+      "Device ID": "{'deviceId':'6723f0bb-efb4-47d5-808b-a890d51467cb','firebaseToken':'fjOxwcrRTwSHSwjbvWL96t:APA91bEvcFZ_RqRb89oJxEf6-YFAm9ED9IRshA8CrBcgTqScLy54UaFUCP6j8wQ3Cc-ghxm2kPGq0uk9a3P0LlXi-zDmmeIymWA_w7XSDdIkq2xo6r-jxb4','platform':'ANDROID','appVersion':1,'lastLogin':1757522417495}",
       "Device1": "{'deviceId':'e1864a5c-c4ef-4c83-96c9-c5510b170eaa','firebaseToken':'fHFW09QYSli-jmN9ori7X5:APA91bFyJOMiH5hT-PD9VajzySutOvRJKeg89fKylAjMxXS4VLV8zNj3-N9ymILko1EntQAX2dMHG7dPQwoxONrhb_9oQYWmk4wABezXARcBWlmXhodMZxs','platform':'ANDROID','appVersion':1,'lastLogin':1753809368731}",
       "client_uri": "https://app.company.com/user/johndoe",
       "onboarding_status": "completed",
