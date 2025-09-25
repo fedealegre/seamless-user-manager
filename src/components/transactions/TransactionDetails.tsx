@@ -22,6 +22,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
 import { translate } from "@/lib/translations";
+import { getTranslatedStatusBadge } from "./transaction-utils";
 
 interface TransactionDetailsProps {
   transaction: Transaction;
@@ -141,15 +142,7 @@ export default function TransactionDetails({
                     {t("status")}
                   </Label>
                   <p className="text-sm">
-                    <Badge 
-                      variant={
-                        transactionData?.status?.toLowerCase() === 'completed' || transactionData?.status === 'COMPLETED' ? 'default' : 
-                        transactionData?.status?.toLowerCase() === 'pending' || transactionData?.status === 'PENDING' ? 'secondary' : 
-                        'destructive'
-                      }
-                    >
-                      {t(transactionData?.status?.toLowerCase() || 'unknown')}
-                    </Badge>
+                    {getTranslatedStatusBadge(transactionData?.status, settings.language)}
                   </p>
                 </div>
               </div>
