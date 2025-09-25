@@ -97,299 +97,91 @@ export default function TransactionDetails({
               </Alert>
             )}
 
-            <Accordion type="single" collapsible defaultValue="financial" className="w-full">
-              {/* Financial Information */}
-              <AccordionItem value="financial">
-                <AccordionTrigger className="text-lg font-medium">
-                  <div className="flex items-center gap-2">
-                    <DollarSign className="h-5 w-5" />
-                    {t("financial-information")}
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent>
-                  <div className="grid grid-cols-2 gap-4 pt-2">
-                    <div>
-                      <Label className="text-sm font-medium text-muted-foreground">
-                        {t("amount")}
-                      </Label>
-                      <p className="text-lg font-semibold">
-                        {formatCurrency_(transactionData?.amount, transactionData?.currency)}
-                      </p>
-                    </div>
-                    <div>
-                      <Label className="text-sm font-medium text-muted-foreground">
-                        {t("currency")}
-                      </Label>
-                      <p className="text-sm">{transactionData?.currency || "-"}</p>
-                    </div>
-                    <div>
-                      <Label className="text-sm font-medium text-muted-foreground">
-                        {t("movement-type")}
-                      </Label>
-                      <p className="text-sm">
-                        <Badge variant={transactionData?.movementType === 'INCOME' ? 'default' : 'secondary'}>
-                          {t(transactionData?.movementType?.toLowerCase() || 'unknown')}
-                        </Badge>
-                      </p>
-                    </div>
-                    <div>
-                      <Label className="text-sm font-medium text-muted-foreground">
-                        {t("status")}
-                      </Label>
-                      <p className="text-sm">
-                        <Badge 
-                          variant={
-                            transactionData?.status?.toLowerCase() === 'completed' || transactionData?.status === 'COMPLETED' ? 'default' : 
-                            transactionData?.status?.toLowerCase() === 'pending' || transactionData?.status === 'PENDING' ? 'secondary' : 
-                            'destructive'
-                          }
-                        >
-                          {t(transactionData?.status?.toLowerCase() || 'unknown')}
-                        </Badge>
-                      </p>
-                    </div>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
+            {/* Basic Information - Always Visible */}
+            <div className="bg-muted/50 rounded-lg p-4">
+              <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                <Info className="h-5 w-5" />
+                {t("basic-information")}
+              </h3>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-sm font-medium text-muted-foreground">
+                    {t("transaction-date")}
+                  </Label>
+                  <p className="text-sm font-medium">
+                    {transactionData?.date ? formatDateTime(transactionData.date) : "-"}
+                  </p>
+                </div>
+                <div>
+                  <Label className="text-sm font-medium text-muted-foreground">
+                    {t("amount")}
+                  </Label>
+                  <p className="text-lg font-semibold">
+                    {formatCurrency_(transactionData?.amount, transactionData?.currency)}
+                  </p>
+                </div>
+                <div>
+                  <Label className="text-sm font-medium text-muted-foreground">
+                    {t("currency")}
+                  </Label>
+                  <p className="text-sm font-medium">{transactionData?.currency || "-"}</p>
+                </div>
+                <div>
+                  <Label className="text-sm font-medium text-muted-foreground">
+                    {t("transaction-type")}
+                  </Label>
+                  <p className="text-sm">
+                    <Badge variant="outline">
+                      {transactionData?.transactionType || "-"}
+                    </Badge>
+                  </p>
+                </div>
+                <div>
+                  <Label className="text-sm font-medium text-muted-foreground">
+                    {t("status")}
+                  </Label>
+                  <p className="text-sm">
+                    <Badge 
+                      variant={
+                        transactionData?.status?.toLowerCase() === 'completed' || transactionData?.status === 'COMPLETED' ? 'default' : 
+                        transactionData?.status?.toLowerCase() === 'pending' || transactionData?.status === 'PENDING' ? 'secondary' : 
+                        'destructive'
+                      }
+                    >
+                      {t(transactionData?.status?.toLowerCase() || 'unknown')}
+                    </Badge>
+                  </p>
+                </div>
+              </div>
+            </div>
 
-              {/* Account Information */}
-              <AccordionItem value="account">
-                <AccordionTrigger className="text-lg font-medium">
-                  <div className="flex items-center gap-2">
-                    <User className="h-5 w-5" />
-                    {t("account-information")}
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent>
-                  <div className="grid grid-cols-2 gap-4 pt-2">
-                    <div>
-                      <Label className="text-sm font-medium text-muted-foreground">
-                        {t("customer-id")}
-                      </Label>
-                      <p className="text-sm">{transactionData?.customerId || "-"}</p>
-                    </div>
-                    <div>
-                      <Label className="text-sm font-medium text-muted-foreground">
-                        {t("wallet-id")}
-                      </Label>
-                      <p className="text-sm">{transactionData?.walletId || "-"}</p>
-                    </div>
-                    {transactionData?.additionalInfo?.original_customer_id && (
-                      <div>
-                        <Label className="text-sm font-medium text-muted-foreground">
-                          {t("original-customer-id")}
-                        </Label>
-                        <p className="text-sm">{transactionData.additionalInfo.original_customer_id}</p>
-                      </div>
-                    )}
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-
-              {/* Basic Information */}
-              <AccordionItem value="basic">
-                <AccordionTrigger className="text-lg font-medium">
-                  <div className="flex items-center gap-2">
-                    <Info className="h-5 w-5" />
-                    {t("basic-information")}
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent>
-                  <div className="grid grid-cols-1 gap-4 pt-2">
-                    <div>
-                      <Label className="text-sm font-medium text-muted-foreground">
-                        {t("transaction-id")}
-                      </Label>
-                      <p className="text-sm font-mono">{transactionData?.transactionId || "-"}</p>
-                    </div>
-                    <div>
-                      <Label className="text-sm font-medium text-muted-foreground">
-                        {t("reference")}
-                      </Label>
-                      <p className="text-sm">{transactionData?.reference || "-"}</p>
-                    </div>
-                    <div>
-                      <Label className="text-sm font-medium text-muted-foreground">
-                        {t("transaction-type")}
-                      </Label>
-                      <p className="text-sm">
-                        <Badge variant="outline">
-                          {transactionData?.transactionType || "-"}
-                        </Badge>
-                      </p>
-                    </div>
-                    {transactionData?.additionalInfo?.reference_id && (
-                      <div>
-                        <Label className="text-sm font-medium text-muted-foreground">
-                          {t("reference-id")}
-                        </Label>
-                        <p className="text-sm font-mono">{transactionData.additionalInfo.reference_id}</p>
-                      </div>
-                    )}
-                    {transactionData?.additionalInfo?.coelsa_id && (
-                      <div>
-                        <Label className="text-sm font-medium text-muted-foreground">
-                          {t("coelsa-id")}
-                        </Label>
-                        <p className="text-sm font-mono">{transactionData.additionalInfo.coelsa_id}</p>
-                      </div>
-                    )}
-                    {transactionData?.additionalInfo?.code_id && (
-                      <div>
-                        <Label className="text-sm font-medium text-muted-foreground">
-                          {t("code-id")}
-                        </Label>
-                        <p className="text-sm font-mono">{transactionData.additionalInfo.code_id}</p>
-                      </div>
-                    )}
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-
-              {/* Date and Time */}
-              <AccordionItem value="datetime">
-                <AccordionTrigger className="text-lg font-medium">
-                  <div className="flex items-center gap-2">
-                    <Clock className="h-5 w-5" />
-                    {t("date-time")}
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent>
-                  <div className="grid grid-cols-1 gap-4 pt-2">
-                    <div>
-                      <Label className="text-sm font-medium text-muted-foreground">
-                        {t("transaction-date")}
-                      </Label>
-                      <p className="text-sm">
-                        {transactionData?.date ? formatDateTime(transactionData.date) : "-"}
-                      </p>
-                    </div>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-
-
-              {/* Compensation Details */}
-              {(transactionData?.transactionType === 'compensation' || transactionData?.transactionType === 'compensacion') && (
-                <AccordionItem value="compensation">
+            {/* Additional Information from additional_info */}
+            {transactionData?.additionalInfo && Object.keys(transactionData.additionalInfo).length > 0 && (
+              <Accordion type="single" collapsible className="w-full">
+                <AccordionItem value="additional-info">
                   <AccordionTrigger className="text-lg font-medium">
                     <div className="flex items-center gap-2">
-                      <DollarSign className="h-5 w-5" />
-                      {t("compensation-details")}
+                      <Info className="h-5 w-5" />
+                      {t("additional-information")}
                     </div>
                   </AccordionTrigger>
                   <AccordionContent>
-                    <div className="pt-2">
-                      <Label className="text-sm font-medium text-muted-foreground">
-                        {t("compensation-reason")}
-                      </Label>
-                      <p className="text-sm">{transactionData?.reference || t("reason-not-provided")}</p>
+                    <div className="grid grid-cols-2 gap-4 pt-2">
+                      {Object.entries(transactionData.additionalInfo).map(([key, value]) => (
+                        <div key={key}>
+                          <Label className="text-sm font-medium text-muted-foreground capitalize">
+                            {key.replace(/_/g, ' ')}
+                          </Label>
+                          <p className="text-sm break-words">
+                            {typeof value === 'object' ? JSON.stringify(value, null, 2) : String(value)}
+                          </p>
+                        </div>
+                      ))}
                     </div>
                   </AccordionContent>
                 </AccordionItem>
-              )}
-
-              {/* QR Payment Details */}
-              {(transactionData?.transactionType === 'Pago con QR' || transactionData?.additionalInfo?.payment_type === 'qr_payment') && (
-                <AccordionItem value="qr-payment">
-                  <AccordionTrigger className="text-lg font-medium">
-                    <div className="flex items-center gap-2">
-                      <QrCode className="h-5 w-5" />
-                      {t("qr-payment-details")}
-                    </div>
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    <div className="space-y-6 pt-2">
-                      {/* Acceptor Information */}
-                      {transactionData?.additionalInfo?.resolver && (
-                        <div>
-                          <Label className="text-sm font-semibold text-muted-foreground mb-2 block">
-                            {t("acceptor-information")}
-                          </Label>
-                          <div className="grid grid-cols-2 gap-4 pl-4">
-                            <div>
-                                <Label className="text-sm font-medium text-muted-foreground">
-                                  {t("resolver")}
-                                </Label>
-                              <p className="text-sm">{transactionData.additionalInfo.resolver}</p>
-                            </div>
-                            {transactionData?.additionalInfo?.mcc && (
-                              <div>
-                                  <Label className="text-sm font-medium text-muted-foreground">
-                                    {t("mcc")}
-                                  </Label>
-                                <p className="text-sm">{transactionData.additionalInfo.mcc}</p>
-                              </div>
-                            )}
-                            {transactionData?.additionalInfo?.branch && (
-                              <div>
-                                  <Label className="text-sm font-medium text-muted-foreground">
-                                    {t("branch")}
-                                  </Label>
-                                <p className="text-sm">{transactionData.additionalInfo.branch}</p>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Destination Information */}
-                      {(transactionData?.additionalInfo?.destination_cbu || transactionData?.additionalInfo?.destination_cuit) && (
-                        <div>
-                          <Label className="text-sm font-semibold text-muted-foreground mb-2 block">
-                            {t("destination-information")}
-                          </Label>
-                          <div className="grid grid-cols-2 gap-4 pl-4">
-                            {transactionData?.additionalInfo?.destination_cbu && (
-                              <div>
-                                  <Label className="text-sm font-medium text-muted-foreground">
-                                    {t("destination-cbu")}
-                                  </Label>
-                                <p className="text-sm font-mono">{transactionData.additionalInfo.destination_cbu}</p>
-                              </div>
-                            )}
-                            {transactionData?.additionalInfo?.destination_cuit && (
-                              <div>
-                                  <Label className="text-sm font-medium text-muted-foreground">
-                                    {t("destination-cuit")}
-                                  </Label>
-                                <p className="text-sm font-mono">{transactionData.additionalInfo.destination_cuit}</p>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Legacy QR fields for backward compatibility */}
-                      {transactionData?.additionalInfo?.qr_code && (
-                        <div>
-                          <Label className="text-sm font-medium text-muted-foreground">
-                            {translate("qr-code")}
-                          </Label>
-                          <p className="text-sm font-mono">{transactionData.additionalInfo.qr_code}</p>
-                        </div>
-                      )}
-                      {transactionData?.additionalInfo?.destination_account && (
-                        <div>
-                          <Label className="text-sm font-medium text-muted-foreground">
-                            {translate("destination-account")}
-                          </Label>
-                          <p className="text-sm">{transactionData.additionalInfo.destination_account}</p>
-                        </div>
-                      )}
-                      {transactionData?.additionalInfo?.merchant_info && (
-                        <div>
-                          <Label className="text-sm font-medium text-muted-foreground">
-                            {translate("merchant-info")}
-                          </Label>
-                          <p className="text-sm">{transactionData.additionalInfo.merchant_info}</p>
-                        </div>
-                      )}
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
-              )}
-            </Accordion>
+              </Accordion>
+            )}
           </div>
         </ScrollArea>
       </DialogContent>
