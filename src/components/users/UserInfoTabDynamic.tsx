@@ -33,15 +33,32 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
   // Fields that should only appear once (avoid duplication between root and additional_info)
   const uniqueFields = ['status'];
 
+  const renderGovernmentIdentification = (user: any, typeKey: string, idKey: string) => {
+    const typeValue = user[typeKey];
+    const idValue = user[idKey];
+    
+    // Only render if both values exist
+    if (!typeValue || !idValue) return null;
+    
+    return (
+      <div key={idKey} className="flex justify-between items-start py-2 border-b border-border/40">
+        <span className="font-medium text-foreground">
+          {typeValue}
+        </span>
+        {renderFieldValue(idKey, idValue)}
+      </div>
+    );
+  };
+
   const getFieldLabel = (fieldName: string): string => {
     const translationKey = fieldName.toLowerCase().replace(/[._]/g, '_');
     const translation = translate(translationKey, settings.language);
     
     if (translation === translationKey) {
-      // If no translation found, format the field name
+      // If no translation found, format the field name by replacing special characters with spaces
       return fieldName
-        .replace(/([A-Z])/g, ' $1')
         .replace(/[._]/g, ' ')
+        .replace(/([A-Z])/g, ' $1')
         .replace(/\b\w/g, l => l.toUpperCase())
         .trim();
     }
@@ -214,10 +231,23 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
     );
   };
 
-  const renderUserField = (key: string, value: any) => {
+  const renderUserField = (key: string, value: any, userData?: any) => {
     // Skip excluded fields
     if (excludedFields.includes(key)) {
       return null;
+    }
+
+    // Skip government identification fields that will be handled specially
+    if (key === 'government_identification_type' || key === 'government_identification_type2') {
+      return null;
+    }
+
+    // Handle government identification fields specially
+    if (key === 'government_identification') {
+      return renderGovernmentIdentification(userData || user, 'government_identification_type', 'government_identification');
+    }
+    if (key === 'government_identification2') {
+      return renderGovernmentIdentification(userData || user, 'government_identification_type2', 'government_identification2');
     }
 
     // Handle object fields (like address)
@@ -325,10 +355,10 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
       </CardHeader>
       <CardContent className="space-y-1">
         {/* Render root fields */}
-        {rootFields.map(([key, value]) => renderUserField(key, value))}
+        {rootFields.map(([key, value]) => renderUserField(key, value, user))}
         
         {/* Render additional_info fields */}
-        {additionalInfoFields.map(([key, value]) => renderUserField(key, value))}
+        {additionalInfoFields.map(([key, value]) => renderUserField(key, value, { ...user, ...additionalInfo }))}
       </CardContent>
     </Card>
   );
