@@ -90,8 +90,8 @@ const UserProfile: React.FC<UserProfileProps> = ({ type, sidebarOpen }) => {
             </Avatar>
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="hidden">
-          <DropdownMenuLabel>{t('my-account')}</DropdownMenuLabel>
+        <DropdownMenuContent align="end" className="w-56 bg-background">
+          <DropdownMenuLabel>{user.name} {user.surname}</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={handleNavigateToProfile}>
             <User size={16} className="mr-2" /> {t('profile')}
