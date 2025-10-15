@@ -7,6 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
 import { translate } from "@/lib/translations";
 import { usePermissions } from "@/hooks/use-permissions";
+import { formatTransactionTypeLabel } from "@/lib/utils";
 
 export type FiltersType = {
   status: string;
@@ -308,9 +309,9 @@ export function useUserTransactions(userId: string, selectedWalletId: string | n
     
     return Array.from(typeSet).map(type => ({
       value: type,
-      label: t(type.toLowerCase().replace(/\s+/g, '_')) || type
+      label: formatTransactionTypeLabel(type)
     }));
-  }, [allTransactions, t]);
+  }, [allTransactions]);
 
   return {
     page,

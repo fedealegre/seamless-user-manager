@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { usePermissions } from "@/hooks/use-permissions";
 import { translate } from "@/lib/translations";
 import { useBackofficeSettings } from "@/contexts/BackofficeSettingsContext";
+import { formatTransactionTypeLabel } from "@/lib/utils";
 
 interface TransactionFilters {
   status: string;
@@ -373,9 +374,9 @@ export const useTransactionManagement = () => {
     
     return Array.from(typeSet).map(type => ({
       value: type,
-      label: t(type.toLowerCase().replace(/\s+/g, '_')) || type
+      label: formatTransactionTypeLabel(type)
     }));
-  }, [allTransactions, t]);
+  }, [allTransactions]);
 
   return {
     page,

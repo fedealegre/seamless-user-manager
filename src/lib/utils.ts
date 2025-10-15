@@ -33,6 +33,17 @@ export function formatFieldName(fieldName: string): string {
     .join(' ');
 }
 
+// Format transaction type labels: replace underscores and hyphens with spaces and capitalize
+export function formatTransactionTypeLabel(type: string): string {
+  if (!type) return '';
+  
+  return type
+    .replace(/[_-]/g, ' ')  // Replace underscores and hyphens with spaces
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
+}
+
 // Safely parse date string to date object preserving the correct date
 export function parseDate(dateString: string | undefined): Date | undefined {
   if (!dateString) return undefined;
