@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { LogOut, User, KeyRound } from "lucide-react";
+import { LogOut, KeyRound } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -33,9 +33,6 @@ const UserProfile: React.FC<UserProfileProps> = ({ type, sidebarOpen }) => {
     navigate("/login");
   };
 
-  const handleNavigateToProfile = () => {
-    navigate("/my-profile");
-  };
 
   const handleChangePassword = () => {
     setIsPasswordDialogOpen(true);
@@ -93,9 +90,6 @@ const UserProfile: React.FC<UserProfileProps> = ({ type, sidebarOpen }) => {
         <DropdownMenuContent align="end" className="w-56 bg-background">
           <DropdownMenuLabel>{user.name} {user.surname}</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={handleNavigateToProfile}>
-            <User size={16} className="mr-2" /> {t('profile')}
-          </DropdownMenuItem>
           <DropdownMenuItem onClick={handleChangePassword}>
             <KeyRound size={16} className="mr-2" /> {t('change-password')}
           </DropdownMenuItem>
