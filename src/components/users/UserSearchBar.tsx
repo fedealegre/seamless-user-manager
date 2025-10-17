@@ -56,8 +56,15 @@ const UserSearchBar: React.FC<UserSearchBarProps> = ({
             return false;
           }
         }
-        // Other fields (id, phone, cellPhone) require at least 1 character
-        if (['id', 'phone', 'cellPhone'].includes(fieldId) && value.trim().length < 1) {
+        // Phone and cellPhone must contain only numbers
+        if ((fieldId === 'phone' || fieldId === 'cellPhone') && value.trim().length > 0) {
+          const phoneRegex = /^\d+$/;
+          if (!phoneRegex.test(value.trim())) {
+            return false;
+          }
+        }
+        // Other fields (id) require at least 1 character
+        if (['id'].includes(fieldId) && value.trim().length < 1) {
           return false;
         }
       }
@@ -74,6 +81,10 @@ const UserSearchBar: React.FC<UserSearchBarProps> = ({
     if (fieldId === 'email' && value && value.trim().length > 0) {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       return !emailRegex.test(value.trim());
+    }
+    if ((fieldId === 'phone' || fieldId === 'cellPhone') && value && value.trim().length > 0) {
+      const phoneRegex = /^\d+$/;
+      return !phoneRegex.test(value.trim());
     }
     return false;
   };
@@ -122,6 +133,9 @@ const UserSearchBar: React.FC<UserSearchBarProps> = ({
     }
     if (fieldId === 'email') {
       return "Debe ingresar un correo electrónico válido y completo";
+    }
+    if (fieldId === 'phone' || fieldId === 'cellPhone') {
+      return "Debe ingresar un número de teléfono válido utilizando solo números";
     }
     return "";
   };

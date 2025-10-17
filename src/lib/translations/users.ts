@@ -58,6 +58,7 @@ export const userTranslations = {
     'search-by-surname-placeholder': 'Search by last name...',
     'search-by-email-placeholder': 'Search by email...',
     'search-by-phone-placeholder': 'Search by cell phone number...',
+    'phone-validation-error': 'Please enter a valid phone number using only numbers',
     // User details page
     'basic-information': 'Basic Information',
     'full-name': 'Full Name',
@@ -237,6 +238,7 @@ export const userTranslations = {
     'search-by-surname-placeholder': 'Buscar por apellido',
     'search-by-email-placeholder': 'Buscar por correo',
     'search-by-phone-placeholder': 'Buscar por número de teléfono',
+    'phone-validation-error': 'Debe ingresar un número de teléfono válido utilizando solo números',
     // User details page
     'basic-information': 'Información Básica',
     'full-name': 'Nombre Completo',
