@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { ChevronDown, ChevronUp, Edit } from "lucide-react";
 import { User } from "@/lib/api/types";
 import { EditUserInfoForm } from "./EditUserInfoForm";
@@ -73,17 +72,6 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
     return String(value);
   };
 
-  const renderStatus = () => {
-    const statusValue = user.status || "unknown";
-    const variant = statusValue === "active" ? "default" : 
-                   statusValue === "blocked" ? "destructive" : "secondary";
-    
-    return (
-      <Badge variant={variant} className="capitalize">
-        {t(statusValue)}
-      </Badge>
-    );
-  };
 
   const isJSON = (value: string): boolean => {
     try {
@@ -131,15 +119,6 @@ export const UserInfoTab: React.FC<UserInfoTabProps> = ({ user }) => {
 
   const renderFieldValue = (key: string, value: any) => {
     const stringValue = formatDisplayValue(value);
-    
-    // Handle status field specially
-    if (key.toLowerCase() === 'status') {
-      return (
-        <div className="text-right min-w-0 flex-1 ml-4">
-          {renderStatus()}
-        </div>
-      );
-    }
     
     // Check if the value is long and should be collapsible (more than ~200 characters or multiline)
     const isLongValue = stringValue.length > 200 || stringValue.includes('\n');
