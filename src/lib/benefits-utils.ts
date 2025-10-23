@@ -5,12 +5,17 @@ export const calculateBenefitStatus = (benefit: Benefit): 'activo' | 'expirado' 
   const now = new Date();
   const endDate = new Date(benefit.fechaFin);
   
-  // Si la fecha de fin ya pasó, está expirado
-  if (endDate < now) {
+  // Normalizar fechas a medianoche (00:00:00) para comparar solo días
+  const nowDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const endDateOnly = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
+  
+  // El beneficio está expirado solo si la fecha actual es POSTERIOR a la fecha de fin
+  // Si hoy es igual a fechaFin, el beneficio sigue activo
+  if (nowDate > endDateOnly) {
     return 'expirado';
   }
   
-  // Si está en el rango de fechas válido, está activo
+  // Si está en el rango de fechas válido (incluyendo el día de finalización), está activo
   return 'activo';
 };
 
